@@ -17,41 +17,29 @@ const VALID_CODES = [
 /* ── الأعضاء ─────────────────────────────────── */
 const PEOPLE = [
   { id:'#K4X-8412', name:'ليان',  g:'f', c:'ل', age:24, city:'الرياض',
-    bio:'أحب القهوة والكتب. أبحث عن محادثة صادقة.',
-    interests:['موسيقى','سفر','قراءة'] },
+    bio:'أحب القهوة والكتب. أبحث عن محادثة صادقة.' },
   { id:'#M2P-7719', name:'عمر',   g:'m', c:'ع', age:28, city:'جدة',
-    bio:'مهندس نهاراً، عازف غيتار ليلاً.',
-    interests:['تقنية','غيتار','عمل'] },
+    bio:'مهندس نهاراً، عازف غيتار ليلاً.' },
   { id:'#R8V-3306', name:'نور',   g:'f', c:'ن', age:22, city:'الدمام',
-    bio:'طالبة طب. وقتي ضيق لكن أعطي من يستحق.',
-    interests:['طب','رياضة','أفلام'] },
+    bio:'طالبة طب. وقتي ضيق لكن أعطي من يستحق.' },
   { id:'#B5N-2048', name:'زياد',  g:'m', c:'ز', age:31, city:'الرياض',
-    bio:'رجل أعمال. أقدّر الصدق فوق كل شيء.',
-    interests:['أعمال','سفر','تصوير'] },
+    bio:'رجل أعمال. أقدّر الصدق فوق كل شيء.' },
   { id:'#Q7L-9921', name:'سارة',  g:'f', c:'س', age:26, city:'مكة',
-    bio:'مصممة جرافيك. أرى العالم بالألوان.',
-    interests:['تصميم','فن','قهوة'] },
+    bio:'مصممة جرافيك. أرى العالم بالألوان.' },
   { id:'#T3D-6613', name:'كريم',  g:'m', c:'ك', age:29, city:'المدينة',
-    bio:'طبيب بيطري. أحب الحيوانات.',
-    interests:['حيوانات','طبيعة','طبخ'] },
+    bio:'طبيب بيطري. أحب الحيوانات.' },
   { id:'#X9C-4478', name:'هدى',   g:'f', c:'ه', age:25, city:'الخبر',
-    bio:'معلمة لغة عربية. الكلمة الصادقة تصل.',
-    interests:['لغة','شعر','خط'] },
+    bio:'معلمة لغة عربية. الكلمة الصادقة تصل.' },
   { id:'#A6J-1184', name:'آدم',   g:'m', c:'آ', age:27, city:'أبها',
-    bio:'مطوّر برمجيات. أحل المشكلات.',
-    interests:['برمجة','شطرنج','قهوة'] },
+    bio:'مطوّر برمجيات. أحل المشكلات.' },
   { id:'#W2E-8027', name:'ريم',   g:'f', c:'ر', age:23, city:'تبوك',
-    bio:'أكتب الشعر في وقت الفراغ.',
-    interests:['شعر','موسيقى','قهوة'] },
+    bio:'أكتب الشعر في وقت الفراغ.' },
   { id:'#F4Y-5521', name:'يوسف',  g:'m', c:'ي', age:30, city:'بريدة',
-    bio:'قارئ نهم. أمشي كل صباح.',
-    interests:['كتب','مشي','قهوة'] },
+    bio:'قارئ نهم. أمشي كل صباح.' },
   { id:'#H7K-3904', name:'لمى',   g:'f', c:'لـ', age:21, city:'الرياض',
-    bio:'أحب الرقص والأفلام القديمة.',
-    interests:['رقص','سفر','أفلام'] },
+    bio:'أحب الرقص والأفلام القديمة.' },
   { id:'#G1S-7782', name:'مروان', g:'m', c:'م', age:33, city:'جدة',
-    bio:'مغامر. أحب البحر والرياضة.',
-    interests:['رياضة','مغامرة','بحر'] }
+    bio:'مغامر. أحب البحر والرياضة.' }
 ];
 
 const IDLE_CHAT = [
@@ -70,17 +58,10 @@ const PRIVATE_HINTS = [
 ];
 
 const NOTIF_MSGS = [
-  'أهلاً، شفت ملفك وأعجبني…',
-  'ممكن نتكلم شوي؟',
-  'أنت جديد هنا؟',
-  'شكلك شخص مثير للاهتمام…',
-  'عندي سؤال شخصي…',
-  'تحب نتكلم في الخاص؟',
-  'قلت لي شيئاً في الغرفة، أذكر؟',
-  'ما عرفت كيف أراسلك، أرسلت هنا.',
-  'هل تقرأ الرسائل؟',
-  'أنا معجبة بملفك…',
-  'لدي شيء لأقوله لك على الخاص.',
+  'أهلاً، شفت ملفك وأعجبني…','ممكن نتكلم شوي؟','أنت جديد هنا؟',
+  'شكلك شخص مثير للاهتمام…','عندي سؤال شخصي…','تحب نتكلم في الخاص؟',
+  'قلت لي شيئاً في الغرفة، أذكر؟','ما عرفت كيف أراسلك، أرسلت هنا.',
+  'هل تقرأ الرسائل؟','أنا معجبة بملفك…','لدي شيء لأقوله لك على الخاص.',
   'أهلاً، سمعت عنك من صديقة.'
 ];
 
@@ -95,7 +76,6 @@ const TICKER_ITEMS = [
   ['ريم من المنامة اشتركت','قبل 52 دقيقة']
 ];
 
-/* ── الخدمات ────────────────────────────────── */
 const SERVICES = [
   { icon:'💬', title:'الدردشة الحية',     desc:'تحدّث في الغرفة العامة مع مئات الأعضاء في وقت واحد' },
   { icon:'💌', title:'الرسائل الخاصة',   desc:'راسل من تريد بشكل خاص وآمن بعيداً عن الغرفة' },
@@ -111,9 +91,12 @@ const S = {
   user: null,
   vip: false,
   userCode: null,
+  booted: false,
   roomTimer: null,
   notifTimer: null,
   countTimer: null,
+  onlineTimer: null,
+  statsTimer: null,
   activeView: 'room',
   stats: { views: 0, likes: 0, matches: 0 },
   countdownEnd: 0,
@@ -128,7 +111,8 @@ const pad = n => String(n).padStart(2,'0');
 
 function showScreen(id){
   $$('.screen').forEach(el => el.classList.remove('active'));
-  $(id).classList.add('active');
+  const t = $(id);
+  if(t) t.classList.add('active');
 }
 function showView(v){
   S.activeView = v;
@@ -136,7 +120,8 @@ function showView(v){
   const t = $(`#view-${v}`);
   if(t) t.classList.add('active');
   $$('.tab').forEach(x => x.classList.toggle('active', x.dataset.v === v));
-  if(v === 'notif') $('#notif-dot').classList.remove('on');
+  const dot = $('#notif-dot');
+  if(v === 'notif' && dot) dot.classList.remove('on');
 }
 function openModal(id){ const el = $(id); if(el) el.classList.add('on'); }
 function closeModal(id){ const el = $(id); if(el) el.classList.remove('on'); }
@@ -205,6 +190,7 @@ $$('#r-gender button').forEach(b => {
 $('#r-dob').addEventListener('change', () => {
   const age = calcAge($('#r-dob').value);
   const h = $('#r-age-hint');
+  if(!h) return;
   if(!age){ h.textContent = ''; h.className = 'hint'; return; }
   if(age < 18){
     h.textContent = `عمرك ${age} — يجب أن تكون 18+`;
@@ -237,10 +223,17 @@ $('#r-submit').addEventListener('click', () => {
 
 /* ═══ الإقلاع ═══ */
 function bootApp(){
+  if(S.booted) return;
+  S.booted = true;
+
   const u = S.user;
+  if(!u) return;
+
   $$('.me-name').forEach(el => el.textContent = `${u.name} · زائر`);
-  $('#p-name').textContent = `${u.name} ${u.nick}`;
-  $('#p-avatar').textContent = u.name.charAt(0).toUpperCase();
+  const pname = $('#p-name');
+  const pav = $('#p-avatar');
+  if(pname) pname.textContent = `${u.name} ${u.nick}`;
+  if(pav) pav.textContent = u.name.charAt(0).toUpperCase();
 
   renderMatches();
   renderMembers();
@@ -248,7 +241,6 @@ function bootApp(){
   renderServices();
   updateStatsUI();
   updateVipUI();
-  updateProgress();
 
   buildTicker();
   startCountdown();
@@ -404,24 +396,31 @@ function startNotifLoop(){
   if(S.notifTimer) clearInterval(S.notifTimer);
   S.notifTimer = setInterval(() => {
     addNotifItem(rnd(PEOPLE), rnd(NOTIF_MSGS), 'الآن');
-    if(S.activeView !== 'notif') $('#notif-dot').classList.add('on');
+    if(S.activeView !== 'notif'){
+      const dot = $('#notif-dot');
+      if(dot) dot.classList.add('on');
+    }
   }, rint(24000, 45000));
 }
 
 /* ═══ الإحصائيات ═══ */
 function updateStatsUI(){
-  $('#st-views').textContent = S.stats.views;
-  $('#st-likes').textContent = S.stats.likes;
-  $('#st-match').textContent = S.stats.matches;
+  const v = $('#st-views'), l = $('#st-likes'), m = $('#st-match');
+  if(v) v.textContent = S.stats.views;
+  if(l) l.textContent = S.stats.likes;
+  if(m) m.textContent = S.stats.matches;
 }
 function startStatsLoop(){
-  setInterval(() => {
+  if(S.onlineTimer) clearInterval(S.onlineTimer);
+  if(S.statsTimer) clearInterval(S.statsTimer);
+
+  S.onlineTimer = setInterval(() => {
     const n = rint(1100, 1480);
     const el = $('#online-count');
     if(el) el.textContent = n.toLocaleString('en');
   }, 4000);
 
-  setInterval(() => {
+  S.statsTimer = setInterval(() => {
     S.stats.views += rint(1, 4);
     if(Math.random() < 0.4) S.stats.likes += rint(0, 2);
     if(Math.random() < 0.2) S.stats.matches += 1;
@@ -429,14 +428,16 @@ function startStatsLoop(){
   }, 6000);
 }
 
-/* ═══ الشريط العلوي ═══ */
+/* ═══ الشريط المتحرك ═══ */
 function buildTicker(){
   const track = $('#tick-track');
   if(!track) return;
-  const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
-  track.innerHTML = items.map(([a,b]) =>
+  const oneSet = TICKER_ITEMS.map(([a,b]) =>
     `<span>⭐ <b>${escapeHtml(a)}</b> · ${escapeHtml(b)}</span>`
   ).join('');
+  track.innerHTML =
+    `<div class="tick-set">${oneSet}</div>` +
+    `<div class="tick-set">${oneSet}</div>`;
 }
 
 /* ═══ العدّاد ═══ */
@@ -463,9 +464,6 @@ function updateCountdown(){
   if(el1) el1.textContent = `ينتهي العرض: ${str}`;
   if(el2) el2.textContent = `ينتهي العرض خلال ${str}`;
 }
-
-/* ═══ التقدم ═══ */
-function updateProgress(){ /* لم يُعد مستخدماً في هذه النسخة */ }
 
 /* ═══ VIP ═══ */
 function updateVipUI(){
@@ -503,7 +501,7 @@ function updateVipUI(){
   }
 }
 
-/* ═══ الأزرار ═══ */
+/* ═══ أزرار الترقية ═══ */
 ['#btn-upgrade-top','#btn-upgrade-room','#btn-vip-bar',
  '#btn-upgrade-profile','#btn-upgrade-services']
   .forEach(sel => {
@@ -514,6 +512,7 @@ function updateVipUI(){
     });
   });
 
+/* ═══ الجدار والباقات ═══ */
 $('#wall-close').addEventListener('click', () => closeModal('#wall'));
 $('#wall-go').addEventListener('click', () => {
   closeModal('#wall');
@@ -556,6 +555,7 @@ $('#verify-close').addEventListener('click', () => closeModal('#verify'));
 $('#code-submit').addEventListener('click', () => {
   const input = $('#code-input').value.trim().toUpperCase();
   const hint = $('#code-hint');
+  if(!hint) return;
   if(!input){
     hint.textContent = 'أدخل الكود'; hint.className = 'code-hint bad'; return;
   }
@@ -575,7 +575,8 @@ $('#code-submit').addEventListener('click', () => {
     renderServices();
     renderNotifications();
     $('#code-input').value = '';
-    hint.textContent = ''; hint.className = 'code-hint';
+    hint.textContent = '';
+    hint.className = 'code-hint';
   }, 1200);
 });
 
@@ -584,7 +585,7 @@ $$('.tab').forEach(t => {
   t.addEventListener('click', () => showView(t.dataset.v));
 });
 
-/* ═══ الإقلاع ═══ */
+/* ═══ الإقلاع الأول ═══ */
 const saved = load();
 if(saved && saved.user && saved.user.name){
   S.user = saved.user;
