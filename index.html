@@ -33,8 +33,8 @@
       <div class="fld">
         <label>الجنس</label>
         <div class="seg" id="r-gender">
-          <button data-v="m" class="on">ذكر</button>
-          <button data-v="f">أنثى</button>
+          <button type="button" data-v="m" class="on">ذكر</button>
+          <button type="button" data-v="f">أنثى</button>
         </div>
       </div>
       <div class="fld">
@@ -42,7 +42,7 @@
         <input id="r-pass" type="password" placeholder="••••••">
       </div>
 
-      <button class="btn-primary" id="r-submit">إنشاء حساب</button>
+      <button type="button" class="btn-primary" id="r-submit">إنشاء حساب</button>
       <div class="reg-fine">+18 فقط · بالدخول أنت توافق على الشروط</div>
     </div>
   </section>
@@ -50,24 +50,20 @@
   <!-- ══ الشاشة الرئيسية ══ -->
   <section class="screen" id="scr-app">
 
-    <!-- شريط الإثبات الاجتماعي -->
     <div class="social-ticker">
       <div class="tick-track" id="tick-track"></div>
     </div>
 
-    <!-- الشريط العلوي -->
     <header class="topbar">
       <div class="me-info" id="me-chip">
         <span class="me-name">—</span>
         <span class="me-badge temp" id="me-badge">حساب مؤقت</span>
       </div>
-      <button class="upgrade-mini" id="btn-upgrade-top">ترقية</button>
+      <button type="button" class="upgrade-mini" id="btn-upgrade-top">ترقية</button>
     </header>
 
-    <!-- المسرح -->
     <main class="stage">
 
-      <!-- الغرفة -->
       <div class="view active" id="view-room">
         <div class="room-head">
           <div class="live-dot"></div>
@@ -77,12 +73,11 @@
         <div class="composer-lock" id="room-lock">
           <div class="lock-inner">
             <span>🔒 الكتابة للأعضاء فقط</span>
-            <button class="btn-mini" id="btn-upgrade-room">احصل على ID</button>
+            <button type="button" class="btn-mini" id="btn-upgrade-room">احصل على ID</button>
           </div>
         </div>
       </div>
 
-      <!-- الاستكشاف -->
       <div class="view" id="view-discover">
         <div class="section-title">مطابقاتك اليوم</div>
         <div class="matches" id="matches-grid"></div>
@@ -90,7 +85,6 @@
         <div class="members" id="members-list"></div>
       </div>
 
-      <!-- البروفايل -->
       <div class="view" id="view-profile">
         <div class="profile-head">
           <div class="avatar-big" id="p-avatar">؟</div>
@@ -99,7 +93,6 @@
           <div class="p-badge" id="p-badge">حساب مؤقت</div>
         </div>
 
-        <!-- شريط التقدم -->
         <div class="progress-wrap">
           <div class="progress-label">
             <span>اكتمال حسابك</span>
@@ -117,11 +110,10 @@
           <div class="stat"><b id="st-match">0</b><span>مطابقة</span></div>
         </div>
 
-        <button class="btn-primary" id="btn-upgrade-profile">تفعيل ID دائم</button>
-        <button class="btn-ghost" id="btn-verify-open">لدي كود تفعيل</button>
+        <button type="button" class="btn-primary" id="btn-upgrade-profile">تفعيل ID دائم</button>
+        <button type="button" class="btn-ghost" id="btn-verify-open">لدي كود تفعيل</button>
       </div>
 
-      <!-- الإشعارات -->
       <div class="view" id="view-notif">
         <div class="section-title">رسائل جديدة</div>
         <div class="notif-list" id="notif-list"></div>
@@ -129,21 +121,19 @@
 
     </main>
 
-    <!-- التنقل -->
     <nav class="tabbar">
-      <button class="tab active" data-v="room">💬<span>الغرفة</span></button>
-      <button class="tab" data-v="discover">🔍<span>اكتشف</span></button>
-      <button class="tab" data-v="notif">🔔<span>إشعارات</span><i class="dot" id="notif-dot"></i></button>
-      <button class="tab" data-v="profile">👤<span>حسابي</span></button>
+      <button type="button" class="tab active" data-v="room">💬<span>الغرفة</span></button>
+      <button type="button" class="tab" data-v="discover">🔍<span>اكتشف</span></button>
+      <button type="button" class="tab" data-v="notif">🔔<span>إشعارات</span><i class="dot" id="notif-dot"></i></button>
+      <button type="button" class="tab" data-v="profile">👤<span>حسابي</span></button>
     </nav>
 
-    <!-- شريط VIP مع العدّاد -->
     <div class="vipbar" id="vipbar">
       <div class="vip-left">
         <div class="vip-text">🔒 احصل على ID دائم</div>
         <div class="vip-count" id="vip-count">ينتهي العرض: 23:59:59</div>
       </div>
-      <button class="vip-btn" id="btn-vip-bar">تفعيل</button>
+      <button type="button" class="vip-btn" id="btn-vip-bar">تفعيل</button>
     </div>
 
   </section>
@@ -161,8 +151,8 @@
         <li>البروفايل المُفعّل</li>
       </ul>
       <div class="wall-count" id="wall-count">ينتهي العرض خلال 23:59:59</div>
-      <button class="btn-primary" id="wall-go">اختر الباقة</button>
-      <button class="btn-ghost" id="wall-close">لاحقاً</button>
+      <button type="button" class="btn-primary" id="wall-go">اختر الباقة</button>
+      <button type="button" class="btn-ghost" id="wall-close">لاحقاً</button>
     </div>
   </div>
 
@@ -173,32 +163,23 @@
       <p class="plans-sub">الاشتراك يُفعَّل بنجوم تيليجرام</p>
 
       <div class="plan" data-plan="week">
-        <div class="plan-head">
-          <b>أسبوعي</b>
-          <div class="plan-price">50 ⭐</div>
-        </div>
+        <div class="plan-head"><b>أسبوعي</b><div class="plan-price">50 ⭐</div></div>
         <div class="plan-feats">فتح كامل · 7 أيام</div>
       </div>
 
       <div class="plan hot" data-plan="month">
         <div class="plan-badge">الأكثر اختياراً</div>
-        <div class="plan-head">
-          <b>شهري</b>
-          <div class="plan-price">150 ⭐</div>
-        </div>
+        <div class="plan-head"><b>شهري</b><div class="plan-price">150 ⭐</div></div>
         <div class="plan-feats">فتح كامل + أولوية · 30 يوم</div>
       </div>
 
       <div class="plan" data-plan="life">
-        <div class="plan-head">
-          <b>دائم</b>
-          <div class="plan-price">400 ⭐</div>
-        </div>
+        <div class="plan-head"><b>دائم</b><div class="plan-price">400 ⭐</div></div>
         <div class="plan-feats">ID محفوظ للأبد · شارة دائمة</div>
       </div>
 
       <div class="plans-fine">سيتم تحويلك لتيليجرام لإتمام الدفع</div>
-      <button class="btn-ghost" id="plans-close">رجوع</button>
+      <button type="button" class="btn-ghost" id="plans-close">رجوع</button>
     </div>
   </div>
 
@@ -211,8 +192,8 @@
       <input id="code-input" type="text" placeholder="VIP-XXXX" autocomplete="off"
              style="width:100%;padding:14px 16px;border-radius:14px;background:#17171b;border:1px solid #26262c;color:#fff;font-size:16px;outline:none;text-align:center;letter-spacing:2px;margin:8px 0">
       <div class="code-hint" id="code-hint"></div>
-      <button class="btn-primary" id="code-submit">تأكيد</button>
-      <button class="btn-ghost" id="verify-close">إلغاء</button>
+      <button type="button" class="btn-primary" id="code-submit">تأكيد</button>
+      <button type="button" class="btn-ghost" id="verify-close">إلغاء</button>
     </div>
   </div>
 
