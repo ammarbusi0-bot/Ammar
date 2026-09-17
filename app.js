@@ -5,31 +5,53 @@
 (() => {
 'use strict';
 
-/* ── الإعدادات ─────────────────────────────────── */
 const TG_USER = 'Winda_13';
 const TG_BASE = `https://t.me/${TG_USER}`;
-const STORE_KEY = 'wisal_v2';
+const STORE_KEY = 'wisal_v3';
 
-/* ── أكواد التفعيل ────────────────────────────── */
 const VALID_CODES = [
   'VIP-2211','VIP-3300','VIP-4411','VIP-5500','VIP-6611',
   'VIP-7722','VIP-8833','VIP-9944','VIP-1155','VIP-2266'
 ];
 
-/* ── الشخصيات ──────────────────────────────────── */
+/* ── الأعضاء ─────────────────────────────────── */
 const PEOPLE = [
-  { id:'#K4X-8412', name:'ليان',  g:'f', c:'ل' },
-  { id:'#M2P-7719', name:'عمر',   g:'m', c:'ع' },
-  { id:'#R8V-3306', name:'نور',   g:'f', c:'ن' },
-  { id:'#B5N-2048', name:'زياد',  g:'m', c:'ز' },
-  { id:'#Q7L-9921', name:'سارة',  g:'f', c:'س' },
-  { id:'#T3D-6613', name:'كريم',  g:'m', c:'ك' },
-  { id:'#X9C-4478', name:'هدى',   g:'f', c:'ه' },
-  { id:'#A6J-1184', name:'آدم',   g:'m', c:'آ' },
-  { id:'#W2E-8027', name:'ريم',   g:'f', c:'ر' },
-  { id:'#F4Y-5521', name:'يوسف',  g:'m', c:'ي' },
-  { id:'#H7K-3904', name:'لمى',   g:'f', c:'لـ' },
-  { id:'#G1S-7782', name:'مروان', g:'m', c:'م' }
+  { id:'#K4X-8412', name:'ليان',  g:'f', c:'ل', age:24, city:'الرياض',
+    bio:'أحب القهوة والكتب. أبحث عن محادثة صادقة.',
+    interests:['موسيقى','سفر','قراءة'] },
+  { id:'#M2P-7719', name:'عمر',   g:'m', c:'ع', age:28, city:'جدة',
+    bio:'مهندس نهاراً، عازف غيتار ليلاً.',
+    interests:['تقنية','غيتار','عمل'] },
+  { id:'#R8V-3306', name:'نور',   g:'f', c:'ن', age:22, city:'الدمام',
+    bio:'طالبة طب. وقتي ضيق لكن أعطي من يستحق.',
+    interests:['طب','رياضة','أفلام'] },
+  { id:'#B5N-2048', name:'زياد',  g:'m', c:'ز', age:31, city:'الرياض',
+    bio:'رجل أعمال. أقدّر الصدق فوق كل شيء.',
+    interests:['أعمال','سفر','تصوير'] },
+  { id:'#Q7L-9921', name:'سارة',  g:'f', c:'س', age:26, city:'مكة',
+    bio:'مصممة جرافيك. أرى العالم بالألوان.',
+    interests:['تصميم','فن','قهوة'] },
+  { id:'#T3D-6613', name:'كريم',  g:'m', c:'ك', age:29, city:'المدينة',
+    bio:'طبيب بيطري. أحب الحيوانات.',
+    interests:['حيوانات','طبيعة','طبخ'] },
+  { id:'#X9C-4478', name:'هدى',   g:'f', c:'ه', age:25, city:'الخبر',
+    bio:'معلمة لغة عربية. الكلمة الصادقة تصل.',
+    interests:['لغة','شعر','خط'] },
+  { id:'#A6J-1184', name:'آدم',   g:'m', c:'آ', age:27, city:'أبها',
+    bio:'مطوّر برمجيات. أحل المشكلات.',
+    interests:['برمجة','شطرنج','قهوة'] },
+  { id:'#W2E-8027', name:'ريم',   g:'f', c:'ر', age:23, city:'تبوك',
+    bio:'أكتب الشعر في وقت الفراغ.',
+    interests:['شعر','موسيقى','قهوة'] },
+  { id:'#F4Y-5521', name:'يوسف',  g:'m', c:'ي', age:30, city:'بريدة',
+    bio:'قارئ نهم. أمشي كل صباح.',
+    interests:['كتب','مشي','قهوة'] },
+  { id:'#H7K-3904', name:'لمى',   g:'f', c:'لـ', age:21, city:'الرياض',
+    bio:'أحب الرقص والأفلام القديمة.',
+    interests:['رقص','سفر','أفلام'] },
+  { id:'#G1S-7782', name:'مروان', g:'m', c:'م', age:33, city:'جدة',
+    bio:'مغامر. أحب البحر والرياضة.',
+    interests:['رياضة','مغامرة','بحر'] }
 ];
 
 const IDLE_CHAT = [
@@ -47,6 +69,21 @@ const PRIVATE_HINTS = [
   'أنا أرتاح أكثر بالخاص','لو تكلمنا على الخاص أقول لك أكثر'
 ];
 
+const NOTIF_MSGS = [
+  'أهلاً، شفت ملفك وأعجبني…',
+  'ممكن نتكلم شوي؟',
+  'أنت جديد هنا؟',
+  'شكلك شخص مثير للاهتمام…',
+  'عندي سؤال شخصي…',
+  'تحب نتكلم في الخاص؟',
+  'قلت لي شيئاً في الغرفة، أذكر؟',
+  'ما عرفت كيف أراسلك، أرسلت هنا.',
+  'هل تقرأ الرسائل؟',
+  'أنا معجبة بملفك…',
+  'لدي شيء لأقوله لك على الخاص.',
+  'أهلاً، سمعت عنك من صديقة.'
+];
+
 const TICKER_ITEMS = [
   ['أحمد من الرياض اشترك الآن','قبل 3 دقائق'],
   ['نورة من جدة فعّلت عضويتها','قبل 7 دقائق'],
@@ -58,7 +95,18 @@ const TICKER_ITEMS = [
   ['ريم من المنامة اشتركت','قبل 52 دقيقة']
 ];
 
-/* ── الحالة ─────────────────────────────────────── */
+/* ── الخدمات ────────────────────────────────── */
+const SERVICES = [
+  { icon:'💬', title:'الدردشة الحية',     desc:'تحدّث في الغرفة العامة مع مئات الأعضاء في وقت واحد' },
+  { icon:'💌', title:'الرسائل الخاصة',   desc:'راسل من تريد بشكل خاص وآمن بعيداً عن الغرفة' },
+  { icon:'💜', title:'المطابقات الذكية', desc:'نظام يجد لك من يشبهك في الاهتمامات والعمر والمدينة' },
+  { icon:'⭐', title:'الملف المُفعّل',    desc:'ID دائم + شارة التحقق + ظهور مميز في كل القوائم' },
+  { icon:'🎯', title:'البحث المتقدم',     desc:'ابحث حسب المدينة، العمر، الاهتمامات، وحالة الاتصال' },
+  { icon:'🔥', title:'الأولوية في الغرفة', desc:'رسائلك تظهر أولاً، وملفك في المقدمة' },
+  { icon:'👁', title:'من شاهدك',          desc:'اعرف من زار ملفك ومن أعجب بك' },
+  { icon:'🚀', title:'الدعوات الحصرية',   desc:'دعوة أصدقاء واكسب أيام مجانية' }
+];
+
 const S = {
   user: null,
   vip: false,
@@ -72,7 +120,6 @@ const S = {
   pendingVerifyOpen: false
 };
 
-/* ── أدوات ─────────────────────────────────────── */
 const $  = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const rnd = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -86,9 +133,9 @@ function showScreen(id){
 function showView(v){
   S.activeView = v;
   $$('.view').forEach(el => el.classList.remove('active'));
-  const target = $(`#view-${v}`);
-  if(target) target.classList.add('active');
-  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.v === v));
+  const t = $(`#view-${v}`);
+  if(t) t.classList.add('active');
+  $$('.tab').forEach(x => x.classList.toggle('active', x.dataset.v === v));
   if(v === 'notif') $('#notif-dot').classList.remove('on');
 }
 function openModal(id){ const el = $(id); if(el) el.classList.add('on'); }
@@ -97,10 +144,8 @@ function closeModal(id){ const el = $(id); if(el) el.classList.remove('on'); }
 function save(){
   try{
     localStorage.setItem(STORE_KEY, JSON.stringify({
-      user: S.user,
-      vip: S.vip,
-      userCode: S.userCode,
-      countdownEnd: S.countdownEnd
+      user: S.user, vip: S.vip,
+      userCode: S.userCode, countdownEnd: S.countdownEnd
     }));
   }catch(e){}
 }
@@ -134,13 +179,10 @@ function escapeHtml(s){
   }[c]));
 }
 
-function genUserCode(){
-  return 'wisal_' + rint(10000, 99999);
-}
+function genUserCode(){ return 'wisal_' + rint(10000, 99999); }
 
 function genPermanentID(){
-  const L = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const D = '0123456789';
+  const L = 'ABCDEFGHJKLMNPQRSTUVWXYZ', D = '0123456789';
   let a = '', b = '';
   for(let i = 0; i < 3; i++) a += L[rint(0, L.length - 1)];
   for(let i = 0; i < 4; i++) b += D[rint(0, D.length - 1)];
@@ -152,9 +194,7 @@ function tgLink(plan){
   return `${TG_BASE}?start=${encodeURIComponent(payload)}`;
 }
 
-/* ═══════════════════════════════════════════════
-   التسجيل
-   ═══════════════════════════════════════════════ */
+/* ═══ التسجيل ═══ */
 $$('#r-gender button').forEach(b => {
   b.addEventListener('click', () => {
     $$('#r-gender button').forEach(x => x.classList.remove('on'));
@@ -191,18 +231,13 @@ $('#r-submit').addEventListener('click', () => {
   S.user = { name, nick, dob, g, age: calcAge(dob), createdAt: Date.now() };
   S.userCode = genUserCode();
   S.countdownEnd = Date.now() + 24 * 3600 * 1000;
-
   save();
   bootApp();
 });
 
-/* ═══════════════════════════════════════════════
-   الإقلاع
-   ═══════════════════════════════════════════════ */
+/* ═══ الإقلاع ═══ */
 function bootApp(){
   const u = S.user;
-
-  /* بيانات المستخدم */
   $$('.me-name').forEach(el => el.textContent = `${u.name} · زائر`);
   $('#p-name').textContent = `${u.name} ${u.nick}`;
   $('#p-avatar').textContent = u.name.charAt(0).toUpperCase();
@@ -210,6 +245,7 @@ function bootApp(){
   renderMatches();
   renderMembers();
   renderNotifications();
+  renderServices();
   updateStatsUI();
   updateVipUI();
   updateProgress();
@@ -224,9 +260,7 @@ function bootApp(){
   showView('room');
 }
 
-/* ═══════════════════════════════════════════════
-   الغرفة
-   ═══════════════════════════════════════════════ */
+/* ═══ الغرفة ═══ */
 function startRoomLoop(){
   if(S.roomTimer) clearTimeout(S.roomTimer);
   scheduleNext();
@@ -243,11 +277,9 @@ function pushRoomMessage(){
   const p = rnd(PEOPLE);
   const isHint = Math.random() < 0.18;
   let text = isHint ? rnd(PRIVATE_HINTS) : rnd(IDLE_CHAT);
-
   if(Math.random() < 0.10 && S.user && S.user.name){
     text = `يا ${S.user.name}، ${text}`;
   }
-
   addRoomMsg(p, text);
 }
 function addRoomMsg(p, text){
@@ -271,28 +303,33 @@ function addRoomMsg(p, text){
   stream.scrollTop = stream.scrollHeight;
 }
 
-/* ═══════════════════════════════════════════════
-   الاستكشاف
-   ═══════════════════════════════════════════════ */
+/* ═══ المطابقات ═══ */
 function renderMatches(){
   const grid = $('#matches-grid');
   if(!grid) return;
   grid.innerHTML = '';
   const picks = [...PEOPLE].sort(() => Math.random() - 0.5).slice(0, 6);
+  const count = $('#match-count');
+  if(count) count.textContent = picks.length;
+
   picks.forEach(p => {
     const pct = rint(78, 97);
     const el = document.createElement('div');
     el.className = 'match-card' + (S.vip ? ' unlocked' : '');
     el.innerHTML = `
+      <div class="mc-pct">${pct}%</div>
       <div class="mc-av" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
       <div class="mc-name">${escapeHtml(p.name)}</div>
-      <div class="mc-meta">${escapeHtml(p.id)} · ${pct}%</div>
-      <div class="mc-blur">🔒</div>
+      <div class="mc-meta">${p.age} · ${escapeHtml(p.city)}</div>
+      <div class="mc-bio">${escapeHtml(p.bio)}</div>
+      <div class="mc-lock">${S.vip ? '✓ يمكن المراسلة' : '🔒 فتح المحادثة'}</div>
     `;
     el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
     grid.appendChild(el);
   });
 }
+
+/* ═══ الأعضاء ═══ */
 function renderMembers(){
   const list = $('#members-list');
   if(!list) return;
@@ -302,27 +339,51 @@ function renderMembers(){
     el.className = 'member-row';
     el.innerHTML = `
       <div class="avatar-sm" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
-      <div class="member-info"><b>${escapeHtml(p.name)}</b><span>نشط الآن</span></div>
-      <div class="member-id">${escapeHtml(p.id)}</div>
+      <div class="member-info">
+        <b>${escapeHtml(p.name)} <span style="color:var(--dim);font-weight:400;font-size:11px">· ${p.age} · ${escapeHtml(p.city)}</span></b>
+        <span>${escapeHtml(p.bio)}</span>
+      </div>
+      <div class="member-right">
+        <div class="member-id">${escapeHtml(p.id)}</div>
+        <div class="online-tag">نشط</div>
+      </div>
     `;
     el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
     list.appendChild(el);
   });
 }
 
-/* ═══════════════════════════════════════════════
-   الإشعارات
-   ═══════════════════════════════════════════════ */
+/* ═══ الخدمات ═══ */
+function renderServices(){
+  const grid = $('#services-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  SERVICES.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'service-card';
+    el.innerHTML = `
+      <div class="sc-icon">${s.icon}</div>
+      <div class="sc-body">
+        <div class="sc-title">${escapeHtml(s.title)}</div>
+        <div class="sc-desc">${escapeHtml(s.desc)}</div>
+      </div>
+      <div class="sc-lock${S.vip ? ' on' : ''}">${S.vip ? '✓' : '🔒'}</div>
+    `;
+    el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
+    grid.appendChild(el);
+  });
+}
+
+/* ═══ الإشعارات ═══ */
 function renderNotifications(){
   const list = $('#notif-list');
   if(!list) return;
   list.innerHTML = '';
-  const count = rint(8, 14);
-  for(let i = 0; i < count; i++){
-    addNotifItem(rnd(PEOPLE), rint(1,59) + ' دقيقة');
+  for(let i = 0; i < rint(8, 12); i++){
+    addNotifItem(rnd(PEOPLE), rnd(NOTIF_MSGS), rint(1,59) + ' دقيقة');
   }
 }
-function addNotifItem(p, when){
+function addNotifItem(p, msg, when){
   const list = $('#notif-list');
   if(!list) return;
   const el = document.createElement('div');
@@ -330,10 +391,10 @@ function addNotifItem(p, when){
   el.innerHTML = `
     <div class="avatar-sm" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
     <div class="notif-text">
-      <b>${escapeHtml(p.name)} <span style="color:var(--accent);font-size:10px">${escapeHtml(p.id)}</span></b>
-      <span>أرسل لك رسالة قبل ${escapeHtml(when)}</span>
+      <b>${escapeHtml(p.name)}<span>${escapeHtml(p.id)}</span></b>
+      <div class="notif-preview">${escapeHtml(msg)}</div>
     </div>
-    <div class="notif-lock${S.vip ? ' unlocked' : ''}">${S.vip ? '✓' : '🔒'}</div>
+    <div class="notif-lock${S.vip ? ' on' : ''}">${S.vip ? '✓' : '🔒'}</div>
   `;
   el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
   list.insertBefore(el, list.firstChild);
@@ -342,14 +403,12 @@ function addNotifItem(p, when){
 function startNotifLoop(){
   if(S.notifTimer) clearInterval(S.notifTimer);
   S.notifTimer = setInterval(() => {
-    addNotifItem(rnd(PEOPLE), 'الآن');
+    addNotifItem(rnd(PEOPLE), rnd(NOTIF_MSGS), 'الآن');
     if(S.activeView !== 'notif') $('#notif-dot').classList.add('on');
   }, rint(24000, 45000));
 }
 
-/* ═══════════════════════════════════════════════
-   الإحصائيات
-   ═══════════════════════════════════════════════ */
+/* ═══ الإحصائيات ═══ */
 function updateStatsUI(){
   $('#st-views').textContent = S.stats.views;
   $('#st-likes').textContent = S.stats.likes;
@@ -359,7 +418,7 @@ function startStatsLoop(){
   setInterval(() => {
     const n = rint(1100, 1480);
     const el = $('#online-count');
-    if(el) el.textContent = `${n.toLocaleString('en')} متصل الآن`;
+    if(el) el.textContent = n.toLocaleString('en');
   }, 4000);
 
   setInterval(() => {
@@ -367,13 +426,10 @@ function startStatsLoop(){
     if(Math.random() < 0.4) S.stats.likes += rint(0, 2);
     if(Math.random() < 0.2) S.stats.matches += 1;
     updateStatsUI();
-    updateProgress();
   }, 6000);
 }
 
-/* ═══════════════════════════════════════════════
-   شريط الإثبات الاجتماعي
-   ═══════════════════════════════════════════════ */
+/* ═══ الشريط العلوي ═══ */
 function buildTicker(){
   const track = $('#tick-track');
   if(!track) return;
@@ -383,9 +439,7 @@ function buildTicker(){
   ).join('');
 }
 
-/* ═══════════════════════════════════════════════
-   العدّاد التنازلي
-   ═══════════════════════════════════════════════ */
+/* ═══ العدّاد ═══ */
 function startCountdown(){
   if(!S.countdownEnd || S.countdownEnd < Date.now()){
     S.countdownEnd = Date.now() + 24 * 3600 * 1000;
@@ -405,33 +459,18 @@ function updateCountdown(){
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
   const str = `${pad(h)}:${pad(m)}:${pad(s)}`;
-
-  const el1 = $('#vip-count');
-  const el2 = $('#wall-count');
+  const el1 = $('#vip-count'), el2 = $('#wall-count');
   if(el1) el1.textContent = `ينتهي العرض: ${str}`;
   if(el2) el2.textContent = `ينتهي العرض خلال ${str}`;
 }
 
-/* ═══════════════════════════════════════════════
-   شريط التقدم
-   ═══════════════════════════════════════════════ */
-function updateProgress(){
-  const pct = S.vip ? 100 : 40;
-  const pctEl = $('#progress-pct');
-  const fillEl = $('#progress-fill');
-  const noteEl = $('#progress-note');
-  if(pctEl) pctEl.textContent = pct + '%';
-  if(fillEl) fillEl.style.width = pct + '%';
-  if(noteEl) noteEl.textContent = S.vip ? 'حسابك مُفعّل ✓' : 'تبقّى: تفعيل الاشتراك';
-}
+/* ═══ التقدم ═══ */
+function updateProgress(){ /* لم يُعد مستخدماً في هذه النسخة */ }
 
-/* ═══════════════════════════════════════════════
-   حالة VIP
-   ═══════════════════════════════════════════════ */
+/* ═══ VIP ═══ */
 function updateVipUI(){
   const u = S.user;
   if(!u) return;
-
   const badge = $('#me-badge');
   const pBadge = $('#p-badge');
   const pId = $('#p-id');
@@ -440,7 +479,6 @@ function updateVipUI(){
 
   if(S.vip){
     if(!u.permanentID) u.permanentID = genPermanentID();
-
     $$('.me-name').forEach(el => el.textContent = `${u.name} · عضو`);
     if(badge){ badge.textContent = 'عضو ✓'; badge.classList.add('vip'); }
     if(pBadge){ pBadge.textContent = 'عضو مُفعّل'; pBadge.classList.add('vip'); }
@@ -449,27 +487,25 @@ function updateVipUI(){
       roomLock.innerHTML = '<div class="lock-inner vip">✓ العضوية مُفعّلة — يمكنك الكتابة الآن</div>';
     }
     if(vipbar) vipbar.style.display = 'none';
-
-    /* فك أقفال المطابقات */
-    $$('.match-card').forEach(c => c.classList.add('unlocked'));
-    $$('.notif-lock').forEach(l => {
-      l.textContent = '✓';
-      l.classList.add('unlocked');
+    $$('.match-card').forEach(c => {
+      c.classList.add('unlocked');
+      const lock = c.querySelector('.mc-lock');
+      if(lock) lock.textContent = '✓ يمكن المراسلة';
     });
+    $$('.notif-lock').forEach(l => { l.textContent = '✓'; l.classList.add('on'); });
+    $$('.sc-lock').forEach(l => { l.textContent = '✓'; l.classList.add('on'); });
   } else {
     $$('.me-name').forEach(el => el.textContent = `${u.name} · زائر`);
-    if(badge){ badge.textContent = 'حساب مؤقت'; badge.classList.remove('vip'); }
-    if(pBadge){ pBadge.textContent = 'حساب مؤقت'; pBadge.classList.remove('vip'); }
+    if(badge){ badge.textContent = 'حساب مجاني'; badge.classList.remove('vip'); }
+    if(pBadge){ pBadge.textContent = 'حساب مجاني'; pBadge.classList.remove('vip'); }
     if(pId) pId.textContent = 'لا يوجد ID دائم';
     if(vipbar) vipbar.style.display = 'flex';
   }
-  updateProgress();
 }
 
-/* ═══════════════════════════════════════════════
-   الجدار + الباقات
-   ═══════════════════════════════════════════════ */
-['#btn-upgrade-top','#btn-upgrade-room','#btn-vip-bar','#btn-upgrade-profile']
+/* ═══ الأزرار ═══ */
+['#btn-upgrade-top','#btn-upgrade-room','#btn-vip-bar',
+ '#btn-upgrade-profile','#btn-upgrade-services']
   .forEach(sel => {
     const el = $(sel);
     if(el) el.addEventListener('click', () => {
@@ -479,26 +515,23 @@ function updateVipUI(){
   });
 
 $('#wall-close').addEventListener('click', () => closeModal('#wall'));
-
 $('#wall-go').addEventListener('click', () => {
   closeModal('#wall');
   openModal('#plans');
 });
-
 $('#plans-close').addEventListener('click', () => {
   S.pendingVerifyOpen = false;
   closeModal('#plans');
 });
 
-/* إغلاق الباقات عند الضغط خارجها */
-$('#plans').addEventListener('click', e => {
-  if(e.target.id === 'plans'){ S.pendingVerifyOpen = false; closeModal('#plans'); }
-});
-$('#wall').addEventListener('click', e => {
-  if(e.target.id === 'wall') closeModal('#wall');
-});
-$('#verify').addEventListener('click', e => {
-  if(e.target.id === 'verify') closeModal('#verify');
+['#plans','#wall','#verify'].forEach(id => {
+  const el = $(id);
+  if(el) el.addEventListener('click', e => {
+    if(e.target.id === id.slice(1)){
+      if(id === '#plans') S.pendingVerifyOpen = false;
+      closeModal(id);
+    }
+  });
 });
 
 $$('.plan').forEach(el => {
@@ -506,89 +539,67 @@ $$('.plan').forEach(el => {
     const plan = el.dataset.plan;
     window.open(tgLink(plan), '_blank', 'noopener');
     closeModal('#plans');
-
-    /* افتح نافذة الكود فقط إذا لم يكن مفعّلاً بعد */
     if(!S.vip){
       S.pendingVerifyOpen = true;
       setTimeout(() => {
-        if(S.pendingVerifyOpen && !S.vip){
-          openModal('#verify');
-        }
+        if(S.pendingVerifyOpen && !S.vip) openModal('#verify');
         S.pendingVerifyOpen = false;
       }, 2500);
     }
   });
 });
 
-/* ═══════════════════════════════════════════════
-   التحقق من الكود
-   ═══════════════════════════════════════════════ */
+/* ═══ الكود ═══ */
 $('#btn-verify-open').addEventListener('click', () => openModal('#verify'));
 $('#verify-close').addEventListener('click', () => closeModal('#verify'));
 
 $('#code-submit').addEventListener('click', () => {
   const input = $('#code-input').value.trim().toUpperCase();
   const hint = $('#code-hint');
-
   if(!input){
-    hint.textContent = 'أدخل الكود';
-    hint.className = 'code-hint bad';
-    return;
+    hint.textContent = 'أدخل الكود'; hint.className = 'code-hint bad'; return;
   }
   if(!VALID_CODES.includes(input)){
-    hint.textContent = 'الكود غير صحيح';
-    hint.className = 'code-hint bad';
-    return;
+    hint.textContent = 'الكود غير صحيح'; hint.className = 'code-hint bad'; return;
   }
-
   S.vip = true;
   S.user.permanentID = genPermanentID();
   save();
-
-  hint.textContent = 'تم التفعيل ✓';
-  hint.className = 'code-hint ok';
+  hint.textContent = 'تم التفعيل ✓'; hint.className = 'code-hint ok';
 
   setTimeout(() => {
     closeModal('#verify');
     updateVipUI();
     renderMatches();
     renderMembers();
+    renderServices();
+    renderNotifications();
     $('#code-input').value = '';
-    hint.textContent = '';
-    hint.className = 'code-hint';
+    hint.textContent = ''; hint.className = 'code-hint';
   }, 1200);
 });
 
-/* ═══════════════════════════════════════════════
-   التنقل
-   ═══════════════════════════════════════════════ */
+/* ═══ التنقل ═══ */
 $$('.tab').forEach(t => {
   t.addEventListener('click', () => showView(t.dataset.v));
 });
 
-/* ═══════════════════════════════════════════════
-   الإقلاع الأول
-   ═══════════════════════════════════════════════ */
+/* ═══ الإقلاع ═══ */
 const saved = load();
 if(saved && saved.user && saved.user.name){
   S.user = saved.user;
   S.vip = saved.vip || false;
   S.countdownEnd = saved.countdownEnd || (Date.now() + 24 * 3600 * 1000);
-
-  /* استعد أو ولّد كود المستخدم — واحفظه دائماً */
   if(saved.userCode){
     S.userCode = saved.userCode;
   } else {
     S.userCode = genUserCode();
     save();
   }
-
-  /* إن كان VIP لكن بدون ID، ولّد واحداً واحفظ */
   if(S.vip && !S.user.permanentID){
     S.user.permanentID = genPermanentID();
     save();
   }
-
   bootApp();
 } else {
   showScreen('#scr-register');
