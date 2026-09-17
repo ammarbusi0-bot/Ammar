@@ -10,10 +10,7 @@ const TG_USER = 'Winda_13';
 const TG_BASE = `https://t.me/${TG_USER}`;
 const STORE_KEY = 'wisal_v2';
 
-/* ── أكواد التفعيل ──────────────────────────────
-   ضع هنا الأكواد التي يبيعها المشرف.
-   كل كود يستخدم مرة واحدة (يُحفظ في localStorage).
-   ─────────────────────────────────────────────── */
+/* ── أكواد التفعيل ────────────────────────────── */
 const VALID_CODES = [
   'VIP-2211','VIP-3300','VIP-4411','VIP-5500','VIP-6611',
   'VIP-7722','VIP-8833','VIP-9944','VIP-1155','VIP-2266'
@@ -68,12 +65,11 @@ const S = {
   userCode: null,
   roomTimer: null,
   notifTimer: null,
-  statsTimer: null,
-  tickTimer: null,
   countTimer: null,
   activeView: 'room',
   stats: { views: 0, likes: 0, matches: 0 },
-  countdownEnd: 0
+  countdownEnd: 0,
+  pendingVerifyOpen: false
 };
 
 /* ── أدوات ─────────────────────────────────────── */
@@ -83,7 +79,6 @@ const rnd = arr => arr[Math.floor(Math.random() * arr.length)];
 const rint = (a,b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pad = n => String(n).padStart(2,'0');
 
-/* ── عرض ───────────────────────────────────────── */
 function showScreen(id){
   $$('.screen').forEach(el => el.classList.remove('active'));
   $(id).classList.add('active');
@@ -91,14 +86,14 @@ function showScreen(id){
 function showView(v){
   S.activeView = v;
   $$('.view').forEach(el => el.classList.remove('active'));
-  $(`#view-${v}`).classList.add('active');
+  const target = $(`#view-${v}`);
+  if(target) target.classList.add('active');
   $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.v === v));
   if(v === 'notif') $('#notif-dot').classList.remove('on');
 }
-function openModal(id){ $(id).classList.add('on'); }
-function closeModal(id){ $(id).classList.remove('on'); }
+function openModal(id){ const el = $(id); if(el) el.classList.add('on'); }
+function closeModal(id){ const el = $(id); if(el) el.classList.remove('on'); }
 
-/* ── تخزين ─────────────────────────────────────── */
 function save(){
   try{
     localStorage.setItem(STORE_KEY, JSON.stringify({
@@ -116,7 +111,6 @@ function load(){
   }catch(e){ return null; }
 }
 
-/* ── العمر ────────────────────────────────────── */
 function calcAge(dob){
   const d = new Date(dob);
   if(isNaN(d)) return 0;
@@ -127,10 +121,9 @@ function calcAge(dob){
   return a;
 }
 
-/* ── لون الصورة الرمزية ────────────────────────── */
 function avatarColor(id){
   let h = 0;
-  for(let i=0;i<id.length;i++) h = id.charCodeAt(i) + ((h<<5) - h);
+  for(let i = 0; i < id.length; i++) h = id.charCodeAt(i) + ((h << 5) - h);
   const hue = Math.abs(h) % 360;
   return `linear-gradient(135deg, hsl(${hue},70%,55%), hsl(${(hue+40)%360},70%,45%))`;
 }
@@ -141,28 +134,22 @@ function escapeHtml(s){
   }[c]));
 }
 
-/* ── توليد كود المستخدم ────────────────────────── */
 function genUserCode(){
   return 'wisal_' + rint(10000, 99999);
 }
 
-/* ── توليد ID دائم ────────────────────────────── */
 function genPermanentID(){
   const L = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
   const D = '0123456789';
-  let a = '';
-  for(let i=0;i<3;i++) a += L[rint(0, L.length-1)];
-  let b = '';
-  for(let i=0;i<4;i++) b += D[rint(0, D.length-1)];
+  let a = '', b = '';
+  for(let i = 0; i < 3; i++) a += L[rint(0, L.length - 1)];
+  for(let i = 0; i < 4; i++) b += D[rint(0, D.length - 1)];
   return `#${a}-${b}`;
 }
 
-/* ── رابط تيليجرام مع الكود ────────────────────── */
 function tgLink(plan){
-  const params = new URLSearchParams({
-    start: `${S.userCode || 'guest'}_${plan || 'open'}`
-  });
-  return `${TG_BASE}?${params.toString()}`;
+  const payload = `${S.userCode || 'guest'}_${plan || 'open'}`;
+  return `${TG_BASE}?start=${encodeURIComponent(payload)}`;
 }
 
 /* ═══════════════════════════════════════════════
@@ -203,7 +190,7 @@ $('#r-submit').addEventListener('click', () => {
 
   S.user = { name, nick, dob, g, age: calcAge(dob), createdAt: Date.now() };
   S.userCode = genUserCode();
-  S.countdownEnd = Date.now() + 24 * 3600 * 1000; // 24 ساعة
+  S.countdownEnd = Date.now() + 24 * 3600 * 1000;
 
   save();
   bootApp();
@@ -214,21 +201,24 @@ $('#r-submit').addEventListener('click', () => {
    ═══════════════════════════════════════════════ */
 function bootApp(){
   const u = S.user;
+
+  /* بيانات المستخدم */
   $$('.me-name').forEach(el => el.textContent = `${u.name} · زائر`);
+  $('#p-name').textContent = `${u.name} ${u.nick}`;
+  $('#p-avatar').textContent = u.name.charAt(0).toUpperCase();
 
   renderMatches();
   renderMembers();
   renderNotifications();
   updateStatsUI();
-  updateProgress();
   updateVipUI();
+  updateProgress();
 
   buildTicker();
   startCountdown();
   startRoomLoop();
   startStatsLoop();
   startNotifLoop();
-  startTickerLoop();
 
   showScreen('#scr-app');
   showView('room');
@@ -254,8 +244,7 @@ function pushRoomMessage(){
   const isHint = Math.random() < 0.18;
   let text = isHint ? rnd(PRIVATE_HINTS) : rnd(IDLE_CHAT);
 
-  // شخصنة أحياناً
-  if(Math.random() < 0.10 && S.user){
+  if(Math.random() < 0.10 && S.user && S.user.name){
     text = `يا ${S.user.name}، ${text}`;
   }
 
@@ -263,14 +252,15 @@ function pushRoomMessage(){
 }
 function addRoomMsg(p, text){
   const stream = $('#chat-stream');
+  if(!stream) return;
   const row = document.createElement('div');
   row.className = 'msg-row';
   row.innerHTML = `
-    <div class="avatar-sm" style="background:${avatarColor(p.id)}">${p.c}</div>
+    <div class="avatar-sm" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
     <div class="msg-body">
       <div class="msg-meta">
-        <b>${p.name}</b>
-        <span class="msg-id">${p.id}</span>
+        <b>${escapeHtml(p.name)}</b>
+        <span class="msg-id">${escapeHtml(p.id)}</span>
         <span class="msg-vip">عضو</span>
       </div>
       <div class="msg-text">${escapeHtml(text)}</div>
@@ -286,40 +276,36 @@ function addRoomMsg(p, text){
    ═══════════════════════════════════════════════ */
 function renderMatches(){
   const grid = $('#matches-grid');
+  if(!grid) return;
   grid.innerHTML = '';
   const picks = [...PEOPLE].sort(() => Math.random() - 0.5).slice(0, 6);
   picks.forEach(p => {
     const pct = rint(78, 97);
     const el = document.createElement('div');
-    el.className = 'match-card';
+    el.className = 'match-card' + (S.vip ? ' unlocked' : '');
     el.innerHTML = `
-      <div class="mc-av" style="background:${avatarColor(p.id)}">${p.c}</div>
-      <div class="mc-name">${p.name}</div>
-      <div class="mc-meta">${p.id} · ${pct}%</div>
+      <div class="mc-av" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
+      <div class="mc-name">${escapeHtml(p.name)}</div>
+      <div class="mc-meta">${escapeHtml(p.id)} · ${pct}%</div>
       <div class="mc-blur">🔒</div>
     `;
-    el.addEventListener('click', () => {
-      if(S.vip) return;
-      openModal('#wall');
-    });
+    el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
     grid.appendChild(el);
   });
 }
 function renderMembers(){
   const list = $('#members-list');
+  if(!list) return;
   list.innerHTML = '';
   [...PEOPLE].sort(() => Math.random() - 0.5).slice(0, 8).forEach(p => {
     const el = document.createElement('div');
     el.className = 'member-row';
     el.innerHTML = `
-      <div class="avatar-sm" style="background:${avatarColor(p.id)}">${p.c}</div>
-      <div class="member-info"><b>${p.name}</b><span>نشط الآن</span></div>
-      <div class="member-id">${p.id}</div>
+      <div class="avatar-sm" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
+      <div class="member-info"><b>${escapeHtml(p.name)}</b><span>نشط الآن</span></div>
+      <div class="member-id">${escapeHtml(p.id)}</div>
     `;
-    el.addEventListener('click', () => {
-      if(S.vip) return;
-      openModal('#wall');
-    });
+    el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
     list.appendChild(el);
   });
 }
@@ -329,32 +315,32 @@ function renderMembers(){
    ═══════════════════════════════════════════════ */
 function renderNotifications(){
   const list = $('#notif-list');
+  if(!list) return;
   list.innerHTML = '';
   const count = rint(8, 14);
-  for(let i=0;i<count;i++){
+  for(let i = 0; i < count; i++){
     addNotifItem(rnd(PEOPLE), rint(1,59) + ' دقيقة');
   }
 }
 function addNotifItem(p, when){
   const list = $('#notif-list');
+  if(!list) return;
   const el = document.createElement('div');
   el.className = 'notif-item';
   el.innerHTML = `
-    <div class="avatar-sm" style="background:${avatarColor(p.id)}">${p.c}</div>
+    <div class="avatar-sm" style="background:${avatarColor(p.id)}">${escapeHtml(p.c)}</div>
     <div class="notif-text">
-      <b>${p.name} <span style="color:var(--accent);font-size:10px">${p.id}</span></b>
-      <span>أرسل لك رسالة قبل ${when}</span>
+      <b>${escapeHtml(p.name)} <span style="color:var(--accent);font-size:10px">${escapeHtml(p.id)}</span></b>
+      <span>أرسل لك رسالة قبل ${escapeHtml(when)}</span>
     </div>
-    <div class="notif-lock">🔒</div>
+    <div class="notif-lock${S.vip ? ' unlocked' : ''}">${S.vip ? '✓' : '🔒'}</div>
   `;
-  el.addEventListener('click', () => {
-    if(S.vip) return;
-    openModal('#wall');
-  });
+  el.addEventListener('click', () => { if(!S.vip) openModal('#wall'); });
   list.insertBefore(el, list.firstChild);
   while(list.children.length > 30) list.removeChild(list.lastChild);
 }
 function startNotifLoop(){
+  if(S.notifTimer) clearInterval(S.notifTimer);
   S.notifTimer = setInterval(() => {
     addNotifItem(rnd(PEOPLE), 'الآن');
     if(S.activeView !== 'notif') $('#notif-dot').classList.add('on');
@@ -372,10 +358,11 @@ function updateStatsUI(){
 function startStatsLoop(){
   setInterval(() => {
     const n = rint(1100, 1480);
-    $('#online-count').textContent = `${n.toLocaleString('en')} متصل الآن`;
+    const el = $('#online-count');
+    if(el) el.textContent = `${n.toLocaleString('en')} متصل الآن`;
   }, 4000);
 
-  S.statsTimer = setInterval(() => {
+  setInterval(() => {
     S.stats.views += rint(1, 4);
     if(Math.random() < 0.4) S.stats.likes += rint(0, 2);
     if(Math.random() < 0.2) S.stats.matches += 1;
@@ -390,14 +377,10 @@ function startStatsLoop(){
 function buildTicker(){
   const track = $('#tick-track');
   if(!track) return;
-  // نكرر العناصر مرتين للحركة المستمرة
   const items = [...TICKER_ITEMS, ...TICKER_ITEMS];
   track.innerHTML = items.map(([a,b]) =>
-    `<span>⭐ <b>${a}</b> · ${b}</span>`
+    `<span>⭐ <b>${escapeHtml(a)}</b> · ${escapeHtml(b)}</span>`
   ).join('');
-}
-function startTickerLoop(){
-  // لا شيء — الحركة بـ CSS
 }
 
 /* ═══════════════════════════════════════════════
@@ -413,9 +396,7 @@ function startCountdown(){
   S.countTimer = setInterval(updateCountdown, 1000);
 }
 function updateCountdown(){
-  const diff = S.countdownEnd - Date.now();
-  if(diff <= 0){
-    // إعادة العرض بصيغة جديدة
+  if(S.countdownEnd < Date.now()){
     S.countdownEnd = Date.now() + 24 * 3600 * 1000;
     save();
   }
@@ -435,17 +416,13 @@ function updateCountdown(){
    شريط التقدم
    ═══════════════════════════════════════════════ */
 function updateProgress(){
-  let pct = 40;
-  const note = $('#progress-note');
-  if(!S.vip){
-    pct = 40;
-    note.textContent = 'تبقّى: تفعيل الاشتراك';
-  } else {
-    pct = 100;
-    note.textContent = 'حسابك مُفعّل ✓';
-  }
-  $('#progress-pct').textContent = pct + '%';
-  $('#progress-fill').style.width = pct + '%';
+  const pct = S.vip ? 100 : 40;
+  const pctEl = $('#progress-pct');
+  const fillEl = $('#progress-fill');
+  const noteEl = $('#progress-note');
+  if(pctEl) pctEl.textContent = pct + '%';
+  if(fillEl) fillEl.style.width = pct + '%';
+  if(noteEl) noteEl.textContent = S.vip ? 'حسابك مُفعّل ✓' : 'تبقّى: تفعيل الاشتراك';
 }
 
 /* ═══════════════════════════════════════════════
@@ -455,27 +432,36 @@ function updateVipUI(){
   const u = S.user;
   if(!u) return;
 
+  const badge = $('#me-badge');
+  const pBadge = $('#p-badge');
+  const pId = $('#p-id');
+  const roomLock = $('#room-lock');
+  const vipbar = $('#vipbar');
+
   if(S.vip){
-    // مفعّل
+    if(!u.permanentID) u.permanentID = genPermanentID();
+
     $$('.me-name').forEach(el => el.textContent = `${u.name} · عضو`);
-    $('#me-badge').textContent = 'عضو ✓';
-    $('#me-badge').classList.add('vip');
-    $('#p-badge').textContent = 'عضو مُفعّل';
-    $('#p-badge').classList.add('vip');
-    if(u.permanentID){
-      $('#p-id').textContent = u.permanentID;
+    if(badge){ badge.textContent = 'عضو ✓'; badge.classList.add('vip'); }
+    if(pBadge){ pBadge.textContent = 'عضو مُفعّل'; pBadge.classList.add('vip'); }
+    if(pId) pId.textContent = u.permanentID;
+    if(roomLock){
+      roomLock.innerHTML = '<div class="lock-inner vip">✓ العضوية مُفعّلة — يمكنك الكتابة الآن</div>';
     }
-    $('#room-lock').innerHTML =
-      '<div class="lock-inner" style="color:var(--ok);border-color:rgba(0,224,138,.3)">✓ العضوية مُفعّلة — يمكنك الكتابة الآن</div>';
-    $('#vipbar').style.display = 'none';
+    if(vipbar) vipbar.style.display = 'none';
+
+    /* فك أقفال المطابقات */
+    $$('.match-card').forEach(c => c.classList.add('unlocked'));
+    $$('.notif-lock').forEach(l => {
+      l.textContent = '✓';
+      l.classList.add('unlocked');
+    });
   } else {
     $$('.me-name').forEach(el => el.textContent = `${u.name} · زائر`);
-    $('#me-badge').textContent = 'حساب مؤقت';
-    $('#me-badge').classList.remove('vip');
-    $('#p-badge').textContent = 'حساب مؤقت';
-    $('#p-badge').classList.remove('vip');
-    $('#p-id').textContent = 'لا يوجد ID دائم';
-    $('#vipbar').style.display = 'flex';
+    if(badge){ badge.textContent = 'حساب مؤقت'; badge.classList.remove('vip'); }
+    if(pBadge){ pBadge.textContent = 'حساب مؤقت'; pBadge.classList.remove('vip'); }
+    if(pId) pId.textContent = 'لا يوجد ID دائم';
+    if(vipbar) vipbar.style.display = 'flex';
   }
   updateProgress();
 }
@@ -484,27 +470,53 @@ function updateVipUI(){
    الجدار + الباقات
    ═══════════════════════════════════════════════ */
 ['#btn-upgrade-top','#btn-upgrade-room','#btn-vip-bar','#btn-upgrade-profile']
-  .forEach(sel => $(sel)?.addEventListener('click', () => {
-    if(S.vip) return;
-    openModal('#wall');
-  }));
+  .forEach(sel => {
+    const el = $(sel);
+    if(el) el.addEventListener('click', () => {
+      if(S.vip) return;
+      openModal('#wall');
+    });
+  });
 
 $('#wall-close').addEventListener('click', () => closeModal('#wall'));
+
 $('#wall-go').addEventListener('click', () => {
   closeModal('#wall');
   openModal('#plans');
 });
-$('#plans-close').addEventListener('click', () => closeModal('#plans'));
+
+$('#plans-close').addEventListener('click', () => {
+  S.pendingVerifyOpen = false;
+  closeModal('#plans');
+});
+
+/* إغلاق الباقات عند الضغط خارجها */
+$('#plans').addEventListener('click', e => {
+  if(e.target.id === 'plans'){ S.pendingVerifyOpen = false; closeModal('#plans'); }
+});
+$('#wall').addEventListener('click', e => {
+  if(e.target.id === 'wall') closeModal('#wall');
+});
+$('#verify').addEventListener('click', e => {
+  if(e.target.id === 'verify') closeModal('#verify');
+});
 
 $$('.plan').forEach(el => {
   el.addEventListener('click', () => {
     const plan = el.dataset.plan;
     window.open(tgLink(plan), '_blank', 'noopener');
     closeModal('#plans');
-    // أظهر خيار إدخال الكود بعد لحظة
-    setTimeout(() => {
-      if(!S.vip) openModal('#verify');
-    }, 2500);
+
+    /* افتح نافذة الكود فقط إذا لم يكن مفعّلاً بعد */
+    if(!S.vip){
+      S.pendingVerifyOpen = true;
+      setTimeout(() => {
+        if(S.pendingVerifyOpen && !S.vip){
+          openModal('#verify');
+        }
+        S.pendingVerifyOpen = false;
+      }, 2500);
+    }
   });
 });
 
@@ -529,7 +541,6 @@ $('#code-submit').addEventListener('click', () => {
     return;
   }
 
-  // فعّل
   S.vip = true;
   S.user.permanentID = genPermanentID();
   save();
@@ -544,6 +555,7 @@ $('#code-submit').addEventListener('click', () => {
     renderMembers();
     $('#code-input').value = '';
     hint.textContent = '';
+    hint.className = 'code-hint';
   }, 1200);
 });
 
@@ -561,8 +573,22 @@ const saved = load();
 if(saved && saved.user && saved.user.name){
   S.user = saved.user;
   S.vip = saved.vip || false;
-  S.userCode = saved.userCode || genUserCode();
   S.countdownEnd = saved.countdownEnd || (Date.now() + 24 * 3600 * 1000);
+
+  /* استعد أو ولّد كود المستخدم — واحفظه دائماً */
+  if(saved.userCode){
+    S.userCode = saved.userCode;
+  } else {
+    S.userCode = genUserCode();
+    save();
+  }
+
+  /* إن كان VIP لكن بدون ID، ولّد واحداً واحفظ */
+  if(S.vip && !S.user.permanentID){
+    S.user.permanentID = genPermanentID();
+    save();
+  }
+
   bootApp();
 } else {
   showScreen('#scr-register');
