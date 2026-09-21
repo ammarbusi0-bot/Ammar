@@ -152,8 +152,6 @@ function buildSocialResponse(socialTypes) {
 // ============================================================
 // 💬 نسيان + عدم فهم + معلومات شخصية
 // ============================================================
-
-// ردود عدم الفهم (تُستخدم عند الغموض)
 const NOT_UNDERSTOOD = [
     'ما فهمت قصدك بالضبط، وضّح أكثر؟',
     'همم، مش واضح. تقصد إيش بالضبط؟',
@@ -162,7 +160,6 @@ const NOT_UNDERSTOOD = [
     'دقيقة، سؤالك مو واضح لي تماماً. تقصد إيش؟'
 ];
 
-// أعذار النسيان (تُستخدم عند سؤال عن شيء قديم)
 const FORGET_EXCUSES = [
     'آسف، عندنا ضغوطات اليوم وما أذكر بالضبط وش قلت.',
     'اعذرني، ذاكرتي مشغولة شوي بالضغوطات. ذكّرني؟',
@@ -171,7 +168,6 @@ const FORGET_EXCUSES = [
     'معليش، الضغوطات تخرب التركيز. وش كان سؤالك؟'
 ];
 
-// معلومات شخصية عشوائية (تُضاف أحياناً بشكل طبيعي)
 const PERSONAL_COMMENTS = {
     saudi: ['الجو حار عندنا اليوم', 'القهوة السعودية ما تعوّض', 'اليوم زحمة عندنا'],
     emirati: ['الجو رطب اليوم', 'الشغل واقف شوي', 'اليوم يوم طويل'],
@@ -378,26 +374,22 @@ function buildPrompt(section, query, user, expert, history, dialectKey, mood) {
     const lateNightHint = isLateNight ? '\n🌙 الوقت متأخر — يمكنك أن تبدو متعباً قليلاً، ردود أقصر.' : '';
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
 
-    // تردد قبل الجواب (35%)
     const useHesitation = Math.random() < 0.35;
     const hesitationHint = useHesitation
         ? '\n💭 ابدأ بتردد طبيعي مثل ("همم"، "دقيقة"، "خلني أراجع") ثم اكمل.'
         : '';
 
-    // تقسيم لرسائل متعددة (40%)
     const useSplit = Math.random() < 0.4 && intent.lengthHint !== 'very_short';
     const splitHint = useSplit
         ? '\n💬 قسّم ردك إلى 2-3 رسائل قصيرة باستخدام [SPLIT] — كأنك ترسل واتساب.'
         : '';
 
-    // معلومة شخصية عشوائية (20%)
     const usePersonalComment = Math.random() < 0.2;
     const personalComment = usePersonalComment ? pickPersonalComment(dialectKey) : null;
     const personalHint = personalComment
         ? `\n👤 يمكنك أن تضيف بشكل طبيعي جملة قصيرة مثل: "${personalComment}" — فقط إذا ناسب السياق. لا تجعلها في البداية.`
         : '';
 
-    // إذا سأل عن شيء قديم → نسيان مع عذر
     const forgetHint = intent.isForgetQuestion
         ? `\n🧠 المستخدم يسأل عن شيء قاله سابقاً. أحياناً (وليس دائماً) يمكنك أن تقول بلطف: "${pickRandom(FORGET_EXCUSES)}" — لأنك مشغول بالضغوطات.`
         : '';
@@ -512,11 +504,9 @@ function extractReplies(text, truncated = false) {
 // ⏱️ نظام التوقيت المتغير
 // ============================================================
 function getTimingHint() {
-    // 30% سريع، 50% عادي، 20% بطيء
     const r = Math.random();
     if (r < 0.30) return { speed: 'fast', delayMs: 400 + Math.floor(Math.random() * 800), note: null };
     if (r < 0.80) return { speed: 'normal', delayMs: 2000 + Math.floor(Math.random() * 4000), note: null };
-    // بطيء مع عذر
     return {
         speed: 'slow',
         delayMs: 12000 + Math.floor(Math.random() * 12000),
@@ -566,12 +556,49 @@ setInterval(() => {
 }, 60 * 60 * 1000);
 
 // ============================================================
+// 🛡️ قرار الإغلاق — مع حماية المستخدم من الظلم
+// ============================================================
+function shouldCloseConversation(intent, history, session) {
+    // عدد رسائل المستخدم الحقيقية
+    const userMsgCount = history ? history.filter(h => h.role === 'user').length : 0;
+
+    // ✅ 1) الإنهاء الواضح — يُغلق فوراً (شكراً، وداعاً، ...)
+    if (intent.isDone) {
+        return { close: true, reason: 'user_done' };
+    }
+
+    // ✅ 2) التسلية — ننتظر على الأقل 6 رسائل + استمرار السلوك
+    if (intent.isTrolling && intent.trollScore >= 6 && userMsgCount >= 6) {
+        const recent = (history || []).filter(h => h.role === 'user').slice(-4);
+        const allTrollish = recent.length >= 4 && recent.every(m => m.content.trim().length < 15);
+        if (allTrollish) return { close: true, reason: 'trolling' };
+    }
+
+    // ✅ 3) الملل — ننتظر على الأقل 8 رسائل
+    if (intent.emotionalState === 'bored' && userMsgCount >= 8) {
+        return { close: true, reason: 'bored' };
+    }
+
+    // ✅ 4) الإغلاق الطبيعي بعد محادثة طويلة جداً
+    if (userMsgCount >= 25) {
+        return { close: true, reason: 'deep_close' };
+    }
+
+    // ✅ 5) الوقاحة — بعد 3 إهانات صريحة على الأقل
+    if (intent.isRude && session && session.rudeCount >= 3 && userMsgCount >= 3) {
+        return { close: true, reason: 'rude' };
+    }
+
+    return { close: false };
+}
+
+// ============================================================
 // 🛡️ المسارات
 // ============================================================
 app.get('/', (req, res) => {
     res.json({
         status: 'OK',
-        behavior: 'Human-v8-Natural-VariableTiming-ForgetExcuse',
+        behavior: 'Human-v9-Natural-ProtectedClosure',
         dialectsCount: Object.keys(DIALECTS).length,
         activeSessions: SESSIONS.size
     });
@@ -619,7 +646,6 @@ app.post('/api/analyze', async (req, res) => {
     }
 
     // ============ 🤷 عدم الفهم (5% فقط) ============
-    // فقط إذا كانت الرسالة قصيرة جداً أو غامضة
     const isVague = query.trim().length > 0 && query.trim().length < 5 && !/^(مرحبا|هلا|شكرا|طيب|تمام|زين|اوكي|سلام)$/i.test(query.trim());
     if (isVague && Math.random() < 0.4) {
         const timing = getTimingHint();
@@ -640,7 +666,7 @@ app.post('/api/analyze', async (req, res) => {
             return res.json({
                 replies: [socialReply],
                 model: 'local-social',
-                timing: { delayMs: Math.min(timing.delayMs, 2500) }, // التحيات سريعة
+                timing: { delayMs: Math.min(timing.delayMs, 2500) },
                 source: 'social'
             });
         }
@@ -662,30 +688,32 @@ app.post('/api/analyze', async (req, res) => {
 
     // ============ تحليل النية ============
     const intent = analyzeUserIntent(query, history);
+    const closeDecision = shouldCloseConversation(intent, history, session);
 
-    if (intent.isDone) {
-        closeSession(session, 'user_done');
+    if (closeDecision.close) {
+        let replies = [];
+        if (closeDecision.reason === 'user_done') {
+            replies = [pickRandom(CLOSING_PATTERNS)];
+        } else if (closeDecision.reason === 'trolling') {
+            replies = [TROLL_RESPONSES.level3[0]];
+        } else if (closeDecision.reason === 'bored') {
+            replies = ['يبدو أن الموضوع ما شدّك. إذا احتجت استشارة محددة، أنا موجود. يوم موفق.'];
+        } else if (closeDecision.reason === 'deep_close') {
+            replies = ['محادثة طويلة ومفيدة. خذ وقتك في تطبيق ما تحدثنا عنه، وأنا هنا وقت ما تحتاج.'];
+        } else if (closeDecision.reason === 'rude') {
+            replies = [RUDE_RESPONSES.level3[0]];
+        }
+        closeSession(session, closeDecision.reason);
         return res.json({
-            replies: [pickRandom(CLOSING_PATTERNS)],
+            replies,
             model: 'local',
             closed: true,
-            closeReason: 'user_done',
-            cooldownMinutes: Math.floor(COOLDOWN_RULES.user_done / 60000)
+            closeReason: closeDecision.reason,
+            cooldownMinutes: Math.floor(COOLDOWN_RULES[closeDecision.reason] / 60000)
         });
     }
 
-    if (intent.isTrolling && intent.trollScore >= 6) {
-        closeSession(session, 'trolling');
-        return res.json({
-            replies: [TROLL_RESPONSES.level3[0]],
-            model: 'local',
-            closed: true,
-            closeReason: 'trolling',
-            cooldownMinutes: Math.floor(COOLDOWN_RULES.trolling / 60000)
-        });
-    }
-
-    if (intent.isTrolling && intent.trollScore >= 3) {
+    if (intent.isTrolling && intent.trollScore >= 3 && intent.trollScore < 6) {
         const level = intent.trollScore >= 5 ? 'level2' : 'level1';
         const timing = getTimingHint();
         return res.json({ replies: [pickRandom(TROLL_RESPONSES[level])], model: 'local', timing });
@@ -699,10 +727,8 @@ app.post('/api/analyze', async (req, res) => {
         const result = await callGemini(prompt);
         const replies = extractReplies(result.text, result.truncated);
 
-        // ⏱️ توقيت متغيّر
         const timing = getTimingHint();
 
-        // إذا كان بطيئاً، أضف عذر التأخير في بداية الرد
         if (timing.speed === 'slow' && timing.note && replies.length > 0) {
             replies[0] = `${timing.note}.\n${replies[0]}`;
         }
@@ -725,5 +751,5 @@ app.listen(PORT, () => {
     console.log(`🗺️ لهجات: ${Object.keys(DIALECTS).length}`);
     console.log(`⏱️ توقيت متغيّر: نشط`);
     console.log(`🧠 نظام النسيان: نشط`);
-    console.log(`🤷 نظام عدم الفهم: نشط`);
+    console.log(`🛡️ حماية المستخدم من الإغلاق المبكر: نشط`);
 });
