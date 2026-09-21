@@ -563,3 +563,473 @@ const EXPERTS = {
         { name: 'أمل الحسن', role: 'محللة سياسات الطاقة', years: '9 سنوات خبرة' },
         { name: 'خالد الغريب', role: 'خبير ممرات تجارية', years: '12 سنة خبرة' },
         { name: 'روان العنزي', role: 'محللة مخاطر جيوسياسية', years: '7 سنوات خبرة' }
+    ],
+    budget: [
+        { name: 'منى الغامدي', role: 'مدرّبة مالية شخصية', years: '6 سنوات خبرة' },
+        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات', years: '13 سنة خبرة' },
+        { name: 'هند الرشيد', role: 'مخططة مالية معتمدة', years: '10 سنوات خبرة' },
+        { name: 'يوسف العامري', role: 'مستشار تخطيط تقاعدي', years: '15 سنة خبرة' },
+        { name: 'شهد باحمدان', role: 'مدرّبة ميزانية أسرية', years: '8 سنوات خبرة' },
+        { name: 'مازن الشريف', role: 'خبير إدارة ديون', years: '12 سنة خبرة' }
+    ],
+    crypto: [
+        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات خبرة' },
+        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات خبرة' },
+        { name: 'راكان الصقر', role: 'محلل بيتكوين أول', years: '7 سنوات خبرة' },
+        { name: 'جواهر المالكي', role: 'خبيرة تنظيم أصول رقمية', years: '6 سنوات خبرة' },
+        { name: 'عدنان بخاري', role: 'محلل DeFi و Web3', years: '4 سنوات خبرة' },
+        { name: 'ليان الجهني', role: 'محللة مخاطر كريبتو', years: '5 سنوات خبرة' }
+    ]
+};
+
+const SECTIONS = { 
+    gold: 'الذهب والمعادن', 
+    stocks: 'الأسهم', 
+    macro: 'الاقتصاد الكلي', 
+    geopolitical: 'الجيوسياسي', 
+    budget: 'الميزانية', 
+    crypto: 'الأصول الرقمية' 
+};
+
+const SUGGESTIONS = {
+    gold: ['هل الوقت مناسب للشراء؟', 'توقعك لسعر الأونصة؟', 'كيف أتحوط ضد التضخم؟'],
+    stocks: ['أفضل القطاعات حالياً؟', 'كيف أقيّم شركة؟', 'نصائح للمبتدئين'],
+    macro: ['تأثير قرارات الفيدرالي؟', 'توقعك للتضخم؟', 'أفضل الأصول الآن؟'],
+    geopolitical: ['تأثير التوترات على النفط؟', 'الحروب والأسواق؟'],
+    budget: ['كيف أنظم راتبي؟', 'أفضل طريقة للادخار؟', 'الخروج من الديون؟'],
+    crypto: ['توقعك للبيتكوين؟', 'هل هي آمنة؟', 'مشروع واعد؟']
+};
+
+let user = null, section = null, expert = null, history = [], busy = false;
+let progressTimer = null, waitingTimer = null;
+
+// ============ Theme ============
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ammar_theme', next);
+    document.getElementById('themeBtn').textContent = next === 'light' ? '🌙' : '☀️';
+}
+
+function initThemeBtn() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    document.getElementById('themeBtn').textContent = current === 'light' ? '🌙' : '☀️';
+}
+
+// ============ Splash ============
+const SPLASH_MSGS = ['جاري تجهيز بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'مراجعة الأسواق...', 'تجهيز فريق الاستقبال...'];
+let splashP = 0, splashMsgIdx = 0;
+
+function startSplash() {
+    const fill = document.getElementById('splashFill');
+    const msg = document.getElementById('splashMsg');
+    const interval = setInterval(() => {
+        splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.5, 85);
+        fill.style.width = splashP + '%';
+        const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
+        if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
+        
+        if (splashP >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                document.getElementById('splash').classList.add('fade');
+                setTimeout(() => {
+                    document.getElementById('splash').style.display = 'none';
+                    initView();
+                }, 700);
+            }, 400);
+        }
+    }, 200);
+}
+
+function initView() {
+    initThemeBtn();
+    if (loadUser()) {
+        document.getElementById('home').classList.add('show');
+    } else {
+        document.getElementById('welcome').classList.add('show');
+    }
+}
+
+startSplash();
+setTimeout(() => { window.SERVER_READY = true; }, 15000);
+
+// ============ User ============
+function loadUser() {
+    const s = localStorage.getItem('ammar_user');
+    if (s) {
+        try {
+            user = JSON.parse(s);
+            showUserBar();
+            return true;
+        } catch (e) { localStorage.removeItem('ammar_user'); }
+    }
+    return false;
+}
+
+function saveUser() {
+    const name = document.getElementById('inName').value.trim();
+    const age = document.getElementById('inAge').value.trim();
+    const exp = document.getElementById('inExp').value;
+    const reason = document.getElementById('inReason').value.trim();
+    
+    if (!name || name.length < 2) { alert('أدخل اسماً صحيحاً'); return; }
+    if (!age || age < 15 || age > 100) { alert('أدخل عمراً صحيحاً (15-100)'); return; }
+    
+    user = { name, age, experience: exp, reason };
+    localStorage.setItem('ammar_user', JSON.stringify(user));
+    showUserBar();
+    document.getElementById('welcome').classList.remove('show');
+    document.getElementById('home').classList.add('show');
+}
+
+function showUserBar() {
+    document.getElementById('userBar').classList.add('show');
+    document.getElementById('userAvatar').innerText = user.name.charAt(0);
+    document.getElementById('userGreeting').innerText = `مرحباً ${user.name}`;
+}
+
+function resetUser() {
+    if (confirm('مسح بياناتك والبدء من جديد؟')) {
+        localStorage.removeItem('ammar_user');
+        location.reload();
+    }
+}
+
+// ============ Sections ============
+function pickExpert(s) {
+    const list = EXPERTS[s];
+    return list[Math.floor(Math.random() * list.length)];
+}
+
+function openSection(s) {
+    section = s;
+    expert = pickExpert(s);
+    history = [];
+    
+    document.getElementById('home').classList.remove('show');
+    document.getElementById('chat').classList.add('show');
+    
+    document.getElementById('expAvatar').innerText = expert.name.charAt(0);
+    document.getElementById('expName').innerText = expert.name;
+    document.getElementById('expRole').innerHTML = `<span class="status-dot"></span><span class="status-text">متصل الآن</span>`;
+    document.getElementById('messages').innerHTML = '';
+    
+    showSuggestions(s);
+    
+    setTimeout(() => {
+        const hour = new Date().getHours();
+        const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
+        const welcome = `${greet} ${user.name} 🌟\nأنا ${expert.name}، ${expert.role}.\nخبرتي ${expert.years} في ${SECTIONS[s]}.\n\nكيف أقدر أساعدك اليوم؟`;
+        addBubble('expert', welcome);
+        history.push({ role: 'assistant', content: welcome });
+    }, 700);
+    
+    setTimeout(() => document.getElementById('input').focus(), 600);
+}
+
+function showSuggestions(s) {
+    const c = document.getElementById('suggestions');
+    const list = SUGGESTIONS[s] || [];
+    c.innerHTML = list.map(t => `<div class="chip" onclick="useSug('${t.replace(/'/g, "\\'")}')">${t}</div>`).join('');
+    c.style.display = 'flex';
+}
+
+function useSug(t) {
+    document.getElementById('input').value = t;
+    document.getElementById('input').focus();
+}
+
+function goBack() {
+    document.getElementById('chat').classList.remove('show');
+    document.getElementById('home').classList.add('show');
+    section = null; expert = null; history = [];
+}
+
+// ============ Utils ============
+function timeNow() {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+
+function esc(t) {
+    const d = document.createElement('div');
+    d.innerText = t;
+    return d.innerHTML;
+}
+
+function formatText(text) {
+    let html = esc(text);
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    return html;
+}
+
+// ============ الحالة "غير متصل" ============
+function setExpertStatus(status) {
+    const el = document.querySelector('.expert-info .status-text');
+    const avatar = document.getElementById('expAvatar');
+    if (!el) return;
+    
+    if (status === 'offline') {
+        el.textContent = 'غير متصل';
+        el.style.color = '#94a3b8';
+        avatar.classList.add('offline');
+    } else if (status === 'typing') {
+        el.textContent = 'يكتب الآن...';
+        el.style.color = '#22c55e';
+        avatar.classList.remove('offline');
+    } else {
+        el.textContent = 'متصل الآن';
+        el.style.color = '';
+        avatar.classList.remove('offline');
+    }
+}
+
+// ============ إضافة فقاعة ============
+function addBubble(who, text, isError = false) {
+    const wrap = document.createElement('div');
+    wrap.className = `bubble-wrap ${who}`;
+    const name = who === 'user' ? user.name : (expert ? expert.name : 'النظام');
+    
+    wrap.innerHTML = `
+        <div class="bubble ${isError ? 'error-bubble' : ''}">
+            <div class="sender">${name}</div>
+            <div class="bubble-content">${isError ? text : formatText(text)}</div>
+            <div class="time-row">
+                <span class="time">${timeNow()}</span>
+                ${who === 'user' ? '<span class="checks sent">✓</span>' : ''}
+            </div>
+        </div>
+    `;
+    const m = document.getElementById('messages');
+    m.appendChild(wrap);
+    m.scrollTop = m.scrollHeight;
+    
+    // ✅ علامات القراءة — تتحول تدريجياً (بعد القراءة فقط)
+    if (who === 'user') {
+        const checksEl = wrap.querySelector('.checks');
+        // بعد 1.5 ثانية → صحين رمادية (delivered - تم التوصيل)
+        setTimeout(() => {
+            if (checksEl) {
+                checksEl.textContent = '✓✓';
+                checksEl.classList.add('delivered');
+                checksEl.classList.remove('sent');
+            }
+        }, 1500);
+        // ✅ لا تتحول إلى زرقاء إلا عندما "يقرأها" المحلل — ستُدار من دالة الرد
+        wrap.dataset.pendingRead = 'true';
+        wrap.dataset.checksId = 'ck-' + Date.now() + Math.random().toString(36).slice(2,6);
+        const ck = wrap.querySelector('.checks');
+        if (ck) ck.id = wrap.dataset.checksId;
+    }
+}
+
+// ✅ تعليم آخر رسائل المستخدم كمقروءة (تُستدعى عندما يبدأ المحلل بالكتابة)
+function markAllUserMessagesAsRead() {
+    const pending = document.querySelectorAll('[data-pending-read="true"]');
+    pending.forEach(wrap => {
+        const ck = wrap.querySelector('.checks');
+        if (ck) {
+            ck.textContent = '✓✓';
+            ck.classList.add('read');
+            ck.classList.remove('delivered', 'sent');
+        }
+        wrap.dataset.pendingRead = 'false';
+    });
+}
+
+// ============ Progress ============
+function startProgress() {
+    const bar = document.getElementById('progressBar');
+    const fill = document.getElementById('progressFill');
+    bar.classList.add('show');
+    let p = 0;
+    progressTimer = setInterval(() => {
+        p = Math.min(p + Math.random() * 4, 88);
+        fill.style.width = p + '%';
+    }, 400);
+}
+
+function finishProgress() {
+    clearInterval(progressTimer);
+    const fill = document.getElementById('progressFill');
+    fill.style.width = '100%';
+    setTimeout(() => {
+        document.getElementById('progressBar').classList.remove('show');
+        fill.style.width = '0%';
+    }, 500);
+}
+
+// ============ Waiting Bubble — إعادة تصميم ============
+const WSTEPS = [
+    { icon: '📡', text: 'الاتصال بقواعد بيانات الأسواق...' },
+    { icon: '📊', text: 'سحب آخر التسعيرات اللحظية...' },
+    { icon: '🔎', text: 'تحليل المؤشرات الفنية...' },
+    { icon: '⚖️', text: 'تقييم التوازن بين المخاطر والعائد...' },
+    { icon: '🧩', text: 'ربط العوامل الاقتصادية الكلية...' },
+    { icon: '💡', text: 'صياغة الرأي والسيناريوهات...' },
+    { icon: '📝', text: 'مراجعة نهائية وإعداد الرد...' }
+];
+
+function showWaiting() {
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'bubble-wrap expert';
+    w.id = 'waiting';
+    const stepsHtml = WSTEPS.map((s, i) => `<div class="wstep" data-i="${i}"><span class="wstep-icon">${s.icon}</span><span>${s.text}</span></div>`).join('');
+    w.innerHTML = `
+        <div class="bubble waiting-bubble">
+            <div class="sender">${expert.name}</div>
+            <div class="waiting-header">✍️ جاري إعداد التحليل...</div>
+            <div class="waiting-steps">${stepsHtml}</div>
+        </div>
+    `;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+    
+    let i = 0;
+    waitingTimer = setInterval(() => {
+        const steps = document.querySelectorAll('#waiting .wstep');
+        if (!steps.length) return;
+        if (i > 0 && steps[i-1]) {
+            steps[i-1].classList.remove('active');
+            steps[i-1].classList.add('done');
+            steps[i-1].querySelector('.wstep-icon').textContent = '✓';
+        }
+        if (i < steps.length) { steps[i].classList.add('active'); i++; }
+        else { i = 0; steps.forEach(s => { s.classList.remove('active','done'); s.querySelector('.wstep-icon').textContent = WSTEPS[parseInt(s.dataset.i)].icon; }); }
+    }, 2000);
+}
+
+function hideWaiting() {
+    clearInterval(waitingTimer);
+    const w = document.getElementById('waiting');
+    if (w) w.remove();
+}
+
+function showTyping() {
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'bubble-wrap expert';
+    w.id = 'typing';
+    w.innerHTML = `
+        <div class="bubble">
+            <div class="sender">${expert.name}</div>
+            <div class="typing"><span></span><span></span><span></span></div>
+        </div>
+    `;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+    setExpertStatus('typing');
+}
+
+function hideTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+    setExpertStatus('online');
+}
+
+// ============ Send ============
+async function sendMsg() {
+    const input = document.getElementById('input');
+    const text = input.value.trim();
+    if (!text || busy) return;
+    
+    input.value = '';
+    addBubble('user', text);
+    history.push({ role: 'user', content: text });
+    document.getElementById('suggestions').style.display = 'none';
+    
+    busy = true;
+    document.getElementById('sendBtn').disabled = true;
+    
+    // ✅ 1) ابدأ بحالة "غير متصل" — كأنه خرج من المحادثة
+    setExpertStatus('offline');
+    
+    // ✅ 2) انتظر قليلاً ثم أظهر "غير متصل" بشكل واضح
+    await sleep(600 + Math.random() * 600);
+    
+    // ✅ 3) ابدأ الـ waiting bubble
+    showWaiting();
+    startProgress();
+    
+    // ✅ 4) تعليم الرسائل كمقروءة (بعد أن "رأى" المحلل الرسالة)
+    await sleep(800);
+    markAllUserMessagesAsRead();
+    
+    try {
+        const res = await fetch('https://ammar-e0tp.onrender.com/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                section, query: text, user, expert,
+                history: history.slice(-6)
+            })
+        });
+        
+        const raw = await res.text();
+        let data = {};
+        try { data = JSON.parse(raw); } catch (e) {
+            hideWaiting(); finishProgress();
+            setExpertStatus('online');
+            addBubble('expert', `⚠️ خطأ (${res.status})`, true);
+            return;
+        }
+        
+        if (!res.ok) {
+            hideWaiting(); finishProgress();
+            setExpertStatus('online');
+            addBubble('expert', `⚠️ خطأ: ${data.error || ''}\n${data.details || ''}`, true);
+            return;
+        }
+        
+        hideWaiting();
+        finishProgress();
+        
+        // ✅ 5) العودة للوضع النشط
+        setExpertStatus('online');
+        
+        const replies = data.replies || [data.answer].filter(Boolean);
+        
+        // ✅ 6) عرض الردود مع فاصل زمني طبيعي
+        for (let i = 0; i < replies.length; i++) {
+            if (i > 0) {
+                // ✅ قبل كل رد إضافي: اظهر "يكتب" + "غير متصل" لفترة
+                setExpertStatus('offline');
+                await sleep(1500 + Math.random() * 1500);
+                showTyping();
+                await sleep(800 + Math.random() * 1000);
+                hideTyping();
+                await sleep(300);
+            }
+            addBubble('expert', replies[i]);
+            history.push({ role: 'assistant', content: replies[i] });
+            
+            if (i < replies.length - 1) await sleep(600);
+        }
+        
+    } catch (e) {
+        hideWaiting(); finishProgress();
+        setExpertStatus('online');
+        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}\n\n💡 جرّب مرة أخرى.`, true);
+    } finally {
+        busy = false;
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('input').focus();
+        setExpertStatus('online');
+    }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const inp = document.getElementById('input');
+    if (inp) inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+    });
+});
+</script>
+
+</body>
+</html>
