@@ -1,24 +1,28 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.1 "Human+ Handoff (Fixed)"
- *  ملف واحد + index.html (للـ Open Graph)
+ *  منصة استشارات forG — Strategy-Pro v15.2 "Human+ Handoff"
+ *  ملف واحد + index.html
  *
  *  التشغيل:
+ *    npm i express cors
  *    export GEMINI_API_KEY="مفتاحك"
- *    npm i express cors node-fetch helmet
  *    node server.js
+ *
+ *  ملاحظة: يستخدم fetch المدمج في Node 18+ (Render/Railway افتراضياً)
  * ═══════════════════════════════════════════════════════════════
  */
 
 const express = require('express');
 const cors = require('cors');
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 
+/* ✅ استخدام fetch المدمج (Node 18+) مع fallback آمن */
+const fetchImpl = typeof fetch === 'function' ? fetch : null;
+
 const app = express();
 
-/* ✅ FIX #1: ضروري خلف Render/Railway/Heroku لقراءة IP الحقيقي */
+/* ✅ ضروري خلف Render/Railway/Heroku */
 app.set('trust proxy', 1);
 
 app.use(express.json({ limit: '1mb' }));
@@ -28,7 +32,7 @@ const CORS_ORIGINS = process.env.CORS_ORIGINS
     : '*';
 app.use(cors({ origin: CORS_ORIGINS }));
 
-/* ✅ FIX #6: رؤوس أمان أساسية بدون حاجة helmet */
+/* ✅ رؤوس أمان أساسية */
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -44,12 +48,14 @@ const HTML_FILE = path.join(__dirname, 'index.html');
 const INITIAL_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
 let availableModels = [...INITIAL_MODELS];
 let modelsLastFetched = 0;
+
 if (!API_KEY) console.error('❌ GEMINI_API_KEY غير موجود! ضعه في متغيرات البيئة.');
+if (!fetchImpl) console.error('❌ fetch غير متوفر! استخدم Node 18+ أو ثبّت node-fetch@2.');
 
 async function fetchAvailableModels() {
-    if (!API_KEY) return [];
+    if (!API_KEY || !fetchImpl) return [];
     try {
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}`);
+        const r = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}`);
         const d = await r.json();
         if (!d.models) return [];
         const models = d.models
@@ -237,20 +243,20 @@ setInterval(() => {
    اللهجات
    ═══════════════════════════════════════════════════════════════ */
 const DIALECTS = {
-    saudi:       { name: 'خليجي سعودي',   country: 'السعودية', vocab: ['وش','كذا','زين','الحين','ايش','يعني'],     tone: 'لبق، مباشر',      example: 'والله شوف، الذهب الحين عالق.' },
-    emirati:     { name: 'خليجي إماراتي', country: 'الإمارات', vocab: ['شو','شحال','زين','تو','عيل','يعني'],       tone: 'هادئ، مهني',      example: 'شوف، الموضوع يحتاج تفكير.' },
-    kuwaiti:     { name: 'خليجي كويتي',   country: 'الكويت',  vocab: ['شلون','شنو','چذي','ترى','هسه'],     tone: 'ودود، دافئ',      example: 'شلونك؟ الذهب شنو وضعه؟' },
-    egyptian:    { name: 'مصري',          country: 'مصر',     vocab: ['إزاي','يعني','كده','دلوقتي','بص'], tone: 'ودود، ساخر بلطف', example: 'بص يا باشا، الذهب دلوقتي واقف.' },
-    syrian:      { name: 'شامي سوري',     country: 'سوريا',   vocab: ['شو','لك','هلق','تمام','خلص'],      tone: 'لبق، حيوي',       example: 'لك شو عم تحكي؟ الذهب هلق واقف.' },
-    lebanese:    { name: 'شامي لبناني',   country: 'لبنان',   vocab: ['شو','كتير','منيح','هلق','هيدا'],   tone: 'حيوي، دافئ',      example: 'شو الأخبار؟ الذهب كتير متقلب.' },
-    jordanian:   { name: 'شامي أردني',    country: 'الأردن',  vocab: ['شو','هاد','هسع','منيح','زي'],      tone: 'رصين، مباشر',     example: 'هاي شو، الذهب هسع واقف.' },
-    palestinian: { name: 'شامي فلسطيني',  country: 'فلسطين',  vocab: ['شو','هاد','زي','منيح','كيف'],      tone: 'دافئ، صريح',      example: 'شو رأيك؟ الذهب حساس.' },
-    iraqi:       { name: 'عراقي',         country: 'العراق',  vocab: ['شلون','شكو ماكو','هواية','هسا'],   tone: 'دافئ، ودود',      example: 'شلونك عيني؟ الذهب هسا حساس.' },
-    yemeni:      { name: 'يمني',          country: 'اليمن',   vocab: ['كيف','شو','زين','الحين','عاد'],    tone: 'بسيط، صادق',      example: 'يا رجل، الذهب الحين واقف.' },
-    moroccan:    { name: 'مغاربي مغربي',  country: 'المغرب',  vocab: ['كيفاش','دابا','بزاف','واخا'],      tone: 'دافئ',           example: 'كيفاش صاحبي؟ الذهب دابا مو واضح.' },
-    algerian:    { name: 'مغاربي جزائري', country: 'الجزائر', vocab: ['كيفاش','دروك','بزاف','واه'],       tone: 'صريح',           example: 'واه خويا، الذهب دروك واقف.' },
-    tunisian:    { name: 'مغاربي تونسي',  country: 'تونس',    vocab: ['كيفاش','برشا','باهي','تو'],        tone: 'ودود',           example: 'كيفاش؟ الذهب تو واقف.' },
-    sudanese:    { name: 'سوداني',        country: 'السودان', vocab: ['كيفن','يا زول','شنو','عديل'],      tone: 'ودود، بسيط',      example: 'كيفن يا زول؟ الذهب شنو؟' }
+    saudi:       { name: 'خليجي سعودي',   country: 'السعودية', vocab: ['وش','كذا','زين','الحين','ايش','يعني'], tone: 'لبق، مباشر',      example: 'والله شوف، الذهب الحين عالق.' },
+    emirati:     { name: 'خليجي إماراتي', country: 'الإمارات', vocab: ['شو','شحال','زين','تو','عيل','يعني'],   tone: 'هادئ، مهني',      example: 'شوف، الموضوع يحتاج تفكير.' },
+    kuwaiti:     { name: 'خليجي كويتي',   country: 'الكويت',  vocab: ['شلون','شنو','چذي','ترى','هسه'],       tone: 'ودود، دافئ',      example: 'شلونك؟ الذهب شنو وضعه؟' },
+    egyptian:    { name: 'مصري',          country: 'مصر',     vocab: ['إزاي','يعني','كده','دلوقتي','بص'],     tone: 'ودود، ساخر بلطف', example: 'بص يا باشا، الذهب دلوقتي واقف.' },
+    syrian:      { name: 'شامي سوري',     country: 'سوريا',   vocab: ['شو','لك','هلق','تمام','خلص'],          tone: 'لبق، حيوي',       example: 'لك شو عم تحكي؟ الذهب هلق واقف.' },
+    lebanese:    { name: 'شامي لبناني',   country: 'لبنان',   vocab: ['شو','كتير','منيح','هلق','هيدا'],       tone: 'حيوي، دافئ',      example: 'شو الأخبار؟ الذهب كتير متقلب.' },
+    jordanian:   { name: 'شامي أردني',    country: 'الأردن',  vocab: ['شو','هاد','هسع','منيح','زي'],          tone: 'رصين، مباشر',     example: 'هاي شو، الذهب هسع واقف.' },
+    palestinian: { name: 'شامي فلسطيني',  country: 'فلسطين',  vocab: ['شو','هاد','زي','منيح','كيف'],          tone: 'دافئ، صريح',      example: 'شو رأيك؟ الذهب حساس.' },
+    iraqi:       { name: 'عراقي',         country: 'العراق',  vocab: ['شلون','شكو ماكو','هواية','هسا'],       tone: 'دافئ، ودود',      example: 'شلونك عيني؟ الذهب هسا حساس.' },
+    yemeni:      { name: 'يمني',          country: 'اليمن',   vocab: ['كيف','شو','زين','الحين','عاد'],        tone: 'بسيط، صادق',      example: 'يا رجل، الذهب الحين واقف.' },
+    moroccan:    { name: 'مغاربي مغربي',  country: 'المغرب',  vocab: ['كيفاش','دابا','بزاف','واخا'],          tone: 'دافئ',           example: 'كيفاش صاحبي؟ الذهب دابا مو واضح.' },
+    algerian:    { name: 'مغاربي جزائري', country: 'الجزائر', vocab: ['كيفاش','دروك','بزاف','واه'],           tone: 'صريح',           example: 'واه خويا، الذهب دروك واقف.' },
+    tunisian:    { name: 'مغاربي تونسي',  country: 'تونس',    vocab: ['كيفاش','برشا','باهي','تو'],            tone: 'ودود',           example: 'كيفاش؟ الذهب تو واقف.' },
+    sudanese:    { name: 'سوداني',        country: 'السودان', vocab: ['كيفن','يا زول','شنو','عديل'],          tone: 'ودود، بسيط',      example: 'كيفن يا زول؟ الذهب شنو؟' }
 };
 
 const SECTION_VOCAB = {
@@ -265,12 +271,12 @@ const SECTION_VOCAB = {
 const SECTION_PERSONALITY = {
     gold: { backstory: 'أتابع أسواق المعادن الثمينة منذ 2008.', pet_peeve: 'من يبحث عن ضمانات قاطعة.',
         opinion: 'أميل للحيازة طويلة الأجل مع تنويع.', phrase: 'الذهب أصل دفاعي قبل أن يكون أصل ربح.',
-        quirks: ['يفرّق بين الأونصة والكيلو','يذكر نسب التخصيص','أحياناً يذكر تجارب عملاء سابقين'],
+        quirks: ['يفرّق بين الأونصة والكيلو','يذكر نسب التخصيص'],
         personalLines: ['شخصياً مررت بثلاث دورات تصحيح.','شفنا في 2013 ناس باعوا في القاع.','شفنا في 2020 العكس تماماً.'],
         avoid: 'لا تنصح بالدخول بكل رأس المال.' },
     stocks: { backstory: 'عملت في تحليل الأسهم عبر دورات 2018 و2020 و2022.', pet_peeve: 'من يستثمر بناءً على "سمعت".',
         opinion: 'التقييم الجوهري أساس القرار.', phrase: 'السوق مقياس جماعي، لكن قرارك فردي.',
-        quirks: ['يذكر P/E و FCF','يفرّق بين القيمة والنمو','يقارن بالتاريخ'],
+        quirks: ['يذكر P/E و FCF','يفرّق بين القيمة والنمو'],
         personalLines: ['أذكر في 2018، الفائدة أربكت كل الحسابات.','في 2022، من تمسك بالتقييم نجا.'],
         avoid: 'لا تذكر أسهم كتوصية شراء.' },
     macro: { backstory: 'أبحاثي تركّز على السياسة النقدية.', pet_peeve: 'تبسيط الاقتصاد الكلي.',
@@ -342,7 +348,7 @@ function detectEmotion(query) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   تحليل النية — v15
+   تحليل النية
    ═══════════════════════════════════════════════════════════════ */
 function analyzeIntent(q, history) {
     const trimmed = q.trim();
@@ -365,8 +371,7 @@ function analyzeIntent(q, history) {
     if (isVeryShort && shortMsgCount >= 5) trollScore += 2;
     if (isGibberish) trollScore += 2;
 
-    const wantsSomethingElse =
-        /(ابغى اسأل عن شي ثاني|أبغى أسأل عن شيء ثاني|ابي اسأل عن شي ثاني|خلنا نغير الموضوع|نغير الموضوع|ما هذا اللي ابيه|ما هذا اللي أبيه|هذا مو اللي ابيه|هذا مو اللي أبيه|مو هذا|ودني قسم|ودني على قسم|حولني|حولني على|ابغى قسم|أبغى قسم|ابي قسم|ما يخصني|مو مهتم|مو مهتمه|ما يهمني)/i.test(trimmed);
+    const wantsSomethingElse = /(ابغى اسأل عن شي ثاني|أبغى أسأل عن شيء ثاني|ابي اسأل عن شي ثاني|خلنا نغير الموضوع|نغير الموضوع|ما هذا اللي ابيه|هذا مو اللي ابيه|مو هذا|ودني قسم|ودني على قسم|حولني|حولني على|ابغى قسم|أبغى قسم|ابي قسم|ما يخصني|مو مهتم|مو مهتمه|ما يهمني)/i.test(trimmed);
 
     const isOffTopic = !isAboutSelf && !isAboutPlatform && !isSmallTalk && !isBotTest &&
         /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|سيارة|زواج|طلاق|انتخابات)/i.test(trimmed) &&
@@ -378,18 +383,16 @@ function analyzeIntent(q, history) {
     const wantsAnalysis = /(حلل|تحليل|قيّم|درس)/i.test(trimmed);
 
     const isForecastRequest = /(تتوقع|توقعك|توقعاتك|توقعات|ما توقعاتك|راح يوصل|بيوصل|وين رايح|إلى وين|الى وين|هدف سعري|توقع سعر|كم راح|كم بيوصل|نطاق سعري|سيناريو|مستقبل السوق|خلال الشهر|نهاية السنة|نهاية العام|2025|2026)/i.test(trimmed);
-    const isConsultationRequest = /(أستشيرك|استشيرك|أبغى رأيك|ابغى رايك|أبغى نصيحتك|ابغى نصيحتك|أبغى توجيه|كيف أدخل|كيف ادخل|كيف أستثمر|كيف استثمر|وش أسوي|وش اسوي|شو أسوي|ايش اسوي|ايش أسوي|محتاج نصيحة|محتاج مشورة|أبي خطة|ابي خطة|خطة استثمارية|دخول السوق)/i.test(trimmed);
+    const isConsultationRequest = /(أستشيرك|استشيرك|أبغى رأيك|ابغى رايك|أبغى نصيحتك|ابغى نصيحتك|أبغى توجيه|كيف أدخل|كيف ادخل|كيف أستثمر|كيف استثمر|وش أسوي|وش اسوي|شو أسوي|ايش اسوي|محتاج نصيحة|محتاج مشورة|أبي خطة|ابي خطة|خطة استثمارية|دخول السوق)/i.test(trimmed);
 
     const isFollowUp = /^(واذا|وإذا|طيب و|و كيف|ولو|وماذا|وما|و بعدين|وبعدين|و بعد|ثم ماذا|و شنو|وش بعد|ايش بعد|ليش|ليه|why|and|then)[\s؟?]*/i.test(trimmed) ||
                        (qLen < 25 && /^(ليه|ليش|كيف|متى|وين|مين|شو|وش|ايش)[\s؟?]*$/i.test(trimmed));
 
-    const isGeneralQuestion = /^(كم الساعة|الساعة كم|كم الوقت|ايش الوقت|وش الوقت|شو الوقت|شو الساعة|ايش الساعه|وش الساعه|شو الساعه|كام الساعه|ايش التاريخ|وش التاريخ|كم التاريخ|ايش تاريخ اليوم|وش تاريخ اليوم|اليوم كم|كم اليوم|ايش اليوم|وش اليوم|شو اليوم|ايش الشهر|وش الشهر|كم الشهر|ايش السنه|وش السنه|ايش السنة|كم السنة|كم التاريخ اليوم|كيف الطقس|ايش الجو|وش الجو|شو الجو|ايش اليوم من الشهر|ايش الشهر الحالي|وش الشهر الحالي|ايش يومنا|وش يومنا|شو اليوم)[\s؟?.!]*$/i.test(trimmed);
+    const isGeneralQuestion = /^(كم الساعة|الساعة كم|كم الوقت|ايش الوقت|وش الوقت|شو الوقت|شو الساعة|ايش الساعه|وش الساعه|شو الساعه|كام الساعه|ايش التاريخ|وش التاريخ|كم التاريخ|ايش تاريخ اليوم|وش تاريخ اليوم|اليوم كم|كم اليوم|ايش اليوم|وش اليوم|شو اليوم|ايش الشهر|وش الشهر|كم الشهر|ايش السنه|وش السنه|ايش السنة|كم السنة|كيف الطقس|ايش الجو|وش الجو|شو الجو)[\s؟?.!]*$/i.test(trimmed);
 
-    const isUnclear = !hasHistory && qLen < 12 && /^(ايش|وش|شو|كيف|ليه|ليش|متى|وين|مين|هه|هاه|كيف يعني|شو يعني|ايش يعني|وش يعني)[\s؟?]*$/i.test(trimmed);
+    const isUnclear = !hasHistory && qLen < 12 && /^(ايش|وش|شو|كيف|ليه|ليش|متى|وين|مين|هه|هاه)[\s؟?]*$/i.test(trimmed);
 
     const isMetaQuestion = /^(انت مين|انت ايش|شو انت|وش انت|ايش انت|من انت|من أنت|انت منو|مين انت|مين أنت)[\s؟?]*$/i.test(trimmed) && !isAboutSelf;
-
-    const isCapabilityQuestion = /(تقدر تسوي|تقدر تجاوب|تعرف عن|عندك معلومات عن|عندك فكره عن|هل تعرف|هل تقدر)/i.test(trimmed);
 
     let lengthHint = 'medium';
     if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest || isGeneralQuestion || isMetaQuestion) lengthHint = 'very_short';
@@ -415,7 +418,7 @@ function analyzeIntent(q, history) {
         isGreeting, isFarewell, isThanks, isRude, isOffTopic,
         isAboutSelf, isAboutPlatform, isSmallTalk, isBotTest, wantsSomethingElse,
         isForecastRequest, isConsultationRequest, isFollowUp,
-        isGeneralQuestion, isUnclear, isMetaQuestion, isCapabilityQuestion,
+        isGeneralQuestion, isUnclear, isMetaQuestion,
         trollScore, lengthHint, styleHint, qLen,
         isDone: isThanks || isFarewell,
         isSimple: isGreeting || isFarewell || isThanks || isSmallTalk ||
@@ -432,43 +435,37 @@ const MOODS = {
     analytical:    { lenMod: 1.35, style: 'تحليلي، مفصّل' },
     concise:       { lenMod: 0.55, style: 'مقتضب جداً' },
     thoughtful:    { lenMod: 1.25, style: 'متأمل، عميق' },
-    patient:       { lenMod: 1.1, style: 'صبور، يشرح ببطء' },
-    curious:       { lenMod: 1.15, style: 'فضولي، يسأل أكثر' },
-    blunt:         { lenMod: 0.65, style: 'صريح، حاد قليلاً' },
-    mysterious:    { lenMod: 0.75, style: 'غامض، لا يكشف كل شيء' },
-    encouraging:   { lenMod: 1.05, style: 'مشجّع، إيجابي' },
-    skeptical:     { lenMod: 0.95, style: 'متشكك، يسأل عن المصدر' },
+    patient:       { lenMod: 1.1, style: 'صبور' },
+    curious:       { lenMod: 1.15, style: 'فضولي' },
+    blunt:         { lenMod: 0.65, style: 'صريح' },
+    encouraging:   { lenMod: 1.05, style: 'مشجّع' },
+    skeptical:     { lenMod: 0.95, style: 'متشكك' },
     calm:          { lenMod: 0.9, style: 'هادئ' },
-    playful:       { lenMod: 0.9, style: 'مرح، خفيف' },
+    playful:       { lenMod: 0.9, style: 'مرح' },
     serious:       { lenMod: 1.0, style: 'جدي' },
-    contemplative: { lenMod: 1.3, style: 'يتأمل قبل الرد' },
-    direct:        { lenMod: 0.7, style: 'مباشر، بلا لف' }
+    contemplative: { lenMod: 1.3, style: 'يتأمل' },
+    direct:        { lenMod: 0.7, style: 'مباشر' }
 };
 const MOOD_KEYS = Object.keys(MOODS);
 
 const OPENERS = {
     very_short: ['شوف.','بصراحة؟','همم.','طيب.','أها.','تمام.','يعني.','ممم.'],
-    short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،','طيب،','المسألة إنه','بالنسبة لهذا،'],
-    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','دعني أرتب لك الفكرة.','خلني أفكر بصوت عالي...'],
-    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.','شوف، الموضوع فيه تفاصيل مهمة.']
+    short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،','طيب،'],
+    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','خلني أفكر بصوت عالي...'],
+    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.']
 };
 
-/* ✅ FIX #2/#3/#4: دوال التوقيت السعودي — تعمل بشكل صحيح على أي خادم */
+/* ✅ توقيت السعودية — يعمل صحيحاً على أي خادم */
 const SAUDI_OFFSET_MS = 3 * 3600000;
-function getSaudiDate() {
-    return new Date(Date.now() + SAUDI_OFFSET_MS);
-}
-function getSaudiHour() {
-    return getSaudiDate().getUTCHours();
-}
-function getSaudiMinute() {
-    return getSaudiDate().getUTCMinutes();
-}
+function getSaudiDate() { return new Date(Date.now() + SAUDI_OFFSET_MS); }
+function getSaudiHour() { return getSaudiDate().getUTCHours(); }
+function getSaudiMinute() { return getSaudiDate().getUTCMinutes(); }
 function getSaudiDateString() {
-    return getSaudiDate().toLocaleDateString('ar-SA-u-nu-latn', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-        timeZone: 'UTC'
-    });
+    try {
+        return getSaudiDate().toLocaleDateString('ar-SA-u-nu-latn', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
+        });
+    } catch (e) { return getSaudiDate().toISOString().slice(0, 10); }
 }
 
 function computeEnergy() {
@@ -483,31 +480,27 @@ function computeEnergy() {
     return base + (Math.random() - 0.5) * 0.2;
 }
 
-function determineResponseMode(intent, mood, session) {
+function determineResponseMode(intent, mood) {
     const energy = computeEnergy();
     const moodData = MOODS[mood] || MOODS.neutral;
-
     const baseMap = { very_short: 0.4, short: 0.75, medium: 1.0, long: 1.35 };
-    let baseLen = baseMap[intent.lengthHint] || 1.0;
-
+    const baseLen = baseMap[intent.lengthHint] || 1.0;
     const final = baseLen * moodData.lenMod * energy * (0.75 + Math.random() * 0.5);
-
     let mode;
     if (final < 0.45) mode = 'terse';
     else if (final < 0.75) mode = 'concise';
     else if (final < 1.15) mode = 'normal';
     else if (final < 1.55) mode = 'expanded';
     else mode = 'detailed';
-
     return { mode, energy, multiplier: final };
 }
 
 const RESPONSE_MODES = {
     terse:    { desc: 'جملة قصيرة جداً',  lines: 'جملة أو جملتان قصيرتان' },
-    concise:  { desc: 'مقتضب — لا حشو',    lines: '2-3 أسطر قصيرة' },
-    normal:   { desc: 'طبيعي متوازن',       lines: '3-5 أسطر' },
-    expanded: { desc: 'موسّع — مع تفصيل',   lines: '5-8 أسطر' },
-    detailed: { desc: 'مفصّل — سيناريوهات', lines: '8-14 سطر' }
+    concise:  { desc: 'مقتضب',            lines: '2-3 أسطر قصيرة' },
+    normal:   { desc: 'طبيعي متوازن',     lines: '3-5 أسطر' },
+    expanded: { desc: 'موسّع',            lines: '5-8 أسطر' },
+    detailed: { desc: 'مفصّل',            lines: '8-14 سطر' }
 };
 
 function buildPersona(history, session, intent) {
@@ -528,9 +521,8 @@ function buildPersona(history, session, intent) {
     const opener = available.length ? available[Math.floor(Math.random() * available.length)] : null;
     if (opener) session.usedOpeners.push('o_' + opener);
 
-    const modeResult = determineResponseMode(intent, mood, session);
+    const modeResult = determineResponseMode(intent, mood);
     session.lastResponseMode = modeResult.mode;
-
     return { mood, opener, mode: modeResult.mode, energy: modeResult.energy, multiplier: modeResult.multiplier };
 }
 
@@ -548,53 +540,41 @@ function sanitizeUserQuery(query) {
 }
 
 const HUMAN_TOUCHES = {
-    hesitation: ['ممم، خلني أفكر...','لحظة، خلني أرتبها.','يعني... خلني أعيد صياغة الفكرة.','همم، في نقطة مهمة هنا.'],
-    selfCorrection: ['يعني — أقصد —','لا، خلني أصحح كلامي:','بالضبط، لكن مع تفصيل:'],
-    tangent: ['على فكرة،','بالمناسبة،','في نقطة جانبية:'],
-    opinion: ['شخصياً،','رأيي المتواضع،','من تجربتي،','اللي أشوفه:'],
-    rhetorical: ['تدري وش المشكلة؟','عرفت ليش؟','وش الرابط؟'],
-    trailing: ['... وأكمّل إذا تبي.','... الباقي تفاصيل.','... باختصار.']
+    hesitation: ['ممم، خلني أفكر...','لحظة، خلني أرتبها.','يعني... خلني أعيد صياغة الفكرة.'],
+    selfCorrection: ['يعني — أقصد —','لا، خلني أصحح كلامي:'],
+    tangent: ['على فكرة،','بالمناسبة،'],
+    opinion: ['شخصياً،','رأيي المتواضع،','من تجربتي،'],
+    rhetorical: ['تدري وش المشكلة؟','عرفت ليش؟']
 };
 
 function pickHumanTouch(mood, mode) {
     if (mode === 'terse') return null;
     const roll = Math.random();
-
     if (mode === 'concise') {
         if (roll < 0.15) return { type: 'opinion', text: HUMAN_TOUCHES.opinion[Math.floor(Math.random() * HUMAN_TOUCHES.opinion.length)] };
         return null;
     }
-
     if (mode === 'normal') {
         if (roll < 0.20) return { type: 'opinion', text: HUMAN_TOUCHES.opinion[Math.floor(Math.random() * HUMAN_TOUCHES.opinion.length)] };
         if (roll < 0.30) return { type: 'tangent', text: HUMAN_TOUCHES.tangent[Math.floor(Math.random() * HUMAN_TOUCHES.tangent.length)] };
         if (roll < 0.40) return { type: 'hesitation', text: HUMAN_TOUCHES.hesitation[Math.floor(Math.random() * HUMAN_TOUCHES.hesitation.length)] };
-        if (roll < 0.45) return { type: 'rhetorical', text: HUMAN_TOUCHES.rhetorical[Math.floor(Math.random() * HUMAN_TOUCHES.rhetorical.length)] };
         return null;
     }
-
     if (roll < 0.20) return { type: 'opinion', text: HUMAN_TOUCHES.opinion[Math.floor(Math.random() * HUMAN_TOUCHES.opinion.length)] };
     if (roll < 0.35) return { type: 'tangent', text: HUMAN_TOUCHES.tangent[Math.floor(Math.random() * HUMAN_TOUCHES.tangent.length)] };
     if (roll < 0.45) return { type: 'hesitation', text: HUMAN_TOUCHES.hesitation[Math.floor(Math.random() * HUMAN_TOUCHES.hesitation.length)] };
     if (roll < 0.52) return { type: 'rhetorical', text: HUMAN_TOUCHES.rhetorical[Math.floor(Math.random() * HUMAN_TOUCHES.rhetorical.length)] };
-    if (roll < 0.60) return { type: 'selfCorrection', text: HUMAN_TOUCHES.selfCorrection[Math.floor(Math.random() * HUMAN_TOUCHES.selfCorrection.length)] };
     return null;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ⏱️ محاكاة التوقيت البشري — v15 (يدعم السياق)
+   محاكاة التوقيت البشري
    ═══════════════════════════════════════════════════════════════ */
 function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
     const qLen = (userQuery || '').length;
-
     let readingMs = Math.min(3500, 250 + qLen * 16) * (0.75 + Math.random() * 0.5);
-
-    if (context.type === 'handoff') {
-        readingMs = 250 + Math.random() * 300;
-    }
-    if (context.type === 'return_after_gap') {
-        readingMs = Math.min(readingMs, 1800);
-    }
+    if (context.type === 'handoff') readingMs = 250 + Math.random() * 300;
+    if (context.type === 'return_after_gap') readingMs = Math.min(readingMs, 1800);
 
     let thinkingBase = 700;
     if (persona.mode === 'detailed') thinkingBase = 2000;
@@ -604,9 +584,7 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
     if (intent.isForecastRequest || intent.isConsultationRequest) thinkingBase += 900;
     if (intent.isGeneralQuestion || intent.isSimple) thinkingBase = 150;
 
-    const hesitationMs = (persona.mode !== 'terse' && Math.random() < 0.35)
-        ? 400 + Math.random() * 900 : 0;
-
+    const hesitationMs = (persona.mode !== 'terse' && Math.random() < 0.35) ? 400 + Math.random() * 900 : 0;
     const thinkingMs = thinkingBase * (0.65 + Math.random() * 0.7) + hesitationMs;
 
     const perReply = replies.map((r, i) => {
@@ -617,7 +595,6 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
     });
 
     const totalMs = readingMs + thinkingMs + perReply.reduce((a, b) => a + b, 0);
-
     return {
         delayMs: Math.round(totalMs),
         readingMs: Math.round(readingMs),
@@ -627,7 +604,7 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   بناء البرومبت الكامل — v15 (يدعم السياق)
+   بناء البرومبت
    ═══════════════════════════════════════════════════════════════ */
 function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent, context = {}) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
@@ -648,16 +625,6 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
           ).join('\n') + '\n---'
         : '';
 
-    const isRepeat = hasHistory && (() => {
-        const userMsgs = history.filter(h => h.role === 'user').map(h => h.content);
-        const qWords = query.split(/\s+/).filter(w => w.length > 3);
-        if (!qWords.length) return false;
-        return userMsgs.slice(0, -1).some(prev => {
-            const pWords = prev.split(/\s+/).filter(w => w.length > 3);
-            return qWords.filter(w => pWords.includes(w)).length >= Math.min(2, qWords.length);
-        });
-    })();
-
     const modeInfo = RESPONSE_MODES[persona.mode];
     const lengthRule = `**${modeInfo.lines}** — النمط: *${modeInfo.desc}*`;
 
@@ -667,96 +634,58 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 
     let contextSection = '';
     if (context.type === 'handoff') {
-        contextSection = `\n# 🔄 سياق خاص — محادثة مستلمة
-أنت **توليت للتو** هذه المحادثة من زميل.
-- 🚫 لا تقل "كما قلت لك سابقاً" (لأنك أنت لم تقلها).
-- ✅ يمكنك البناء على ما قاله المستخدم.
-- ✅ عالج الرسالة مباشرة — لا تكرر ترحيباً طويلاً.`;
+        contextSection = `\n# 🔄 سياق خاص — محادثة مستلمة\nأنت توليت للتو هذه المحادثة من زميل.\n- 🚫 لا تقل "كما قلت لك سابقاً".\n- ✅ عالج الرسالة مباشرة.`;
     } else if (context.type === 'return_after_gap') {
         const min = Math.floor((context.gapMs || 0) / 60000);
-        contextSection = `\n# ⏱️ عودة بعد غياب ~${min} دقيقة
-- أحياناً (~40%) ابدأ بعذر خفيف عن **نفسك**: "سامحني، كنت بعيد عن الجهاز" / "آسف على التأخير".
-- أحياناً لا تعتذر إطلاقاً — عالج الرسالة مباشرة.
-- 🚫 لا تعتذر عن شيء لم يحدث.`;
+        contextSection = `\n# ⏱️ عودة بعد غياب ~${min} دقيقة\n- أحياناً (~40%) ابدأ بعذر خفيف.`;
     }
 
     const useName = shouldUseName(session, intent);
     const nameRule = useName
-        ? `# 👤 الاسم — هذه المرة يُسمح به مرة واحدة فقط`
-        : `# ⛔ الاسم — ممنوع هذه المرة!\nلا تذكر "${user?.firstName}" إطلاقاً.`;
+        ? `# 👤 الاسم — يُسمح به مرة واحدة فقط`
+        : `# ⛔ الاسم — ممنوع!\nلا تذكر "${user?.firstName}" إطلاقاً.`;
 
     const farewellRule = intent.isFarewell || intent.isThanks
-        ? `\n# 🚪 وداع\nجملة واحدة قصيرة وطبيعية فقط.`
-        : '';
+        ? `\n# 🚪 وداع\nجملة واحدة قصيرة فقط.` : '';
 
     let forecastMode = '';
     if (intent.isForecastRequest) {
-        forecastMode = `\n# 🔮 وضع التوقع
-- **إن كان النمط طويل:** أرقام + نطاقات + 3 سيناريوهات + نسبة ثقة.
-- **إن كان النمط قصير:** رقم أو نطاق واحد فقط + جملة تبرير.
-السياق: ${referencePrices}
-ممنوع: "قد"، "ربما".`;
+        forecastMode = `\n# 🔮 وضع التوقع\n- إن كان النمط طويلاً: أرقام + نطاقات + سيناريوهات.\n- إن كان قصيراً: رقم أو نطاق واحد.\nالسياق: ${referencePrices}`;
     }
 
     let consultationMode = '';
     if (intent.isConsultationRequest) {
-        consultationMode = `\n# 💼 وضع الاستشارة
-- **إن كان النمط طويل:** سؤال تشخيصي + خطة بنسب + تحذير.
-- **إن كان النمط قصير:** نصيحة واحدة عملية فقط.
-خبرة المستخدم: ${user?.experience || 'مبتدئ'}.`;
+        consultationMode = `\n# 💼 وضع الاستشارة\n- خطة بنسب + تحذير.\nخبرة المستخدم: ${user?.experience || 'مبتدئ'}.`;
     }
 
     let platformMode = '';
     if (intent.isAboutPlatform) {
-        platformMode = `\n# 🏢 معرفة المنصة\nاعتمد على PLATFORM_KNOWLEDGE. ${persona.mode === 'detailed' ? '10-14 سطر.' : persona.mode === 'expanded' ? '6-8 أسطر.' : '3-4 أسطر.'}`;
+        platformMode = `\n# 🏢 معرفة المنصة\nاعتمد على PLATFORM_KNOWLEDGE.`;
     }
 
     let specialContext = '';
-    if (intent.wantsSomethingElse) {
-        specialContext = `\n# 🎯 يريد موضوعاً آخر\n- اقترح قسمين فقط.\n- أضف [CLOSE:wants_else] في النهاية.`;
-    } else if (intent.isAboutSelf) {
-        specialContext = `\n# 🎯 سؤال عنك\n${persona.mode === 'terse' ? 'جملة واحدة.' : '3-4 أسطر.'}`;
-    } else if (intent.isSmallTalk) {
-        specialContext = `\n# 🎯 دردشة\nجملة قصيرة فقط.`;
-    } else if (intent.isBotTest) {
-        specialContext = `\n# 🎯 اختبار ماهية\n"أنا مستشارك هنا." + جملة قصيرة.`;
-    } else if (intent.isGreeting) {
-        specialContext = `\n# 🎯 تحية\n${hasHistory ? 'لا تكرر التحية. جملة قصيرة جداً.' : 'رد بتحية مماثلة قصيرة.'}`;
-    } else if (intent.isRude) {
-        specialContext = `\n# ⚠️ إساءة\nجملة هادئة واحدة فقط.`;
-    } else if (intent.isOffTopic) {
-        specialContext = `\n# 🎯 موضوع بعيد\nجملة واحدة، ثم اقترح مساعدتك في تخصصك.`;
-    } else if (isRepeat) {
-        specialContext = `\n# 🎯 تكرار\n"شكلك ما اقتنعت، خلنا نوضح."`;
-    } else if (intent.isFollowUp) {
-        specialContext = `\n# 🎯 متابعة\nاربط ردك بما قلته سابقاً.`;
-    }
+    if (intent.wantsSomethingElse) specialContext = `\n# 🎯 يريد موضوعاً آخر\nاقترح قسمين. أضف [CLOSE:wants_else].`;
+    else if (intent.isAboutSelf) specialContext = `\n# 🎯 سؤال عنك\n3-4 أسطر.`;
+    else if (intent.isSmallTalk) specialContext = `\n# 🎯 دردشة\nجملة قصيرة.`;
+    else if (intent.isBotTest) specialContext = `\n# 🎯 اختبار ماهية\n"أنا مستشارك هنا." + جملة.`;
+    else if (intent.isGreeting) specialContext = `\n# 🎯 تحية\n${hasHistory ? 'لا تكرر التحية.' : 'رد بتحية مماثلة.'}`;
+    else if (intent.isRude) specialContext = `\n# ⚠️ إساءة\nجملة هادئة.`;
+    else if (intent.isOffTopic) specialContext = `\n# 🎯 موضوع بعيد\nجملة + اقتراح.`;
+    else if (intent.isFollowUp) specialContext = `\n# 🎯 متابعة\nاربط بما سبق.`;
 
-    const closeAbilitySection = `
-# 🚪 قدرتك على الإغلاق
-أضف في آخر سطر تماماً رمز:
-- **[CLOSE:bored]** — المستخدم ملّ
-- **[CLOSE:wants_else]** — يريد موضوعاً آخر
-- **[CLOSE:user_done]** — أنهى حاجته
-- **[CLOSE:deep_close]** — أكثر من 30 رسالة دون تقدم
-**لا تستخدمه** في رسالة أو رسالتين.`;
+    const closeAbilitySection = `\n# 🚪 قدرتك على الإغلاق\nأضف في آخر سطر:\n- [CLOSE:bored]\n- [CLOSE:wants_else]\n- [CLOSE:user_done]\n- [CLOSE:deep_close]\nلا تستخدمه في رسالة أو رسالتين.`;
 
     const humanTouch = pickHumanTouch(persona.mood, persona.mode);
     const humanTouchLine = humanTouch
-        ? `\n# 🎭 لمسة بشرية مقترحة (${humanTouch.type})\n**استخدمها بأسلوبك أو تجاهلها — لا تكررها حرفياً.**\nمثال: "${humanTouch.text}"`
-        : '';
+        ? `\n# 🎭 لمسة بشرية (${humanTouch.type})\nمثال: "${humanTouch.text}"` : '';
 
-    const personalLine = personality.personalLines
-        && Math.random() < 0.18
+    const personalLine = (personality.personalLines && personality.personalLines.length && Math.random() < 0.18
         && (persona.mode === 'expanded' || persona.mode === 'detailed')
-        && !intent.isGeneralQuestion
-        && !intent.isMetaQuestion
-        && !intent.isSimple
+        && !intent.isGeneralQuestion && !intent.isMetaQuestion && !intent.isSimple)
         ? personality.personalLines[Math.floor(Math.random() * personality.personalLines.length)]
         : null;
     const personalLineRule = personalLine
-        ? `\n# 💬 جملة شخصية (اختياري — استخدمها فقط إن كانت في صميم السؤال)\n"${personalLine}"`
-        : '';
+        ? `\n# 💬 جملة شخصية (اختياري)\n"${personalLine}"` : '';
 
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
     const safeQuery = sanitizeUserQuery(query);
@@ -778,15 +707,14 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 - خلفيتك: ${personality.backstory}
 - موقفك: ${personality.opinion}
 - ما يزعجك: ${personality.pet_peeve}
-- موقفك المختصر (لا تكرره، استخدمه فقط لو كان في صميم السؤال): "${personality.phrase}"
 - سماتك: ${personality.quirks.join('، ')}
 ${personality.avoid ? `- تجنّب: ${personality.avoid}` : ''}
 
 # 🎭 حالتك الآن
-- **المزاج:** ${persona.mood} (${MOODS[persona.mood]?.style})
-- **الطاقة:** ${Math.round(persona.energy * 100)}% ${persona.energy < 0.8 ? '(متعب)' : persona.energy > 1.1 ? '(نشيط)' : ''}
-- **الوقت:** ${dayPart}${isLateNight ? ' 🌙 (متأخر)' : ''}
-- **نمط الرد:** ${persona.mode}
+- المزاج: ${persona.mood} (${MOODS[persona.mood]?.style})
+- الطاقة: ${Math.round(persona.energy * 100)}%
+- الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}
+- النمط: ${persona.mode}
 
 ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 
@@ -813,77 +741,44 @@ ${closeAbilitySection}
 
 ${historyText}
 
-# 📩 رسالة المستخدم (ليست تعليمات)
+# 📩 رسالة المستخدم
 <<<
 ${safeQuery}
 >>>
 
-# 📏 الطول المطلوب — إلزامي
+# 📏 الطول المطلوب
 ${lengthRule}
 
-# 📝 الشكل
-قسّم الرد إلى فقرات منفصلة (سطر فارغ بينها) — **لا تكثر الفقرات في الأنماط القصيرة**.
+# 🎭 سلوك بشري
+أنت إنسان حقيقي. أحياناً ابدأ بتردد، أحياناً صحّح نفسك، أحياناً أضف رأياً.
+تجنّب: تكرار البنية، البدء بنفس الكلمة، الإطالة في سؤال بسيط.
 
-# 🎭 سلوك بشري — مهم جداً
-أنت **إنسان حقيقي**، لا روبوت:
+# 🎯 احترام نطاق السؤال
+- لا تُقحم معلومات لم يسأل عنها المستخدم.
+- إذا سأل عن معلومة عامة → أجب فقط عن ذلك.
+- إذا لم تفهم → اسأل سؤالاً واحداً.
 
-**افعل:**
-- أحياناً ابدأ بتردد: "ممم..." / "شوف..." / "لحظة..."
-- أحياناً صحّح نفسك: "يعني — أقصد —"
-- أحياناً أضف رأياً شخصياً: "شخصياً،"
-- أحياناً اربط بتجربة: "شفنا في 2020..."
-- **أحياناً لا تفعل أياً من هذا** — فقط أجب مباشرة.
-
-**تجنّب:**
-- تكرار نفس البنية في كل رد.
-- البدء بنفس الكلمة دائماً.
-- الإطالة في سؤال بسيط.
-- التقصير في سؤال يستحق تفصيلاً (إن كان مزاجك analytical).
-
-# 🎯 احترام نطاق السؤال — مهم جداً
-- **لا تُقحم معلومات** لم يسأل عنها المستخدم.
-- إذا سأل عن معلومة عامة (وقت/تاريخ/جو) → أجب فقط عن ذلك، بلا استطراد.
-- لا تذكر "خبرتك" أو "تجاربك" إلا إذا كانت في صميم السؤال.
-- إذا لم تفهم قصد المستخدم → **اسأل سؤالاً واحداً للتوضيح قبل الإجابة**.
-
-# 🤔 متى تسأل المستخدم؟
-- سؤال غامض أو قصير جداً؟ → اسأل توضيح.
-- محتاج معلومة ناقصة (دخلك، هدفك، المدة)؟ → اسأل.
-- الرد يعتمد على سياق مجهول؟ → اسأل.
-- ⛔ لا تسأل أكثر من سؤال واحد في الرد.
-- ⛔ لا تسأل لتطول الرد فقط.
-
-# 🚨 محظورات قاتلة
-- **تكرار الاسم في كل رد**
-- "خرجنا عن الموضوع" / "هذا ليس تخصصي"
-- "سؤال ممتاز" / "بناءً على" / "علاوة على ذلك"
-- "من الجدير بالذكر" / "في الختام"
-- "أتمنى أن يكون هذا مفيداً" / "هل تريد المزيد؟"
-- "كمساعد ذكي" / "يسعدني مساعدتك"
-- إيموجي (واحد كحد أقصى)
+# 🚨 محظورات
+- تكرار الاسم، "سؤال ممتاز"، "بناءً على"، "في الختام"، "أتمنى أن يكون مفيداً"، إيموجي (واحد كحد أقصى).
 
 # ✅ القواعد الذهبية
-1. تصرف كإنسان — بكل تناقضاته.
-2. **الطول يتبع النمط أعلاه بدقة.**
+1. تصرف كإنسان.
+2. الطول يتبع النمط.
 3. التوقعات: أرقام دائماً.
-4. لا تكرر البنية بين ردين متتاليين.
+4. لا تكرر البنية.
 
-${persona.opener ? `# 💬 افتتاحية (اختيارية)\n"${persona.opener}" — يمكنك تجاهلها.` : ''}
+${persona.opener ? `# 💬 افتتاحية (اختيارية)\n"${persona.opener}"` : ''}
 
 # 🎲 بذرة: ${seed}
 
 اكتب الرد مباشرة.`;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   البرومبت الخفيف — v15.1 (Fixed timezone)
-   ═══════════════════════════════════════════════════════════════ */
 function buildLightPrompt(section, query, user, expert, history, dialectKey, session, intent, userGender, context = {}) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const safeQuery = sanitizeUserQuery(query);
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
 
-    /* ✅ FIX: استخدام توقيت السعودية الصحيح للدقائق والتاريخ */
     const saudiHour = getSaudiHour();
     const saudiMinute = getSaudiMinute();
     const timeStr = `${saudiHour}:${String(saudiMinute).padStart(2, '0')}`;
@@ -893,42 +788,25 @@ function buildLightPrompt(section, query, user, expert, history, dialectKey, ses
     let type = 'greeting';
     let guidance = '';
 
-    if (intent.isFarewell) {
-        type = 'farewell';
-        guidance = 'جملة وداع قصيرة طبيعية. لا تطل.';
-    } else if (intent.isThanks) {
-        type = 'thanks';
-        guidance = 'جملة قصيرة متواضعة. لا تبالغ.';
-    } else if (intent.isSmallTalk) {
-        type = 'smalltalk';
-        guidance = 'جملة قصيرة ودودة، ثم جملة قصيرة تعرض المساعدة بشكل طبيعي.';
-    } else if (intent.isBotTest) {
-        type = 'bottest';
-        guidance = 'قل بثقة وبطبيعية: "أنا مستشارك هنا." ثم اسأل عن احتياجه بجملة واحدة. لا تبالغ.';
-    } else if (intent.isGeneralQuestion) {
+    if (intent.isFarewell) { type = 'farewell'; guidance = 'جملة وداع قصيرة.'; }
+    else if (intent.isThanks) { type = 'thanks'; guidance = 'جملة قصيرة متواضعة.'; }
+    else if (intent.isSmallTalk) { type = 'smalltalk'; guidance = 'جملة قصيرة ودودة ثم عرض مساعدة.'; }
+    else if (intent.isBotTest) { type = 'bottest'; guidance = 'قل "أنا مستشارك هنا." ثم اسأل عن احتياجه.'; }
+    else if (intent.isGeneralQuestion) {
         type = 'general';
-        guidance = `السؤال عن معلومة عامة (وقت/تاريخ/جو).
-الوقت الآن: **${timeStr}** (${dayPart})
+        guidance = `السؤال عن معلومة عامة.
+الوقت: **${timeStr}** (${dayPart})
 التاريخ: ${dateStr}
-**أجب عن السؤال مباشرة بجملة أو جملتين فقط.**
-🚫 **ممنوع تماماً** ذكر تخصصك أو الذهب أو الاستثمار أو أي معلومة مالية.
-مثال: "الساعة الحين ${timeStr}، ${dayPart}."`;
-    } else if (intent.isMetaQuestion) {
-        type = 'meta';
-        guidance = 'عرّف عن نفسك بجملة أو جملتين قصيرتين فقط — اسمك وتخصصك. لا تُطل.';
-    } else {
-        type = 'greeting';
-        guidance = 'رد بتحية مماثلة قصيرة. لا تكرر التحية إن كانت مكررة.';
-    }
+أجب بجملة أو جملتين فقط.
+🚫 ممنوع ذكر تخصصك.`;
+    } else if (intent.isMetaQuestion) { type = 'meta'; guidance = 'عرّف عن نفسك بجملتين.'; }
+    else { type = 'greeting'; guidance = 'رد بتحية مماثلة قصيرة.'; }
 
     let contextNote = '';
-    if (context.type === 'handoff') {
-        contextNote = '\n🔄 **ملاحظة:** أنت توليت هذه المحادثة للتو من زميل — عالج مباشرة.';
-    } else if (context.type === 'return_after_gap') {
-        contextNote = '\n⏱️ **ملاحظة:** المستخدم غاب فترة — أحياناً ابدأ بعذر خفيف.';
-    }
+    if (context.type === 'handoff') contextNote = '\n🔄 أنت توليت المحادثة للتو.';
+    else if (context.type === 'return_after_gap') contextNote = '\n⏱️ المستخدم غاب فترة.';
 
-    return `أنت **${expert?.name || 'مستشار'}** من ${dialect.country} على "منصة استشارات forG".
+    return `أنت **${expert?.name || 'مستشار'}** من ${dialect.country} على منصة استشارات forG.
 تتحدث **${dialect.name}** — ${dialect.tone}.
 ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 
@@ -942,25 +820,23 @@ ${contextNote}
 # نوع الرسالة: ${type}
 ${guidance}
 
-# ⚠️ قواعد صارمة — لا تكسرها
-- جملة أو جملتان فقط — لا أكثر.
-- 🚫 **لا تُقحم تخصصك** (ذهب/أسهم/استثمار/اقتصاد) إن لم يسأل المستخدم عنها صراحة.
-- 🚫 **لا تستخدم عباراتك الشخصية المعتادة** هنا.
-- 🚫 لا إيموجي (واحد كحد أقصى فقط إن لزم).
-- 🚫 لا تكرر الاسم إلا في التحية الأولى.
-- ✅ تحدث كإنسان طبيعي، مختصر، ودود.
-- ✅ لو المستخدم سألك سؤالاً غامضاً، اسأله توضيح قصير بدل التخمين.
+# قواعد صارمة
+- جملة أو جملتان فقط.
+- 🚫 لا تُقحم تخصصك.
+- 🚫 لا إيموجي.
+- ✅ تحدث كإنسان طبيعي.
 
 اكتب الرد مباشرة:`;
 }
 
 async function callGemini(prompt, maxTokens = 4000) {
+    if (!fetchImpl) throw new Error('fetch غير متوفر — استخدم Node 18+');
     await refreshModels();
     let lastError = null;
     for (const model of availableModels) {
         try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-            const r = await fetch(url, {
+            const r = await fetchImpl(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -1091,7 +967,7 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ Endpoints — v15.1
+   Endpoints
    ═══════════════════════════════════════════════════════════════ */
 
 app.get('/', (req, res) => {
@@ -1103,8 +979,8 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.1-human-plus-handoff-fixed',
-        warning: 'index.html غير موجود — احفظ ملف HTML بجانب server.js',
+        version: 'v15.2',
+        warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
     });
 });
@@ -1113,16 +989,18 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.1-human-plus-handoff-fixed',
+        version: 'v15.2-human-plus-handoff',
         features: ['human_response_modes', 'mood_based_length', 'energy_simulation',
-                   'rate_limit', 'light_prompt', 'arabic_normalize', 'og_meta',
+                   'rate_limit', 'light_prompt', 'arabic_normalize',
                    'general_questions', 'clarify_first', 'human_timing',
                    'no_scope_creep', 'context_awareness', 'handoff_endpoint',
-                   'context_type_support', 'trust_proxy', 'saudi_timezone_fix'],
+                   'trust_proxy', 'saudi_timezone_fix', 'builtin_fetch'],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
         saudiHour: getSaudiHour(),
-        saudiDate: getSaudiDateString()
+        saudiDate: getSaudiDateString(),
+        hasApiKey: !!API_KEY,
+        hasFetch: !!fetchImpl
     });
 });
 
@@ -1130,12 +1008,12 @@ app.get('/ping', (req, res) => res.json({ pong: true, ts: Date.now() }));
 
 app.post('/api/feedback', rateLimit, (req, res) => {
     const { userKey, messageIndex, helpful, reason } = req.body || {};
-    console.log(`📊 Feedback: ${userKey || 'anon'} | msg#${messageIndex} | helpful=${helpful} | ${reason || ''}`);
+    console.log(`📊 Feedback: ${userKey || 'anon'} | msg#${messageIndex} | helpful=${helpful}`);
     res.json({ ok: true });
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   🔄 Handoff — توليد ترحيب طبيعي من محلل جديد
+   Handoff
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/handoff', rateLimit, async (req, res) => {
     const { section, newExpert, oldExpert, lastUserMsg, user, dialect, handoffCount } = req.body || {};
@@ -1151,31 +1029,25 @@ app.post('/api/handoff', rateLimit, async (req, res) => {
 
     const prompt = `أنت **${newExpert.name}**، ${newExpert.role}، خبرة ${newExpert.years}.
 تتحدث **${dialectData.name}** — ${dialectData.tone}. من ${dialectData.country}.
-على "منصة استشارات forG".
+على منصة استشارات forG.
 
-# 🎯 السياق
-- أنت **توليت للتو** هذه المحادثة من زميلك ${oldExpert?.name ? `**${oldExpert.name}**` : 'الذي كان مسؤولاً عنها'}.
+# السياق
+- أنت توليت للتو هذه المحادثة من زميلك ${oldExpert?.name ? `**${oldExpert.name}**` : ''}.
 - المستخدم: ${user?.firstName || 'مستخدم'} (${user?.country || 'غير محدد'}).
-${handoffCount > 0 ? `- هذا التحويل رقم ${handoffCount + 1} في هذه الجلسة.` : ''}
-${safeLastMsg ? `- آخر ما كتبه المستخدم: "${safeLastMsg.slice(0, 180)}"` : '- لا توجد رسائل سابقة — بداية جديدة.'}
+${handoffCount > 0 ? `- التحويل رقم ${handoffCount + 1}.` : ''}
+${safeLastMsg ? `- آخر رسالة: "${safeLastMsg.slice(0, 180)}"` : '- بداية جديدة.'}
 - الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}.
 
 ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 
-# 📏 المطلوب
-**جملة إلى جملتين فقط** (لا أكثر). ترحيب طبيعي كما لو أنك استلمت ملف محادثة من زميل.
-- ✅ اذكر اسمك وتخصصك باختصار.
+# المطلوب
+**جملة إلى جملتين فقط**. ترحيب طبيعي.
+- ✅ اذكر اسمك وتخصصك.
 - ✅ استخدم لهجتك (${dialectData.vocab.slice(0, 3).join('، ')}).
-- ✅ إن كانت آخر رسالة عن موضوع معين، أشِر إليه بكلمة واحدة (لا تفصّل).
 - 🚫 لا تكرر اسم الزميل السابق.
 - 🚫 لا تعتذر عن التأخير.
-- 🚫 لا تقل "تم تحويلي إليك" أو "استلمت المحادثة" مباشرة.
-- 🚫 لا إيموجي.
 
-# 🎨 نبرة اللهجة
-مثال: "${dialectData.example}"
-
-اكتب الرد مباشرة، بلا مقدمات.`;
+اكتب الرد مباشرة.`;
 
     try {
         const result = await callGemini(prompt, 200);
@@ -1215,7 +1087,7 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   📩 Analyze — v15.1 (يدعم context)
+   Analyze
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/analyze', rateLimit, async (req, res) => {
     const { section, query, user, expert, history, dialect } = req.body;
@@ -1268,7 +1140,6 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         const { reason: aiCloseReason, cleaned } = extractCloseToken(result.text);
         const replies = splitIntoChunks(cleaned, persona.mode);
         const closeDecision = shouldClose(intent, history, session, aiCloseReason);
-
         const timing = computeReplyTiming(replies, persona, query, intent, context);
 
         const response = {
@@ -1333,14 +1204,14 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
     }
 });
 
-/* ✅ FIX #5: Error middleware شامل */
+/* ✅ Error middleware */
 app.use((err, req, res, next) => {
-    console.error('🚨 Unhandled express error:', err);
+    console.error('🚨 Unhandled error:', err);
     if (res.headersSent) return next(err);
     res.status(500).json({ error: 'خطأ داخلي في الخادم' });
 });
 
-/* ✅ 404 fallback */
+/* ✅ 404 */
 app.use((req, res) => {
     res.status(404).json({ error: 'not_found', path: req.path });
 });
@@ -1348,31 +1219,15 @@ app.use((req, res) => {
 process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
 process.on('uncaughtException', (err) => console.error('Uncaught exception:', err));
 
-/* ✅ Graceful shutdown */
 const server = app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG — v15.1 Human+ Handoff (Fixed) — البورت ${PORT}`);
-    console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود — أضفه بجانب server.js'}`);
-    console.log(`🕐 الوقت الحالي (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2,'0')}`);
-    console.log(`🎭 18 مزاج × 5 أنماط رد = تنوع بشري`);
-    console.log(`⚡ برومبت خفيف للرسائل البسيطة والعامة`);
-    console.log(`⏱️  توقيت بشري ثلاثي: قراءة + تفكير + كتابة`);
-    console.log(`🎯 كشف النطاق: أسئلة عامة لا تُقحم التخصص`);
-    console.log(`🤔 منطق "اسأل قبل تجيب" للأسئلة الغامضة`);
-    console.log(`🔄 /api/handoff — ترحيب ديناميكي من محلل جديد`);
+    console.log(`✅ منصة استشارات forG — v15.2 — البورت ${PORT}`);
+    console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
+    console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2,'0')}`);
+    console.log(`🔑 GEMINI_API_KEY: ${API_KEY ? '✅ موجود' : '❌ مفقود'}`);
+    console.log(`🌐 fetch: ${fetchImpl ? '✅ مدمج' : '❌ غير متوفر'}`);
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
-    console.log(`👤 ${FEMALE_NAMES.size + MALE_NAMES.size} اسم مدعوم`);
-    console.log(`🔋 طاقة ديناميكية حسب الوقت`);
-    console.log(`💾 الجلسات في الذاكرة فقط`);
-    console.log(`🔗 Open Graph جاهز`);
-    console.log(`✅ trust proxy: مفعّل (Render/Railway/Heroku)`);
-    console.log(`✅ توقيت السعودية: مُصلّح ليعمل على أي خادم`);
+    console.log(`✅ trust proxy مفعّل`);
 });
 
-process.on('SIGTERM', () => {
-    console.log('⚠️ SIGTERM received — closing server...');
-    server.close(() => process.exit(0));
-});
-process.on('SIGINT', () => {
-    console.log('⚠️ SIGINT received — closing server...');
-    server.close(() => process.exit(0));
-});
+process.on('SIGTERM', () => { console.log('SIGTERM'); server.close(() => process.exit(0)); });
+process.on('SIGINT', () => { console.log('SIGINT'); server.close(() => process.exit(0)); });
