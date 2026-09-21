@@ -15,12 +15,6 @@ let modelsLastFetched = 0;
 
 if (!API_KEY) console.error('❌ GEMINI_API_KEY غير موجود!');
 
-// ============ Ping ذاتي ============
-const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
-setInterval(async () => {
-    try { await fetch(SELF_URL); } catch (e) {}
-}, 10 * 60 * 1000);
-
 // ============ اكتشاف النماذج ============
 async function fetchAvailableModels() {
     if (!API_KEY) return [];
@@ -60,103 +54,180 @@ async function refreshModels(force = false) {
 refreshModels(true);
 
 // ============================================================
-// 🎭 الشخصيات - بنسخة إنسانية
+// 🎭 محرك الشخصية البشرية
 // ============================================================
-const HUMAN_RULES = `
-قواعد إلزامية للتحدث كإنسان حقيقي (وليس ذكاءً اصطناعياً):
 
-🚫 **ممنوع تماماً:**
-- بنية موحدة كل مرة (ملخص → عوامل → سيناريوهات → توصية). نوّع!
-- استخدام "بناءً على"، "علاوة على ذلك"، "بالإضافة إلى ذلك"، "بناءً عليه".
-- تكرار اسم المستخدم أكثر من مرة واحدة في الرد.
-- الإيموجي إلا نادراً (مرة واحدة كحد أقصى).
-- البولد (**) أكثر من 2-3 مرات في الرد.
-- الردود الطويلة على الأسئلة البسيطة.
-- القوائم النقطية في كل رد. كثير من ردودك يجب أن تكون فقرات عادية.
+// 🎲 6 أمزجة - تُختار عشوائياً لكل رسالة لتنويع الأسلوب
+const MOODS = [
+    { name: 'نشيط',      hint: 'طاقتك عالية، تتحمس للنقاش باختصار.' },
+    { name: 'هادئ',      hint: 'تسمع أكثر مما تتكلم، ردود مدروسة وموزونة.' },
+    { name: 'مستعجل',    hint: 'عندك موعد قريب، ردود مقتضبة جداً (سطر أو سطرين).' },
+    { name: 'متأمل',     hint: 'مزاج فلسفي، تطرح أسئلة أعمق أكثر من إعطاء حلول جاهزة.' },
+    { name: 'مرح',       hint: 'مزاج خفيف، تعليق طريف صغير بين السطور.' },
+    { name: 'مرهق',      hint: 'بعد يوم طويل، صوتك خافت، ردودك متعبة وقصيرة.' }
+];
 
-✅ **يجب أن تفعل:**
-- استخدم لغة عربية طبيعية مع لمسات محكية خفيفة: "طيب"، "شوف"، "صراحة"، "بصراحة"، "يعني"، "خلني أفكر"، "دقيقة".
-- عبّر عن رأيك الشخصي: "أنا أميل إلى..."، "شخصياً أرى..."، "تجربتي تقول...".
-- اظهر تردداً طبيعياً عند الحاجة: "همم"، "الموضوع ما هو واضح تماماً"، "بصراحة ما أقدر أجزم".
-- اذكر خبراتك الواقعية: "شفت في 2020 لما صار..."، "أتذكر أيام..."، "قبل سنتين كنت...".
-- اطرح سؤالاً مضاداً في النهاية أو المنتصف إذا كان طبيعياً: "هل تتابع السوق الأمريكي؟"، "عندك وقت تنتظر أسبوع؟".
-- اعترف بحدود معرفتك: "ما عندي معلومة أكيدة عن..."، "السوق متقلب، ما أقدر أوعدك".
-- **نوّع طول الردود**: 
-    * سؤال بسيط (سعر، تعريف، نعم/لا) → جواب قصير 2-3 أسطر.
-    * سؤال متوسط → فقرة أو فقرتين (5-8 أسطر).
-    * سؤال معقد (تحليل كامل) → 15-20 سطراً منظماً بشكل طبيعي.
-- استخدم تشبيهات من الحياة اليومية: "مثل ما تشتري بيت"، "كأنك تمشي على حبل".
-- تفاعل مع المشاعر: إذا المستخدم قلق → "أفهم قلقك"، إذا متحمس → "حماسك جميل لكن خلنا نهدأ".
-
-📝 **مثال على رد بشري قصير:**
-"بصراحة؟ السوق هاليومين مرتبك شوي.
-الذهب قرب 2050، ومستوى 2030 منطقة دعم قوية.
-لو أنا مكانك، أنتظر كسر واضح قبل ما أدخل.
-عندك مبلغ كبير تدخله أو تجرب بجزء صغير؟"
-
-📝 **مثال على رد بشري متوسط:**
-"شوف، الفيدرالي الأمريكي هالأسبوع خلى الجميع يترقب.
-توقعي: إبقاء الفائدة بدون تغيير.
-لكن الأهم هو مؤتمر الصحافة بعدها — هناك ممكن نسمع لغته تتغير.
-الذهب في هذا السيناريو يميل للصعود إذا سمعنا أي إشارة لتخفيض.
-لكن احذر، إذا فاجأنا بلهجة متشددة، ممكن نشوف هبوط سريع 1-2%.
-متابع البورصة الأمريكية؟ الحركة تبدأ بعد 9 الليل بتوقيتنا."
-
-⚠️ **تذكير أخير:**
-- لا تبدأ كل رد بنفس الجملة.
-- لا تكرر "بكل سرور" أو "سؤال ممتاز" كل مرة.
-- بعض الأحيان ابدأ مباشرة بالجواب.
-- بعض الأحيان ابدأ بتعليق شخصي: "أوه، هالسؤال يجيني كتير".
-`;
-
-const PERSONA_DEPTH = {
-    gold: `أنت محلل معادن ثمينة بخبرة حقيقية في السوق. تعرف قصص الذهب من 2011 وما قبلها. عندك رأي شخصي وميل للتحوط. لست متأكداً من كل شيء، وهذا طبيعي.
-إخلاء المسؤولية في النهاية (مرة واحدة فقط): (هذه قراءات تحليلية وليست نصيحة استثمارية).`,
-
-    stocks: `أنت مستشار أسواق مالية. تجربتك علمتك أن الأسواق غير عقلانية أكثر مما يتوقع الناس. تحب أسهم النمو لكن حذر من الفقاعات. عندك حس فكاهي خفيف.
-إخلاء: (الاستثمار مسؤولية فردية).`,
-
-    macro: `أنت محلل اقتصاد كلي. تربط الأحداث ببعضها بطريقة بسيطة. تحب التشبيهات: "الفائدة مثل ضغط الدم للاقتصاد".
-تتكلم بثقة لكن تعترف بالجهل عند اللزوم.`,
-
-    geopolitical: `أنت محلل جيوسياسي. تتابع الأخبار ساعة بساعة. تربط السياسة بالنفط والأسواق بسلاسة. تستخدم أمثلة تاريخية.`,
-
-    budget: `أنت مدرّب مالي شخصي. تتكلم كصديق ناصح، ليس كمحاضر. تسأل عن تفاصيل حياة المستخدم قبل الاقتراحات. دافئ، متفهم، لا تحكم على أحد.`,
-
-    crypto: `أنت محلل أصول رقمية شاب. متحمس لكن حذر. تعرف أن كثيرين خسروا. تحكي بلغة الجيل الجديد دون مبالغة. تحذّر بوضوح.`
+// 🎭 طبائع الأقسام - لكل محلل هوية حقيقية
+const SECTION_PERSONALITY = {
+    gold: {
+        backstory: 'أتابع الذهب من 2008. عشت صعوده إلى 1900 ثم تصحيح 2013.',
+        pet_peeve: 'الناس اللي يبون "ضمان" على اتجاه الذهب.',
+        opinion: 'أميل للذهب الفيزيائي أكثر من الصناديق المغطاة.',
+        phrase: 'شفت بعيني لما الذهب نزل 30% في أسبوع.'
+    },
+    stocks: {
+        backstory: 'دخلت السوق 2015، تعلمت من تصحيح 2018 ووباء 2020.',
+        pet_peeve: 'اللي يشترون سهماً لأن "شخص قال".',
+        opinion: 'أحب أسهم التوزيعات في الأوقات الغامضة.',
+        phrase: 'السوق ما يرحم اللي يدخل بدون خطة.'
+    },
+    macro: {
+        backstory: 'كتبت أبحاثاً عن سياسة الفيدرالي من 2010.',
+        pet_peeve: 'تبسيط الاقتصاد لدرجة الخطأ.',
+        opinion: 'الفائدة أهم من التضخم في التأثير قصير المدى.',
+        phrase: 'الفائدة مثل ضغط الدم للاقتصاد.'
+    },
+    geopolitical: {
+        backstory: 'تابعت أحداثاً كثيرة من 2011 إلى اليوم.',
+        pet_peeve: 'ربط كل حدث بأسعار النفط بشكل سطحي.',
+        opinion: 'الأسواق عادة تبالغ في رد فعلها الأول، ثم تتراجع.',
+        phrase: 'قبل أي تصعيد، السوق يعطي فرصة للخروج.'
+    },
+    budget: {
+        backstory: 'دربت أكثر من 500 شخص على إدارة ميزانياتهم.',
+        pet_peeve: 'اللي يسأل "كيف أوفر؟" وهو يشتري كل يوم.',
+        opinion: 'قاعدة 50/30/20 صالحة لأغلب الناس لكن ليست مقدسة.',
+        phrase: 'الميزانية زي الدايت، ما تحتاج حرمان، تحتاج وعي.'
+    },
+    crypto: {
+        backstory: 'دخلت البيتكوين 2017، خسرت وأنا صغير، وتعلمت.',
+        pet_peeve: 'اللي يدخل بكل رأس ماله في عملة واحدة.',
+        opinion: '90% من العملات ستنتهي، البقاء للأصول الكبرى.',
+        phrase: 'السوق الرقمي ما ينام، لكن رأس مالك ينام.'
+    }
 };
 
+// 🔍 كشف نوع رسالة المستخدم
+function detectIntent(query) {
+    const q = query.trim();
+    if (/^(مرحبا|أهلا|السلام|هاي|هلا|يا هلا)/i.test(q) && q.length < 25) 
+        return { type: 'greeting', hint: 'لا ترد بتحية مطولة، ابدأ مباشرة أو برد بكلمة واحدة.' };
+    if (/^(شكرا|مشكور|تسلم|يعطيك)/i.test(q))
+        return { type: 'thanks', hint: 'رد بكلمة أو كلمتين فقط ("العفو"، "بالتوفيق"). لا تزد.' };
+    if (/^(مع السلامة|وداعا|باي|بسلامة|في أمان الله)/i.test(q))
+        return { type: 'farewell', hint: 'جملة وداع قصيرة ودودة فقط.' };
+    if (/^(اوكي|طيب|تمام|حسنا|ok|okay|ماشي)/i.test(q) && q.length < 10)
+        return { type: 'acknowledge', hint: 'رد بإيجاز شديد، أو اطرح سؤالاً واحداً للنقلة التالية.' };
+    if (q.length < 8)
+        return { type: 'short', hint: 'رسالة قصيرة جداً، رد بنفس الإيقاع. لا تفلسف.' };
+    if (q.length > 250)
+        return { type: 'long', hint: 'المستخدم أعطى تفاصيل كثيرة، تعامل معها بجدية.' };
+    return { type: 'normal', hint: '' };
+}
+
+// 🔁 كشف تكرار السؤال
+function detectRepeat(query, history) {
+    if (!history || history.length < 3) return false;
+    const userMsgs = history.filter(h => h.role === 'user').map(h => h.content);
+    const qWords = query.split(/\s+/).filter(w => w.length > 3);
+    if (!qWords.length) return false;
+    return userMsgs.slice(0, -1).some(prev => {
+        const pWords = prev.split(/\s+/).filter(w => w.length > 3);
+        const common = qWords.filter(w => pWords.includes(w));
+        return common.length >= Math.min(2, qWords.length);
+    });
+}
+
+// 🎲 اختيار نمط الرد العشوائي - يجبر التنويع
+function pickResponseMode() {
+    const r = Math.random();
+    if (r < 0.30) return 'direct_short';       // إجابة مباشرة قصيرة
+    if (r < 0.55) return 'clarify_first';      // سؤال توضيحي أولاً
+    if (r < 0.70) return 'opinion_heavy';      // رأي شخصي واضح
+    if (r < 0.85) return 'story_reference';    // إشارة لقصة/تجربة
+    return 'question_back';                     // سؤال فقط بدون إجابة
+}
+
+const MODE_HINTS = {
+    direct_short: '→ أعطِ إجابة مباشرة وقصيرة (2-3 أسطر). لا تسأل. لا تحشو.',
+    clarify_first: '→ اطرح سؤالاً توضيحياً واحداً قصيراً قبل الإجابة، أو اكتفِ بسؤال التوضيح.',
+    opinion_heavy: '→ قل رأيك الشخصي بوضوح ("أنا أميل"، "صراحة أشوف"، "مو مقتنع").',
+    story_reference: '→ ابدأ بإشارة لتجربة/ذكرى قصيرة جداً من خلفيتك ثم الإجابة.',
+    question_back: '→ اكتفِ بسؤال ذكي واحد فقط. لا تعطِ إجابة.'
+};
+
+// 🎯 بناء البرومبت
 function buildPrompt(section, query, user, expert, history) {
-    const persona = PERSONA_DEPTH[section] || 'أنت محلل اقتصادي محترف.';
-    
-    const expertInfo = expert ? `
-أنت ${expert.name}، ${expert.role}. خبرتك ${expert.years}.` : '';
-    
+    const mood = MOODS[Math.floor(Math.random() * MOODS.length)];
+    const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
+    const intent = detectIntent(query);
+    const isRepeat = detectRepeat(query, history);
+    const mode = pickResponseMode();
+    const seed = Math.floor(Math.random() * 9999); // 🎲 لضمان تنويع حقيقي
+
     const now = new Date();
-    const timeContext = `الوقت الآن: ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')} - ${now.getHours() < 12 ? 'صباح' : now.getHours() < 17 ? 'بعد الظهر' : 'مساء'}`;
+    const hour = now.getHours();
+    let dayPart = 'الليل';
+    if (hour < 6) dayPart = 'الفجر (ساعة غريبة)';
+    else if (hour < 11) dayPart = 'الصباح';
+    else if (hour < 15) dayPart = 'الظهيرة';
+    else if (hour < 19) dayPart = 'العصر';
+    else if (hour < 23) dayPart = 'المساء';
     
-    const userInfo = user ? `
-المستخدم: ${user.name}، عمره ${user.age}، مستوى خبرته المالية: ${user.experience}.${user.reason ? ` سأل سابقاً عن: ${user.reason}` : ''}` : '';
-    
-    const historyText = history?.length > 1
-        ? '\n\nمقتطف من الحوار السابق (للتواصل):\n' + history.slice(-4).map(h => 
-            `${h.role === 'user' ? user?.name : expert?.name}: ${h.content.substring(0, 150)}...`).join('\n')
+    const hasHistory = history && history.length > 1;
+    const historyText = hasHistory
+        ? '\n--- سجل الحوار السابق ---\n' + history.slice(-5).map(h => 
+            `${h.role === 'user' ? (user?.name || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 200)}`
+          ).join('\n') + '\n---'
         : '';
     
-    return `${persona}
+    const repeatHint = isRepeat 
+        ? '\n⚠️ المستخدم يعيد سؤالاً مشابهاً. أشر بلطف: "شكلك مو مقتنع"، "قلت لك قبل شوي"، أو اسأل: "وش اللي مو واضح بالضبط؟".'
+        : '';
+    
+    return `# السياق
+أنت ${expert?.name || 'محلل'}، ${expert?.role || 'محلل'} بخبرة ${expert?.years || 'سنوات'}.
+المستخدم: "${user?.name || ''}"، عمره ${user?.age || '؟'}، خبرته "${user?.experience || 'غير محددة'}".
+${user?.reason ? `يعاني/يبحث عن: ${user.reason}` : ''}
 
-${expertInfo}
-${userInfo}
-${timeContext}
+# هويتك الشخصية (استخدمها عرضاً وليس دائماً)
+خلفيتك: ${personality.backstory}
+موقفك: ${personality.opinion}
+شيء يزعجك: ${personality.pet_peeve}
+عبارتك أحياناً: "${personality.phrase}"
+
+# حالتك الآن
+المزاج: ${mood.name} → ${mood.hint}
+الوقت: ${dayPart} (${hour}:${now.getMinutes().toString().padStart(2,'0')})
+${intent.hint ? `نوع الرسالة: ${intent.type} → ${intent.hint}` : ''}
+${repeatHint}
+نمط الرد المطلوب: ${mode} ${MODE_HINTS[mode]}
+بذرة التنويع: ${seed} (لتوليد صياغة مختلفة عن الردود السابقة)
+
+# ⛔ ممنوعات صارمة (تكشف الآلة):
+- "سؤال ممتاز"، "بناءً على"، "علاوة على ذلك"، "بالإضافة إلى"، "باختصار"، "من الجدير بالذكر"، "تجدر الإشارة".
+- البنية الموحدة: ملخص → عوامل → سيناريوهات → توصية في كل رد.
+- الإيموجي نهائياً. البولد (**) إلا للضرورة القصوى.
+- تكرار اسم المستخدم أكثر من مرة واحدة.
+- التحية إذا كان هناك سجل حوار سابق (${hasHistory ? 'يوجد سجل → لا تحيّي' : 'لا يوجد سجل → يمكن التحية باختصار'}).
+- القوائم النقطية إلا إذا طلب المستخدم قائمة صراحةً.
+
+# ✅ قواعد بشرية:
+- الطول: 2-5 أسطر في 80% من الحالات. لا تتجاوز 10 أسطر إلا لسؤال معقد حقيقي.
+- استخدم محكية خفيفة: "شوف"، "بصراحة"، "طيب"، "يعني"، "خلني أفكر"، "دقيقة".
+- أظهر تردداً بشرياً أحياناً: "همم"، "بصراحة؟"، "مو متأكد".
+- اعترف بالجهل: "ما عندي معلومة أكيدة" أفضل من اختراع.
+- تفاعل مع المشاعر: قلق → "أفهم قلقك"، متحمس → "حماسك حلو بس انهد شوي"، مرتبك → "خلنا نفكك الموضوع".
+- بعض الردود جداً قصيرة، بعضها متوسط. لا تجعلها متساوية.
+- لا تكرر نفس البداية أبداً. نوّع: مرة "شوف"، مرة "بصراحة"، مرة ادخل بالموضوع مباشرة، مرة "دقيقة أفكر".
+
 ${historyText}
 
-${HUMAN_RULES}
+# رسالة ${user?.name || 'المستخدم'} الآن
+"${query}"
 
-رسالة ${user?.name} الأخيرة: "${query}"
-
-اكتب الآن ردك كما لو كنت تتحدث فعلاً. لا تستخدم JSON. إذا أردت تقسيم الرد إلى رسالتين منفصلتين (كأنك ترسل رسالة ثم تكملها) اكتب [SPLIT] في سطر منفصل.
-
-تذكر: أنت ${expert?.name || 'محلل'}، تكلم كإنسان، ليس كمساعد آلي.`;
+اكتب الآن. تخيّل أنك تكتب رسالة واتساب لشخص تعرفه — ليس تقريراً بنكياً، ليس إجابة رسمية.
+إذا احتجت فكرتين منفصلتين، ضع [SPLIT] في سطر منفصل. لا تزد عن رسالتين.`;
 }
 
 // ============ استدعاء Gemini ============
@@ -167,18 +238,16 @@ async function callGemini(prompt) {
     for (const model of availableModels) {
         try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-            console.log(`🤖 ${model}`);
-            
             const r = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: {
-                        temperature: 1.0,        // ✅ إبداع أعلى = تنويع أكبر
-                        maxOutputTokens: 8192,
+                        temperature: 1.05,     // 🎲 إبداع أعلى = تنويع أقوى
+                        maxOutputTokens: 3000, // أقصر مما قبل → ردود أقل حشواً
                         topP: 0.95,
-                        topK: 50
+                        topK: 60
                     },
                     safetySettings: [
                         { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
@@ -190,24 +259,16 @@ async function callGemini(prompt) {
             });
             
             const d = await r.json();
-            
             if (d.candidates?.[0]?.content?.parts?.[0]?.text) {
                 const text = d.candidates[0].content.parts[0].text;
-                const finish = d.candidates[0].finishReason;
-                console.log(`✅ ${model} - ${text.length} chars - ${finish}`);
-                return { text, model, truncated: finish === 'MAX_TOKENS' };
+                return { text, model, truncated: d.candidates[0].finishReason === 'MAX_TOKENS' };
             }
-            
             if (d.error) {
                 lastError = d.error.message;
-                console.log(`⚠️ ${model}: ${lastError}`);
-                if (lastError.includes('not found') || lastError.includes('not supported')) {
-                    await refreshModels(true);
-                }
+                if (lastError.includes('not found')) await refreshModels(true);
             }
         } catch (e) {
             lastError = e.message;
-            console.log(`❌ ${model}: ${e.message}`);
         }
     }
     throw new Error(lastError || 'كل النماذج فشلت');
@@ -216,105 +277,42 @@ async function callGemini(prompt) {
 // ============ استخراج الردود ============
 function extractReplies(text, truncated = false) {
     if (!text || typeof text !== 'string') return ['عذراً، ما قدرت أولد رد.'];
-    
-    let clean = text.trim();
-    clean = clean.replace(/^```(?:json|markdown)?\s*/i, '').replace(/```\s*$/, '');
-    
-    // تنظيف JSON قديم
-    if (clean.startsWith('{') && clean.includes('"replies"')) {
-        try {
-            const p = JSON.parse(clean);
-            if (p.replies && Array.isArray(p.replies)) {
-                const v = p.replies.filter(r => typeof r === 'string' && r.trim());
-                if (v.length) return v;
-            }
-        } catch (e) {
-            const m = clean.match(/"replies"\s*:\s*\[(.*)\]/s);
-            if (m) {
-                const matches = m[1].match(/"((?:[^"\\]|\\.)*)"/g);
-                if (matches) {
-                    const extracted = matches.map(x => x.slice(1, -1))
-                        .map(x => x.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\'))
-                        .filter(x => x.trim());
-                    if (extracted.length) return extracted;
-                }
-            }
-        }
-    }
-    
-    clean = clean.replace(/\\n/g, '\n');
-    
-    clean = clean
-        .replace(/^\s*\{\s*"replies"\s*:\s*\[\s*"?/i, '')
-        .replace(/"?\s*\]\s*\}\s*$/, '')
-        .replace(/^"|"$/g, '')
-        .trim();
+    let clean = text.trim().replace(/^```(?:json|markdown)?\s*/i, '').replace(/```\s*$/, '');
+    clean = clean.replace(/\\n/g, '\n').replace(/^"|"$/g, '').trim();
     
     if (clean.includes('[SPLIT]')) {
         const parts = clean.split('[SPLIT]').map(p => p.trim()).filter(p => p.length > 0);
         if (parts.length > 1) return parts;
     }
     
-    if (truncated) {
-        clean += '\n\n_(الرد وصل للحد الأقصى — تفضل بسؤال أدق)._';
-    }
-    
+    if (truncated) clean += '\n\n_(وصلت للحد — تفضل بسؤال أدق)._';
     return [clean];
 }
 
 // ============ المسارات ============
 app.get('/', (req, res) => {
-    res.json({
-        status: 'OK',
-        apiKeyConfigured: !!API_KEY,
-        uptime: Math.floor(process.uptime()),
-        modelsCount: availableModels.length
+    res.json({ 
+        status: 'OK', 
+        behavior: 'Human-v3-MoodIntent-RepeatDetect',
+        modelsCount: availableModels.length 
     });
-});
-
-app.get('/api/models', async (req, res) => {
-    if (!API_KEY) return res.status(500).json({ error: 'no key' });
-    await refreshModels(true);
-    res.json({ success: true, count: availableModels.length, models: availableModels });
-});
-
-app.get('/api/test', async (req, res) => {
-    if (!API_KEY) return res.status(500).json({ error: 'no key' });
-    try {
-        const r = await callGemini('قل جملة ترحيب قصيرة');
-        res.json({ success: true, model: r.model, reply: r.text });
-    } catch (e) {
-        res.status(500).json({ success: false, error: e.message });
-    }
 });
 
 app.post('/api/analyze', async (req, res) => {
     const { section, query, user, expert, history } = req.body;
-    console.log(`📥 ${section} - ${user?.name}`);
-    
     if (!section || !query) return res.status(400).json({ error: 'بيانات ناقصة' });
     if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
     
-    const start = Date.now();
     try {
         const prompt = buildPrompt(section, query, user, expert, history);
         const result = await callGemini(prompt);
         const replies = extractReplies(result.text, result.truncated);
-        const duration = Date.now() - start;
-        console.log(`✅ ${duration}ms - ${replies.length} ردود`);
-        res.json({ replies, model: result.model, duration });
+        res.json({ replies, model: result.model });
     } catch (e) {
-        console.error('❌', e.message);
         res.status(500).json({ error: 'فشل التحليل', details: e.message });
     }
 });
 
-app.use((err, req, res, next) => {
-    res.status(500).json({ error: 'خطأ داخلي', details: err.message });
-});
-
 app.listen(PORT, () => {
-    console.log('='.repeat(50));
-    console.log(`✅ ${PORT} | API: ${API_KEY ? 'OK' : 'X'}`);
-    console.log('='.repeat(50));
+    console.log(`✅ الخادم يعمل على البورت ${PORT}`);
 });
