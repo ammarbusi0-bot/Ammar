@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>محول الويب إلى تطبيقات PWA و Android</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -12,28 +12,32 @@
     --text-color:#f8fafc; --border-color:#334155;
 }
 * { box-sizing:border-box; margin:0; padding:0; font-family:system-ui,-apple-system,sans-serif; }
-body { background:var(--bg-color); color:var(--text-color); height:100vh; overflow:hidden; }
-.app-container { display:grid; grid-template-columns:1fr 400px; height:100vh; }
-.editor-section { padding:20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; }
+body { background:var(--bg-color); color:var(--text-color); min-height:100vh; }
+.app-container { display:grid; grid-template-columns:1fr 400px; gap:16px; padding:16px; min-height:100vh; }
+.editor-section {
+    padding:20px; background:var(--panel-bg); border-radius:12px;
+    display:flex; flex-direction:column; gap:15px;
+}
 .config-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .input-group { display:flex; flex-direction:column; gap:5px; }
 .input-group label { font-size:0.85rem; color:#94a3b8; }
 input[type="text"], input[type="color"] {
-    padding:8px 12px; background:var(--panel-bg); border:1px solid var(--border-color);
+    padding:8px 12px; background:#0f172a; border:1px solid var(--border-color);
     color:white; border-radius:6px; width:100%;
 }
 input[type="color"] { height:38px; cursor:pointer; }
-.code-editors { display:flex; flex-direction:column; gap:10px; flex-grow:1; }
+.code-editors { display:flex; flex-direction:column; gap:10px; }
 textarea {
-    width:100%; height:120px; background:#090d16; color:#38bdf8;
+    width:100%; height:110px; background:#090d16; color:#38bdf8;
     border:1px solid var(--border-color); border-radius:6px;
     padding:10px; font-family:monospace; font-size:0.9rem; resize:vertical;
 }
-.actions { display:flex; gap:10px; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:auto; }
 .btn {
-    flex:1; padding:12px; border:none; border-radius:6px; font-weight:bold;
-    cursor:pointer; transition:0.2s; display:flex; align-items:center;
-    justify-content:center; gap:8px; font-size:0.95rem;
+    flex:1; min-width:140px; padding:12px; border:none; border-radius:6px;
+    font-weight:bold; cursor:pointer; transition:0.2s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-size:0.95rem;
 }
 .btn:disabled { opacity:0.6; cursor:not-allowed; }
 .btn-pwa { background:#10b981; color:white; }
@@ -41,7 +45,7 @@ textarea {
 .btn-android { background:var(--accent-color); color:white; }
 .btn-android:hover:not(:disabled) { background:#4f46e5; }
 .preview-section {
-    background:#020617; border-right:1px solid var(--border-color);
+    background:#020617; border-radius:12px;
     display:flex; align-items:center; justify-content:center; padding:20px;
 }
 .phone-frame {
@@ -55,6 +59,30 @@ textarea {
     font-size:0.75rem; color:white;
 }
 iframe { width:100%; height:calc(100% - 28px); border:none; background:white; }
+
+/* ================== الجوال ================== */
+@media (max-width: 900px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        padding:10px;
+    }
+    .preview-section {
+        order:-1;             /* المعاينة تظهر في الأعلى */
+        padding:12px;
+    }
+    .phone-frame {
+        width:100%;
+        max-width:300px;
+        height:520px;
+    }
+    .editor-section { padding:14px; }
+    .config-grid { grid-template-columns:1fr; }
+    textarea { height:130px; font-size:16px; }  /* 16px لمنع تكبير Safari التلقائي */
+    input[type="text"] { font-size:16px; }
+    .actions { flex-direction:column; }
+    .btn { width:100%; padding:14px; }
+    h2 { font-size:1.1rem; }
+}
 </style>
 </head>
 <body>
@@ -102,12 +130,6 @@ button { padding: 10px 20px; background: #6366f1; color: white; border: none; bo
                 <span>12:00</span>
                 <span id="previewTitle">تطبيقي الرائع</span>
             </div>
-            <!--
-                sandbox="allow-scripts allow-modals" مقصود:
-                - يسمح بتشغيل JS و alert/confirm/print
-                - يمنع allow-same-origin لتفادي هروب iframe من sandbox
-                - النتيجة: أكواد المستخدم معزولة بأمان (لا localStorage ولا DOM parent)
-            -->
             <iframe id="previewFrame"
                     sandbox="allow-scripts allow-modals"
                     referrerpolicy="no-referrer"></iframe>
