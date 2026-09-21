@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v13 "Human"
+ *  منصة استشارات forG — Strategy-Pro v15 "Human+ Handoff"
  *  ملف واحد + index.html (للـ Open Graph)
  *  
  *  التشغيل:
@@ -187,7 +187,8 @@ const COOLDOWNS = {
     bored:      15 * 60 * 1000,
     deep_close: 10 * 60 * 1000,
     rude:       30 * 60 * 1000,
-    wants_else: 12 * 60 * 1000
+    wants_else: 12 * 60 * 1000,
+    inactivity:  3 * 60 * 1000
 };
 
 function getUserKey(user, section) {
@@ -204,7 +205,8 @@ function getSession(userKey) {
             usedOpeners: [], cooldownUntil: 0, closeReason: null,
             rudeCount: 0, trollingCount: 0, offTopicStreak: 0, aiCloseAttempts: 0,
             nameUsageCount: 0, messagesSinceLastName: 0, lastMood: null,
-            energy: 1.0, lastResponseMode: null, topicsDiscussed: []
+            energy: 1.0, lastResponseMode: null, topicsDiscussed: [],
+            clarifyCount: 0
         });
     }
     return SESSIONS.get(userKey);
@@ -325,17 +327,21 @@ function detectEmotion(query) {
     return null;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   تحليل النية — v15
+   ═══════════════════════════════════════════════════════════════ */
 function analyzeIntent(q, history) {
     const trimmed = q.trim();
     const qLen = trimmed.length;
     const recentMsgs = (history || []).filter(h => h.role === 'user').map(h => h.content).slice(-6);
+    const hasHistory = (history || []).length > 1;
 
     const isAboutPlatform = /(المنصة|منصتكم|الموقع|موقعكم|الاقسام|الأقسام|اقسام|أقسام|المحللين|المحللون|فريقكم|المهنه|تخصصاتكم|كم قسم|وش عندكم|شو عندكم|ايش عندكم|ايش تقدمون|وش تقدمون|شو تقدمون|منو انتو|مين انتو|من انتم|وش تسوون|شو تسوون|ايش تسوون)/i.test(trimmed);
     const isAboutSelf = /(تخصصك|اختصاصك|مجالك|خبرتك|خلفيتك|من انت|من أنت|من تكون|اسمك|شو اسمك|وش اسمك|ايش اسمك|من وين|من أي بلد|تعريف عنك|حدثني عن نفسك|عرفني بنفسك|وش تخصصك|شو تخصصك|مين انت|مين أنت|عرّفني)/i.test(trimmed);
     const isSmallTalk = /^(كيف حالك|كيف حالكم|كيفك|كيف الحال|شلونك|شحالك|شو أخبارك|شخبارك|عامل ايه|كيف الأمور|شو عم تعمل|وش تسوي|ايش تسوي|كيف أمورك)[\s؟?]*$/i.test(trimmed);
     const isBotTest = /(هل انت انسان|هل انت إنسان|انت انسان ولا|انت بوت|هل انت بوت|انت روبوت|انت ذكاء اصطناعي|انت AI|هل انت AI|انت انسان حقيقي)/i.test(trimmed);
     const isGreeting = /^(مرحبا|مرحباً|أهلا|أهلاً|السلام عليكم|وعليكم السلام|هلا|يا هلا|صباح الخير|صباح النور|مساء الخير|مساء النور|hi|hello|hey|هاي)[\s!.,؟?]*$/i.test(trimmed) || (qLen < 20 && /(السلام عليكم|صباح الخير|مساء الخير)/i.test(trimmed));
-    const isFarewell = /^(مع السلامة|وداعا|وداعاً|باي|في أمان الله|بسلامة|تصبح على خير|الى اللقاء|إلى اللقاء)/i.test(trimmed) && qLen < 25;
+    const isFarewell = /^(مع السلامة|وداعا|وداعاً|باي|في أمان الله|بسلامة|تصبح على خير|الى اللقاء|إلى اللقاء)[\s؟?]*$/i.test(trimmed) && qLen < 25;
     const isThanks = /^(شكرا|شكراً|مشكور|مشكورة|تسلم|تسلمين|يعطيك العافية|جزاك الله|بارك الله)/i.test(trimmed) && qLen < 40;
     const isRude = /(غبي|أحمق|احمق|حمار|كلب|زبالة|تفو|قذر|خنزير|حقير|تافه|سافل|وقح)/i.test(trimmed);
     const isGibberish = /^[\s\W_]+$/.test(trimmed) || /(.)\1{4,}/.test(trimmed);
@@ -349,7 +355,7 @@ function analyzeIntent(q, history) {
         /(ابغى اسأل عن شي ثاني|أبغى أسأل عن شيء ثاني|ابي اسأل عن شي ثاني|خلنا نغير الموضوع|نغير الموضوع|ما هذا اللي ابيه|ما هذا اللي أبيه|هذا مو اللي ابيه|هذا مو اللي أبيه|مو هذا|ودني قسم|ودني على قسم|حولني|حولني على|ابغى قسم|أبغى قسم|ابي قسم|ما يخصني|مو مهتم|مو مهتمه|ما يهمني)/i.test(trimmed);
 
     const isOffTopic = !isAboutSelf && !isAboutPlatform && !isSmallTalk && !isBotTest &&
-        /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|طقس|سيارة|زواج|طلاق|انتخابات)/i.test(trimmed) &&
+        /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|سيارة|زواج|طلاق|انتخابات)/i.test(trimmed) &&
         !/(استثمار|مال|سوق|ذهب|سهم|عملة|تضخم|فائدة|ميزانية|محفظة|اقتصاد|بنك|تمويل|دخل|رأس مال|منصة|قسم|محلل)/i.test(trimmed);
 
     const wantsBrief = /(باختصار|اختصار|بسرعة|مختصر|لا تطول|لا تطل)/i.test(trimmed);
@@ -363,8 +369,16 @@ function analyzeIntent(q, history) {
     const isFollowUp = /^(واذا|وإذا|طيب و|و كيف|ولو|وماذا|وما|و بعدين|وبعدين|و بعد|ثم ماذا|و شنو|وش بعد|ايش بعد|ليش|ليه|why|and|then)[\s؟?]*/i.test(trimmed) ||
                        (qLen < 25 && /^(ليه|ليش|كيف|متى|وين|مين|شو|وش|ايش)[\s؟?]*$/i.test(trimmed));
 
+    const isGeneralQuestion = /^(كم الساعة|الساعة كم|كم الوقت|ايش الوقت|وش الوقت|شو الوقت|شو الساعة|ايش الساعه|وش الساعه|شو الساعه|كام الساعه|ايش التاريخ|وش التاريخ|كم التاريخ|ايش تاريخ اليوم|وش تاريخ اليوم|اليوم كم|كم اليوم|ايش اليوم|وش اليوم|شو اليوم|ايش الشهر|وش الشهر|كم الشهر|ايش السنه|وش السنه|ايش السنة|كم السنة|كم التاريخ اليوم|كيف الطقس|ايش الجو|وش الجو|شو الجو|ايش اليوم من الشهر|ايش الشهر الحالي|وش الشهر الحالي|ايش يومنا|وش يومنا|شو اليوم)[\s؟?.!]*$/i.test(trimmed);
+
+    const isUnclear = !hasHistory && qLen < 12 && /^(ايش|وش|شو|كيف|ليه|ليش|متى|وين|مين|هه|هاه|كيف يعني|شو يعني|ايش يعني|وش يعني)[\s؟?]*$/i.test(trimmed);
+
+    const isMetaQuestion = /^(انت مين|انت ايش|شو انت|وش انت|ايش انت|من انت|من أنت|انت منو|مين انت|مين أنت)[\s؟?]*$/i.test(trimmed) && !isAboutSelf;
+
+    const isCapabilityQuestion = /(تقدر تسوي|تقدر تجاوب|تعرف عن|عندك معلومات عن|عندك فكره عن|هل تعرف|هل تقدر)/i.test(trimmed);
+
     let lengthHint = 'medium';
-    if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest) lengthHint = 'very_short';
+    if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest || isGeneralQuestion || isMetaQuestion) lengthHint = 'very_short';
     else if (wantsBrief || isVeryShort) lengthHint = 'very_short';
     else if (isAboutPlatform) lengthHint = 'long';
     else if (isForecastRequest || isConsultationRequest) lengthHint = 'long';
@@ -373,6 +387,8 @@ function analyzeIntent(q, history) {
 
     let styleHint = 'default';
     if (isAboutPlatform) styleHint = 'platform_info';
+    else if (isGeneralQuestion) styleHint = 'general';
+    else if (isMetaQuestion) styleHint = 'meta';
     else if (isForecastRequest) styleHint = 'forecast';
     else if (isConsultationRequest) styleHint = 'consultation';
     else if (wantsSomethingElse) styleHint = 'redirect';
@@ -385,9 +401,12 @@ function analyzeIntent(q, history) {
         isGreeting, isFarewell, isThanks, isRude, isOffTopic,
         isAboutSelf, isAboutPlatform, isSmallTalk, isBotTest, wantsSomethingElse,
         isForecastRequest, isConsultationRequest, isFollowUp,
+        isGeneralQuestion, isUnclear, isMetaQuestion, isCapabilityQuestion,
         trollScore, lengthHint, styleHint, qLen,
         isDone: isThanks || isFarewell,
-        isSimple: isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest
+        isSimple: isGreeting || isFarewell || isThanks || isSmallTalk ||
+                  isBotTest || isGeneralQuestion || isMetaQuestion,
+        shouldClarify: isUnclear
     };
 }
 
@@ -536,7 +555,61 @@ function pickHumanTouch(mood, mode) {
     return null;
 }
 
-function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent) {
+/* ═══════════════════════════════════════════════════════════════
+   ⏱️ محاكاة التوقيت البشري — v15 (يدعم السياق)
+   ═══════════════════════════════════════════════════════════════ */
+function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
+    const qLen = (userQuery || '').length;
+
+    /* 1) وقت قراءة رسالة المستخدم */
+    let readingMs = Math.min(3500, 250 + qLen * 16) * (0.75 + Math.random() * 0.5);
+
+    /* عند handoff — المحلل الجديد لم يقرأ شيئاً بعد */
+    if (context.type === 'handoff') {
+        readingMs = 250 + Math.random() * 300;
+    }
+
+    /* عند return_after_gap — لم يرَ الرسالة القديمة أيضاً */
+    if (context.type === 'return_after_gap') {
+        readingMs = Math.min(readingMs, 1800);
+    }
+
+    /* 2) وقت التفكير */
+    let thinkingBase = 700;
+    if (persona.mode === 'detailed') thinkingBase = 2000;
+    else if (persona.mode === 'expanded') thinkingBase = 1400;
+    else if (persona.mode === 'terse') thinkingBase = 200;
+    else if (persona.mode === 'concise') thinkingBase = 450;
+    if (intent.isForecastRequest || intent.isConsultationRequest) thinkingBase += 900;
+    if (intent.isGeneralQuestion || intent.isSimple) thinkingBase = 150;
+
+    const hesitationMs = (persona.mode !== 'terse' && Math.random() < 0.35)
+        ? 400 + Math.random() * 900 : 0;
+
+    const thinkingMs = thinkingBase * (0.65 + Math.random() * 0.7) + hesitationMs;
+
+    /* 3) وقت الكتابة لكل رد */
+    const perReply = replies.map((r, i) => {
+        const chars = (r || '').length;
+        const typingMs = chars * (70 + Math.random() * 40);
+        const pauseBetween = i > 0 ? 350 + Math.random() * 800 : 0;
+        return Math.max(650, Math.min(12000, typingMs + pauseBetween));
+    });
+
+    const totalMs = readingMs + thinkingMs + perReply.reduce((a, b) => a + b, 0);
+
+    return {
+        delayMs: Math.round(totalMs),
+        readingMs: Math.round(readingMs),
+        thinkingMs: Math.round(thinkingMs),
+        perReply: perReply.map(Math.round)
+    };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   بناء البرومبت الكامل — v15 (يدعم السياق)
+   ═══════════════════════════════════════════════════════════════ */
+function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent, context = {}) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
     const sectionVocab = SECTION_VOCAB[section] || [];
@@ -572,6 +645,22 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         ? `\n# 💙 حالة المستخدم: ${emotion}\nابدأ بجملة تعاطف خفيفة: "${EMOTIONAL_REACTIONS[emotion]}"`
         : '';
 
+    /* 🆕 سياق خاص */
+    let contextSection = '';
+    if (context.type === 'handoff') {
+        contextSection = `\n# 🔄 سياق خاص — محادثة مستلمة
+أنت **توليت للتو** هذه المحادثة من زميل.
+- 🚫 لا تقل "كما قلت لك سابقاً" (لأنك أنت لم تقلها).
+- ✅ يمكنك البناء على ما قاله المستخدم.
+- ✅ عالج الرسالة مباشرة — لا تكرر ترحيباً طويلاً.`;
+    } else if (context.type === 'return_after_gap') {
+        const min = Math.floor((context.gapMs || 0) / 60000);
+        contextSection = `\n# ⏱️ عودة بعد غياب ~${min} دقيقة
+- أحياناً (~40%) ابدأ بعذر خفيف عن **نفسك**: "سامحني، كنت بعيد عن الجهاز" / "آسف على التأخير".
+- أحياناً لا تعتذر إطلاقاً — عالج الرسالة مباشرة.
+- 🚫 لا تعتذر عن شيء لم يحدث.`;
+    }
+
     const useName = shouldUseName(session, intent);
     const nameRule = useName
         ? `# 👤 الاسم — هذه المرة يُسمح به مرة واحدة فقط`
@@ -594,7 +683,7 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     if (intent.isConsultationRequest) {
         consultationMode = `\n# 💼 وضع الاستشارة
 - **إن كان النمط طويل:** سؤال تشخيصي + خطة بنسب + تحذير.
-- **إن كان قصير:** نصيحة واحدة عملية فقط.
+- **إن كان النمط قصير:** نصيحة واحدة عملية فقط.
 خبرة المستخدم: ${user?.experience || 'مبتدئ'}.`;
     }
 
@@ -638,11 +727,16 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         ? `\n# 🎭 لمسة بشرية مقترحة (${humanTouch.type})\n**استخدمها بأسلوبك أو تجاهلها — لا تكررها حرفياً.**\nمثال: "${humanTouch.text}"`
         : '';
 
-    const personalLine = personality.personalLines && Math.random() < 0.35 && persona.mode !== 'terse'
+    const personalLine = personality.personalLines
+        && Math.random() < 0.18
+        && (persona.mode === 'expanded' || persona.mode === 'detailed')
+        && !intent.isGeneralQuestion
+        && !intent.isMetaQuestion
+        && !intent.isSimple
         ? personality.personalLines[Math.floor(Math.random() * personality.personalLines.length)]
         : null;
     const personalLineRule = personalLine
-        ? `\n# 💬 جملة شخصية (اختياري)\nيمكنك الاستئناس بها: "${personalLine}"`
+        ? `\n# 💬 جملة شخصية (اختياري — استخدمها فقط إن كانت في صميم السؤال)\n"${personalLine}"`
         : '';
 
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
@@ -665,7 +759,7 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 - خلفيتك: ${personality.backstory}
 - موقفك: ${personality.opinion}
 - ما يزعجك: ${personality.pet_peeve}
-- عبارتك الثابتة: "${personality.phrase}"
+- موقفك المختصر (لا تكرره، استخدمه فقط لو كان في صميم السؤال): "${personality.phrase}"
 - سماتك: ${personality.quirks.join('، ')}
 ${personality.avoid ? `- تجنّب: ${personality.avoid}` : ''}
 
@@ -687,6 +781,7 @@ ${nameRule}
 - عدد الرسائل: ${session?.messageCount || 0}
 ${user?.reason ? `- سبب الزيارة: ${user.reason}` : ''}
 ${emotionHint}
+${contextSection}
 ${farewellRule}
 ${forecastMode}
 ${consultationMode}
@@ -726,6 +821,19 @@ ${lengthRule}
 - الإطالة في سؤال بسيط.
 - التقصير في سؤال يستحق تفصيلاً (إن كان مزاجك analytical).
 
+# 🎯 احترام نطاق السؤال — مهم جداً
+- **لا تُقحم معلومات** لم يسأل عنها المستخدم.
+- إذا سأل عن معلومة عامة (وقت/تاريخ/جو) → أجب فقط عن ذلك، بلا استطراد.
+- لا تذكر "خبرتك" أو "تجاربك" إلا إذا كانت في صميم السؤال.
+- إذا لم تفهم قصد المستخدم → **اسأل سؤالاً واحداً للتوضيح قبل الإجابة**.
+
+# 🤔 متى تسأل المستخدم؟
+- سؤال غامض أو قصير جداً؟ → اسأل توضيح.
+- محتاج معلومة ناقصة (دخلك، هدفك، المدة)؟ → اسأل.
+- الرد يعتمد على سياق مجهول؟ → اسأل.
+- ⛔ لا تسأل أكثر من سؤال واحد في الرد.
+- ⛔ لا تسأل لتطول الرد فقط.
+
 # 🚨 محظورات قاتلة
 - **تكرار الاسم في كل رد**
 - "خرجنا عن الموضوع" / "هذا ليس تخصصي"
@@ -748,24 +856,59 @@ ${persona.opener ? `# 💬 افتتاحية (اختيارية)\n"${persona.opene
 اكتب الرد مباشرة.`;
 }
 
-function buildLightPrompt(section, query, user, expert, history, dialectKey, session, intent, userGender) {
+/* ═══════════════════════════════════════════════════════════════
+   البرومبت الخفيف — v15 (يدعم السياق)
+   ═══════════════════════════════════════════════════════════════ */
+function buildLightPrompt(section, query, user, expert, history, dialectKey, session, intent, userGender, context = {}) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const safeQuery = sanitizeUserQuery(query);
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
 
-    let type = 'greeting';
-    if (intent.isFarewell) type = 'farewell';
-    else if (intent.isThanks) type = 'thanks';
-    else if (intent.isSmallTalk) type = 'smalltalk';
-    else if (intent.isBotTest) type = 'bottest';
+    const now = new Date();
+    const saudiHour = getSaudiHour(3);
+    const saudiMinute = now.getMinutes();
+    const timeStr = `${saudiHour}:${String(saudiMinute).padStart(2, '0')}`;
+    const dayPart = saudiHour < 6 ? 'الفجر' : saudiHour < 11 ? 'الصباح' : saudiHour < 15 ? 'الظهيرة' : saudiHour < 19 ? 'العصر' : saudiHour < 23 ? 'المساء' : 'الليل';
+    const dateStr = now.toLocaleDateString('ar-SA-u-nu-latn', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-    const guidance = {
-        greeting: 'رد بتحية مماثلة قصيرة. لا تكرر التحية إن كانت مكررة.',
-        farewell: 'جملة وداع قصيرة طبيعية. لا تطل.',
-        thanks: 'جملة قصيرة متواضعة. لا تبالغ.',
-        smalltalk: 'جملة قصيرة ودودة، ثم جملة قصيرة تعرض المساعدة.',
-        bottest: 'قل بوضوح: "أنا مستشارك هنا." ثم اسأل عن احتياجه بجملة واحدة.'
-    }[type];
+    let type = 'greeting';
+    let guidance = '';
+
+    if (intent.isFarewell) {
+        type = 'farewell';
+        guidance = 'جملة وداع قصيرة طبيعية. لا تطل.';
+    } else if (intent.isThanks) {
+        type = 'thanks';
+        guidance = 'جملة قصيرة متواضعة. لا تبالغ.';
+    } else if (intent.isSmallTalk) {
+        type = 'smalltalk';
+        guidance = 'جملة قصيرة ودودة، ثم جملة قصيرة تعرض المساعدة بشكل طبيعي.';
+    } else if (intent.isBotTest) {
+        type = 'bottest';
+        guidance = 'قل بثقة وبطبيعية: "أنا مستشارك هنا." ثم اسأل عن احتياجه بجملة واحدة. لا تبالغ.';
+    } else if (intent.isGeneralQuestion) {
+        type = 'general';
+        guidance = `السؤال عن معلومة عامة (وقت/تاريخ/جو).
+الوقت الآن: **${timeStr}** (${dayPart})
+التاريخ: ${dateStr}
+**أجب عن السؤال مباشرة بجملة أو جملتين فقط.**
+🚫 **ممنوع تماماً** ذكر تخصصك أو الذهب أو الاستثمار أو أي معلومة مالية.
+مثال: "الساعة الحين ${timeStr}، ${dayPart}."`;
+    } else if (intent.isMetaQuestion) {
+        type = 'meta';
+        guidance = 'عرّف عن نفسك بجملة أو جملتين قصيرتين فقط — اسمك وتخصصك. لا تُطل.';
+    } else {
+        type = 'greeting';
+        guidance = 'رد بتحية مماثلة قصيرة. لا تكرر التحية إن كانت مكررة.';
+    }
+
+    /* 🆕 سياق خاص */
+    let contextNote = '';
+    if (context.type === 'handoff') {
+        contextNote = '\n🔄 **ملاحظة:** أنت توليت هذه المحادثة للتو من زميل — عالج مباشرة.';
+    } else if (context.type === 'return_after_gap') {
+        contextNote = '\n⏱️ **ملاحظة:** المستخدم غاب فترة — أحياناً ابدأ بعذر خفيف.';
+    }
 
     return `أنت **${expert?.name || 'مستشار'}** من ${dialect.country} على "منصة استشارات forG".
 تتحدث **${dialect.name}** — ${dialect.tone}.
@@ -776,15 +919,19 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 <<<
 ${safeQuery}
 >>>
+${contextNote}
 
 # نوع الرسالة: ${type}
 ${guidance}
 
-# قواعد
-- جملة أو جملتان فقط.
-- لا إيموجي.
-- لا تكرر الاسم إلا في التحية الأولى.
-- **تحدث كإنسان، لا كروبوت.**
+# ⚠️ قواعد صارمة — لا تكسرها
+- جملة أو جملتان فقط — لا أكثر.
+- 🚫 **لا تُقحم تخصصك** (ذهب/أسهم/استثمار/اقتصاد) إن لم يسأل المستخدم عنها صراحة.
+- 🚫 **لا تستخدم عباراتك الشخصية المعتادة** هنا.
+- 🚫 لا إيموجي (واحد كحد أقصى فقط إن لزم).
+- 🚫 لا تكرر الاسم إلا في التحية الأولى.
+- ✅ تحدث كإنسان طبيعي، مختصر، ودود.
+- ✅ لو المستخدم سألك سؤالاً غامضاً، اسأله توضيح قصير بدل التخمين.
 
 اكتب الرد مباشرة:`;
 }
@@ -926,34 +1073,34 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ Endpoints — v13
+   ✅ Endpoints — v15
    ═══════════════════════════════════════════════════════════════ */
 
-// ✅ الجديد: يخدم index.html عند زيارة الرابط
 app.get('/', (req, res) => {
     if (fs.existsSync(HTML_FILE)) {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=300');
         return res.sendFile(HTML_FILE);
     }
-    // fallback — لو index.html غير موجود
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v13-human',
+        version: 'v15-human-plus-handoff',
         warning: 'index.html غير موجود — احفظ ملف HTML بجانب server.js',
         activeSessions: SESSIONS.size
     });
 });
 
-// معلومات المنصة JSON — endpoint منفصل
 app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v13-human',
+        version: 'v15-human-plus-handoff',
         features: ['human_response_modes', 'mood_based_length', 'energy_simulation',
-                   'rate_limit', 'light_prompt', 'arabic_normalize', 'og_meta'],
+                   'rate_limit', 'light_prompt', 'arabic_normalize', 'og_meta',
+                   'general_questions', 'clarify_first', 'human_timing',
+                   'no_scope_creep', 'context_awareness', 'handoff_endpoint',
+                   'context_type_support'],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size
     });
@@ -967,8 +1114,94 @@ app.post('/api/feedback', rateLimit, (req, res) => {
     res.json({ ok: true });
 });
 
+/* ═══════════════════════════════════════════════════════════════
+   🔄 NEW: Handoff — توليد ترحيب طبيعي من محلل جديد
+   ═══════════════════════════════════════════════════════════════ */
+app.post('/api/handoff', rateLimit, async (req, res) => {
+    const { section, newExpert, oldExpert, lastUserMsg, user, dialect, handoffCount } = req.body || {};
+    if (!section || !newExpert) return res.status(400).json({ error: 'بيانات ناقصة' });
+    if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
+
+    const userGender = detectUserGender(user?.firstName);
+    const safeLastMsg = sanitizeUserQuery(lastUserMsg || '');
+    const dialectData = DIALECTS[dialect] || DIALECTS[newExpert?.dialect] || DIALECTS.saudi;
+    const hour = getSaudiHour(3);
+    const isLateNight = hour >= 23 || hour < 6;
+    const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
+
+    const prompt = `أنت **${newExpert.name}**، ${newExpert.role}، خبرة ${newExpert.years}.
+تتحدث **${dialectData.name}** — ${dialectData.tone}. من ${dialectData.country}.
+على "منصة استشارات forG".
+
+# 🎯 السياق
+- أنت **توليت للتو** هذه المحادثة من زميلك ${oldExpert?.name ? `**${oldExpert.name}**` : 'الذي كان مسؤولاً عنها'}.
+- المستخدم: ${user?.firstName || 'مستخدم'} (${user?.country || 'غير محدد'}).
+${handoffCount > 0 ? `- هذا التحويل رقم ${handoffCount + 1} في هذه الجلسة.` : ''}
+${safeLastMsg ? `- آخر ما كتبه المستخدم: "${safeLastMsg.slice(0, 180)}"` : '- لا توجد رسائل سابقة — بداية جديدة.'}
+- الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}.
+
+${genderInstructions(userGender, user?.firstName || 'المستخدم')}
+
+# 📏 المطلوب
+**جملة إلى جملتين فقط** (لا أكثر). ترحيب طبيعي كما لو أنك استلمت ملف محادثة من زميل.
+- ✅ اذكر اسمك وتخصصك باختصار.
+- ✅ استخدم لهجتك (${dialectData.vocab.slice(0, 3).join('، ')}).
+- ✅ إن كانت آخر رسالة عن موضوع معين، أشِر إليه بكلمة واحدة (لا تفصّل).
+- 🚫 لا تكرر اسم الزميل السابق.
+- 🚫 لا تعتذر عن التأخير.
+- 🚫 لا تقل "تم تحويلي إليك" أو "استلمت المحادثة" مباشرة.
+- 🚫 لا إيموجي.
+
+# 🎨 نبرة اللهجة
+مثال: "${dialectData.example}"
+
+اكتب الرد مباشرة، بلا مقدمات.`;
+
+    try {
+        const result = await callGemini(prompt, 200);
+        const cleaned = (result.text || '').trim()
+            .replace(/^```(?:json|markdown)?\s*/i, '')
+            .replace(/```\s*$/, '')
+            .replace(/^"|"$/g, '')
+            .trim();
+
+        if (!cleaned) throw new Error('empty greeting');
+
+        const chars = cleaned.length;
+        const typingMs = chars * (70 + Math.random() * 30);
+        const totalMs = 500 + 300 + typingMs;
+
+        res.json({
+            replies: [cleaned],
+            newExpert,
+            handoffCount: handoffCount || 0,
+            timing: {
+                delayMs: Math.round(totalMs),
+                perReply: [Math.round(typingMs)],
+                readingMs: 500,
+                thinkingMs: 300
+            }
+        });
+    } catch (e) {
+        console.error('❌ handoff error:', e.message);
+        const fallback = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
+        res.json({
+            replies: [fallback],
+            newExpert,
+            fallback: true,
+            timing: { delayMs: 2000, perReply: [1500], readingMs: 300, thinkingMs: 200 }
+        });
+    }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   📩 Analyze — v15 (يدعم context)
+   ═══════════════════════════════════════════════════════════════ */
 app.post('/api/analyze', rateLimit, async (req, res) => {
     const { section, query, user, expert, history, dialect } = req.body;
+    const context = req.body.context || {};
+    const contextType = context.type || 'normal';
+
     if (!section || !query) return res.status(400).json({ error: 'بيانات ناقصة' });
     if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
 
@@ -997,6 +1230,8 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         session.nameUsageCount++;
     }
 
+    if (intent.shouldClarify) session.clarifyCount = (session.clarifyCount || 0) + 1;
+
     if (intent.styleHint && intent.styleHint !== 'default' && !session.topicsDiscussed.includes(intent.styleHint)) {
         session.topicsDiscussed.push(intent.styleHint);
         if (session.topicsDiscussed.length > 10) session.topicsDiscussed.shift();
@@ -1004,8 +1239,8 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
 
     try {
         const prompt = intent.isSimple
-            ? buildLightPrompt(section, query, user, expert, history, dialect || 'saudi', session, intent, userGender)
-            : buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender, session, intent);
+            ? buildLightPrompt(section, query, user, expert, history, dialect || 'saudi', session, intent, userGender, context)
+            : buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender, session, intent, context);
 
         const maxTokens = intent.isSimple ? 300 : (persona.mode === 'detailed' ? 4000 : persona.mode === 'expanded' ? 2500 : 1500);
         const result = await callGemini(prompt, maxTokens);
@@ -1014,15 +1249,8 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         const replies = splitIntoChunks(cleaned, persona.mode);
         const closeDecision = shouldClose(intent, history, session, aiCloseReason);
 
-        const replyDelays = replies.map((r, i) => {
-            const base = r.length * (persona.mode === 'terse' ? 55 : 42);
-            const jitter = base * 0.45 * (Math.random() - 0.5);
-            const thinkPenalty = i === 0 ? 900 + Math.random() * 1200 : 0;
-            return Math.max(1100, Math.min(9500, base + jitter + thinkPenalty));
-        });
-        const totalDelayMs = replyDelays.reduce((a, b) => a + b, 0);
-        const readThinkMs = persona.mode === 'terse' ? 700 + Math.random() * 800 : 900 + Math.random() * 1800;
-        const overallDelayMs = Math.round(totalDelayMs + readThinkMs);
+        /* ⏱️ توقيت بشري يدعم السياق */
+        const timing = computeReplyTiming(replies, persona, query, intent, context);
 
         const response = {
             replies,
@@ -1034,8 +1262,12 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
             userGender,
             emotion: detectEmotion(query),
             usedNameThisReply: useNameThisReply,
+            askingBack: !!intent.shouldClarify,
+            context: { type: contextType, gapMs: context.gapMs || 0 },
             intent: {
                 type: intent.wantsSomethingElse ? 'wants_else'
+                    : intent.isGeneralQuestion ? 'general'
+                    : intent.isMetaQuestion ? 'meta'
                     : intent.isAboutPlatform ? 'aboutplatform'
                     : intent.isGreeting ? 'greeting'
                     : intent.isSmallTalk ? 'smalltalk'
@@ -1052,12 +1284,17 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
                 lengthHint: intent.lengthHint,
                 styleHint: intent.styleHint,
                 aiRequestedClose: !!aiCloseReason,
-                usedLightPrompt: intent.isSimple
+                usedLightPrompt: intent.isSimple,
+                isGeneralQuestion: intent.isGeneralQuestion,
+                isMetaQuestion: intent.isMetaQuestion,
+                shouldClarify: intent.shouldClarify
             },
             replyCount: replies.length,
             timing: {
-                delayMs: overallDelayMs,
-                perReply: replyDelays.map(Math.round)
+                delayMs: timing.delayMs,
+                perReply: timing.perReply,
+                readingMs: timing.readingMs,
+                thinkingMs: timing.thinkingMs
             }
         };
 
@@ -1081,10 +1318,15 @@ process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', 
 process.on('uncaughtException', (err) => console.error('Uncaught exception:', err));
 
 app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG — v13 Human — البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — v15 Human+ Handoff — البورت ${PORT}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود — أضفه بجانب server.js'}`);
     console.log(`🎭 18 مزاج × 5 أنماط رد = تنوع بشري`);
-    console.log(`⚡ برومبت خفيف للرسائل البسيطة`);
+    console.log(`⚡ برومبت خفيف للرسائل البسيطة والعامة`);
+    console.log(`⏱️  توقيت بشري ثلاثي: قراءة + تفكير + كتابة`);
+    console.log(`🎯 كشف النطاق: أسئلة عامة لا تُقحم التخصص`);
+    console.log(`🤔 منطق "اسأل قبل تجيب" للأسئلة الغامضة`);
+    console.log(`🔄 NEW: /api/handoff — ترحيب ديناميكي من محلل جديد`);
+    console.log(`🎯 NEW: context-aware prompts (handoff / return_after_gap)`);
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`👤 ${FEMALE_NAMES.size + MALE_NAMES.size} اسم مدعوم`);
     console.log(`🔋 طاقة ديناميكية حسب الوقت`);
