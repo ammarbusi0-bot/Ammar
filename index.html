@@ -119,6 +119,7 @@
     }
     button { font-family: inherit; }
 
+    /* ═══════════════ شاشة البداية ═══════════════ */
     #splash {
         position: fixed; inset: 0;
         background: radial-gradient(circle at 30% 20%, #102b4e 0%, #0a1628 45%, #030912 100%);
@@ -208,6 +209,60 @@
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .splash-msg { color: var(--accent-soft); font-size: 13.5px; min-height: 24px; opacity: 0.9; position: relative; z-index: 2; letter-spacing: 0.2px; }
+
+    /* ═══════════════ زر البدء ═══════════════ */
+    #startBtn {
+        display: none;
+        margin-top: 24px; padding: 15px 48px;
+        border: none; border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 50%, var(--accent) 100%);
+        background-size: 200% auto;
+        color: #0a1628; font-weight: 800; font-size: 16px;
+        font-family: inherit; letter-spacing: 0.5px;
+        cursor: pointer; position: relative; z-index: 5;
+        box-shadow:
+            0 14px 38px rgba(212,175,55,0.5),
+            0 4px 12px rgba(212,175,55,0.35),
+            inset 0 2px 0 rgba(255,255,255,0.5);
+        transition: all 0.4s var(--ease-smooth);
+        animation: startBtnPulse 2.2s ease-in-out infinite;
+    }
+    #startBtn:hover {
+        transform: translateY(-3px) scale(1.04);
+        background-position: 200% center;
+        box-shadow:
+            0 20px 50px rgba(212,175,55,0.65),
+            0 6px 16px rgba(212,175,55,0.45),
+            inset 0 2px 0 rgba(255,255,255,0.6);
+    }
+    #startBtn:active { transform: translateY(-1px) scale(1.01); }
+    #splash.waiting #startBtn { display: inline-block; }
+    @keyframes startBtnPulse {
+        0%,100% { box-shadow: 0 14px 38px rgba(212,175,55,0.5), 0 4px 12px rgba(212,175,55,0.35), inset 0 2px 0 rgba(255,255,255,0.5); }
+        50% { box-shadow: 0 18px 46px rgba(212,175,55,0.75), 0 6px 18px rgba(212,175,55,0.5), inset 0 2px 0 rgba(255,255,255,0.6); }
+    }
+
+    /* ═══════════════ زر كتم/تشغيل الموسيقى ═══════════════ */
+    #musicToggle {
+        position: fixed; top: 78px; left: 16px;
+        width: 42px; height: 42px; border-radius: 50%;
+        background: rgba(10,22,40,0.85); backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1.5px solid rgba(212,175,55,0.4);
+        color: var(--accent-soft); font-size: 17px;
+        display: none; align-items: center; justify-content: center;
+        cursor: pointer; z-index: 998;
+        transition: all 0.35s var(--ease-bounce);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 0 0 3px rgba(212,175,55,0.08);
+    }
+    #musicToggle.show { display: flex; animation: fadeIn 0.6s var(--ease-smooth); }
+    #musicToggle:hover {
+        transform: scale(1.12) rotate(-6deg);
+        border-color: var(--accent);
+        box-shadow: 0 8px 24px rgba(212,175,55,0.35), 0 0 0 4px rgba(212,175,55,0.15);
+    }
+    #musicToggle.muted { color: #94a3b8; border-color: rgba(148,163,184,0.4); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     header {
         background: linear-gradient(135deg, rgba(5,13,24,0.98) 0%, rgba(15,37,64,0.98) 55%, rgba(10,22,40,0.98) 100%);
@@ -895,6 +950,7 @@
         header h1 .brand { font-size: 15px; padding: 2px 8px; }
         header p { font-size: 11px; }
         .theme-toggle { width: 38px; height: 38px; font-size: 16px; left: 12px; }
+        #musicToggle { top: 68px; left: 12px; width: 38px; height: 38px; font-size: 15px; }
         #messages { padding: 20px 12px; max-height: 58vh; }
         .grid { grid-template-columns: 1fr; gap: 14px; }
         .chat-header { padding: 12px 14px; }
@@ -911,10 +967,25 @@
         .return-btn { padding: 14px 30px; font-size: 14px; }
         .input-area { padding: 12px; }
         .send-btn { width: 46px; height: 46px; font-size: 18px; }
+        .splash-logo { width: 100px; height: 100px; font-size: 50px; }
+        .splash-title { font-size: 24px; }
+        .splash-title .brand { font-size: 18px; padding: 2px 8px; }
+        #startBtn { padding: 13px 38px; font-size: 15px; }
     }
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════
+     🎵 عنصر الموسيقى (يقرأ الصوت من ملف MP4 في GitHub)
+     ⚠️ استبدل الرابط أدناه برابط ملفك الحقيقي
+     ═══════════════════════════════════════════════════════ -->
+<audio id="bgMusic" loop preload="auto" playsinline crossorigin="anonymous">
+    <source src="https://raw.githubusercontent.com/USERNAME/REPO/main/VID_20260921_231229_590.mp4" type="audio/mp4">
+</audio>
+
+<!-- زر كتم/تشغيل الموسيقى -->
+<button id="musicToggle" onclick="toggleMusic()" title="تشغيل/كتم الموسيقى" aria-label="الموسيقى">🎵</button>
 
 <div id="splash">
     <div class="splash-logo">💼</div>
@@ -922,6 +993,7 @@
     <div class="splash-sub">نخبة من المحللين العرب — استشارات بلهجات محلية</div>
     <div class="splash-progress"><div class="splash-fill" id="splashFill"></div></div>
     <div class="splash-msg" id="splashMsg">جاري تجهيز بيئة العمل...</div>
+    <button id="startBtn" onclick="onStartClick()">ابدأ الاستشارة</button>
 </div>
 
 <header>
@@ -1027,6 +1099,69 @@
 </div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════
+   🎵 نظام الموسيقى — يعمل من أول لمسة على الشاشة
+   ═══════════════════════════════════════════════════════════════════ */
+const MUSIC_VOLUME = 0.35;
+let musicStarted = false;
+let musicMuted = false;
+
+function startMusic() {
+    if (musicStarted || musicMuted) return;
+    const music = document.getElementById('bgMusic');
+    if (!music) return;
+
+    music.volume = MUSIC_VOLUME;
+
+    const playPromise = music.play();
+    if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.then(() => {
+            musicStarted = true;
+            document.getElementById('musicToggle').classList.add('show');
+            document.getElementById('musicToggle').classList.remove('muted');
+        }).catch(err => {
+            // المتصفح منع التشغيل — سيُعاد المحاولة في اللمسة القادمة
+            console.log('Music autoplay blocked:', err.message);
+        });
+    } else {
+        musicStarted = true;
+        document.getElementById('musicToggle').classList.add('show');
+    }
+}
+
+function toggleMusic() {
+    const music = document.getElementById('bgMusic');
+    const btn = document.getElementById('musicToggle');
+    if (!music) return;
+
+    if (music.paused || musicMuted) {
+        musicMuted = false;
+        music.volume = MUSIC_VOLUME;
+        music.play().then(() => {
+            musicStarted = true;
+            btn.classList.remove('muted');
+            btn.textContent = '🎵';
+        }).catch(() => {});
+    } else {
+        musicMuted = true;
+        music.pause();
+        btn.classList.add('muted');
+        btn.textContent = '🔇';
+    }
+}
+
+function onStartClick() {
+    startMusic();
+    splashP = 100;
+}
+
+// ✅ أول لمسة/ضغطة/مفتاح = تشغيل الموسيقى فوراً
+['touchstart', 'click', 'keydown', 'pointerdown'].forEach(evt => {
+    document.addEventListener(evt, function firstTouch() {
+        startMusic();
+    }, { once: true, passive: true });
+});
+
 /* ═══════════════════════════════════════════════════════════════════
    البيانات الأساسية
    ═══════════════════════════════════════════════════════════════════ */
@@ -1155,11 +1290,18 @@ function initThemeBtn() {
    ═══════════════════════════════════════════════════════════════════ */
 const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
 let splashP = 0, splashMsgIdx = 0;
+let splashDone = false;
+
 function startSplash() {
     const fill = document.getElementById('splashFill');
     const msg = document.getElementById('splashMsg');
     const interval = setInterval(() => {
-        splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
+        // إذا ضغط المستخدم "ابدأ" → 100% فوراً
+        if (splashDone) {
+            splashP = 100;
+        } else {
+            splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
+        }
         fill.style.width = splashP + '%';
         const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
         if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
@@ -1174,7 +1316,15 @@ function startSplash() {
             }, 400);
         }
     }, 200);
+
+    // ✅ إذا الخادم لم يجهز بعد 4 ثوان → اعرض زر "ابدأ الاستشارة"
+    setTimeout(() => {
+        if (!window.SERVER_READY && splashP < 100) {
+            document.getElementById('splash').classList.add('waiting');
+        }
+    }, 4000);
 }
+
 function initView() {
     initThemeBtn();
     buildSectionGrid();
@@ -1184,6 +1334,7 @@ function initView() {
         document.getElementById('welcome').classList.add('show');
     }
 }
+
 function buildSectionGrid() {
     const grid = document.getElementById('sectionGrid');
     grid.innerHTML = Object.entries(SECTION_INFO).map(([key, info]) => `
@@ -1195,6 +1346,7 @@ function buildSectionGrid() {
         </div>
     `).join('');
 }
+
 startSplash();
 setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
@@ -1576,7 +1728,7 @@ function showClosedOverlay(until, reason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   إرسال الرسالة — النسخة المحدثة بالتأخير الذكي
+   إرسال الرسالة
    ═══════════════════════════════════════════════════════════════════ */
 async function sendMsg() {
     const input = document.getElementById('input');
@@ -1615,7 +1767,6 @@ async function sendMsg() {
         })
     });
 
-    // وقت قراءة قصير قبل ما يبدأ "الكتابة"
     await sleep(500 + Math.random() * 600);
     markMessagesRead();
 
@@ -1646,16 +1797,13 @@ async function sendMsg() {
         finishProgress();
 
         const replies = data.replies || [];
-        // ✅ استخدام التأخير البشري الذكي المحسوب من الخادم
         const perReplyDelays = data.timing?.perReply || [];
 
-        // وقت قراءة وتفكير أولي — يحاكي قراءة السؤال
         setExpertStatus('busy');
         await sleep(800 + Math.random() * 1200);
 
         for (let i = 0; i < replies.length; i++) {
             const reply = replies[i];
-            // ✅ التأخير المحسوب لكل فقرة (بشري ومنطقي)
             const typingTime = perReplyDelays[i] || calcHumanTypingTime(reply);
             setExpertStatus('typing');
             showTypingIndicator();
@@ -1664,7 +1812,6 @@ async function sendMsg() {
             addBubble('expert', reply);
             history.push({ role: 'assistant', content: reply });
 
-            // فاصل قصير بين الفقرات (يحاكي تفكير المستشار)
             if (i < replies.length - 1) {
                 setExpertStatus('busy');
                 await sleep(400 + Math.random() * 700);
