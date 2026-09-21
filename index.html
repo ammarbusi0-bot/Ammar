@@ -530,16 +530,12 @@ const SUGGESTIONS = {
 
 let user = null, section = null, expert = null, history = [], busy = false;
 let progressTimer = null;
-const CONVERSATIONS = {};      // { section: { expert, history, html, suggestionsHidden, resetTimer, resetAt } }
-const LAST_EXPERTS = {};       // { section: expertObject } — آخر محلل لكل قسم (لتجنبه في المرة القادمة)
-
-// ✅ مدة الانتظار قبل التصفير التلقائي (3-5 دقائق عشوائي)
+const CONVERSATIONS = {};
+const LAST_EXPERTS = {};
 const RESET_MIN_MS = 3 * 60 * 1000;
 const RESET_MAX_MS = 5 * 60 * 1000;
 
-function getRandomResetDelay() {
-    return Math.floor(RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS));
-}
+function getRandomResetDelay() { return Math.floor(RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS)); }
 
 function toggleTheme() {
     const current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -622,12 +618,10 @@ function saveUser() {
     const country = document.getElementById('inCountry').value;
     const exp = document.getElementById('inExp').value;
     const reason = document.getElementById('inReason').value.trim();
-
     if (!firstName || firstName.length < 2) { alert('أدخل الاسم الأول بشكل صحيح'); return; }
     if (!lastName || lastName.length < 2) { alert('أدخل اسم العائلة'); return; }
     if (!age || age < 15 || age > 100) { alert('أدخل عمراً صحيحاً (15-100)'); return; }
     if (!country) { alert('اختر البلد'); return; }
-
     user = { firstName, lastName, age, country, experience: exp, reason };
     localStorage.setItem('profin_user', JSON.stringify(user));
     showUserBar();
@@ -641,14 +635,11 @@ function showUserBar() {
     document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
-// ✅ اختيار محلل مختلف عن السابق في نفس القسم
 function pickDifferentExpert(s) {
     const list = EXPERTS[s];
     const last = LAST_EXPERTS[s];
     let candidates = list;
-    if (last && list.length > 1) {
-        candidates = list.filter(e => e.name !== last.name);
-    }
+    if (last && list.length > 1) candidates = list.filter(e => e.name !== last.name);
     const picked = candidates[Math.floor(Math.random() * candidates.length)];
     LAST_EXPERTS[s] = picked;
     return picked;
@@ -656,35 +647,22 @@ function pickDifferentExpert(s) {
 
 function openSection(s) {
     section = s;
-
-    // هل هناك محادثة محفوظة (لم تُصفّر بعد)؟
     if (CONVERSATIONS[s]) {
         const c = CONVERSATIONS[s];
-
-        // ✅ إلغاء مؤقت التصفير — المستخدم عاد
-        if (c.resetTimer) {
-            clearTimeout(c.resetTimer);
-            c.resetTimer = null;
-        }
-
+        if (c.resetTimer) { clearTimeout(c.resetTimer); c.resetTimer = null; }
         expert = c.expert;
         history = c.history;
         renderExpertHeader();
         document.getElementById('messages').innerHTML = c.html;
-        if (c.suggestionsHidden) {
-            document.getElementById('suggestions').style.display = 'none';
-        } else {
-            showSuggestions(s);
-        }
+        if (c.suggestionsHidden) document.getElementById('suggestions').style.display = 'none';
+        else showSuggestions(s);
     } else {
-        // ✅ محادثة جديدة — اختر محللاً مختلفاً عن السابق
         expert = pickDifferentExpert(s);
         history = [];
         renderExpertHeader();
         document.getElementById('messages').innerHTML = '';
         showSuggestions(s);
         CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false, resetTimer: null };
-
         setTimeout(() => {
             const hour = new Date().getHours();
             const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
@@ -700,7 +678,6 @@ function openSection(s) {
             CONVERSATIONS[s].html = document.getElementById('messages').innerHTML;
         }, 700);
     }
-
     document.getElementById('home').classList.remove('show');
     document.getElementById('chat').classList.add('show');
     setTimeout(() => document.getElementById('input').focus(), 600);
@@ -710,10 +687,7 @@ function renderExpertHeader() {
     const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي' };
     document.getElementById('expAvatar').innerText = expert.name.charAt(0);
     document.getElementById('expName').innerText = expert.name;
-    document.getElementById('expRole').innerHTML = `
-        <span class="status-text">متصل الآن</span>
-        <span class="flag-badge">${d.flag} ${d.country}</span>
-    `;
+    document.getElementById('expRole').innerHTML = `<span class="status-text">متصل الآن</span><span class="flag-badge">${d.flag} ${d.country}</span>`;
 }
 
 function showSuggestions(s) {
@@ -723,31 +697,18 @@ function showSuggestions(s) {
     c.style.display = 'flex';
 }
 
-function useSug(t) {
-    document.getElementById('input').value = t;
-    document.getElementById('input').focus();
-}
+function useSug(t) { document.getElementById('input').value = t; document.getElementById('input').focus(); }
 
-// ✅ عند الرجوع: احفظ الحالة وابدأ مؤقت التصفير العشوائي (3-5 دقائق)
 function goBack() {
     if (section && CONVERSATIONS[section]) {
         const c = CONVERSATIONS[section];
         c.html = document.getElementById('messages').innerHTML;
         c.history = history;
         c.suggestionsHidden = document.getElementById('suggestions').style.display === 'none';
-
-        // إلغاء أي مؤقت سابق
         if (c.resetTimer) clearTimeout(c.resetTimer);
-
-        // ✅ جدولة التصفير التلقائي
         const delay = getRandomResetDelay();
         c.resetAt = Date.now() + delay;
-        c.resetTimer = setTimeout(() => {
-            delete CONVERSATIONS[section];
-            console.log(`🔄 تم تصفير محادثة ${section} — محلل جديد في المرة القادمة`);
-        }, delay);
-
-        console.log(`⏱️ سيتم تصفير محادثة ${section} خلال ${Math.round(delay / 60000)} دقيقة`);
+        c.resetTimer = setTimeout(() => { delete CONVERSATIONS[section]; }, delay);
     }
     document.getElementById('chat').classList.remove('show');
     document.getElementById('home').classList.add('show');
@@ -849,46 +810,27 @@ function showAck() {
     w.className = 'bubble-wrap expert';
     w.id = 'ack';
     const msg = ACK_MESSAGES[Math.floor(Math.random() * ACK_MESSAGES.length)];
-    w.innerHTML = `
-        <div class="bubble ack-bubble">
-            <div class="sender">${expert.name}</div>
-            <div class="bubble-content">
-                <div class="ack-content">
-                    <span class="ack-pulse"></span>
-                    <span>${msg}</span>
-                </div>
-            </div>
-        </div>
-    `;
+    w.innerHTML = `<div class="bubble ack-bubble"><div class="sender">${expert.name}</div><div class="bubble-content"><div class="ack-content"><span class="ack-pulse"></span><span>${msg}</span></div></div></div>`;
     m.appendChild(w);
     m.scrollTop = m.scrollHeight;
 }
-function hideAck() {
-    const a = document.getElementById('ack');
-    if (a) a.remove();
-}
+function hideAck() { const a = document.getElementById('ack'); if (a) a.remove(); }
 
 function showTyping() {
     const m = document.getElementById('messages');
     const w = document.createElement('div');
     w.className = 'bubble-wrap expert';
     w.id = 'typing';
-    w.innerHTML = `
-        <div class="bubble">
-            <div class="sender">${expert.name}</div>
-            <div class="typing"><span></span><span></span><span></span></div>
-        </div>
-    `;
+    w.innerHTML = `<div class="bubble"><div class="sender">${expert.name}</div><div class="typing"><span></span><span></span><span></span></div></div>`;
     m.appendChild(w);
     m.scrollTop = m.scrollHeight;
     setExpertStatus('typing');
 }
-function hideTyping() {
-    const t = document.getElementById('typing');
-    if (t) t.remove();
-    setExpertStatus('online');
-}
+function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); setExpertStatus('online'); }
 
+// ============================================================
+// ✅ sendMsg — محدّث لدعم التوقيت المتغير من السيرفر
+// ============================================================
 async function sendMsg() {
     const input = document.getElementById('input');
     const text = input.value.trim();
@@ -900,7 +842,6 @@ async function sendMsg() {
     history.push({ role: 'user', content: text });
     document.getElementById('suggestions').style.display = 'none';
 
-    // ✅ إلغاء مؤقت التصفير — المستخدم يتفاعل
     if (section && CONVERSATIONS[section]?.resetTimer) {
         clearTimeout(CONVERSATIONS[section].resetTimer);
         CONVERSATIONS[section].resetTimer = null;
@@ -927,9 +868,6 @@ async function sendMsg() {
     await sleep(700);
     markAllUserMessagesAsRead();
 
-    const extraDelay = 1500 + Math.random() * 2500;
-    await sleep(extraDelay);
-
     try {
         const res = await fetchPromise;
         const raw = await res.text();
@@ -940,7 +878,7 @@ async function sendMsg() {
             return;
         }
 
-        // ✅ إذا كان هناك cooldown من السيرفر
+        // ✅ إذا كان هناك cooldown
         if (res.status === 429 && data.cooldown) {
             hideAck(); finishProgress(); setExpertStatus('online');
             addBubble('expert', `⏱️ ${data.message || 'المحادثة في فترة انتظار'}`, true);
@@ -956,32 +894,38 @@ async function sendMsg() {
         hideAck();
         finishProgress();
 
+        // ✅ التوقيت المتغيّر من السيرفر
+        const serverDelay = data.timing?.delayMs || (1500 + Math.random() * 2500);
+        const elapsed = 700; // الوقت المستهلك فعلاً
+        const remainingDelay = Math.max(400, serverDelay - elapsed);
+        console.log(`⏱️ تأخير السيرفر: ${serverDelay}ms | المتبقي: ${remainingDelay}ms`);
+
         setExpertStatus('typing');
-        await sleep(800 + Math.random() * 900);
-        hideTyping();
+        await sleep(remainingDelay);
 
         const replies = data.replies || [data.answer].filter(Boolean);
 
+        // ✅ عرض الرسائل الأولى (بدون typing بينها إن كانت قصيرة)
         for (let i = 0; i < replies.length; i++) {
-            if (i > 0) {
-                setExpertStatus('busy');
-                await sleep(1200 + Math.random() * 1500);
-                setExpertStatus('typing');
-                await sleep(700 + Math.random() * 800);
-                setExpertStatus('online');
-            }
+            hideTyping();
             addBubble('expert', replies[i]);
             history.push({ role: 'assistant', content: replies[i] });
-            if (i < replies.length - 1) await sleep(500);
-        }
 
-        // ✅ حفظ التحديث
+            // إذا كان هناك رسالة أخرى → typing قصير
+            if (i < replies.length - 1) {
+                setExpertStatus('busy');
+                await sleep(600 + Math.random() * 500);
+                showTyping();
+                await sleep(700 + Math.random() * 500);
+            }
+        }
+        hideTyping();
+
         if (section && CONVERSATIONS[section]) {
             CONVERSATIONS[section].history = history;
             CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
         }
 
-        // ✅ إذا أُغلقت المحادثة من السيرفر
         if (data.closed) {
             setTimeout(() => {
                 addBubble('expert', `🔒 أُغلقت الجلسة. يمكنك العودة بعد ${data.cooldownMinutes} دقيقة أو اختيار قسم آخر.`, true);
