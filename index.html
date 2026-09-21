@@ -3,28 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>منصة استشارات forG — استشارات مالية عربية بلهجات محلية</title>
+
+<!-- ═══════════════ الهوية الأساسية ═══════════════ -->
+<title>منصة استشارات forG — نخبة المحللين العرب بلهجات محلية</title>
+<meta name="description" content="منصة استشارات forG: نخبة محللين عرب من 17 دولة يقدمون استشارات مالية بلهجات محلية. ذهب، أسهم، اقتصاد، جيوسياسة، ميزانية، وكريبتو.">
+<meta name="author" content="منصة استشارات forG">
+<meta name="keywords" content="استشارات مالية, ذهب, أسهم, كريبتو, اقتصاد, جيوسياسة, ميزانية, تخطيط مالي, محللين عرب">
+
+<!-- ═══════════════ Open Graph ═══════════════ -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ammar-e0tp.onrender.com/">
+<meta property="og:title" content="منصة استشارات forG — استشارات مالية عربية بلهجات محلية">
+<meta property="og:description" content="40+ محلل من 17 دولة عربية. ذهب، أسهم، اقتصاد كلي، جيوسياسة، ميزانية، وكريبتو. استشارات مخصصة بلغة تناسبك.">
+<meta property="og:site_name" content="منصة استشارات forG">
+<meta property="og:locale" content="ar_SA">
+<meta property="og:image" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
+<meta property="og:image:secure_url" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="منصة استشارات forG">
+
+<!-- ═══════════════ Twitter Card ═══════════════ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="منصة استشارات forG — نخبة المحللين العرب">
+<meta name="twitter:description" content="40+ محلل من 17 دولة. ذهب، أسهم، اقتصاد، جيوسياسة، ميزانية، وكريبتو.">
+<meta name="twitter:image" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
+
+<!-- ═══════════════ الأيقونات والألوان ═══════════════ -->
+<meta name="theme-color" content="#0a1628">
+<meta name="msapplication-TileColor" content="#0a1628">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="forG">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="application-name" content="forG">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d4af37'/%3E%3Cstop offset='100%25' stop-color='%23f0d977'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%230a1628'/%3E%3Ctext x='50' y='70' font-family='Arial,sans-serif' font-size='56' font-weight='900' fill='url(%23g)' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d4af37'/%3E%3Cstop offset='100%25' stop-color='%23f0d977'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%230a1628'/%3E%3Ctext x='50' y='70' font-family='Arial,sans-serif' font-size='56' font-weight='900' fill='url(%23g)' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
 <script>
+(function prewarm() {
+    const wake = () => fetch('https://ammar-e0tp.onrender.com/', { cache: 'no-store' })
+        .then(r => r.json()).then(() => {
+            window.SERVER_READY = true;
+            document.dispatchEvent(new Event('serverReady'));
+        }).catch(() => {});
+    wake();
+    setTimeout(wake, 3000);
+    setTimeout(wake, 8000);
+})();
 (function initTheme() {
     const saved = localStorage.getItem('forg_theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
 })();
 </script>
+
 <style>
     :root {
         --primary: #0a1628; --secondary: #142c4a;
         --accent: #d4af37; --accent-soft: #f0d977; --accent-dark: #a8862a;
         --accent-glow: rgba(212,175,55,0.4);
+        --accent-glow-strong: rgba(212,175,55,0.7);
         --app-bg: #cfd6de;
         --chat-bg: linear-gradient(180deg, #e8e2d9 0%, #ebe5dc 100%);
         --chat-pattern: rgba(10,22,40,0.045);
         --user-bubble: linear-gradient(135deg, #d9fdd3 0%, #c8f5c1 100%);
+        --user-bubble-tail: #d9fdd3;
         --expert-bubble: #ffffff;
+        --expert-bubble-tail: #ffffff;
         --text: #0f172a; --muted: #64748b; --border: rgba(0,0,0,0.08);
+        --border-glow: rgba(212,175,55,0.25);
         --time-color: #667781;
         --online: #22c55e; --busy: #f59e0b; --away: #94a3b8;
         --danger: #b91c1c; --danger-bg: #fee2e2;
+        --check-sent: #667781; --check-read: #53bdeb;
+        --shadow-sm: 0 2px 4px rgba(10,22,40,0.06), 0 1px 2px rgba(10,22,40,0.04);
+        --shadow-md: 0 8px 24px rgba(10,22,40,0.10), 0 2px 6px rgba(10,22,40,0.06);
+        --shadow-lg: 0 24px 60px rgba(10,22,40,0.20), 0 8px 20px rgba(10,22,40,0.10);
+        --shadow-xl: 0 32px 80px rgba(10,22,40,0.28), 0 12px 28px rgba(10,22,40,0.15);
         --card-bg: #ffffff; --input-bg: #ffffff;
         --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -35,278 +96,1618 @@
         --chat-bg: linear-gradient(180deg, #0a1118 0%, #0d141c 100%);
         --chat-pattern: rgba(212,175,55,0.05);
         --user-bubble: linear-gradient(135deg, #005c4b 0%, #00735c 100%);
-        --expert-bubble: #1e2a33;
+        --user-bubble-tail: #005c4b;
+        --expert-bubble: #1e2a33; --expert-bubble-tail: #1e2a33;
         --text: #e9edef; --muted: #8696a0; --border: rgba(255,255,255,0.06);
+        --border-glow: rgba(212,175,55,0.35);
         --time-color: #8696a0;
         --danger: #fca5a5; --danger-bg: #4c1d1d;
+        --check-sent: #8696a0; --check-read: #53bdeb;
         --card-bg: #0f1a22; --input-bg: #222f3a;
+        --shadow-sm: 0 2px 4px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+        --shadow-md: 0 8px 24px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
+        --shadow-lg: 0 24px 60px rgba(0,0,0,0.65), 0 8px 20px rgba(0,0,0,0.45);
+        --shadow-xl: 0 32px 80px rgba(0,0,0,0.75), 0 12px 28px rgba(0,0,0,0.55);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body {
         height: 100%;
-        font-family: 'Cairo', 'Tajawal', sans-serif;
+        font-family: 'Cairo', 'Tajawal', 'Segoe UI', 'Tahoma', system-ui, sans-serif;
         background: var(--app-bg); color: var(--text); line-height: 1.7;
+        overflow-x: hidden; transition: background 0.4s var(--ease-smooth), color 0.4s var(--ease-smooth);
+        font-feature-settings: 'kern' 1, 'liga' 1;
     }
+    button { font-family: inherit; }
+
+    #splash {
+        position: fixed; inset: 0;
+        background: radial-gradient(circle at 30% 20%, #102b4e 0%, #0a1628 45%, #030912 100%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        z-index: 9999; color: white; transition: opacity 0.9s var(--ease-smooth);
+        overflow: hidden;
+    }
+    #splash::before {
+        content: ''; position: absolute; inset: 0;
+        background:
+            radial-gradient(circle at 70% 80%, rgba(212,175,55,0.14), transparent 50%),
+            radial-gradient(circle at 20% 60%, rgba(212,175,55,0.10), transparent 45%),
+            radial-gradient(circle at 50% 30%, rgba(212,175,55,0.06), transparent 60%);
+        animation: bgShift 10s ease-in-out infinite alternate;
+    }
+    #splash::after {
+        content: ''; position: absolute; inset: 0;
+        background-image:
+            radial-gradient(2px 2px at 20% 30%, rgba(212,175,55,0.6), transparent),
+            radial-gradient(2px 2px at 60% 70%, rgba(212,175,55,0.4), transparent),
+            radial-gradient(1.5px 1.5px at 80% 20%, rgba(240,217,119,0.5), transparent),
+            radial-gradient(1.5px 1.5px at 30% 80%, rgba(212,175,55,0.35), transparent),
+            radial-gradient(2px 2px at 90% 60%, rgba(240,217,119,0.45), transparent),
+            radial-gradient(1.5px 1.5px at 10% 45%, rgba(212,175,55,0.4), transparent);
+        animation: sparkleFloat 12s ease-in-out infinite;
+        opacity: 0.7;
+    }
+    @keyframes sparkleFloat {
+        0%,100% { transform: translateY(0) scale(1); opacity: 0.6; }
+        50% { transform: translateY(-30px) scale(1.15); opacity: 0.9; }
+    }
+    @keyframes bgShift { 0% { transform: scale(1) translateY(0); } 100% { transform: scale(1.15) translateY(-25px); } }
+    #splash.fade { opacity: 0; pointer-events: none; }
+    .splash-logo {
+        width: 128px; height: 128px; border-radius: 38px;
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 45%, var(--accent) 100%);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 62px; margin-bottom: 30px; position: relative;
+        box-shadow:
+            0 28px 80px rgba(212,175,55,0.5),
+            0 8px 24px rgba(212,175,55,0.3),
+            inset 0 3px 0 rgba(255,255,255,0.5),
+            inset 0 -4px 12px rgba(0,0,0,0.15);
+        animation: floaty 3.5s ease-in-out infinite;
+    }
+    .splash-logo::after {
+        content: ''; position: absolute; inset: -10px; border-radius: 46px;
+        border: 2.5px solid transparent;
+        background: linear-gradient(135deg, rgba(212,175,55,0.6), rgba(240,217,119,0.2), rgba(212,175,55,0.6)) border-box;
+        -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: ringRotate 5s linear infinite;
+    }
+    @keyframes ringRotate { to { transform: rotate(360deg); } }
+    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+    .splash-title {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 32px; font-weight: 800; margin-bottom: 8px;
+        background: linear-gradient(90deg, #fff 20%, #f0d977 50%, #fff 80%);
+        background-size: 200% auto;
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        letter-spacing: 0.5px; position: relative; z-index: 2;
+        animation: shine 3s linear infinite;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
+    .splash-title .brand {
+        font-weight: 400; font-size: 24px; opacity: 0.95; letter-spacing: 1.5px;
+        display: inline-block; padding: 2px 10px; margin-right: 8px;
+        border: 1.5px solid rgba(212,175,55,0.5); border-radius: 8px;
+        background: rgba(212,175,55,0.08);
+    }
+    .splash-sub { color: #94a3b8; font-size: 14px; margin-bottom: 48px; position: relative; z-index: 2; letter-spacing: 0.3px; }
+    .splash-progress {
+        width: min(340px, 78vw); height: 4px;
+        background: rgba(255,255,255,0.08); border-radius: 4px;
+        overflow: hidden; margin-bottom: 22px; position: relative; z-index: 2;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .splash-fill {
+        height: 100%; width: 0%; border-radius: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+        background-size: 200% 100%;
+        transition: width 0.5s var(--ease-smooth);
+        box-shadow: 0 0 16px var(--accent-glow-strong), 0 0 32px rgba(212,175,55,0.3);
+        animation: shimmer 1.8s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .splash-msg { color: var(--accent-soft); font-size: 13.5px; min-height: 24px; opacity: 0.9; position: relative; z-index: 2; letter-spacing: 0.2px; }
+
     header {
-        background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98));
-        color: white; padding: 20px; text-align: center;
-        border-bottom: 2px solid var(--accent); position: relative;
+        background: linear-gradient(135deg, rgba(5,13,24,0.98) 0%, rgba(15,37,64,0.98) 55%, rgba(10,22,40,0.98) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: white; padding: 20px 20px; text-align: center;
+        border-bottom: 2px solid transparent;
+        border-image: linear-gradient(90deg, transparent, var(--accent), transparent) 1;
+        box-shadow: 0 12px 40px rgba(10,22,40,0.35);
+        position: relative; z-index: 10; overflow: hidden;
     }
-    header h1 { font-family: 'Tajawal', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent-soft); }
-    header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+    header::after {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(circle at 30% 50%, rgba(212,175,55,0.10), transparent 45%),
+                    radial-gradient(circle at 70% 50%, rgba(212,175,55,0.06), transparent 40%);
+        pointer-events: none;
+    }
+    header h1 {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 22px; font-weight: 800; letter-spacing: 0.3px;
+        background: linear-gradient(90deg, #fff 30%, #f0d977 70%, #fff 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        position: relative; z-index: 2;
+        animation: shine 4s linear infinite;
+    }
+    header h1 .brand {
+        display: inline-block; font-weight: 400; font-size: 18px;
+        padding: 2px 10px; margin-right: 6px;
+        border: 1.5px solid rgba(212,175,55,0.55); border-radius: 7px;
+        vertical-align: middle; -webkit-text-fill-color: var(--accent-soft);
+        color: var(--accent-soft); background: rgba(212,175,55,0.08);
+    }
+    header p { font-size: 12px; color: #94a3b8; margin-top: 6px; position: relative; z-index: 2; letter-spacing: 0.2px; }
     .theme-toggle {
         position: absolute; top: 50%; transform: translateY(-50%); left: 16px;
-        background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.14); color: white;
+        background: rgba(255,255,255,0.08); backdrop-filter: blur(14px);
+        border: 1.5px solid rgba(255,255,255,0.14); color: white;
         width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 18px;
         display: flex; align-items: center; justify-content: center;
+        transition: all 0.4s var(--ease-bounce); z-index: 5;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
+    .theme-toggle:hover {
+        background: rgba(212,175,55,0.25);
+        border-color: var(--accent);
+        transform: translateY(-50%) rotate(25deg) scale(1.1);
+        box-shadow: 0 8px 24px rgba(212,175,55,0.35), 0 0 0 4px rgba(212,175,55,0.1);
+    }
+
+    .user-bar {
+        background: linear-gradient(135deg, rgba(10,22,40,0.96), rgba(20,44,74,0.96));
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        color: white; padding: 12px 22px;
+        display: none; justify-content: flex-start; align-items: center;
+        font-size: 14px; font-weight: 600;
+        border-bottom: 1px solid rgba(212,175,55,0.18);
+        position: sticky; top: 0; z-index: 9;
+        box-shadow: 0 4px 20px rgba(10,22,40,0.15);
+    }
+    .user-bar.show { display: flex; animation: slideDown 0.5s var(--ease-smooth); }
+    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .user-info { display: flex; align-items: center; gap: 14px; }
+    .avatar-sm {
+        width: 42px; height: 42px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+        color: #0a1628; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 16px;
+        box-shadow:
+            0 0 0 3px rgba(212,175,55,0.25),
+            0 6px 18px rgba(212,175,55,0.35),
+            inset 0 2px 0 rgba(255,255,255,0.4);
+        position: relative;
+    }
+    .avatar-sm::after {
+        content: ''; position: absolute; inset: -6px;
+        border-radius: 50%; border: 2px solid rgba(212,175,55,0.25);
+        animation: pulse-ring 2s ease-out infinite;
+    }
+    @keyframes pulse-ring {
+        0% { transform: scale(0.9); opacity: 1; }
+        100% { transform: scale(1.35); opacity: 0; }
+    }
+
     .container { max-width: 1100px; margin: 34px auto; padding: 0 22px; }
+
     #welcome {
-        background: var(--card-bg); border-radius: 28px; padding: 40px;
-        max-width: 620px; margin: 30px auto; text-align: center;
-        border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        background: var(--card-bg); border-radius: 28px; padding: 52px 48px 46px;
+        box-shadow: var(--shadow-xl); max-width: 620px; margin: 30px auto;
+        text-align: center; display: none;
+        border: 1px solid var(--border);
+        position: relative; overflow: hidden;
     }
-    #welcome h2 { font-size: 26px; margin-bottom: 8px; color: var(--text); font-weight: 800; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; text-align: right; }
-    .form-group { grid-column: span 2; }
-    .form-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; color: var(--text); }
+    #welcome::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+        background: linear-gradient(90deg, transparent, var(--accent), var(--accent-soft), var(--accent), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+    #welcome::after {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(circle at 50% 0%, rgba(212,175,55,0.06), transparent 50%);
+        pointer-events: none;
+    }
+    #welcome.show { display: block; animation: slideUp 0.7s var(--ease-smooth); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: translateY(0); } }
+    .welcome-icon {
+        width: 88px; height: 88px; margin: 0 auto 22px; border-radius: 28px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 40px;
+        box-shadow:
+            0 18px 48px rgba(212,175,55,0.45),
+            0 6px 16px rgba(212,175,55,0.3),
+            inset 0 3px 0 rgba(255,255,255,0.5);
+        animation: floaty 4s ease-in-out infinite;
+        position: relative; z-index: 2;
+    }
+    #welcome h2 {
+        font-family: 'Tajawal', sans-serif;
+        color: var(--text); font-size: 27px; margin-bottom: 8px; font-weight: 800;
+        position: relative; z-index: 2;
+    }
+    #welcome .sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; position: relative; z-index: 2; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; position: relative; z-index: 2; }
+    .form-group { text-align: right; margin-bottom: 14px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+        display: block; font-weight: 700; margin-bottom: 8px;
+        color: var(--text); font-size: 13px; letter-spacing: 0.1px;
+    }
     .form-group input, .form-group select, .form-group textarea {
-        width: 100%; padding: 13px 16px; border: 1.5px solid var(--border);
-        border-radius: 14px; font-size: 14px; background: var(--input-bg); color: var(--text);
+        width: 100%; padding: 13px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 14px; font-size: 14.5px; font-family: inherit;
+        transition: all 0.3s var(--ease-smooth);
+        background: var(--card-bg); color: var(--text);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
     }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none; border-color: var(--accent);
+        box-shadow:
+            0 0 0 4px rgba(212,175,55,0.15),
+            0 4px 12px rgba(212,175,55,0.15),
+            inset 0 1px 2px rgba(0,0,0,0.02);
+        transform: translateY(-1px);
+    }
+    .form-group textarea { min-height: 82px; resize: vertical; }
     .btn-primary {
         width: 100%; padding: 16px; border: none; border-radius: 15px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-        color: #0a1628; font-size: 16px; font-weight: 800; cursor: pointer;
-        margin-top: 20px; box-shadow: 0 10px 25px rgba(212,175,55,0.3);
+        background: linear-gradient(135deg, #0a1628 0%, #1c3a5c 50%, #0a1628 100%);
+        background-size: 200% auto;
+        color: white; font-size: 16px; font-weight: 800;
+        cursor: pointer; font-family: inherit;
+        transition: all 0.4s var(--ease-smooth);
+        box-shadow:
+            0 10px 28px rgba(10,22,40,0.35),
+            inset 0 2px 0 rgba(255,255,255,0.1);
+        margin-top: 14px; letter-spacing: 0.4px;
+        position: relative; overflow: hidden;
     }
+    .btn-primary::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(212,175,55,0.25), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.6s var(--ease-smooth);
+    }
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px rgba(10,22,40,0.45), 0 0 0 4px rgba(212,175,55,0.1);
+        background-position: 200% center;
+    }
+    .btn-primary:hover::before { transform: translateX(100%); }
+    .btn-primary:active { transform: translateY(-1px); }
+
     #home { display: none; }
+    #home.show { display: block; animation: slideUp 0.6s var(--ease-smooth); }
+    #home h2 {
+        font-family: 'Tajawal', sans-serif;
+        text-align: center; margin-bottom: 10px;
+        color: var(--text); font-size: 26px; font-weight: 800;
+    }
+    #home .home-sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 36px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 20px; }
     .card {
-        background: var(--card-bg); border-radius: 22px; padding: 26px; cursor: pointer;
-        border: 1px solid var(--border); transition: transform 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        background: var(--card-bg); border-radius: 22px; padding: 28px 26px;
+        box-shadow: var(--shadow-md); cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.45s var(--ease-smooth);
+        position: relative; overflow: hidden;
+        display: flex; flex-direction: column; gap: 14px;
     }
-    .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-    .card h3 { color: var(--text); font-size: 18px; margin-bottom: 8px; font-weight: 800; }
-    .card p { color: var(--muted); font-size: 13.5px; }
+    .card::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, transparent 0%, rgba(212,175,55,0.06) 50%, transparent 100%);
+        transform: translateX(-100%);
+        transition: transform 0.7s var(--ease-smooth);
+        pointer-events: none;
+    }
+    .card:hover::before { transform: translateX(100%); }
+    .card::after {
+        content: ''; position: absolute; bottom: 0; right: 0; left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+        background-size: 200% auto;
+        transform: scaleX(0); transform-origin: right;
+        transition: transform 0.5s var(--ease-smooth);
+        box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .card:hover::after { transform: scaleX(1); }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow:
+            0 28px 60px rgba(10,22,40,0.25),
+            0 8px 20px rgba(212,175,55,0.15),
+            0 0 0 1px rgba(212,175,55,0.35);
+        border-color: rgba(212,175,55,0.45);
+    }
+    .card-icon {
+        width: 58px; height: 58px; border-radius: 18px;
+        background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.34));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 26px; border: 1.5px solid rgba(212,175,55,0.32);
+        transition: transform 0.5s var(--ease-bounce), box-shadow 0.4s;
+        box-shadow: 0 4px 14px rgba(212,175,55,0.15);
+    }
+    .card:hover .card-icon {
+        transform: scale(1.12) rotate(-6deg);
+        box-shadow: 0 8px 24px rgba(212,175,55,0.35), inset 0 2px 0 rgba(255,255,255,0.3);
+    }
+    .card h3 {
+        color: var(--text); font-size: 17px; font-weight: 800;
+        line-height: 1.4; letter-spacing: -0.1px;
+    }
+    .card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; }
+    .card-badge {
+        position: absolute; top: 18px; left: 18px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.08));
+        color: #16a34a;
+        padding: 5px 12px; border-radius: 14px;
+        font-size: 11px; font-weight: 700;
+        display: flex; align-items: center; gap: 6px;
+        border: 1px solid rgba(34,197,94,0.25);
+        box-shadow: 0 2px 6px rgba(34,197,94,0.1);
+    }
+    .card-badge::before {
+        content: ''; width: 7px; height: 7px; border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
+        animation: pulse-badge 2s infinite;
+    }
+    @keyframes pulse-badge {
+        0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); opacity: 1; }
+        50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); opacity: 0.85; }
+    }
+
     #chat {
         display: none; max-width: 880px; margin: 20px auto;
-        background: var(--chat-bg); border-radius: 24px; overflow: hidden;
-        border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        background: var(--chat-bg); border-radius: 24px;
+        box-shadow: var(--shadow-xl); overflow: hidden;
+        border: 1px solid var(--border); position: relative;
     }
+    #chat.show { display: block; animation: slideUp 0.5s var(--ease-smooth); }
     .chat-header {
-        background: var(--primary); color: white; padding: 15px 20px;
+        background: linear-gradient(135deg, rgba(5,13,24,0.98) 0%, rgba(15,37,64,0.98) 100%);
+        backdrop-filter: blur(20px);
+        color: white; padding: 15px 20px;
         display: flex; align-items: center; gap: 14px;
+        border-bottom: 1px solid rgba(212,175,55,0.20);
+        position: relative; z-index: 5;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
     .expert-avatar {
-        width: 50px; height: 50px; border-radius: 50%; background: var(--accent);
-        color: #0a1628; display: flex; align-items: center; justify-content: center; font-weight: 800;
+        width: 52px; height: 52px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
+        color: #0a1628; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 20px; position: relative; flex-shrink: 0;
+        box-shadow:
+            0 6px 20px rgba(212,175,55,0.45),
+            inset 0 2px 0 rgba(255,255,255,0.4);
     }
-    .expert-info h3 { font-size: 16px; }
-    .expert-info p { font-size: 12px; color: #94a3b8; }
-    .btn-back { margin-right: auto; background: rgba(255,255,255,0.1); color: white; border: none; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
-    #messages { padding: 20px; min-height: 400px; max-height: 55vh; overflow-y: auto; }
-    .bubble-wrap { display: flex; margin-bottom: 12px; }
+    .expert-avatar::before {
+        content: ''; position: absolute; inset: -4px;
+        border-radius: 50%; border: 2px solid rgba(212,175,55,0.3);
+        animation: pulse-ring 2.5s ease-out infinite;
+    }
+    .expert-avatar::after {
+        content: ''; position: absolute; bottom: 1px; right: 1px;
+        width: 14px; height: 14px; background: var(--online);
+        border: 3px solid #050d18; border-radius: 50%;
+        transition: background 0.35s var(--ease-smooth);
+        box-shadow: 0 0 8px rgba(34,197,94,0.6);
+    }
+    .expert-avatar.offline::after { background: var(--away); box-shadow: 0 0 8px rgba(148,163,184,0.5); }
+    .expert-avatar.busy::after { background: var(--busy); box-shadow: 0 0 8px rgba(245,158,11,0.6); animation: pulse-dot 1.5s infinite; }
+    .expert-avatar.typing::after { background: var(--online); animation: pulse-dot 1.1s infinite; }
+    @keyframes pulse-dot {
+        0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7), 0 0 8px rgba(34,197,94,0.6); }
+        50% { box-shadow: 0 0 0 9px rgba(34,197,94,0), 0 0 8px rgba(34,197,94,0.4); }
+    }
+    .expert-info { flex: 1; min-width: 0; }
+    .expert-info h3 { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.1px; }
+    .expert-info p {
+        font-size: 12px; color: #94a3b8; margin-top: 3px;
+        display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+        transition: color 0.35s var(--ease-smooth);
+    }
+    .expert-info p.typing-status { color: #6ee7b7; text-shadow: 0 0 12px rgba(110,231,183,0.4); }
+    .expert-info p.busy-status { color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,0.3); }
+    .flag-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: linear-gradient(135deg, rgba(212,175,55,0.20), rgba(212,175,55,0.10));
+        color: var(--accent-soft);
+        padding: 3px 9px; border-radius: 9px;
+        font-size: 10.5px; font-weight: 700;
+        border: 1px solid rgba(212,175,55,0.25);
+    }
+    .btn-back {
+        margin-right: auto;
+        background: rgba(255,255,255,0.07); backdrop-filter: blur(10px);
+        color: white; border: 1.5px solid rgba(255,255,255,0.14);
+        padding: 9px 16px; border-radius: 11px; cursor: pointer;
+        font-size: 12.5px; transition: all 0.3s var(--ease-smooth);
+        flex-shrink: 0; font-weight: 700;
+    }
+    .btn-back:hover {
+        background: rgba(212,175,55,0.22);
+        border-color: var(--accent);
+        transform: translateX(3px);
+        box-shadow: 0 4px 14px rgba(212,175,55,0.25);
+    }
+
+    .progress-bar {
+        height: 3px; background: rgba(0,0,0,0.06); overflow: hidden;
+        display: none; position: relative; z-index: 4;
+    }
+    .progress-bar.show { display: block; }
+    .progress-fill {
+        height: 100%; width: 0%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+        background-size: 200% 100%;
+        transition: width 0.5s var(--ease-smooth);
+        animation: shimmer 1.6s linear infinite;
+        box-shadow: 0 0 10px var(--accent-glow-strong);
+    }
+
+    #messages {
+        padding: 28px 20px 22px; min-height: 440px; max-height: 60vh;
+        overflow-y: auto; background: var(--chat-bg);
+        background-image:
+            radial-gradient(circle at 15% 20%, var(--chat-pattern) 0%, transparent 40%),
+            radial-gradient(circle at 85% 75%, var(--chat-pattern) 0%, transparent 40%);
+        scroll-behavior: smooth;
+    }
+    #messages::-webkit-scrollbar { width: 7px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(212,175,55,0.4), rgba(212,175,55,0.25));
+        border-radius: 4px;
+    }
+    #messages::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(212,175,55,0.6), rgba(212,175,55,0.4)); }
+    .bubble-wrap {
+        display: flex; margin-bottom: 12px;
+        animation: msgIn 0.42s var(--ease-smooth);
+        padding: 0 4px;
+    }
+    @keyframes msgIn {
+        from { opacity: 0; transform: translateY(12px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
     .bubble-wrap.user { justify-content: flex-end; }
     .bubble-wrap.expert { justify-content: flex-start; }
-    .bubble { max-width: 78%; padding: 12px 16px; border-radius: 14px; font-size: 14.5k; word-wrap: break-word; }
-    .bubble-wrap.user .bubble { background: var(--user-bubble); color: var(--text); border-top-right-radius: 2px; }
-    .bubble-wrap.expert .bubble { background: var(--expert-bubble); color: var(--text); border-top-left-radius: 2px; border: 1px solid var(--border); }
-    .input-area { background: var(--card-bg); padding: 14px 16px; display: flex; gap: 12px; border-top: 1px solid var(--border); }
-    .input-area textarea { flex: 1; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 20px; resize: none; background: var(--input-bg); color: var(--text); font-family: inherit; }
-    .send-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--accent); color: #0a1628; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+    .bubble {
+        max-width: 78%; padding: 11px 15px 8px; border-radius: 14px;
+        font-size: 14.5px; line-height: 1.78; word-wrap: break-word;
+        position: relative; letter-spacing: 0.1px;
+    }
+    .bubble-wrap.user .bubble {
+        background: var(--user-bubble);
+        color: var(--text);
+        border-top-right-radius: 4px; margin-right: 8px;
+        box-shadow: 0 2px 6px rgba(11,107,58,0.12), 0 1px 2px rgba(11,107,58,0.08);
+    }
+    .bubble-wrap.user .bubble::after {
+        content: ''; position: absolute; top: 0; right: -8px;
+        width: 12px; height: 16px;
+        background: var(--user-bubble-tail);
+        clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+    .bubble-wrap.expert .bubble {
+        background: var(--expert-bubble);
+        color: var(--text);
+        border-top-left-radius: 4px; margin-left: 8px;
+        box-shadow: 0 2px 8px rgba(10,22,40,0.08), 0 1px 2px rgba(10,22,40,0.06);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+    [data-theme="dark"] .bubble-wrap.expert .bubble { border-color: rgba(255,255,255,0.04); }
+    .bubble-wrap.expert .bubble::after {
+        content: ''; position: absolute; top: 0; left: -8px;
+        width: 12px; height: 16px;
+        background: var(--expert-bubble-tail);
+        clip-path: polygon(100% 0, 0 0, 100% 100%);
+    }
+    .sender {
+        font-size: 12px; font-weight: 800; color: var(--accent);
+        margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+        letter-spacing: 0.2px;
+    }
+    .bubble-wrap.user .sender { color: #0b6b3a; }
+    [data-theme="dark"] .bubble-wrap.user .sender { color: #7ee0a6; }
+    .bubble-content { white-space: pre-wrap; padding-bottom: 15px; }
+    .bubble-content strong { color: inherit; font-weight: 800; }
+    .time-row {
+        position: absolute; bottom: 4px; left: 12px;
+        display: flex; align-items: center; gap: 4px;
+        font-size: 10.5px; color: var(--time-color); direction: ltr;
+        opacity: 0.85;
+    }
+    .bubble-wrap.expert .time-row { left: auto; right: 12px; }
+    .checks { font-size: 11px; display: inline-block; transition: color 0.4s var(--ease-smooth); }
+    .checks.sent { color: var(--check-sent); letter-spacing: -2px; }
+    .checks.delivered { color: var(--check-sent); letter-spacing: -3px; }
+    .checks.read { color: var(--check-read); letter-spacing: -3px; text-shadow: 0 0 8px rgba(83,189,235,0.5); }
+    .typing { display: inline-flex; gap: 5px; padding: 8px 3px 16px; }
+    .typing span {
+        width: 8px; height: 8px; background: var(--accent);
+        border-radius: 50%; animation: dotTyping 1.35s infinite;
+        opacity: 0.7;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.16s; }
+    .typing span:nth-child(3) { animation-delay: 0.32s; }
+    @keyframes dotTyping {
+        0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+        30% { transform: translateY(-6px); opacity: 1; }
+    }
+    .error-bubble {
+        background: linear-gradient(135deg, var(--danger-bg), rgba(254,226,226,0.7)) !important;
+        border-right: 3px solid var(--danger);
+        color: var(--danger) !important;
+        box-shadow: 0 2px 8px rgba(185,28,28,0.15) !important;
+    }
+    .error-bubble::after { display: none; }
+
+    .suggestions {
+        display: flex; flex-wrap: wrap; gap: 9px;
+        padding: 14px 20px; background: var(--card-bg);
+        border-top: 1px solid var(--border);
+    }
+    .chip {
+        background: transparent;
+        border: 1.5px solid rgba(212,175,55,0.55);
+        color: var(--accent);
+        padding: 8px 16px; border-radius: 22px;
+        font-size: 12.5px; cursor: pointer; font-weight: 700;
+        transition: all 0.3s var(--ease-smooth);
+        position: relative; overflow: hidden;
+    }
+    .chip::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+        opacity: 0; transition: opacity 0.3s var(--ease-smooth);
+        z-index: -1;
+    }
+    .chip:hover {
+        color: #0a1628;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(212,175,55,0.35);
+    }
+    .chip:hover::before { opacity: 1; }
+    .input-area {
+        background: var(--card-bg); padding: 14px 16px;
+        display: flex; gap: 12px; align-items: flex-end;
+        border-top: 1px solid var(--border);
+    }
+    .input-area textarea {
+        flex: 1; padding: 13px 20px;
+        border: 1.5px solid var(--border);
+        border-radius: 26px; resize: none;
+        min-height: 46px; max-height: 130px;
+        font-family: inherit; font-size: 14.5px; outline: none;
+        transition: all 0.3s var(--ease-smooth);
+        background: var(--input-bg); color: var(--text);
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .input-area textarea:focus {
+        border-color: var(--accent);
+        box-shadow:
+            0 0 0 4px rgba(212,175,55,0.15),
+            0 4px 12px rgba(212,175,55,0.1),
+            inset 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .input-area textarea:disabled { opacity: 0.55; cursor: not-allowed; }
+    .send-btn {
+        width: 50px; height: 50px; border-radius: 50%; border: none;
+        background: linear-gradient(135deg, #0a1628 0%, #1c3a5c 50%, #0a1628 100%);
+        background-size: 200% auto;
+        color: white; font-size: 20px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.35s var(--ease-bounce);
+        box-shadow:
+            0 8px 20px rgba(10,22,40,0.35),
+            inset 0 2px 0 rgba(255,255,255,0.1);
+        flex-shrink: 0;
+        position: relative; overflow: hidden;
+    }
+    .send-btn::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(circle, rgba(212,175,55,0.4), transparent 70%);
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .send-btn:hover:not(:disabled) {
+        transform: scale(1.12) rotate(-5deg);
+        box-shadow:
+            0 12px 30px rgba(10,22,40,0.5),
+            0 0 0 5px rgba(212,175,55,0.15),
+            inset 0 2px 0 rgba(255,255,255,0.15);
+    }
+    .send-btn:hover:not(:disabled)::before { opacity: 1; }
+    .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+
+    .closed-overlay {
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.97) 0%, rgba(5,13,24,0.99) 80%);
+        backdrop-filter: blur(24px) saturate(160%);
+        -webkit-backdrop-filter: blur(24px) saturate(160%);
+        display: none; flex-direction: column;
+        align-items: center; justify-content: center;
+        z-index: 100; color: white;
+        padding: 28px; text-align: center; overflow: hidden;
+    }
+    .closed-overlay::before {
+        content: ''; position: absolute; inset: 0;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(212,175,55,0.15), transparent 45%),
+            radial-gradient(circle at 80% 80%, rgba(212,175,55,0.10), transparent 45%),
+            radial-gradient(circle at 50% 50%, rgba(212,175,55,0.05), transparent 60%);
+        animation: bgShift 12s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+    .closed-overlay::after {
+        content: ''; position: absolute; inset: 0;
+        background-image:
+            radial-gradient(2px 2px at 15% 25%, rgba(212,175,55,0.5), transparent),
+            radial-gradient(2px 2px at 85% 70%, rgba(212,175,55,0.35), transparent),
+            radial-gradient(1.5px 1.5px at 40% 85%, rgba(240,217,119,0.4), transparent),
+            radial-gradient(1.5px 1.5px at 65% 15%, rgba(212,175,55,0.35), transparent);
+        animation: sparkleFloat 14s ease-in-out infinite;
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    .closed-overlay.show { display: flex; animation: overlayIn 0.55s var(--ease-smooth); }
+    @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .lock-shell {
+        position: relative; width: 150px; height: 150px;
+        margin-bottom: 30px; z-index: 2;
+    }
+    .lock-shell svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .lock-ring-bg { fill: none; stroke: rgba(212,175,55,0.14); stroke-width: 3; }
+    .lock-ring-progress {
+        fill: none; stroke: url(#goldGrad); stroke-width: 3.5;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s linear;
+        filter: drop-shadow(0 0 12px var(--accent-glow-strong)) drop-shadow(0 0 20px rgba(212,175,55,0.4));
+    }
+    .lock-core {
+        position: absolute; inset: 22px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #1a2b45 0%, #0a1628 100%);
+        border: 2px solid rgba(212,175,55,0.4);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 38px;
+        box-shadow:
+            inset 0 3px 16px rgba(212,175,55,0.20),
+            0 16px 40px rgba(0,0,0,0.55),
+            0 0 0 1px rgba(212,175,55,0.15);
+        animation: lockPulse 3s ease-in-out infinite;
+    }
+    @keyframes lockPulse {
+        0%,100% {
+            transform: scale(1);
+            box-shadow: inset 0 3px 16px rgba(212,175,55,0.20), 0 16px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(212,175,55,0.15);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: inset 0 3px 24px rgba(212,175,55,0.35), 0 20px 50px rgba(212,175,55,0.25), 0 0 0 2px rgba(212,175,55,0.25);
+        }
+    }
+    .lock-emoji {
+        display: inline-block;
+        animation: lockWiggle 4s ease-in-out infinite;
+        filter: drop-shadow(0 0 12px rgba(212,175,55,0.6));
+    }
+    @keyframes lockWiggle {
+        0%,100% { transform: rotate(0deg) scale(1); }
+        45% { transform: rotate(-8deg) scale(1.05); }
+        55% { transform: rotate(8deg) scale(1.05); }
+    }
+
+    .closed-overlay h3 {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 24px; margin-bottom: 12px;
+        color: var(--accent-soft); font-weight: 800;
+        letter-spacing: 0.3px; z-index: 2; position: relative;
+        text-shadow: 0 0 24px rgba(212,175,55,0.5);
+    }
+    .closed-overlay .reason-text {
+        font-size: 14px; color: #cbd5e1;
+        max-width: 380px; line-height: 1.9;
+        margin-bottom: 26px; z-index: 2; position: relative;
+    }
+    .closed-overlay .reason-text .highlight {
+        color: var(--accent-soft); font-weight: 700;
+        text-shadow: 0 0 12px rgba(212,175,55,0.4);
+    }
+    .countdown-display {
+        display: flex; align-items: baseline; gap: 6px;
+        font-family: 'SF Mono', 'Consolas', 'Cairo', monospace;
+        font-size: 60px; font-weight: 800;
+        color: var(--accent-soft);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        text-shadow:
+            0 0 28px rgba(212,175,55,0.6),
+            0 0 60px rgba(212,175,55,0.3);
+        z-index: 2; position: relative; line-height: 1;
+    }
+    .countdown-display .unit {
+        font-size: 17px; font-weight: 600;
+        color: rgba(212,175,55,0.7);
+        margin-right: 6px; margin-left: 14px;
+        letter-spacing: 0;
+    }
+    .countdown-display .unit:last-child { margin-left: 0; }
+    .countdown-hint {
+        font-size: 12px; color: #64748b;
+        letter-spacing: 2px; margin-bottom: 30px;
+        z-index: 2; position: relative;
+        text-transform: uppercase;
+        opacity: 0.7;
+    }
+    .return-btn {
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
+        background-size: 200% auto;
+        color: #0a1628; border: none;
+        padding: 16px 38px; border-radius: 15px;
+        font-weight: 800; cursor: pointer; font-size: 15px;
+        font-family: inherit; letter-spacing: 0.4px;
+        transition: all 0.4s var(--ease-smooth);
+        box-shadow:
+            0 12px 32px rgba(212,175,55,0.45),
+            0 4px 12px rgba(212,175,55,0.3),
+            inset 0 2px 0 rgba(255,255,255,0.4);
+        z-index: 2; position: relative;
+        overflow: hidden;
+    }
+    .return-btn::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.7s var(--ease-smooth);
+    }
+    .return-btn:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow:
+            0 18px 48px rgba(212,175,55,0.6),
+            0 6px 16px rgba(212,175,55,0.4),
+            inset 0 2px 0 rgba(255,255,255,0.5);
+        background-position: 200% center;
+    }
+    .return-btn:hover::before { transform: translateX(100%); }
+    .return-btn:active { transform: translateY(-2px) scale(1.01); }
+
+    @media (max-width: 640px) {
+        .container { padding: 0 14px; margin: 16px auto; }
+        #welcome { padding: 38px 26px 32px; border-radius: 22px; }
+        .welcome-icon { width: 74px; height: 74px; font-size: 32px; }
+        #welcome h2 { font-size: 22px; }
+        .form-grid { grid-template-columns: 1fr; }
+        .bubble { max-width: 88%; font-size: 14px; }
+        header { padding: 16px 18px; }
+        header h1 { font-size: 17px; }
+        header h1 .brand { font-size: 15px; padding: 2px 8px; }
+        header p { font-size: 11px; }
+        .theme-toggle { width: 38px; height: 38px; font-size: 16px; left: 12px; }
+        #messages { padding: 20px 12px; max-height: 58vh; }
+        .grid { grid-template-columns: 1fr; gap: 14px; }
+        .chat-header { padding: 12px 14px; }
+        .expert-avatar { width: 46px; height: 46px; font-size: 18px; }
+        .expert-info h3 { font-size: 14.5px; }
+        .user-bar { padding: 10px 14px; font-size: 13px; }
+        .avatar-sm { width: 38px; height: 38px; font-size: 14px; }
+        .lock-shell { width: 120px; height: 120px; }
+        .lock-core { font-size: 30px; inset: 18px; }
+        .countdown-display { font-size: 46px; }
+        .countdown-display .unit { font-size: 13px; }
+        .closed-overlay h3 { font-size: 20px; }
+        .closed-overlay .reason-text { font-size: 13px; }
+        .return-btn { padding: 14px 30px; font-size: 14px; }
+        .input-area { padding: 12px; }
+        .send-btn { width: 46px; height: 46px; font-size: 18px; }
+    }
 </style>
 </head>
 <body>
 
+<div id="splash">
+    <div class="splash-logo">💼</div>
+    <div class="splash-title">منصة استشارات <span class="brand">forG</span></div>
+    <div class="splash-sub">نخبة من المحللين العرب — استشارات بلهجات محلية</div>
+    <div class="splash-progress"><div class="splash-fill" id="splashFill"></div></div>
+    <div class="splash-msg" id="splashMsg">جاري تجهيز بيئة العمل...</div>
+</div>
+
 <header>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-    <h1>منصة استشارات forG <span style="font-size:14px; opacity:0.8;">| استشارات مالية مخصصة</span></h1>
-    <p>نخبة من المحللين والمستشارين من 17 دولة عربية بلهجات محلية</p>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    <h1>منصة استشارات <span class="brand">forG</span></h1>
+    <p>محللون عرب — كلٌّ بلهجته واستشاراته</p>
 </header>
 
+<div class="user-bar" id="userBar">
+    <div class="user-info">
+        <div class="avatar-sm" id="userAvatar">؟</div>
+        <span id="userGreeting">مرحباً</span>
+    </div>
+</div>
+
 <div class="container">
-    <!-- شاشة التسجيل / الترحيب (افتراضياً باسم عمار) -->
-    <div id="welcome" class="show">
-        <div style="font-size: 44px; margin-bottom: 14px;">💎</div>
-        <h2>أهلاً بك يا عمار في منصة forG</h2>
-        <p style="color: var(--muted); font-size: 14px;">أدخل بياناتك أو ابدأ مباشرة لتستشير نخبة الخبراء والمحللين</p>
+    <div id="welcome">
+        <div class="welcome-icon">👤</div>
+        <h2>أهلاً بك في منصة استشارات forG</h2>
+        <p class="sub">بياناتك الأساسية لنقدّم استشارة مخصصة بلغة تناسبك</p>
         <div class="form-grid">
+            <div class="form-group"><label>الاسم الأول *</label><input type="text" id="inFirstName" placeholder="مثال: عمار" maxlength="30"></div>
+            <div class="form-group"><label>اسم العائلة *</label><input type="text" id="inLastName" placeholder="مثال: المنصور" maxlength="30"></div>
+            <div class="form-group"><label>العمر *</label><input type="number" id="inAge" placeholder="مثال: 32" min="15" max="100"></div>
             <div class="form-group">
-                <label>اسمك الكريم</label>
-                <input type="text" id="userNameInput" value="عمار">
-            </div>
-            <div class="form-group">
-                <label>اختر اللهجة المفضلة</label>
-                <select id="userDialect">
-                    <option value="saudi">خليجي سعودي</option>
-                    <option value="egyptian">مصري</option>
-                    <option value="emirati">خليجي إماراتي</option>
-                    <option value="kuwaiti">خليجي كويتي</option>
-                    <option value="syrian">شامي سوري</option>
-                    <option value="lebanese">شامي لبناني</option>
-                    <option value="iraqi">عراقي</option>
-                    <option value="moroccan">مغاربي مغربي</option>
+                <label>البلد *</label>
+                <select id="inCountry">
+                    <option value="">اختر البلد</option>
+                    <option>السعودية</option><option>الإمارات</option><option>الكويت</option>
+                    <option>قطر</option><option>البحرين</option><option>عُمان</option>
+                    <option>الأردن</option><option>مصر</option><option>العراق</option>
+                    <option>سوريا</option><option>لبنان</option><option>فلسطين</option>
+                    <option>اليمن</option><option>المغرب</option><option>الجزائر</option>
+                    <option>تونس</option><option>ليبيا</option><option>السودان</option>
+                    <option>موريتانيا</option><option>الصومال</option><option>جيبوتي</option>
+                    <option>تركيا</option><option>أخرى</option>
                 </select>
             </div>
-        </div>
-        <button class="btn-primary" onclick="startPlatform()">ابدأ الاستشارات الآن 🚀</button>
-    </div>
-
-    <!-- شاشة الأقسام الرئيسية -->
-    <div id="home">
-        <h2 id="homeGreeting">أهلاً بك يا عمار</h2>
-        <p class="home-sub">اختر القسم المناسب لاستشارتك مع نخبة خبرائنا:</p>
-        <div class="grid" id="sectionsGrid"></div>
-    </div>
-
-    <!-- شاشة المحادثة -->
-    <div id="chat">
-        <div class="chat-header">
-            <div class="expert-avatar" id="chatAvatar">ف</div>
-            <div class="expert-info">
-                <h3 id="chatExpertName">فاطمة العتيبي</h3>
-                <p id="chatExpertRole">خبيرة أسواق الذهب والمعادن</p>
+            <div class="form-group full">
+                <label>مستوى الخبرة المالية *</label>
+                <select id="inExp">
+                    <option value="مبتدئ — لا خبرة سابقة">🌱 مبتدئ</option>
+                    <option value="متوسط — لديه معرفة عامة" selected>📘 متوسط</option>
+                    <option value="متقدم — يتعامل مع أسواق متعددة">🎓 متقدم</option>
+                    <option value="محترف — خلفية مالية أو استثمارية">💼 محترف</option>
+                </select>
             </div>
-            <button class="btn-back" onclick="backToHome()">الرجوع للأقسام</button>
+            <div class="form-group full">
+                <label>سبب الاستشارة (اختياري)</label>
+                <textarea id="inReason" placeholder="مثال: أرغب بتخصيص محفظة استثمارية..."></textarea>
+            </div>
+        </div>
+        <button class="btn-primary" onclick="saveUser()">الدخول إلى المنصة</button>
+    </div>
+
+    <div id="home">
+        <h2>اختر التخصص الاستشاري</h2>
+        <p class="home-sub">كل قسم يقوده محلل متخصص من بلد عربي مختلف</p>
+        <div class="grid" id="sectionGrid"></div>
+    </div>
+
+    <div id="chat">
+        <div class="closed-overlay" id="closedOverlay">
+            <div class="lock-shell">
+                <svg viewBox="0 0 130 130">
+                    <defs>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#d4af37"/>
+                            <stop offset="50%" stop-color="#f0d977"/>
+                            <stop offset="100%" stop-color="#d4af37"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="lock-ring-bg" cx="65" cy="65" r="58"/>
+                    <circle class="lock-ring-progress" id="lockRing" cx="65" cy="65" r="58"/>
+                </svg>
+                <div class="lock-core"><span class="lock-emoji">🔒</span></div>
+            </div>
+            <h3>أُغلقت المحادثة مؤقتاً</h3>
+            <p class="reason-text" id="closedReason">المحادثة مغلقة. يمكنك العودة بعد انتهاء العدّ التنازلي.</p>
+            <div class="countdown-display" id="countdownDisplay">
+                <span id="cdMin">00</span><span class="unit">د</span><span id="cdSec">00</span><span class="unit">ث</span>
+            </div>
+            <div class="countdown-hint">REMAINING TIME</div>
+            <button class="return-btn" onclick="goBack()">العودة إلى الأقسام</button>
+        </div>
+
+        <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="chat-header">
+            <div class="expert-avatar" id="expAvatar">؟</div>
+            <div class="expert-info">
+                <h3 id="expName">...</h3>
+                <p id="expRole"><span class="status-text">متصل الآن</span></p>
+            </div>
+            <button class="btn-back" onclick="goBack()">← رجوع</button>
         </div>
         <div id="messages"></div>
+        <div class="suggestions" id="suggestions"></div>
         <div class="input-area">
-            <textarea id="queryInput" placeholder="اكتب سؤالك أو استشارتك هنا يا عمار..." rows="1" onkeydown="handleKey(event)"></textarea>
-            <button class="send-btn" onclick="sendMessage()">➤</button>
+            <textarea id="input" placeholder="اكتب استفسارك..." rows="1"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
         </div>
     </div>
 </div>
 
 <script>
-const SECTIONS = [
-    { id: 'gold', name: '💎 أسواق الذهب والمعادن', desc: 'تحليل السبائك والأونصة والتخصيص والتحوط.', expert: { name: 'فاطمة العتيبي', role: 'خبيرة سبائك وأونصة', years: '12 سنة' } },
-    { id: 'stocks', name: '📈 الأسواق المالية والأسهم', desc: 'تقييم الشركات والمضاعفات وقوائم المالية.', expert: { name: 'ريم الفهد', role: 'محللة مالي ومحافظ', years: '10 سنوات' } },
-    { id: 'macro', name: '🌍 الاقتصاد الكلي والسياسة', desc: 'قرارات الفيدرالي، التضخم، والفائدة.', expert: { name: 'د. سارة المنصور', role: 'خبيرة اقتصاد كلي', years: '15 سنة' } },
-    { id: 'geopolitical', name: '🧭 الجيوسياسة وأثرها بالأسواق', desc: 'الأزمات الدولية والممرات وسلاسل الإمداد.', expert: { name: 'نورا الشهري', role: 'محليلة جيوسياسية', years: '9 سنوات' } },
-    { id: 'budget', name: '🎯 التخطيط المالي الشخصي', desc: 'إدارة الميزانية، صندوق الطوارئ، والدين.', expert: { name: 'هند الرشيد', role: 'مستشارة تخطيط مالي', years: '11 سنة' } },
-    { id: 'crypto', name: '🔗 الأصول الرقمية والبلوكشين', desc: 'البيتكوين، DeFi، وإدارة المخاطر.', expert: { name: 'ليان الصقر', role: 'محللة أصول رقمية', years: '7 سنوات' } }
-];
+/* ═══════════════════════════════════════════════════════════════════
+   البيانات الأساسية
+   ═══════════════════════════════════════════════════════════════════ */
+const DIALECTS = {
+    saudi: { flag: '🇸🇦', country: 'السعودية' }, emirati: { flag: '🇦🇪', country: 'الإمارات' },
+    kuwaiti: { flag: '🇰🇼', country: 'الكويت' }, qatari: { flag: '🇶🇦', country: 'قطر' },
+    bahraini: { flag: '🇧🇭', country: 'البحرين' }, omani: { flag: '🇴🇲', country: 'عُمان' },
+    egyptian: { flag: '🇪🇬', country: 'مصر' }, syrian: { flag: '🇸🇾', country: 'سوريا' },
+    lebanese: { flag: '🇱🇧', country: 'لبنان' }, jordanian: { flag: '🇯🇴', country: 'الأردن' },
+    palestinian: { flag: '🇵🇸', country: 'فلسطين' }, iraqi: { flag: '🇮🇶', country: 'العراق' },
+    yemeni: { flag: '🇾🇪', country: 'اليمن' }, moroccan: { flag: '🇲🇦', country: 'المغرب' },
+    algerian: { flag: '🇩🇿', country: 'الجزائر' }, tunisian: { flag: '🇹🇳', country: 'تونس' },
+    sudanese: { flag: '🇸🇩', country: 'السودان' }
+};
 
-let currentUser = { firstName: 'عمار', dialect: 'saudi' };
-let currentSection = null;
-let currentExpert = null;
-let chatHistory = [];
+const EXPERTS = {
+    gold: [
+        { name: 'سارة العتيبي', role: 'محللة معادن ثمينة أولى', years: '8 سنوات', dialect: 'saudi' },
+        { name: 'أحمد الراشد', role: 'خبير أسواق السلع', years: '15 سنة', dialect: 'emirati' },
+        { name: 'ريم الفهد', role: 'محللة ذهب وفضة', years: '10 سنوات', dialect: 'kuwaiti' },
+        { name: 'حسن القيسي', role: 'مستشار معادن استراتيجي', years: '12 سنة', dialect: 'iraqi' },
+        { name: 'ليال حداد', role: 'محللة بلاتين وفضة', years: '7 سنوات', dialect: 'syrian' },
+        { name: 'ماريا نصر', role: 'خبيرة تحوط بالمعادن', years: '9 سنوات', dialect: 'lebanese' },
+        { name: 'أمين بوعلام', role: 'محلل معادن نادرة', years: '11 سنة', dialect: 'moroccan' },
+        { name: 'سالم الكثيري', role: 'محلل أسواق الخليج', years: '6 سنوات', dialect: 'omani' }
+    ],
+    stocks: [
+        { name: 'خالد المنصور', role: 'مستشار أسواق مالية', years: '12 سنة', dialect: 'saudi' },
+        { name: 'محمد عبدالرحمن', role: 'محلل أسهم قطاعية', years: '10 سنوات', dialect: 'egyptian' },
+        { name: 'فيصل الدوسري', role: 'خبير تداول مؤسسي', years: '16 سنة', dialect: 'kuwaiti' },
+        { name: 'سامي خوري', role: 'محلل قطاع التقنية', years: '9 سنوات', dialect: 'palestinian' },
+        { name: 'رامي الخطيب', role: 'محلل أسواق ناشئة', years: '8 سنوات', dialect: 'jordanian' },
+        { name: 'نادية بلحاج', role: 'محللة استثمار بديل', years: '11 سنة', dialect: 'algerian' },
+        { name: 'زياد الجابري', role: 'محلل بنوك واستثمار', years: '13 سنة', dialect: 'iraqi' },
+        { name: 'طارق بن ياسين', role: 'محلل أسهم دفاعية', years: '7 سنوات', dialect: 'tunisian' }
+    ],
+    macro: [
+        { name: 'د. فهد الحربي', role: 'محلل اقتصادي أكاديمي', years: '18 سنة', dialect: 'saudi' },
+        { name: 'د. ماجد العمر', role: 'خبير تضخم وفائدة', years: '20 سنة', dialect: 'emirati' },
+        { name: 'أحمد الشربيني', role: 'محلل سياسات نقدية', years: '12 سنة', dialect: 'egyptian' },
+        { name: 'د. غسان حبيب', role: 'محلل اقتصاد دولي', years: '16 سنة', dialect: 'syrian' },
+        { name: 'منى بلقاسم', role: 'محللة أسواق السندات', years: '10 سنوات', dialect: 'moroccan' },
+        { name: 'حسين الجبوري', role: 'مستشار اقتصادي', years: '14 سنة', dialect: 'iraqi' },
+        { name: 'سلمى بن علي', role: 'محللة دورات اقتصادية', years: '9 سنوات', dialect: 'tunisian' },
+        { name: 'عبدالله الحارثي', role: 'محلل سياسات مالية', years: '11 سنة', dialect: 'omani' }
+    ],
+    geopolitical: [
+        { name: 'عمر الدوسري', role: 'محلل جيوسياسي', years: '14 سنة', dialect: 'saudi' },
+        { name: 'طارق المطيري', role: 'محلل صراعات وأسواق', years: '16 سنة', dialect: 'kuwaiti' },
+        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة', dialect: 'emirati' },
+        { name: 'أمل الحسن', role: 'محللة سياسات الطاقة', years: '9 سنوات', dialect: 'syrian' },
+        { name: 'رنا خوري', role: 'محللة ممرات تجارية', years: '10 سنوات', dialect: 'lebanese' },
+        { name: 'زيد العمري', role: 'محلل مخاطر جيوسياسية', years: '8 سنوات', dialect: 'jordanian' },
+        { name: 'ياسر المقطري', role: 'محلل جيوسياسة الشرق', years: '12 سنة', dialect: 'yemeni' },
+        { name: 'كريم بوزيد', role: 'محلل علاقات شمال إفريقيا', years: '7 سنوات', dialect: 'algerian' }
+    ],
+    budget: [
+        { name: 'منى الغامدي', role: 'مدرّبة مالية شخصية', years: '6 سنوات', dialect: 'saudi' },
+        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات', years: '13 سنة', dialect: 'saudi' },
+        { name: 'هند الرشيد', role: 'مخططة مالية معتمدة', years: '10 سنوات', dialect: 'kuwaiti' },
+        { name: 'يوسف العامري', role: 'مستشار تخطيط تقاعدي', years: '15 سنة', dialect: 'emirati' },
+        { name: 'دينا مصطفى', role: 'مدرّبة ميزانية أسرية', years: '8 سنوات', dialect: 'egyptian' },
+        { name: 'لينا حمدان', role: 'خبيرة إعادة هيكلة الديون', years: '11 سنة', dialect: 'jordanian' },
+        { name: 'إيمان الشريف', role: 'مدرّبة ادخار واستثمار', years: '9 سنوات', dialect: 'tunisian' },
+        { name: 'سامية بن عيسى', role: 'مستشارة تخطيط مالي', years: '12 سنة', dialect: 'moroccan' }
+    ],
+    crypto: [
+        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات', dialect: 'saudi' },
+        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات', dialect: 'emirati' },
+        { name: 'راكان الصقر', role: 'محلل بيتكوين أول', years: '7 سنوات', dialect: 'kuwaiti' },
+        { name: 'زياد عبدالله', role: 'محلل DeFi و Web3', years: '4 سنوات', dialect: 'egyptian' },
+        { name: 'رامي شاهين', role: 'محلل تنظيم أصول رقمية', years: '6 سنوات', dialect: 'lebanese' },
+        { name: 'نور الدين', role: 'محلل مخاطر كريبتو', years: '5 سنوات', dialect: 'moroccan' },
+        { name: 'سيف الدين', role: 'محلل مشاريع بلوكشين', years: '6 سنوات', dialect: 'tunisian' },
+        { name: 'بشار النعيمي', role: 'محلل عملات مستقرة', years: '4 سنوات', dialect: 'iraqi' }
+    ]
+};
 
+const SECTION_INFO = {
+    gold: { icon: '💎', title: 'أسواق الذهب والمعادن الثمينة', desc: 'تحليل حركة السبائك والأونصة، التحوط ضد التضخم، والتخصيص الأمثل في المحفظة.', online: 5 },
+    stocks: { icon: '📈', title: 'الأسواق المالية والأسهم', desc: 'تقييم الشركات، قراءة القوائم المالية، بناء محفظة متوازنة، وإدارة المخاطر.', online: 4 },
+    macro: { icon: '🌍', title: 'الاقتصاد الكلي والسياسات النقدية', desc: 'قرارات الفيدرالي، أسعار الفائدة، التضخم، والدورات الاقتصادية وأثرها على الأصول.', online: 6 },
+    geopolitical: { icon: '🧭', title: 'الجيوسياسة وأثرها على الأسواق', desc: 'تحليل الأزمات والتوترات الدولية، أثرها على الطاقة، التجارة، وسلاسل الإمداد.', online: 3 },
+    budget: { icon: '🎯', title: 'التخطيط المالي الشخصي', desc: 'بناء الميزانية، استراتيجيات الادخار، هيكلة الديون، والتخطيط للتقاعد.', online: 5 },
+    crypto: { icon: '🔗', title: 'الأصول الرقمية والبلوكشين', desc: 'تحليل بيتكوين والإيثيريوم، تقييم المخاطر، والتنظيم العالمي المتسارع.', online: 4 }
+};
+
+const SUGGESTIONS = {
+    gold: ['هل التوقيت مناسب للشراء؟', 'ما نسبة الذهب في المحفظة؟', 'كيف أتحوط ضد التضخم؟'],
+    stocks: ['كيف أقيّم شركة؟', 'أفضل القطاعات دفاعياً؟', 'أساسيات بناء محفظة'],
+    macro: ['أثر رفع الفائدة على الأسهم؟', 'توقعات التضخم؟', 'متى يبدأ التيسير؟'],
+    geopolitical: ['أثر التوترات على النفط؟', 'هل الذهب ملاذ آمن؟'],
+    budget: ['كيف أنظم دخلي؟', 'خطة ادخار 40%؟', 'الخروج من الديون'],
+    crypto: ['نسبة الكريبتو في المحفظة؟', 'ما معايير المشروع الجاد؟', 'كيف أحمي أصولي؟']
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   الحالة العامة
+   ═══════════════════════════════════════════════════════════════════ */
+let user = null, section = null, expert = null, history = [], busy = false;
+let progressTimer = null;
+const CONVERSATIONS = {};
+const LAST_EXPERTS = {};
+const RESET_MIN_MS = 3 * 60 * 1000;
+const RESET_MAX_MS = 5 * 60 * 1000;
+const CLOSE_KEY = 'forg_closed_until';
+let countdownTimer = null;
+
+/* ═══════════════════════════════════════════════════════════════════
+   الثيم
+   ═══════════════════════════════════════════════════════════════════ */
 function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('forg_theme', next);
+    document.getElementById('themeBtn').textContent = next === 'light' ? '🌙' : '☀️';
+}
+function initThemeBtn() {
+    const c = document.documentElement.getAttribute('data-theme') || 'light';
+    document.getElementById('themeBtn').textContent = c === 'light' ? '🌙' : '☀️';
 }
 
-function startPlatform() {
-    const nameInput = document.getElementById('userNameInput').value.trim();
-    if (nameInput) currentUser.firstName = nameInput;
-    currentUser.dialect = document.getElementById('userDialect').value;
-
-    document.getElementById('welcome').classList.remove('show');
-    document.getElementById('home').classList.add('show');
-    document.getElementById('homeGreeting').innerText = `أهلاً بك يا ${currentUser.firstName}`;
-
-    const grid = document.getElementById('sectionsGrid');
-    grid.innerHTML = SECTIONS.map(s => `
-        <div class="card" onclick="openChat('${s.id}')">
-            <h3>${s.name}</h3>
-            <p>${s.desc}</p>
-            <div style="margin-top: 12px; font-size:12px; color:var(--accent); font-weight:700;">المستشارة: ${s.expert.name}</div>
+/* ═══════════════════════════════════════════════════════════════════
+   Splash
+   ═══════════════════════════════════════════════════════════════════ */
+const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
+let splashP = 0, splashMsgIdx = 0;
+function startSplash() {
+    const fill = document.getElementById('splashFill');
+    const msg = document.getElementById('splashMsg');
+    const interval = setInterval(() => {
+        splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
+        fill.style.width = splashP + '%';
+        const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
+        if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
+        if (splashP >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                document.getElementById('splash').classList.add('fade');
+                setTimeout(() => {
+                    document.getElementById('splash').style.display = 'none';
+                    initView();
+                }, 800);
+            }, 400);
+        }
+    }, 200);
+}
+function initView() {
+    initThemeBtn();
+    buildSectionGrid();
+    if (loadUser()) {
+        document.getElementById('home').classList.add('show');
+    } else {
+        document.getElementById('welcome').classList.add('show');
+    }
+}
+function buildSectionGrid() {
+    const grid = document.getElementById('sectionGrid');
+    grid.innerHTML = Object.entries(SECTION_INFO).map(([key, info]) => `
+        <div class="card" onclick="openSection('${key}')">
+            <div class="card-badge">${info.online} متصل</div>
+            <div class="card-icon">${info.icon}</div>
+            <h3>${info.title}</h3>
+            <p>${info.desc}</p>
         </div>
     `).join('');
 }
+startSplash();
+setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
-function openChat(sectionId) {
-    currentSection = SECTIONS.find(s => s.id === sectionId);
-    currentExpert = currentSection.expert;
-    chatHistory = [];
+/* ═══════════════════════════════════════════════════════════════════
+   المستخدم
+   ═══════════════════════════════════════════════════════════════════ */
+function loadUser() {
+    const s = localStorage.getItem('forg_user');
+    if (s) {
+        try {
+            user = JSON.parse(s);
+            if (!user.firstName) throw new Error();
+            showUserBar();
+            return true;
+        } catch (e) { localStorage.removeItem('forg_user'); }
+    }
+    return false;
+}
+function saveUser() {
+    const firstName = document.getElementById('inFirstName').value.trim();
+    const lastName = document.getElementById('inLastName').value.trim();
+    const age = document.getElementById('inAge').value.trim();
+    const country = document.getElementById('inCountry').value;
+    const exp = document.getElementById('inExp').value;
+    const reason = document.getElementById('inReason').value.trim();
+    if (!firstName || firstName.length < 2) return alert('أدخل الاسم الأول بشكل صحيح');
+    if (!lastName || lastName.length < 2) return alert('أدخل اسم العائلة');
+    if (!age || age < 15 || age > 100) return alert('أدخل عمراً صحيحاً (15-100)');
+    if (!country) return alert('اختر البلد');
+    user = { firstName, lastName, age, country, experience: exp, reason };
+    localStorage.setItem('forg_user', JSON.stringify(user));
+    showUserBar();
+    document.getElementById('welcome').classList.remove('show');
+    document.getElementById('home').classList.add('show');
+}
+function showUserBar() {
+    document.getElementById('userBar').classList.add('show');
+    document.getElementById('userAvatar').innerText = user.firstName.charAt(0);
+    document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   فتح الأقسام
+   ═══════════════════════════════════════════════════════════════════ */
+function pickDifferentExpert(s) {
+    const list = EXPERTS[s];
+    const last = LAST_EXPERTS[s];
+    let candidates = list;
+    if (last && list.length > 1) candidates = list.filter(e => e.name !== last.name);
+    const picked = candidates[Math.floor(Math.random() * candidates.length)];
+    LAST_EXPERTS[s] = picked;
+    return picked;
+}
+function openSection(s) {
+    section = s;
+    const closedInfo = getClosureInfo(s);
+    if (closedInfo && Date.now() < closedInfo.until) {
+        document.getElementById('home').classList.remove('show');
+        document.getElementById('chat').classList.add('show');
+        setupChatForSection(s, false);
+        setTimeout(() => showClosedOverlay(closedInfo.until, closedInfo.reason), 250);
+        return;
+    }
+    if (CONVERSATIONS[s]) {
+        const c = CONVERSATIONS[s];
+        if (c.resetTimer) { clearTimeout(c.resetTimer); c.resetTimer = null; }
+        expert = c.expert;
+        history = c.history;
+        renderExpertHeader();
+        document.getElementById('messages').innerHTML = c.html;
+        if (c.suggestionsHidden) document.getElementById('suggestions').style.display = 'none';
+        else showSuggestions(s);
+        document.getElementById('home').classList.remove('show');
+        document.getElementById('chat').classList.add('show');
+        document.getElementById('closedOverlay').classList.remove('show');
+        document.getElementById('input').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        setTimeout(() => document.getElementById('input').focus(), 600);
+    } else {
+        setupChatForSection(s, true);
+    }
+}
+function setupChatForSection(s, showWelcome) {
+    expert = pickDifferentExpert(s);
+    history = [];
+    renderExpertHeader();
+    document.getElementById('messages').innerHTML = '';
+    showSuggestions(s);
+    document.getElementById('closedOverlay').classList.remove('show');
+    document.getElementById('input').disabled = false;
+    document.getElementById('sendBtn').disabled = false;
+    CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false, resetTimer: null };
 
     document.getElementById('home').classList.remove('show');
     document.getElementById('chat').classList.add('show');
-    document.getElementById('chatExpertName').innerText = currentExpert.name;
-    document.getElementById('chatExpertRole').innerText = currentExpert.role;
-    document.getElementById('chatAvatar').innerText = currentExpert.name.charAt(0);
 
-    const msgs = document.getElementById('messages');
-    msgs.innerHTML = `
-        <div class="bubble-wrap expert">
-            <div class="bubble">أهلاً بك يا ${currentUser.firstName}. أنا ${currentExpert.name} (${currentExpert.role}). تفضل اطرح سؤالك أو استشارتك في ${currentSection.name}، ودعنا نبدأ النقاش فوراً.</div>
-        </div>
-    `;
+    if (showWelcome) {
+        setTimeout(async () => {
+            const hour = new Date().getHours();
+            const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
+            const welcomes = [
+                `${greet} ${user.firstName}.\nعندنا ضغوطات اليوم، لكن فريق العمل سيعالج رسالتك.\nمعك ${expert.name}، ${expert.role} بخبرة ${expert.years}.\nتفضل بسؤالك وأنا بالخدمة.`,
+                `${greet}.\nالمنصة مزدحمة قليلاً، بتحمّلنا شوي؟\nأنا ${expert.name}، ${expert.role}.\nاكتب سؤالك وسأعود إليك بأسرع وقت.`,
+                `${greet} ${user.firstName}.\nنعتذر مسبقاً إذا تأخرنا قليلاً، في ضغوطات.\nمعك ${expert.name}، ${expert.role}.\nتفضل بسؤالك.`
+            ];
+            const welcome = welcomes[Math.floor(Math.random() * welcomes.length)];
+            setExpertStatus('typing');
+            showTypingIndicator();
+            await sleep(calcHumanTypingTime(welcome));
+            hideTypingIndicator();
+            addBubble('expert', welcome);
+            history.push({ role: 'assistant', content: welcome });
+            CONVERSATIONS[s].history = history;
+            CONVERSATIONS[s].html = document.getElementById('messages').innerHTML;
+        }, 900 + Math.random() * 700);
+    }
+    setTimeout(() => {
+        if (!document.getElementById('input').disabled) document.getElementById('input').focus();
+    }, 600);
 }
-
-function backToHome() {
+function renderExpertHeader() {
+    const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي' };
+    document.getElementById('expAvatar').innerText = expert.name.charAt(0);
+    document.getElementById('expName').innerText = expert.name;
+    document.getElementById('expRole').innerHTML = `<span class="status-text">متصل الآن</span><span class="flag-badge">${d.flag} ${d.country}</span>`;
+}
+function showSuggestions(s) {
+    const c = document.getElementById('suggestions');
+    const list = SUGGESTIONS[s] || [];
+    c.innerHTML = list.map(t => `<div class="chip" onclick="useSug('${t.replace(/'/g, "\\'")}')">${t}</div>`).join('');
+    c.style.display = 'flex';
+}
+function useSug(t) {
+    if (document.getElementById('input').disabled) return;
+    document.getElementById('input').value = t;
+    document.getElementById('input').focus();
+}
+function goBack() {
+    if (section && CONVERSATIONS[section]) {
+        const c = CONVERSATIONS[section];
+        c.html = document.getElementById('messages').innerHTML;
+        c.history = history;
+        c.suggestionsHidden = document.getElementById('suggestions').style.display === 'none';
+        if (c.resetTimer) clearTimeout(c.resetTimer);
+        const delay = getRandomResetDelay();
+        c.resetTimer = setTimeout(() => { delete CONVERSATIONS[section]; }, delay);
+    }
+    clearInterval(countdownTimer);
+    document.getElementById('closedOverlay').classList.remove('show');
     document.getElementById('chat').classList.remove('show');
     document.getElementById('home').classList.add('show');
+    section = null; expert = null; history = [];
+}
+function getRandomResetDelay() {
+    return Math.floor(RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS));
 }
 
-async function sendMessage() {
-    const input = document.getElementById('queryInput');
-    const query = input.value.trim();
-    if (!query) return;
+/* ═══════════════════════════════════════════════════════════════════
+   أدوات مساعدة
+   ═══════════════════════════════════════════════════════════════════ */
+function timeNow() {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+function esc(t) { const d = document.createElement('div'); d.innerText = t; return d.innerHTML; }
+function formatText(text) {
+    let html = esc(text);
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    return html;
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    input.value = '';
-    appendMessage('user', query);
-    chatHistory.push({ role: 'user', content: query });
+function calcHumanTypingTime(text) {
+    const len = text.length;
+    const base = len * 42;
+    const jitter = base * 0.3 * (Math.random() - 0.5);
+    return Math.max(1200, Math.min(9000, base + jitter));
+}
 
-    const msgs = document.getElementById('messages');
-    const typingId = 'typing_' + Date.now();
-    msgs.innerHTML += `
-        <div class="bubble-wrap expert" id="${typingId}">
-            <div class="bubble" style="opacity: 0.7;">جاري تحليل الاستشارة يا ${currentUser.firstName}...</div>
+function setExpertStatus(status) {
+    const el = document.querySelector('.expert-info .status-text');
+    const info = document.querySelector('.expert-info p');
+    const avatar = document.getElementById('expAvatar');
+    if (!el) return;
+    avatar.classList.remove('offline', 'busy', 'typing');
+    info.classList.remove('typing-status', 'busy-status');
+    if (status === 'offline') { el.textContent = 'غير متصل'; avatar.classList.add('offline'); }
+    else if (status === 'busy') { el.textContent = 'مشغول قليلاً...'; info.classList.add('busy-status'); avatar.classList.add('busy'); }
+    else if (status === 'typing') { el.textContent = 'يكتب الآن...'; info.classList.add('typing-status'); avatar.classList.add('typing'); }
+    else { el.textContent = 'متصل الآن'; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   الرسائل
+   ═══════════════════════════════════════════════════════════════════ */
+function addBubble(who, text, isError = false) {
+    const wrap = document.createElement('div');
+    wrap.className = `bubble-wrap ${who}`;
+    const name = who === 'user' ? user.firstName : (expert ? expert.name : 'النظام');
+    wrap.innerHTML = `
+        <div class="bubble ${isError ? 'error-bubble' : ''}">
+            <div class="sender">${name}</div>
+            <div class="bubble-content">${isError ? esc(text) : formatText(text)}</div>
+            <div class="time-row">
+                ${who === 'user' ? '<span class="checks sent">✓</span>' : ''}
+                <span class="time">${timeNow()}</span>
+            </div>
         </div>
     `;
-    msgs.scrollTop = msgs.scrollHeight;
+    const m = document.getElementById('messages');
+    m.appendChild(wrap);
+    m.scrollTop = m.scrollHeight;
+    if (who === 'user') {
+        const ck = wrap.querySelector('.checks');
+        setTimeout(() => {
+            if (ck && !ck.classList.contains('read')) {
+                ck.textContent = '✓✓';
+                ck.classList.add('delivered');
+                ck.classList.remove('sent');
+            }
+        }, 900 + Math.random() * 800);
+        wrap.dataset.pendingRead = 'true';
+    }
+    return wrap;
+}
+
+async function markMessagesRead() {
+    const pending = document.querySelectorAll('[data-pending-read="true"]');
+    for (const wrap of pending) {
+        await sleep(250 + Math.random() * 400);
+        const ck = wrap.querySelector('.checks');
+        if (ck) {
+            ck.textContent = '✓✓';
+            ck.classList.add('read');
+            ck.classList.remove('delivered', 'sent');
+        }
+        wrap.dataset.pendingRead = 'false';
+    }
+}
+
+function startProgress() {
+    const bar = document.getElementById('progressBar');
+    const fill = document.getElementById('progressFill');
+    bar.classList.add('show');
+    let p = 0;
+    progressTimer = setInterval(() => {
+        p = Math.min(p + Math.random() * 4, 88);
+        fill.style.width = p + '%';
+    }, 400);
+}
+function finishProgress() {
+    clearInterval(progressTimer);
+    const fill = document.getElementById('progressFill');
+    fill.style.width = '100%';
+    setTimeout(() => {
+        document.getElementById('progressBar').classList.remove('show');
+        fill.style.width = '0%';
+    }, 500);
+}
+
+function showTypingIndicator() {
+    if (document.getElementById('typing-indicator')) return;
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'bubble-wrap expert';
+    w.id = 'typing-indicator';
+    w.innerHTML = `<div class="bubble"><div class="sender">${expert.name}</div><div class="typing"><span></span><span></span><span></span></div></div>`;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+    setExpertStatus('typing');
+}
+function hideTypingIndicator() {
+    const t = document.getElementById('typing-indicator');
+    if (t) t.remove();
+    setExpertStatus('online');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   الإغلاق والعد التنازلي
+   ═══════════════════════════════════════════════════════════════════ */
+function getClosureInfo(s) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        const entry = stored[s];
+        if (!entry) return null;
+        if (Date.now() >= entry.until) {
+            delete stored[s];
+            localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+            return null;
+        }
+        return entry;
+    } catch (e) { return null; }
+}
+function setClosureInfo(s, until, reason) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        stored[s] = { until, reason };
+        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+    } catch (e) {}
+}
+function clearClosureInfo(s) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        delete stored[s];
+        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+    } catch (e) {}
+}
+function isChatClosed() {
+    if (!section) return false;
+    const info = getClosureInfo(section);
+    return info && Date.now() < info.until;
+}
+function closeChat(seconds, reason) {
+    const until = Date.now() + seconds * 1000;
+    setClosureInfo(section, until, reason);
+    showClosedOverlay(until, reason);
+}
+
+function showClosedOverlay(until, reason) {
+    const overlay = document.getElementById('closedOverlay');
+    const reasonEl = document.getElementById('closedReason');
+    const ring = document.getElementById('lockRing');
+    const cdMin = document.getElementById('cdMin');
+    const cdSec = document.getElementById('cdSec');
+
+    const reasonText = {
+        user_done: 'انتهت الاستشارة بناءً على <span class="highlight">رغبتك</span>. شكراً لتواصلك.',
+        trolling: 'أُغلقت بسبب <span class="highlight">محتوى غير جدي</span>. نأمل عودتك بجدية.',
+        bored: 'يبدو أن الموضوع <span class="highlight">ما شدّك</span>. نأخذ استراحة قصيرة.',
+        deep_close: '<span class="highlight">محادثة طويلة</span> — نأخذ استراحة قصيرة قبل المتابعة.',
+        rude: 'أُغلقت بسبب <span class="highlight">الإساءة</span>. نحن هنا لمساعدتك باحترام.',
+        wants_else: 'يبدو أنك <span class="highlight">تفضّل موضوعاً آخر</span>. اختر قسماً جديداً.'
+    }[reason] || 'المحادثة مغلقة مؤقتاً. يمكنك العودة بعد انتهاء العدّ التنازلي.';
+
+    reasonEl.innerHTML = reasonText;
+    overlay.classList.add('show');
+
+    document.getElementById('input').disabled = true;
+    document.getElementById('input').placeholder = 'المحادثة مغلقة مؤقتاً...';
+    document.getElementById('sendBtn').disabled = true;
+
+    const totalSeconds = Math.floor((until - Date.now()) / 1000);
+    const initialTotal = totalSeconds;
+    const radius = 58;
+    const circumference = 2 * Math.PI * radius;
+    ring.style.strokeDasharray = `${circumference} ${circumference}`;
+
+    function updateRing(remaining) {
+        const ratio = Math.max(0, remaining / initialTotal);
+        const offset = circumference * (1 - ratio);
+        ring.style.strokeDashoffset = offset;
+    }
+
+    function tick() {
+        const remaining = Math.max(0, Math.floor((until - Date.now()) / 1000));
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        cdMin.textContent = String(m).padStart(2,'0');
+        cdSec.textContent = String(s).padStart(2,'0');
+        updateRing(remaining);
+
+        if (remaining <= 0) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+            overlay.classList.remove('show');
+            const s2 = section;
+            if (s2) clearClosureInfo(s2);
+            document.getElementById('input').disabled = false;
+            document.getElementById('input').placeholder = 'اكتب استفسارك...';
+            document.getElementById('sendBtn').disabled = false;
+            setTimeout(() => {
+                addBubble('expert', 'أهلاً بعودتك. تفضل بأي سؤال.');
+            }, 500);
+        }
+    }
+    tick();
+    clearInterval(countdownTimer);
+    countdownTimer = setInterval(tick, 1000);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   إرسال الرسالة — النسخة المحدثة بالتأخير الذكي
+   ═══════════════════════════════════════════════════════════════════ */
+async function sendMsg() {
+    const input = document.getElementById('input');
+    const text = input.value.trim();
+    if (!text || busy) return;
+
+    if (isChatClosed()) {
+        const info = getClosureInfo(section);
+        if (info) showClosedOverlay(info.until, info.reason);
+        return;
+    }
+
+    input.value = '';
+    input.style.height = 'auto';
+    addBubble('user', text);
+    history.push({ role: 'user', content: text });
+    document.getElementById('suggestions').style.display = 'none';
+
+    if (section && CONVERSATIONS[section]?.resetTimer) {
+        clearTimeout(CONVERSATIONS[section].resetTimer);
+        CONVERSATIONS[section].resetTimer = null;
+    }
+
+    busy = true;
+    document.getElementById('sendBtn').disabled = true;
+    setExpertStatus('busy');
+    startProgress();
+
+    const fetchPromise = fetch('https://ammar-e0tp.onrender.com/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            section, query: text, user, expert,
+            history: history.slice(-6),
+            dialect: expert.dialect
+        })
+    });
+
+    // وقت قراءة قصير قبل ما يبدأ "الكتابة"
+    await sleep(500 + Math.random() * 600);
+    markMessagesRead();
 
     try {
-        const response = await fetch('/api/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                section: currentSection.id,
-                query,
-                user: currentUser,
-                expert: currentExpert,
-                history: chatHistory,
-                dialect: currentUser.dialect
-            })
-        });
-
-        const data = await response.json();
-        document.getElementById(typingId)?.remove();
-
-        if (data.replies && data.replies.length) {
-            data.replies.forEach(rep => {
-                appendMessage('expert', rep);
-                chatHistory.push({ role: 'model', content: rep });
-            });
-        } else {
-            appendMessage('expert', `عذراً يا ${currentUser.firstName}، حدث خطأ بسيط في جلب الرد.`);
+        const res = await fetchPromise;
+        const raw = await res.text();
+        let data = {};
+        try { data = JSON.parse(raw); } catch (e) {
+            finishProgress(); setExpertStatus('online');
+            addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
+            return;
         }
+
+        if (res.status === 429 && data.cooldown) {
+            finishProgress(); setExpertStatus('online');
+            busy = false;
+            document.getElementById('sendBtn').disabled = false;
+            closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
+            return;
+        }
+
+        if (!res.ok) {
+            finishProgress(); setExpertStatus('online');
+            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
+            return;
+        }
+
+        finishProgress();
+
+        const replies = data.replies || [];
+        // ✅ استخدام التأخير البشري الذكي المحسوب من الخادم
+        const perReplyDelays = data.timing?.perReply || [];
+
+        // وقت قراءة وتفكير أولي — يحاكي قراءة السؤال
+        setExpertStatus('busy');
+        await sleep(800 + Math.random() * 1200);
+
+        for (let i = 0; i < replies.length; i++) {
+            const reply = replies[i];
+            // ✅ التأخير المحسوب لكل فقرة (بشري ومنطقي)
+            const typingTime = perReplyDelays[i] || calcHumanTypingTime(reply);
+            setExpertStatus('typing');
+            showTypingIndicator();
+            await sleep(typingTime);
+            hideTypingIndicator();
+            addBubble('expert', reply);
+            history.push({ role: 'assistant', content: reply });
+
+            // فاصل قصير بين الفقرات (يحاكي تفكير المستشار)
+            if (i < replies.length - 1) {
+                setExpertStatus('busy');
+                await sleep(400 + Math.random() * 700);
+            }
+        }
+
+        if (section && CONVERSATIONS[section]) {
+            CONVERSATIONS[section].history = history;
+            CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+        }
+
+        if (data.closed && data.cooldownMinutes) {
+            setTimeout(() => closeChat(data.cooldownMinutes * 60, data.closeReason), 1200);
+        }
+
     } catch (e) {
-        document.getElementById(typingId)?.remove();
-        appendMessage('expert', `عذراً يا ${currentUser.firstName}، تعذر الاتصال بالخادم حالياً.`);
+        finishProgress(); setExpertStatus('online');
+        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}`, true);
+    } finally {
+        busy = false;
+        if (!isChatClosed()) {
+            document.getElementById('sendBtn').disabled = false;
+        }
+        setExpertStatus('online');
     }
 }
 
-function appendMessage(sender, text) {
-    const msgs = document.getElementById('messages');
-    const wrap = document.createElement('div');
-    wrap.className = `bubble-wrap ${sender}`;
-    wrap.innerHTML = `<div class="bubble">${text}</div>`;
-    msgs.appendChild(wrap);
-    msgs.scrollTop = msgs.scrollHeight;
-}
-
-function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+/* ═══════════════════════════════════════════════════════════════════
+   ربط أحداث الإدخال
+   ═══════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    const inp = document.getElementById('input');
+    if (inp) {
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+        });
+        inp.addEventListener('input', () => {
+            inp.style.height = 'auto';
+            inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+        });
     }
-}
+});
 </script>
+
 </body>
 </html>
