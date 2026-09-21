@@ -39,10 +39,8 @@
     
     body { 
         font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif; 
-        background: var(--bg); 
-        color: var(--text); 
-        min-height: 100vh;
-        line-height: 1.6;
+        background: var(--bg); color: var(--text); 
+        min-height: 100vh; line-height: 1.6;
     }
     
     /* ============ Splash ============ */
@@ -152,14 +150,22 @@
         box-shadow: var(--shadow-sm); cursor: pointer;
         border-top: 4px solid var(--secondary);
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative; overflow: hidden;
     }
+    .card::before {
+        content: ''; position: absolute; top: 0; right: 0;
+        width: 0; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(212,175,55,0.08));
+        transition: width 0.4s;
+    }
+    .card:hover::before { width: 100%; }
     .card:hover {
         transform: translateY(-6px);
         box-shadow: var(--shadow-lg);
         border-color: var(--accent);
     }
-    .card h3 { color: var(--primary); margin-bottom: 8px; font-size: 17px; }
-    .card p { color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+    .card h3 { color: var(--primary); margin-bottom: 8px; font-size: 17px; position: relative; }
+    .card p { color: var(--muted); font-size: 13.5px; line-height: 1.6; position: relative; }
     
     /* ============ Chat ============ */
     #chat { 
@@ -189,7 +195,8 @@
     @keyframes onlinePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
     
     .expert-info h3 { font-size: 16px; font-weight: 700; }
-    .expert-info p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .expert-info p { font-size: 12px; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--online); display: inline-block; }
     
     .btn-back {
         margin-left: auto; background: rgba(255,255,255,0.1);
@@ -245,7 +252,17 @@
     .bubble-content { white-space: pre-wrap; }
     .bubble-content strong { color: var(--primary); font-weight: 700; }
     
-    .time { font-size: 10px; color: var(--muted); margin-top: 6px; text-align: left; direction: ltr; }
+    /* ============ WhatsApp-style checks ============ */
+    .time-row { 
+        display: flex; align-items: center; justify-content: flex-end; 
+        gap: 4px; margin-top: 6px; 
+    }
+    .time { font-size: 10px; color: var(--muted); direction: ltr; }
+    .checks { font-size: 11px; color: var(--muted); letter-spacing: -3px; direction: ltr; transition: color 0.3s; }
+    .checks.sent { color: var(--muted); }
+    .checks.delivered { color: #94a3b8; }
+    .checks.read { color: #3b82f6; }
+    .checks.double { letter-spacing: -4px; margin-right: 1px; }
     
     /* ============ Typing ============ */
     .typing { display: inline-flex; gap: 5px; padding: 6px 4px; }
@@ -270,6 +287,7 @@
     }
     .wstep.active { opacity: 1; color: #92400e; font-weight: 700; }
     .wstep.done { opacity: 0.85; color: #166534; }
+    .wstep-icon { display: inline-flex; width: 18px; justify-content: center; }
     
     /* ============ Suggestions ============ */
     .suggestions {
@@ -412,7 +430,7 @@
             <div class="expert-avatar" id="expAvatar">؟</div>
             <div class="expert-info">
                 <h3 id="expName">جاري الاتصال...</h3>
-                <p id="expRole">متصل الآن 🟢</p>
+                <p id="expRole"><span class="status-dot"></span>متصل الآن</p>
             </div>
             <button class="btn-back" onclick="goBack()">← رجوع</button>
         </div>
@@ -564,7 +582,7 @@ function openSection(s) {
     
     document.getElementById('expAvatar').innerText = expert.name.charAt(0);
     document.getElementById('expName').innerText = expert.name;
-    document.getElementById('expRole').innerText = `${expert.role} • ${expert.years} • متصل 🟢`;
+    document.getElementById('expRole').innerHTML = `<span class="status-dot"></span>${expert.role} • ${expert.years}`;
     document.getElementById('messages').innerHTML = '';
     
     showSuggestions(s);
@@ -610,28 +628,62 @@ function esc(t) {
     return d.innerHTML;
 }
 
-// ✅ تنسيق Markdown بسيط (bold + سطور)
 function formatText(text) {
     let html = esc(text);
-    // **نص** → <strong>
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     return html;
+}
+
+// ✅ توليد علامات الصح
+function getChecks(who) {
+    // المحلل: صحين زرقاء (مقروء)
+    // المستخدم: صح واحدة ثم تصبح صحين
+    if (who === 'expert') {
+        return `<span class="checks read double">✓✓</span>`;
+    }
+    return `<span class="checks sent" id="ck-${Date.now()}">✓</span>`;
 }
 
 function addBubble(who, text, isError = false) {
     const wrap = document.createElement('div');
     wrap.className = `bubble-wrap ${who}`;
     const name = who === 'user' ? user.name : (expert ? expert.name : 'النظام');
+    const msgId = 'msg-' + Date.now() + Math.random().toString(36).slice(2, 6);
+    wrap.id = msgId;
+    
     wrap.innerHTML = `
         <div class="bubble ${isError ? 'error-bubble' : ''}">
             <div class="sender">${name}</div>
             <div class="bubble-content">${isError ? text : formatText(text)}</div>
-            <div class="time">${timeNow()}</div>
+            <div class="time-row">
+                <span class="time">${timeNow()}</span>
+                ${getChecks(who)}
+            </div>
         </div>
     `;
     const m = document.getElementById('messages');
     m.appendChild(wrap);
     m.scrollTop = m.scrollHeight;
+    
+    // ✅ تحديث علامات الصح تدريجياً للمستخدم
+    if (who === 'user') {
+        const checksEl = wrap.querySelector('.checks');
+        // بعد 800ms: تصبح صحين رمادية (delivered)
+        setTimeout(() => {
+            if (checksEl) {
+                checksEl.textContent = '✓✓';
+                checksEl.classList.add('double', 'delivered');
+                checksEl.classList.remove('sent');
+            }
+        }, 800);
+        // بعد 2000ms: تصبح صحين زرقاء (read)
+        setTimeout(() => {
+            if (checksEl) {
+                checksEl.classList.add('read');
+                checksEl.classList.remove('delivered');
+            }
+        }, 2000);
+    }
 }
 
 // ============ Progress ============
@@ -670,7 +722,7 @@ function showWaiting() {
     const w = document.createElement('div');
     w.className = 'bubble-wrap expert';
     w.id = 'waiting';
-    const stepsHtml = WSTEPS.map((s, i) => `<div class="wstep" data-i="${i}"><span>${s.icon}</span><span>${s.text}</span></div>`).join('');
+    const stepsHtml = WSTEPS.map((s, i) => `<div class="wstep" data-i="${i}"><span class="wstep-icon">${s.icon}</span><span>${s.text}</span></div>`).join('');
     w.innerHTML = `
         <div class="bubble waiting-bubble">
             <div class="sender">${expert.name}</div>
@@ -687,10 +739,10 @@ function showWaiting() {
         if (i > 0 && steps[i-1]) {
             steps[i-1].classList.remove('active');
             steps[i-1].classList.add('done');
-            steps[i-1].firstElementChild.textContent = '✅';
+            steps[i-1].querySelector('.wstep-icon').textContent = '✓';
         }
         if (i < steps.length) { steps[i].classList.add('active'); i++; }
-        else { i = 0; steps.forEach(s => { s.classList.remove('active','done'); s.firstElementChild.textContent = WSTEPS[parseInt(s.dataset.i)].icon; }); }
+        else { i = 0; steps.forEach(s => { s.classList.remove('active','done'); s.querySelector('.wstep-icon').textContent = WSTEPS[parseInt(s.dataset.i)].icon; }); }
     }, 2400);
 }
 
