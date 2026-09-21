@@ -1,10 +1,11 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15 "Human+ Handoff"
+ *  منصة استشارات forG — Strategy-Pro v15.1 "Human+ Handoff (Fixed)"
  *  ملف واحد + index.html (للـ Open Graph)
- *  
+ *
  *  التشغيل:
  *    export GEMINI_API_KEY="مفتاحك"
+ *    npm i express cors node-fetch helmet
  *    node server.js
  * ═══════════════════════════════════════════════════════════════
  */
@@ -16,12 +17,25 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
+
+/* ✅ FIX #1: ضروري خلف Render/Railway/Heroku لقراءة IP الحقيقي */
+app.set('trust proxy', 1);
+
 app.use(express.json({ limit: '1mb' }));
 
 const CORS_ORIGINS = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(',').map(s => s.trim())
     : '*';
 app.use(cors({ origin: CORS_ORIGINS }));
+
+/* ✅ FIX #6: رؤوس أمان أساسية بدون حاجة helmet */
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    next();
+});
 
 const API_KEY = process.env.GEMINI_API_KEY;
 const PORT = process.env.PORT || 3000;
@@ -439,14 +453,26 @@ const OPENERS = {
     long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.','شوف، الموضوع فيه تفاصيل مهمة.']
 };
 
-function getSaudiHour(offsetHours = 3) {
-    const utc = Date.now() + (new Date().getTimezoneOffset() * 60000);
-    const local = new Date(utc + offsetHours * 3600000);
-    return local.getHours();
+/* ✅ FIX #2/#3/#4: دوال التوقيت السعودي — تعمل بشكل صحيح على أي خادم */
+const SAUDI_OFFSET_MS = 3 * 3600000;
+function getSaudiDate() {
+    return new Date(Date.now() + SAUDI_OFFSET_MS);
+}
+function getSaudiHour() {
+    return getSaudiDate().getUTCHours();
+}
+function getSaudiMinute() {
+    return getSaudiDate().getUTCMinutes();
+}
+function getSaudiDateString() {
+    return getSaudiDate().toLocaleDateString('ar-SA-u-nu-latn', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        timeZone: 'UTC'
+    });
 }
 
 function computeEnergy() {
-    const hour = getSaudiHour(3);
+    const hour = getSaudiHour();
     let base;
     if (hour >= 6 && hour < 10) base = 1.15;
     else if (hour >= 10 && hour < 14) base = 1.25;
@@ -561,20 +587,15 @@ function pickHumanTouch(mood, mode) {
 function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
     const qLen = (userQuery || '').length;
 
-    /* 1) وقت قراءة رسالة المستخدم */
     let readingMs = Math.min(3500, 250 + qLen * 16) * (0.75 + Math.random() * 0.5);
 
-    /* عند handoff — المحلل الجديد لم يقرأ شيئاً بعد */
     if (context.type === 'handoff') {
         readingMs = 250 + Math.random() * 300;
     }
-
-    /* عند return_after_gap — لم يرَ الرسالة القديمة أيضاً */
     if (context.type === 'return_after_gap') {
         readingMs = Math.min(readingMs, 1800);
     }
 
-    /* 2) وقت التفكير */
     let thinkingBase = 700;
     if (persona.mode === 'detailed') thinkingBase = 2000;
     else if (persona.mode === 'expanded') thinkingBase = 1400;
@@ -588,7 +609,6 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
 
     const thinkingMs = thinkingBase * (0.65 + Math.random() * 0.7) + hesitationMs;
 
-    /* 3) وقت الكتابة لكل رد */
     const perReply = replies.map((r, i) => {
         const chars = (r || '').length;
         const typingMs = chars * (70 + Math.random() * 40);
@@ -617,7 +637,7 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     const emotion = detectEmotion(query);
     const seed = Math.floor(Math.random() * 99999);
 
-    const hour = getSaudiHour(3);
+    const hour = getSaudiHour();
     const isLateNight = hour >= 23 || hour < 6;
     const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
 
@@ -645,7 +665,6 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         ? `\n# 💙 حالة المستخدم: ${emotion}\nابدأ بجملة تعاطف خفيفة: "${EMOTIONAL_REACTIONS[emotion]}"`
         : '';
 
-    /* 🆕 سياق خاص */
     let contextSection = '';
     if (context.type === 'handoff') {
         contextSection = `\n# 🔄 سياق خاص — محادثة مستلمة
@@ -857,19 +876,19 @@ ${persona.opener ? `# 💬 افتتاحية (اختيارية)\n"${persona.opene
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   البرومبت الخفيف — v15 (يدعم السياق)
+   البرومبت الخفيف — v15.1 (Fixed timezone)
    ═══════════════════════════════════════════════════════════════ */
 function buildLightPrompt(section, query, user, expert, history, dialectKey, session, intent, userGender, context = {}) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const safeQuery = sanitizeUserQuery(query);
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
 
-    const now = new Date();
-    const saudiHour = getSaudiHour(3);
-    const saudiMinute = now.getMinutes();
+    /* ✅ FIX: استخدام توقيت السعودية الصحيح للدقائق والتاريخ */
+    const saudiHour = getSaudiHour();
+    const saudiMinute = getSaudiMinute();
     const timeStr = `${saudiHour}:${String(saudiMinute).padStart(2, '0')}`;
     const dayPart = saudiHour < 6 ? 'الفجر' : saudiHour < 11 ? 'الصباح' : saudiHour < 15 ? 'الظهيرة' : saudiHour < 19 ? 'العصر' : saudiHour < 23 ? 'المساء' : 'الليل';
-    const dateStr = now.toLocaleDateString('ar-SA-u-nu-latn', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const dateStr = getSaudiDateString();
 
     let type = 'greeting';
     let guidance = '';
@@ -902,7 +921,6 @@ function buildLightPrompt(section, query, user, expert, history, dialectKey, ses
         guidance = 'رد بتحية مماثلة قصيرة. لا تكرر التحية إن كانت مكررة.';
     }
 
-    /* 🆕 سياق خاص */
     let contextNote = '';
     if (context.type === 'handoff') {
         contextNote = '\n🔄 **ملاحظة:** أنت توليت هذه المحادثة للتو من زميل — عالج مباشرة.';
@@ -1073,7 +1091,7 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ Endpoints — v15
+   ✅ Endpoints — v15.1
    ═══════════════════════════════════════════════════════════════ */
 
 app.get('/', (req, res) => {
@@ -1085,7 +1103,7 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15-human-plus-handoff',
+        version: 'v15.1-human-plus-handoff-fixed',
         warning: 'index.html غير موجود — احفظ ملف HTML بجانب server.js',
         activeSessions: SESSIONS.size
     });
@@ -1095,14 +1113,16 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15-human-plus-handoff',
+        version: 'v15.1-human-plus-handoff-fixed',
         features: ['human_response_modes', 'mood_based_length', 'energy_simulation',
                    'rate_limit', 'light_prompt', 'arabic_normalize', 'og_meta',
                    'general_questions', 'clarify_first', 'human_timing',
                    'no_scope_creep', 'context_awareness', 'handoff_endpoint',
-                   'context_type_support'],
+                   'context_type_support', 'trust_proxy', 'saudi_timezone_fix'],
         activeSessions: SESSIONS.size,
-        rateLimitIPs: RATE_LIMIT.size
+        rateLimitIPs: RATE_LIMIT.size,
+        saudiHour: getSaudiHour(),
+        saudiDate: getSaudiDateString()
     });
 });
 
@@ -1115,7 +1135,7 @@ app.post('/api/feedback', rateLimit, (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   🔄 NEW: Handoff — توليد ترحيب طبيعي من محلل جديد
+   🔄 Handoff — توليد ترحيب طبيعي من محلل جديد
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/handoff', rateLimit, async (req, res) => {
     const { section, newExpert, oldExpert, lastUserMsg, user, dialect, handoffCount } = req.body || {};
@@ -1125,7 +1145,7 @@ app.post('/api/handoff', rateLimit, async (req, res) => {
     const userGender = detectUserGender(user?.firstName);
     const safeLastMsg = sanitizeUserQuery(lastUserMsg || '');
     const dialectData = DIALECTS[dialect] || DIALECTS[newExpert?.dialect] || DIALECTS.saudi;
-    const hour = getSaudiHour(3);
+    const hour = getSaudiHour();
     const isLateNight = hour >= 23 || hour < 6;
     const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
 
@@ -1195,7 +1215,7 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   📩 Analyze — v15 (يدعم context)
+   📩 Analyze — v15.1 (يدعم context)
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/analyze', rateLimit, async (req, res) => {
     const { section, query, user, expert, history, dialect } = req.body;
@@ -1249,7 +1269,6 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         const replies = splitIntoChunks(cleaned, persona.mode);
         const closeDecision = shouldClose(intent, history, session, aiCloseReason);
 
-        /* ⏱️ توقيت بشري يدعم السياق */
         const timing = computeReplyTiming(replies, persona, query, intent, context);
 
         const response = {
@@ -1314,22 +1333,46 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
     }
 });
 
+/* ✅ FIX #5: Error middleware شامل */
+app.use((err, req, res, next) => {
+    console.error('🚨 Unhandled express error:', err);
+    if (res.headersSent) return next(err);
+    res.status(500).json({ error: 'خطأ داخلي في الخادم' });
+});
+
+/* ✅ 404 fallback */
+app.use((req, res) => {
+    res.status(404).json({ error: 'not_found', path: req.path });
+});
+
 process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
 process.on('uncaughtException', (err) => console.error('Uncaught exception:', err));
 
-app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG — v15 Human+ Handoff — البورت ${PORT}`);
+/* ✅ Graceful shutdown */
+const server = app.listen(PORT, () => {
+    console.log(`✅ منصة استشارات forG — v15.1 Human+ Handoff (Fixed) — البورت ${PORT}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود — أضفه بجانب server.js'}`);
+    console.log(`🕐 الوقت الحالي (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2,'0')}`);
     console.log(`🎭 18 مزاج × 5 أنماط رد = تنوع بشري`);
     console.log(`⚡ برومبت خفيف للرسائل البسيطة والعامة`);
     console.log(`⏱️  توقيت بشري ثلاثي: قراءة + تفكير + كتابة`);
     console.log(`🎯 كشف النطاق: أسئلة عامة لا تُقحم التخصص`);
     console.log(`🤔 منطق "اسأل قبل تجيب" للأسئلة الغامضة`);
-    console.log(`🔄 NEW: /api/handoff — ترحيب ديناميكي من محلل جديد`);
-    console.log(`🎯 NEW: context-aware prompts (handoff / return_after_gap)`);
+    console.log(`🔄 /api/handoff — ترحيب ديناميكي من محلل جديد`);
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`👤 ${FEMALE_NAMES.size + MALE_NAMES.size} اسم مدعوم`);
     console.log(`🔋 طاقة ديناميكية حسب الوقت`);
     console.log(`💾 الجلسات في الذاكرة فقط`);
     console.log(`🔗 Open Graph جاهز`);
+    console.log(`✅ trust proxy: مفعّل (Render/Railway/Heroku)`);
+    console.log(`✅ توقيت السعودية: مُصلّح ليعمل على أي خادم`);
+});
+
+process.on('SIGTERM', () => {
+    console.log('⚠️ SIGTERM received — closing server...');
+    server.close(() => process.exit(0));
+});
+process.on('SIGINT', () => {
+    console.log('⚠️ SIGINT received — closing server...');
+    server.close(() => process.exit(0));
 });
