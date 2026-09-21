@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 مولّد التطبيقات</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+
+  <header>
+    <h1>🚀 مولّد التطبيقات</h1>
+    <p>حوّل أكوادك إلى تطبيق حقيقي على جوالك — بدون سيرفر، بدون تكلفة</p>
+  </header>
+
+  <div class="layout">
+
+    <!-- ============ الجانب الأيمن: النموذج ============ -->
+    <main class="form-side">
+
+      <section class="card">
+        <h2>📱 معلومات التطبيق</h2>
+
+        <div class="field">
+          <label for="appName">📛 اسم التطبيق</label>
+          <input type="text" id="appName" placeholder="مثال: تطبيق المهام" maxlength="30" value="تطبيقي">
+        </div>
+
+        <div class="field">
+          <label for="appShortName">🔤 الاسم القصير (تحت الأيقونة)</label>
+          <input type="text" id="appShortName" placeholder="مثال: مهامي" maxlength="12" value="تطبيقي">
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="themeColor">🎨 لون التطبيق</label>
+            <input type="color" id="themeColor" value="#4F46E5">
+          </div>
+          <div class="field">
+            <label for="bgColor">🎨 لون الخلفية</label>
+            <input type="color" id="bgColor" value="#ffffff">
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>🖼️ أيقونة التطبيق</h2>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="upload">📤 رفع صورة</button>
+          <button class="tab" data-tab="generate">🎨 توليد تلقائي</button>
+        </div>
+
+        <div id="tab-upload" class="tab-content active">
+          <div class="field">
+            <label for="iconFile">اختر أي صورة</label>
+            <input type="file" id="iconFile" accept="image/*">
+            <small>✅ أي حجم، أي صيغة — تُقصّ تلقائياً إلى 512×512</small>
+          </div>
+        </div>
+
+        <div id="tab-generate" class="tab-content">
+          <div class="field">
+            <label for="iconText">حرف أو رمز للأيقونة</label>
+            <input type="text" id="iconText" maxlength="2" placeholder="م" value="ت">
+          </div>
+          <div class="field">
+            <label for="iconColor2">اللون الثاني للتدرج</label>
+            <input type="color" id="iconColor2" value="#9333EA">
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <div class="preview-label">معاينة الأيقونة:</div>
+          <img id="iconPreview" alt="معاينة" src="">
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>⚡ ميزات جاهزة (اختيارية)</h2>
+
+        <label class="feature-check">
+          <input type="checkbox" id="featSplash">
+          <div>
+            <strong>🎬 شاشة افتتاحية</strong>
+            <small>تعرض اسم وشعار التطبيق لمدة ثانيتين عند الفتح</small>
+          </div>
+        </label>
+
+        <label class="feature-check">
+          <input type="checkbox" id="featDark" checked>
+          <div>
+            <strong>🌙 الوضع الداكن التلقائي</strong>
+            <small>يكتشف وضع الجهاز ويعدّل الألوان تلقائياً</small>
+          </div>
+        </label>
+
+        <label class="feature-check">
+          <input type="checkbox" id="featStorage">
+          <div>
+            <strong>💾 مساعد حفظ البيانات</strong>
+            <small>يوفر دوال جاهزة للحفظ والاسترجاع (Storage.save / Storage.load)</small>
+          </div>
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>💻 أكواد التطبيق</h2>
+
+        <div class="field">
+          <label for="htmlCode">📄 HTML</label>
+          <textarea id="htmlCode" spellcheck="false"><h1>مرحبا بالعالم 👋</h1>
+<p>هذا تطبيقي الأول!</p>
+<button onclick="alert('أهلاً!')">اضغطني</button></textarea>
+        </div>
+
+        <div class="field">
+          <label for="cssCode">🎨 CSS</label>
+          <textarea id="cssCode" spellcheck="false">body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px 20px;
+  margin: 0;
+}
+h1 { color: #4F46E5; }
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #4F46E5;
+  color: white;
+  cursor: pointer;
+}</textarea>
+        </div>
+
+        <div class="field">
+          <label for="jsCode">⚡ JavaScript</label>
+          <textarea id="jsCode" spellcheck="false">console.log('التطبيق يعمل!');</textarea>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="generateBtn" class="primary">📦 توليد التطبيق</button>
+        <div id="status"></div>
+      </div>
+
+    </main>
+
+    <!-- ============ الجانب الأيسر: المعاينة ============ -->
+    <aside class="preview-side">
+      <div class="preview-sticky">
+        <h3>👀 معاينة حية</h3>
+        <p class="preview-hint">شاهد تطبيقك مباشرة أثناء الكتابة</p>
+
+        <div class="phone-frame" id="phoneFrame">
+          <div class="phone-notch"></div>
+          <div class="phone-statusbar" id="phoneStatusbar">
+            <span>9:41</span>
+            <span>📶 🔋</span>
+          </div>
+          <div class="phone-screen">
+            <iframe id="livePreview" sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"></iframe>
+          </div>
+          <div class="phone-home"></div>
+        </div>
+
+        <div class="preview-info">
+          <div class="info-row">
+            <span>📛 الاسم:</span>
+            <strong id="infoName">تطبيقي</strong>
+          </div>
+          <div class="info-row">
+            <span>🎨 الثيم:</span>
+            <span class="color-dot" id="infoThemeDot"></span>
+            <code id="infoTheme">#4F46E5</code>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer>
+    <p>صُنع بـ ❤️ — يعمل بالكامل في متصفحك</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
