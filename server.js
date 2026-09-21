@@ -14,7 +14,9 @@ let availableModels = [...INITIAL_MODELS];
 let modelsLastFetched = 0;
 if (!API_KEY) console.error('❌ GEMINI_API_KEY غير موجود!');
 
+// ============================================================
 // ============ اكتشاف النماذج ============
+// ============================================================
 async function fetchAvailableModels() {
     if (!API_KEY) return [];
     try {
@@ -49,458 +51,73 @@ async function refreshModels(force = false) {
 refreshModels(true);
 
 // ============================================================
-// 🚻 كشف الجنس من الاسم العربي
+// 🚻 كشف الجنس من الاسم — نسخة شاملة
 // ============================================================
-const FEMALE_NAMES = ['فاطمة','زينب','مريم','خديجة','عائشة','سارة','نورة','ليلى','هند','منى','ريم','دانة','هيا','أمل','رنا','لينا','دينا','إيمان','سامية','سلمى','نادية','ماريا','ليال','روان','جواهر','شهد','لطيفة','نوف','نجود','عبير','أسماء','أميرة','بشاير','عهود','روان','رغد','ريما','سمر','سهى','سهام','شذى','صفاء','ضحى','علا','غادة','فاطمة','فرح','لمى','لولوة','مروة','ملاك','منال','مي','نوف','هدى','وفاء','يارا'];
+const FEMALE_NAMES = new Set([
+    'فاطمة','زينب','مريم','خديجة','عائشة','حفصة','رقية','سكينة','نفيسة',
+    'سارة','نورة','نورا','ليلى','هند','منى','ريم','دانة','دانه','هيا','أمل','رنا','لينا','دينا',
+    'إيمان','سامية','سلمى','سلمي','نادية','ماريا','ليال','روان','جواهر','شهد','لطيفة','نوف',
+    'عبير','أسماء','أميرة','عهود','رغد','ريما','سمر','سهى','شذى','صفاء','ضحى','علا','غادة',
+    'فرح','لمى','لمار','مروة','ملاك','منال','مي','ميّ','هدى','وفاء','يارا',
+    'تالا','تولين','جوري','رتاج','ريفال','ليان','جنى','ديما','جمانة','دانا','كادي','ميلاف',
+    'أروى','إسراء','آلاء','بشاير','بدور','تهاني','جميلة','حصة','حنان','خلود','دلال',
+    'رزان','رولا','رهام','سجى','سديم','سهام','شروق','صيتة','غالية',
+    'لجين','لولوة','مشاعل','منيرة','مها','مودة','ميسم','نجود','ندى','نوال','نهى',
+    'هاجر','وجدان','وضحى','ياسمين','يمنى','أنوار','أفنان','بشرى','حور','حوراء',
+    'رؤى','رفيف','رنيم','سلوى','سمية','سناء','شيماء','صابرين','عالية','عزيزة','عليا',
+    'غيداء','فدوى','قمر','كفاح','ماجدة','ملك','ميساء','نجلاء','نور','هالة','هبة'
+]);
 
-const MALE_NAMES = ['محمد','أحمد','خالد','عبدالله','عبدالرحمن','فيصل','عمر','طارق','بدر','سلطان','ماجد','مشعل','مازن','يوسف','زياد','رامي','سامي','حسن','حسين','علي','مصطفى','كريم','عمار','أمين','سالم','ياسر','راكان','عدنان','بشار','سيف','ناصر','فهد','نايف','طلال','مروان','أيمن','إياد','رياض','محمود','ياسين','إبراهيم','إسماعيل','أنس','أوس','أسامة','بسام','جمال','حسام','حمزة','سعيد','سليمان','شادي','صالح','عاصم','عادل','عامر','عصام','عماد','غسان','فادي','قصي','مالك','متعب','مروان','معاذ','نبيل','نزار','هاني','هيثم','وسيم','وليد','يزيد','يعقوب'];
+const MALE_NAMES = new Set([
+    'محمد','أحمد','خالد','عبدالله','عبدالرحمن','عبدالعزيز','عبدالملك','فيصل','عمر','طارق','بدر',
+    'سلطان','ماجد','مشعل','مازن','يوسف','زياد','رامي','سامي','حسن','حسين','علي','مصطفى','كريم',
+    'عمار','أمين','سالم','ياسر','راكان','عدنان','بشار','سيف','ناصر','فهد','نايف','طلال','مروان',
+    'أيمن','إياد','رياض','محمود','ياسين','إبراهيم','إسماعيل','أنس','أوس','أسامة','بسام','جمال',
+    'حسام','حمزة','سعيد','سليمان','شادي','صالح','عاصم','عادل','عامر','عصام','عماد','غسان',
+    'فادي','قصي','مالك','متعب','معاذ','نبيل','نزار','هاني','هيثم','وسيم','وليد','يزيد','يعقوب',
+    'تركي','سعود','نواف','معتصم','سعد','مساعد','بندر','مشاري','منصور','عبدالإله','محسن',
+    'راشد','حمد','خليفة','مبارك','جاسم','عبدالوهاب','حمدان','شهاب','تامر','جواد',
+    'رائد','غيث','حارث','همام','مهند','وسام','بهاء','ضياء','صفوان','عدي','زيد',
+    'معتز','أشرف','أكرم','أنور','باسم','بشير','توفيق','جهاد',
+    'حازم','خليل','رشيد','سامر','سمير','صلاح','ظافر','عاطف','عبدالحكيم','عقيل',
+    'فؤاد','كمال','لؤي','مأمون','متولي','مجدي','مراد','مصعب','منذر','منير',
+    'نجيب','نذير','نعمان','هشام','يعمر'
+]);
 
 function detectUserGender(firstName) {
     if (!firstName || typeof firstName !== 'string') return 'unknown';
-    const n = firstName.trim();
+    const n = firstName.trim().replace(/[أإآ]/g, 'ا').replace(/ـ/g, '');
     if (!n) return 'unknown';
-    // تطابق كامل
-    if (FEMALE_NAMES.includes(n)) return 'female';
-    if (MALE_NAMES.includes(n)) return 'male';
-    // التاء المربوطة في النهاية (علامة أنثوية شبه مؤكدة)
-    if (/[ة]$/.test(n)) return 'female';
-    // لو الاسم ينتهي بـ "ا" (مثل "سلمى"، "هدى") → أنثوي غالباً
+
+    if (FEMALE_NAMES.has(firstName) || FEMALE_NAMES.has(n)) return 'female';
+    if (MALE_NAMES.has(firstName) || MALE_NAMES.has(n)) return 'male';
+
+    // أسماء لاتينية
+    if (/^(Sara|Sarah|Nora|Noura|Layla|Laila|Mariam|Maryam|Fatima|Aisha|Rania|Dina|Dana|Hind|Mona|Noor|Nour|Huda|Salma|Yasmin|Jana|Lina|Lamar|Tala|Yara)$/i.test(n)) return 'female';
+    if (/^(Ahmed|Ahmad|Mohamed|Mohammed|Muhammad|Khalid|Omar|Tariq|Faisal|Fahd|Saad|Bader|Sultan|Majed|Yousef|Yusuf|Rami|Sami|Hassan|Hussain|Ali|Mustafa|Karim|Ammar)$/i.test(n)) return 'male';
+
+    // قواعد حروف
+    if (/[ة]$/.test(n) && n.length > 2) return 'female';
     if (/[ى]$/.test(n) && n.length > 2) return 'female';
-    // انتهاء بـ "ن" أو "د" أو "ر" → محايد، نترك unknown
+
     return 'unknown';
 }
 
-// ============================================================
-// 🎲 أدوات عامة
-// ============================================================
-const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+function genderInstructions(gender, name) {
+    if (gender === 'female') return `# ⚠️ جنس المستخدم
+الاسم "${name}" → **أنثى**. خاطبها بصيغة المؤنث دائماً:
+"أنتِ"، "تفضلي"، "عندكِ"، "تستطيعين"، "رأيكِ"، "لكِ"، "قلتِ"، "شعرتِ".`;
+    if (gender === 'male') return `# ⚠️ جنس المستخدم
+الاسم "${name}" → **ذكر**. خاطبه بصيغة المذكر:
+"أنت"، "تفضل"، "عندك"، "تستطيع"، "رأيك"، "لك"، "قلت"، "شعرت".`;
+    return `# جنس المستخدم
+غير محدد من الاسم "${name}". استخدم صيغة المذكر كافتراضي، أو صياغة محايدة.`;
+}
 
 // ============================================================
-// 🗄️ الجلسات — مع تصفير ذكي
+// 🗄️ الجلسات (Sessions) — مع تتبع الوقاحة
 // ============================================================
 const SESSIONS = new Map();
-const SESSION_IDLE_TIMEOUT = 20 * 60 * 1000; // 20 دقيقة خمول → تصفير
-
-function getUserKey(user, section) {
-    return `${section}::${user?.firstName || 'anon'}::${user?.age || '0'}`;
-}
-
-function createFreshSession() {
-    return {
-        mood: null,
-        messageCount: 0,
-        lastActivity: Date.now(),
-        usedOpeners: [],
-        rudeCount: 0,
-        createdAt: Date.now(),
-        cooldownUntil: 0,
-        closeReason: null,
-        askCount: 0  // عدد الأسئلة الاستباقية المطروحة
-    };
-}
-
-function getSession(userKey) {
-    let session = SESSIONS.get(userKey);
-    if (!session) {
-        session = createFreshSession();
-        SESSIONS.set(userKey, session);
-        return session;
-    }
-    // ✅ إذا مرّ 20 دقيقة من الخمول → تصفير كامل (كأنه إنسان جديد)
-    const idleTime = Date.now() - session.lastActivity;
-    if (idleTime > SESSION_IDLE_TIMEOUT) {
-        console.log(`🔄 تصفير جلسة ${userKey} (خمول ${Math.floor(idleTime/60000)} دقيقة)`);
-        session = createFreshSession();
-        SESSIONS.set(userKey, session);
-    }
-    return session;
-}
-
-function resetSession(userKey) {
-    SESSIONS.set(userKey, createFreshSession());
-}
-
-// تنظيف دوري للجلسات القديمة
-setInterval(() => {
-    const now = Date.now();
-    for (const [key, session] of SESSIONS.entries()) {
-        if (now - session.lastActivity > 3 * 60 * 60 * 1000) SESSIONS.delete(key);
-    }
-}, 30 * 60 * 1000);
-
-// ============================================================
-// 🌍 اللهجات
-// ============================================================
-const DIALECTS = {
-    saudi: { name: 'خليجي سعودي', country: 'السعودية', vocabulary: ['وش','كذا','زين','أبشر','الحين','ايش','مب'], tone: 'لبق، محترم', example: 'والله شوف، الذهب الحين عالق.' },
-    emirati: { name: 'خليجي إماراتي', country: 'الإمارات', vocabulary: ['شو','شحال','زين','عيل','تو'], tone: 'هادئ، مهني', example: 'شوف، الموضوع يحتاج تفكير.' },
-    kuwaiti: { name: 'خليجي كويتي', country: 'الكويت', vocabulary: ['شلون','شنو','چذي','هسه','ترى'], tone: 'ودود', example: 'شلونك؟ الذهب شنو وضعه الحين؟' },
-    egyptian: { name: 'مصري', country: 'مصر', vocabulary: ['إزاي','يعني','كده','دلوقتي','بص','معلش'], tone: 'ودود، ساخر', example: 'بص يا باشا، الذهب دلوقتي واقف.' },
-    syrian: { name: 'شامي سوري', country: 'سوريا', vocabulary: ['شو','لك','هلق','تمام','خلص'], tone: 'لبق', example: 'لك شو عم تحكي؟ الذهب هلق واقف.' },
-    lebanese: { name: 'شامي لبناني', country: 'لبنان', vocabulary: ['شو','كتير','منيح','هلق'], tone: 'حيوي', example: 'شو الأخبار؟ الذهب اليوم كتير متقلب.' },
-    jordanian: { name: 'شامي أردني', country: 'الأردن', vocabulary: ['شو','هاد','هسع','منيح'], tone: 'رصين', example: 'هاي شو، الذهب هسع واقف.' },
-    palestinian: { name: 'شامي فلسطيني', country: 'فلسطين', vocabulary: ['شو','هاد','زي','منيح'], tone: 'دافئ', example: 'شو رأيك؟ الذهب هالفترة حساس.' },
-    iraqi: { name: 'عراقي', country: 'العراق', vocabulary: ['شلون','شكو ماكو','هواية','هسا','عيني'], tone: 'دافئ', example: 'شلونك عيني؟ الذهب هسا وضعه هواية حساس.' },
-    yemeni: { name: 'يمني', country: 'اليمن', vocabulary: ['كيف','شو','زين','الحين'], tone: 'بسيط', example: 'يا رجل، الذهب الحين واقف.' },
-    moroccan: { name: 'مغاربي مغربي', country: 'المغرب', vocabulary: ['كيفاش','دابا','بزاف','واخا','مزيان'], tone: 'دافئ', example: 'كيفاش صاحبي؟ الذهب دابا مو واضح.' },
-    algerian: { name: 'مغاربي جزائري', country: 'الجزائر', vocabulary: ['كيفاش','دروك','بزاف','واه'], tone: 'صريح', example: 'واه خويا، الذهب دروك واقف.' },
-    tunisian: { name: 'مغاربي تونسي', country: 'تونس', vocabulary: ['كيفاش','برشا','باهي','تو'], tone: 'ودود', example: 'كيفاش؟ الذهب تو واقف.' },
-    sudanese: { name: 'سوداني', country: 'السودان', vocabulary: ['كيفن','يا زول','شنو','عديل'], tone: 'ودود', example: 'كيفن يا زول؟ الذهب شنو؟' }
-};
-
-// ============================================================
-// 🤝 الذكاء الاجتماعي
-// ============================================================
-const SOCIAL = {
-    salaam: { r: /(السلام\s*عليكم|سلام\s*عليكم)/i, replies: ['وعليكم السلام ورحمة الله وبركاته', 'وعليكم السلام ورحمة الله، حياك الله'] },
-    howAreYou: { r: /(كيف\s*(حالك|الحال|حالكم|أمورك)|شلونك|شلونج|إزيك|إزاي\s*حالك|كيفاش|شحالك|كيفك|أخبارك|شو\s*أخبارك|عامل\s*إيه)/i, replies: ['بخير الحمد لله، شكراً لسؤالك. وأنت؟', 'الحمد لله بخير وعافية. أنت أخبارك؟', 'تمام الحمد لله، الله يعافيك.'] },
-    morning: { r: /(صباح\s*(الخير|النور|الفل|الورد))/i, replies: ['صباح النور والسرور', 'صباح الفل والياسمين'] },
-    evening: { r: /(مساء\s*(الخير|النور|الأنوار))/i, replies: ['مساء النور والسعادة', 'مساء الأنوار، كيف أقدر أساعدك؟'] },
-    hello: { r: /^(مرحبا|مرحباً|أهلا|أهلاً|اهلا|هلا|يا هلا|حياك|هاي|هالو)/i, replies: ['أهلاً وسهلاً', 'يا هلا ومرحبا', 'حياك الله'] },
-    thanks: { r: /^(شكرا|شكراً|مشكور|مشكورة|يعطيك\s*العافية|تسلم|جزاك\s*الله|مرسي)/i, replies: ['العفو، في خدمتك', 'لا شكر على واجب', 'على الرحب والسعة'] },
-    bye: { r: /^(باي|وداعا|وداعاً|مع\s*السلامة|في\s*أمان\s*الله|سلام|إلى\s*اللقاء|بسلامة)/i, replies: ['في أمان الله، بالتوفيق', 'مع السلامة، لا تتردد بالعودة'] },
-    sorry: { r: /^(آسف|أسف|اعتذر|أعتذر|معلش|بعتذر|سامحني)/i, replies: ['لا مشكلة إطلاقاً', 'عادي، ما صار شي'] },
-    bless: { r: /(الله\s*يبارك|بارك\s*الله|الله\s*يحفظك|الله\s*يكرمك)/i, replies: ['وفيك بارك الله', 'أجمعين يا رب'] },
-    ok: { r: /^(اوكي|أوكي|اوك|طيب|تمام|ماشي|حسنا|زين|واخا|باهي|صح|ok|okay)$/i, replies: ['تمام', 'ممتاز', 'زين', 'طيب'] }
-};
-
-function detectSocial(q) {
-    q = q.trim();
-    if (q.length > 60) return null;
-    const matches = [];
-    for (const [key, v] of Object.entries(SOCIAL)) {
-        if (v.r.test(q)) matches.push(key);
-    }
-    if (!matches.length) return null;
-    const hasRealQ = /[?؟]/.test(q) || /\b(هل|متى|لماذا|ليش|تنصحني|تتوقع|حلل|قارن|اشرح|سعر|نسبة)\b/i.test(q);
-    const isOnlyHow = matches.includes('howAreYou') && matches.length === 1 && q.length < 40;
-    if (hasRealQ && !isOnlyHow) return null;
-    return { types: matches, isPure: !hasRealQ || isOnlyHow };
-}
-
-function buildSocialReply(types) {
-    if (types.includes('salaam') && types.includes('howAreYou')) {
-        return `${pickRandom(SOCIAL.salaam.replies)}.\n${pickRandom(SOCIAL.howAreYou.replies)}`;
-    }
-    const replies = [];
-    const seen = new Set();
-    for (const t of types) {
-        if (seen.has(t)) continue;
-        seen.add(t);
-        if (SOCIAL[t]?.replies) replies.push(pickRandom(SOCIAL[t].replies));
-    }
-    return replies.join('\n');
-}
-
-// ============================================================
-// 🎯 تحليل النية
-// ============================================================
-function analyzeIntent(q, history) {
-    const qLen = q.length;
-    const qLower = q.toLowerCase();
-    const recentMsgs = (history || []).filter(h => h.role === 'user').map(h => h.content).slice(-6);
-
-    const isRude = /(غبي|أحمق|احمق|حمار|كلب|زبالة|تفو|قذر|خنزير|حقير|تافه|سافل|وقح)/i.test(q);
-    const isGibberish = /^[\s\W_]+$/.test(q) || /(.)\1{4,}/.test(q);
-    const isIrrelevant = /^(هههه|ههه|lol|😅|😂|🤣|سوالف|نكتة|نكت)/i.test(q);
-    const shortMsgCount = recentMsgs.filter(m => m.trim().length < 8).length;
-    const isVeryShort = qLen > 0 && qLen < 8;
-
-    let trollScore = 0;
-    if (isVeryShort && shortMsgCount >= 3) trollScore += 2;
-    if (isGibberish) trollScore += 3;
-    if (isIrrelevant) trollScore += 2;
-
-    const isDone = /^(شكرا|شكراً|مشكور|تسلم|يعطيك|جزاك|باي|وداعا|مع السلامة|كفى|خلص|انتهيت|سلام)/i.test(q) && qLen < 40;
-    const isShort = qLen < 20;
-    const isMedium = qLen >= 20 && qLen < 80;
-    const isLong = qLen >= 80 && qLen < 250;
-
-    const wantsBrief = /(باختصار|اختصار|بسرعة|مختصر|لا تطول)/i.test(q);
-    const wantsDetail = /(فصّل|فصل|أشرح|اشرح|بالتفصيل|تفاصيل|موسع)/i.test(q);
-    const wantsAdvice = /(تنصحني|توصيتك|رايك|رأيك|شو رأيك|ماذا تنصح)/i.test(q);
-    const wantsAnalysis = /(حلل|تحليل|قيّم|درس|تتوقع|توقعك)/i.test(q);
-
-    // ✅ كشف النية المبهمة — تحتاج سؤال استباقي
-    const isVagueAdvice = wantsAdvice && qLen < 50 && !hasContext(history);
-    const isVagueShort = isVeryShort && !isDone && !/^(مرحبا|هلا|شكرا|طيب|تمام|زين|اوكي|سلام)$/i.test(q.trim());
-
-    let lengthHint = 'medium';
-    if (wantsBrief || isDone || isShort) lengthHint = 'very_short';
-    else if (isMedium && wantsAdvice) lengthHint = 'short';
-    else if (isLong || wantsDetail || wantsAnalysis) lengthHint = 'long';
-
-    let styleHint = 'default';
-    if (wantsAnalysis) styleHint = 'analysis';
-    else if (wantsAdvice) styleHint = 'advice';
-    else if (wantsDetail) styleHint = 'detail';
-
-    let state = 'calm';
-    if (isRude) state = 'rude';
-    else if (trollScore >= 3) state = 'trolling';
-    else if (isDone) state = 'done';
-    else if (/(قلق|خايف|خوف|متوتر)/i.test(q)) state = 'worried';
-    else if (/(زهقت|تعبت|يئست|خسرت|زعلان|حزين)/i.test(q)) state = 'sad';
-    else if (/(غاضب|معصب|منرفز)/i.test(q)) state = 'angry';
-    else if (/(محتار|ملخبط|مو فاهم|غامض)/i.test(q)) state = 'confused';
-    else if (/(متحمس|حماس|فرحان)/i.test(q)) state = 'excited';
-    else if (/(ملل|طفش|زهقان)/i.test(q)) state = 'bored';
-
-    return {
-        isRude, isDone, trollScore, lengthHint, styleHint, state,
-        isVagueAdvice, isVagueShort, qLen
-    };
-}
-
-function hasContext(history) {
-    if (!history || history.length < 3) return false;
-    const joined = history.filter(h => h.role === 'user').map(h => h.content).join(' ');
-    return /(محفظتي|رأس مال|ميزانية|دخل|استثمار|الهدف|المدة|دخلت|أمتلك|عندي|سنوي|شهري|خبرتي|سني)/i.test(joined);
-}
-
-// ============================================================
-// 🚻 تعليمات مخاطبة المستخدم حسب جنسه
-// ============================================================
-function buildGenderInstructions(gender, userName) {
-    if (gender === 'female') {
-        return `# ⚠️ تعليمات الجنس (مهم جداً)
-المستخدم اسمه "${userName}" وهو **أنثى**. خاطبها بصيغة المؤنث دائماً:
-- "أنتِ"، "قلتِ"، "عندكِ"، "تفضلي"، "شكراً لكِ"
-- الأفعال: "تستطيعين"، "تريدين"، "تعرفين"
-- النعت: "ممتازة" (إن وصفتها)، "حذرة"، "صابرة"
-- **لا تخاطبها بصيغة المذكر أبداً**.`;
-    }
-    if (gender === 'male') {
-        return `# ⚠️ تعليمات الجنس (مهم جداً)
-المستخدم اسمه "${userName}" وهو **ذكر**. خاطبه بصيغة المذكر:
-- "أنت"، "قلت"، "عندك"، "تفضل"
-- الأفعال: "تستطيع"، "تريد"، "تعرف"
-- **لا تخاطبه بصيغة المؤنث**.`;
-    }
-    return `# تعليمات الجنس
-لم نتمكن من تحديد جنس المستخدم "${userName}" بشكل قاطع. استخدم صيغة محايدة قدر الإمكان:
-- تجنب "أنت/أنتِ" الصريحة إن أمكن، أو استخدم صيغة محايدة.
-- الأفعال: استخدم صيغة المذكر كافتراضي (الأكثر شيوعاً في العربية).`;
-}
-
-// ============================================================
-// 🎭 بناء الشخصية — مع منع التكرار
-// ============================================================
-const MOODS = ['neutral', 'warm', 'professional', 'casual', 'analytical', 'concise', 'thoughtful', 'patient', 'curious', 'blunt'];
-
-const OPENERS = {
-    very_short: ['شوف.', 'بصراحة؟', 'همم.', 'طيب.', 'أها.', 'خلني أقولك.'],
-    short: ['شوف،', 'بصراحة،', 'خلني أفكر...', 'المهم،', 'دقيقة،'],
-    medium: ['شوف، خلنا نكون واضحين.', 'بصراحة كذا.', 'خلني أراجع معك.', 'طيب، من وين نبدأ؟'],
-    long: ['خلنا نفككها خطوة خطوة.', 'طيب، خلني أشرح بوضوح.', 'في كم نقطة مهمة.']
-};
-
-function buildPersona(section, history, session) {
-    // مزاج جديد غير مستخدم مؤخراً
-    let mood;
-    const availableMoods = MOODS.filter(m => !session.usedOpeners.includes('mood_' + m));
-    if (availableMoods.length) mood = pickRandom(availableMoods);
-    else { session.usedOpeners = []; mood = pickRandom(MOODS); }
-    session.usedOpeners.push('mood_' + mood);
-    if (session.usedOpeners.length > 15) session.usedOpeners.shift();
-
-    const lastQ = history?.[history.length - 1]?.content || '';
-    const intent = analyzeIntent(lastQ, history);
-
-    const openerList = OPENERS[intent.lengthHint] || OPENERS.medium;
-    const available = openerList.filter(o => !session.usedOpeners.includes('op_' + o));
-    const opener = available.length ? pickRandom(available) : pickRandom(openerList);
-    session.usedOpeners.push('op_' + opener);
-
-    return { mood, opener };
-}
-
-// ============================================================
-// 🎯 البرومبت الرئيسي
-// ============================================================
-function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender) {
-    const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
-    const intent = analyzeIntent(query, history);
-    const seed = Math.floor(Math.random() * 99999);
-    const now = new Date();
-    const hour = now.getHours();
-    const isLateNight = hour >= 23 || hour < 6;
-
-    const historyText = history?.length > 1
-        ? '\n--- سجل الحوار ---\n' + history.slice(-6).map(h =>
-            `${h.role === 'user' ? (user?.firstName || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 200)}`
-          ).join('\n') + '\n---'
-        : '';
-
-    const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
-
-    return `# أنت
-${expert?.name || 'مستشار'}، ${expert?.role || 'مستشار مالي'}، خبرة ${expert?.years || 'سنوات'}.
-من ${dialect.country}.
-
-# 🌍 لهجتك
-${dialect.name}: ${dialect.vocabulary.join('، ')}
-النبرة: ${dialect.tone}
-مثال: "${dialect.example}"
-استخدم 2-4 مفردات فقط. لا تبالغ.
-
-# 🎭 حالتك
-مزاج: **${persona.mood}**
-${isLateNight ? '🌙 ساعة متأخرة — كن أقصر.' : ''}
-
-${buildGenderInstructions(userGender, user?.firstName || 'المستخدم')}
-
-# المستشير
-الاسم: ${fullName || 'المستخدم'} | العمر: ${user?.age || '؟'} | الخبرة: ${user?.experience || 'غير محدد'}
-
-${historyText}
-
-# 🎯 السؤال
-"${query}"
-
-# الطول المطلوب
-${intent.lengthHint === 'very_short' ? '**جملة أو جملتان.**' :
-  intent.lengthHint === 'short' ? '**2-4 أسطر.**' :
-  intent.lengthHint === 'medium' ? '**4-6 أسطر.**' : '**6-10 أسطر.**'}
-
-# ⛔ محظورات صارمة:
-- "سؤال ممتاز"، "بناءً على"، "علاوة على ذلك"، "بالإضافة"
-- "من الجدير بالذكر"، "تجدر الإشارة"، "في الختام"
-- "أتمنى أن يكون هذا مفيداً"، "لا تتردد في السؤال"
-- "كمساعد ذكي"، "يسعدني مساعدتك"، "بكل سرور"
-- "من المهم أن نلاحظ"، "دعنا نتعمق"
-- إيموجي إلا نادراً جداً
-- تكرار اسم المستخدم أكثر من مرة
-
-# ✍️ تفاوت الجمل:
-- اخلط بين جمل قصيرة (أقل من 8 كلمات) وطويلة.
-- لا تبدأ جملتين بنفس الكلمة.
-- بعض الفقرات جملة واحدة فقط — طبيعي.
-
-# 📋 قواعد الذوق:
-- لا تبدأ بنفس الجملة أبداً.
-- لا محاضرة — تكلم كصديق خبير.
-- إذا لم تكن متأكداً، قل "مو متأكد" بدل التخمين.
-
-${persona.opener ? `# اقتراح افتتاحية (اختياري)\n"${persona.opener}"` : ''}
-
-# 🎲 بذرة التنويع: ${seed}
-
-اكتب الرد مباشرة — بلا "الرد:" أو تنسيق.
-إذا احتجت رسالتين، ضع [SPLIT] في سطر.`;
-}
-
-// ============================================================
-// 📞 استدعاء Gemini
-// ============================================================
-async function callGemini(prompt) {
-    await refreshModels();
-    let lastError = null;
-    for (const model of availableModels) {
-        try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-            const r = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 1.25, maxOutputTokens: 4000, topP: 0.95, topK: 70 },
-                    safetySettings: [
-                        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-                        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-                        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-                        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
-                    ]
-                })
-            });
-            const d = await r.json();
-            if (d.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return { text: d.candidates[0].content.parts[0].text, model, truncated: d.candidates[0].finishReason === 'MAX_TOKENS' };
-            }
-            if (d.error) {
-                lastError = d.error.message;
-                if (lastError.includes('not found')) await refreshModels(true);
-            }
-        } catch (e) { lastError = e.message; }
-    }
-    throw new Error(lastError || 'كل النماذج فشلت');
-}
-
-function extractReplies(text, truncated = false) {
-    if (!text || typeof text !== 'string') return ['عذراً، ما قدرت أولد رد.'];
-    let clean = text.trim().replace(/^```(?:json|markdown)?\s*/i, '').replace(/```\s*$/, '');
-    clean = clean.replace(/\\n/g, '\n').replace(/^"|"$/g, '').trim();
-    if (clean.includes('[SPLIT]')) {
-        const parts = clean.split('[SPLIT]').map(p => p.trim()).filter(p => p.length > 0);
-        if (parts.length > 1) return parts;
-    }
-    if (truncated) clean += '\n\n_(وصلت للحد)._';
-    return [clean];
-}
-
-// ============================================================
-// ⏱️ التوقيت
-// ============================================================
-function getTiming(session) {
-    const fatigue = Math.min((session?.messageCount || 0) / 25, 1);
-    const r = Math.random();
-    if (r < 0.30 - fatigue * 0.1) return { speed: 'fast', delayMs: 400 + Math.floor(Math.random() * 800) };
-    if (r < 0.80) return { speed: 'normal', delayMs: 2000 + Math.floor(Math.random() * 4000) };
-    return {
-        speed: 'slow',
-        delayMs: 10000 + Math.floor(Math.random() * 10000),
-        note: pickRandom(['آسف على التأخير', 'معليش اتأخرت عليك', 'اعذرني، الضغوطات'])
-    };
-}
-
-// ============================================================
-// 🎯 أسئلة استباقية لمعرفة النية
-// ============================================================
-const CLARIFY_QUESTIONS = {
-    advice_no_context: [
-        'قبل ما أعطيك رأي — تبي نصيحة قصيرة ولا تحليل مفصّل؟',
-        'سؤال بسيط: أنت تبي تدخل استثمار طويل ولا مضاربة سريعة؟',
-        'تبي رأيي الصريح ولا معلومات عامة؟',
-        'تنصح نفسك بالحذر ولا بالإقدام؟ وش طبيعتك؟'
-    ],
-    vague_short: [
-        'تقصد إيش بالضبط؟ وضح لي أكثر.',
-        'ما فهمت قصدك تماماً. اكتب سؤالك كامل؟',
-        'وضّح لي شوي — وش تبي بالضبط؟'
-    ],
-    first_advice: [
-        'قبل ما أنصحك — كم عندك من وقت لهذا الاستثمار؟',
-        'تبي نصيحة سريعة ولا نقعد نناقش بالتفصيل؟'
-    ]
-};
-
-function pickClarify(intent) {
-    if (intent.isVagueAdvice) return pickRandom(CLARIFY_QUESTIONS.advice_no_context);
-    if (intent.isVagueShort) return pickRandom(CLARIFY_QUESTIONS.vague_short);
-    return null;
-}
-
-// ============================================================
-// 🛡️ ردود جاهزة
-// ============================================================
-const RUDE_RESPONSES = {
-    level1: ['خلنا نحافظ على الاحترام، أنا هنا أساعدك.', 'أفهم إنك متضايق، بس خلنا نكون محترمين.'],
-    level2: ['هذا الأسلوب ما يفيد. أنا جاهز أساعدك إذا غيرت النبرة.'],
-    level3: ['سأغلق المحادثة الآن. تفضل بالعودة بأسلوب محترم.']
-};
-const CLOSINGS = ['على الرحب والسعة.', 'بالتوفيق.', 'أتمنى لك التوفيق.', 'في خدمتك.', 'موفق.'];
-const TROLL_RESPONSES = {
-    level1: ['يبدو إننا خرجنا عن الموضوع. في سؤال مالي؟'],
-    level2: ['أنا هنا لاستشارات جدية. تفضل بسؤال.'],
-    level3: ['سأغلق الآن. ارجع لاحقاً إن احتجت مساعدة جدية.']
-};
-const COOLDOWN_MESSAGES = {
-    user_done: (m) => `المحادثة أُغلقت. يمكنك الفتح مجدداً بعد ${m} دقيقة، أو اختر قسماً آخر.`,
-    trolling: (m) => `المحادثة أُغلقت. عُد بعد ${m} دقيقة.`,
-    bored: (m) => `الجلسة أُغلقت. عُد بعد ${m} دقيقة.`,
-    deep_close: (m) => `المحادثة أُغلقت. عُد بعد ${m} دقيقة.`,
-    rude: (m) => `المحادثة أُغلقت بسبب الإهانات. عُد بعد ${m} دقيقة.`
-};
 
 const COOLDOWNS = {
     user_done: 20 * 60 * 1000,
@@ -510,144 +127,260 @@ const COOLDOWNS = {
     rude: 30 * 60 * 1000
 };
 
-function shouldClose(intent, history) {
-    const userCount = (history || []).filter(h => h.role === 'user').length;
-    if (intent.isDone) return { close: true, reason: 'user_done' };
-    if (intent.trollScore >= 6 && userCount >= 6) {
-        const recent = (history || []).filter(h => h.role === 'user').slice(-4);
-        if (recent.length >= 4 && recent.every(m => m.content.trim().length < 15)) return { close: true, reason: 'trolling' };
+function getUserKey(user, section) {
+    return `${section}::${user?.firstName || 'anon'}::${user?.age || '0'}`;
+}
+
+function getSession(userKey) {
+    if (!SESSIONS.has(userKey)) {
+        SESSIONS.set(userKey, {
+            mood: null,
+            messageCount: 0,
+            lastActivity: Date.now(),
+            usedOpeners: [],
+            cooldownUntil: 0,
+            closeReason: null,
+            rudeCount: 0,        // ✅ إضافة: تتبع الإساءات
+            trollingCount: 0,    // ✅ إضافة: تتبع العبث
+            emotionHistory: []   // ✅ إضافة: تاريخ الحالات العاطفية
+        });
     }
-    if (intent.state === 'bored' && userCount >= 8) return { close: true, reason: 'bored' };
-    if (userCount >= 25) return { close: true, reason: 'deep_close' };
-    if (intent.isRude && intent.rudeCount >= 3 && userCount >= 3) return { close: true, reason: 'rude' };
-    return { close: false };
+    return SESSIONS.get(userKey);
+}
+
+// تنظيف الجلسات القديمة
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, session] of SESSIONS.entries()) {
+        if (now - session.lastActivity > 3 * 60 * 60 * 1000) SESSIONS.delete(key);
+    }
+}, 30 * 60 * 1000);
+
+// ============================================================
+// 🌍 اللهجات (14 لهجة)
+// ============================================================
+const DIALECTS = {
+    saudi:       { name: 'خليجي سعودي',   country: 'السعودية', vocab: ['وش','كذا','زين','الحين','ايش','على طول'],   tone: 'لبق، محترم، مباشر',  example: 'والله شوف، الذهب الحين عالق.' },
+    emirati:     { name: 'خليجي إماراتي', country: 'الإمارات', vocab: ['شو','شحال','زين','تو','عيل'],               tone: 'هادئ، مهني',         example: 'شوف، الموضوع يحتاج تفكير.' },
+    kuwaiti:     { name: 'خليجي كويتي',   country: 'الكويت',  vocab: ['شلون','شنو','چذي','ترى','هسه'],              tone: 'ودود، دافئ',         example: 'شلونك؟ الذهب شنو وضعه الحين؟' },
+    egyptian:    { name: 'مصري',          country: 'مصر',     vocab: ['إزاي','يعني','كده','دلوقتي','بص'],            tone: 'ودود، ساخر بلطف',   example: 'بص يا باشا، الذهب دلوقتي واقف.' },
+    syrian:      { name: 'شامي سوري',     country: 'سوريا',   vocab: ['شو','لك','هلق','تمام','خلص'],                 tone: 'لبق، حيوي',          example: 'لك شو عم تحكي؟ الذهب هلق واقف.' },
+    lebanese:    { name: 'شامي لبناني',   country: 'لبنان',   vocab: ['شو','كتير','منيح','هلق','هيدا'],              tone: 'حيوي، دافئ',         example: 'شو الأخبار؟ الذهب اليوم كتير متقلب.' },
+    jordanian:   { name: 'شامي أردني',    country: 'الأردن',   vocab: ['شو','هاد','هسع','منيح','زي'],                 tone: 'رصين، مباشر',        example: 'هاي شو، الذهب هسع واقف.' },
+    palestinian: { name: 'شامي فلسطيني',  country: 'فلسطين',  vocab: ['شو','هاد','زي','منيح','كيف'],                 tone: 'دافئ، صريح',         example: 'شو رأيك؟ الذهب هالفترة حساس.' },
+    iraqi:       { name: 'عراقي',         country: 'العراق',  vocab: ['شلون','شكو ماكو','هواية','هسا','عيني'],       tone: 'دافئ، ودود',         example: 'شلونك عيني؟ الذهب هسا وضعه حساس.' },
+    yemeni:      { name: 'يمني',          country: 'اليمن',   vocab: ['كيف','شو','زين','الحين','عاد'],               tone: 'بسيط، صادق',         example: 'يا رجل، الذهب الحين واقف.' },
+    moroccan:    { name: 'مغاربي مغربي',  country: 'المغرب',  vocab: ['كيفاش','دابا','بزاف','واخا','مزيان'],          tone: 'دافئ',              example: 'كيفاش صاحبي؟ الذهب دابا مو واضح.' },
+    algerian:    { name: 'مغاربي جزائري', country: 'الجزائر', vocab: ['كيفاش','دروك','بزاف','واه','صاحبي'],          tone: 'صريح',              example: 'واه خويا، الذهب دروك واقف.' },
+    tunisian:    { name: 'مغاربي تونسي',  country: 'تونس',    vocab: ['كيفاش','برشا','باهي','تو','يعيشك'],           tone: 'ودود',              example: 'كيفاش؟ الذهب تو واقف.' },
+    sudanese:    { name: 'سوداني',        country: 'السودان', vocab: ['كيفن','يا زول','شنو','عديل','سمح'],           tone: 'ودود، بسيط',         example: 'كيفن يا زول؟ الذهب شنو؟' }
+};
+
+// مفردات تخصصية لكل قسم
+const SECTION_VOCAB = {
+    gold:         ['الأونصة','السبيكة','العيار','التخصيص','التحوط'],
+    stocks:       ['التقييم','التوزيعات','المكرر','السيولة','القطاع'],
+    macro:        ['الفائدة','التضخم','السياسة النقدية','الدورة','السيولة'],
+    geopolitical: ['التصعيد','الممرات','الإمداد','المخاطر','التوترات'],
+    budget:       ['الميزانية','الالتزامات','الادخار','الطوارئ','التقاعد'],
+    crypto:       ['المحفظة','التنظيم','التقلب','السيولة','الأمان']
+};
+
+// ============================================================
+// 🧠 شخصية القسم — عمق مهني
+// ============================================================
+const SECTION_PERSONALITY = {
+    gold: {
+        backstory: 'أتابع أسواق المعادن الثمينة منذ 2008، مررت بدورات صعود وهبوط متعددة.',
+        pet_peeve: 'من يبحث عن ضمانات قاطعة في أسواق متقلبة.',
+        opinion: 'أميل للحيازة طويلة الأجل مع تنويع، لا للمضاربة اللحظية.',
+        phrase: 'الذهب أصل دفاعي قبل أن يكون أصل ربح.',
+        quirks: ['يفرّق بين الأونصة والكيلو', 'يذكر نسب التخصيص المقترحة'],
+        avoid: 'لا تنصح بالدخول بكل رأس المال، نبّه دائماً.'
+    },
+    stocks: {
+        backstory: 'عملت في تحليل الأسهم عبر دورات 2018 و2020 و2022.',
+        pet_peeve: 'من يستثمر بناءً على "سمعت" أو "قال لي".',
+        opinion: 'التقييم الجوهري أساس القرار، لا العاطفة أو الترند.',
+        phrase: 'السوق مقياس جماعي، لكن قرارك فردي.',
+        quirks: ['يذكر P/E و FCF', 'يفرّق بين القيمة والنمو'],
+        avoid: 'لا تذكر أسهم بأسماء محددة كتوصية شراء.'
+    },
+    macro: {
+        backstory: 'أبحاثي تركّز على السياسة النقدية وأثرها على الأصول.',
+        pet_peeve: 'تبسيط الاقتصاد الكلي لدرجة الخطأ.',
+        opinion: 'الفائدة أقوى محرك للأصول قصير المدى.',
+        phrase: 'الفائدة ضغط الدم، والتضخم الحرارة.',
+        quirks: ['يستخدم "سياسة نقدية" و"مالية"', 'يربط بين الاقتصادات'],
+        avoid: 'لا تتحدث في السياسة الحزبية.'
+    },
+    geopolitical: {
+        backstory: 'تابعت أثر الأزمات الجيوسياسية على الأسواق من 2011 حتى اليوم.',
+        pet_peeve: 'ربط كل حدث بأسعار النفط بشكل سطحي.',
+        opinion: 'الأسواق تبالغ في رد الفعل الأول ثم تصحح.',
+        phrase: 'قبل التصعيد، السوق يمنح فرص خروج.',
+        quirks: ['يذكر الممرات البحرية', 'يفرّق بين الحدث وأثره'],
+        avoid: 'لا تنحاز سياسياً، حلّل فقط.'
+    },
+    budget: {
+        backstory: 'درّبت مئات الأفراد على إدارة ميزانياتهم وخططهم المالية.',
+        pet_peeve: 'من يطلب حلولاً سحرية دون تغيير السلوك.',
+        opinion: 'قاعدة 50/30/20 مفيدة كإطار لا كقيد.',
+        phrase: 'الميزانية وعي، ليست حرمان.',
+        quirks: ['يسأل عن الدخل والالتزامات', 'يعطي أرقاماً عملية'],
+        avoid: 'لا تحكم على المستخدم، كن داعماً.'
+    },
+    crypto: {
+        backstory: 'تابعت دورات الكريبتو من 2017، مررت بانهيارات وارتفاعات.',
+        pet_peeve: 'من يدخل بكل رأس ماله في عملة واحدة.',
+        opinion: 'التنظيم يتسارع، والأصول الكبرى أكثر قدرة على البقاء.',
+        phrase: 'السوق لا ينام، لكن محفظتك تحتاج نوماً آمناً.',
+        quirks: ['يحذّر من المشاريع الوهمية', 'يذكر دورات الهبوط'],
+        avoid: 'لا تدفع للشراء، نبّه على المخاطر دائماً.'
+    }
+};
+
+// ============================================================
+// 💙 التعاطف العاطفي — النسخة المُصلَحة
+// ============================================================
+const EMOTIONAL_REACTIONS = {
+    worried:    ['قلقك مفهوم.', 'طبيعي تسأل هذا الآن.', 'لا تتخذ قراراً تحت ضغط القلق.'],
+    excited:    ['حماسك مفهوم، لكن دعنا نهدأ قليلاً.', 'الحماس عدوّ القرار السليم.'],
+    confused:   ['الموضوع ليس معقداً كما يبدو، خلنا نفككه.', 'خلنا نمشي خطوة بخطوة.'],
+    frustrated: ['إحباطك مفهوم، السوق مرهق.', 'خذ خطوة للخلف قبل القرار.'],
+    sad:        ['أفهم شعورك.', 'طبيعي تحسّ كذا، السوق مرهق.'],
+    angry:      ['أفهم إنك متضايق.', 'خلنا نهدأ ونشوف الموضوع بمنطق.']
+};
+
+/**
+ * ✅ الإصلاح: ترتيب الفحص مهم — الأكثر تحديداً أولاً
+ * sad قبل frustrated لأن "زعلان/حزين" قد تُلتقط في frustrated
+ */
+function detectEmotion(query) {
+    const q = query.toLowerCase();
+    if (/(قلق|خايف|خوف|متوتر|مرتبك)/i.test(q)) return 'worried';
+    if (/(متحمس|حماس|فرحان|مبسوط|متشوق)/i.test(q)) return 'excited';
+    if (/(ملخبط|مو فاهم|ما فهمت|غامض|مو واضح)/i.test(q)) return 'confused';
+    if (/(غاضب|معصب|منرفز|مضايق)/i.test(q)) return 'angry';
+    // ✅ sad قبل frustrated
+    if (/(حزين|زعلان|مكسور|مكتئب)/i.test(q)) return 'sad';
+    if (/(زهقت|تعبت|يئست|خسرت|محبط)/i.test(q)) return 'frustrated';
+    return null;
 }
 
 // ============================================================
-// 🛡️ المسارات
+// 🎯 تحليل النية — نسخة محسّنة
 // ============================================================
-app.get('/', (req, res) => {
-    res.json({
-        status: 'OK',
-        behavior: 'Human-v11-Gender-Aware-Intent-Clarify-RealClose',
-        activeSessions: SESSIONS.size
-    });
-});
+function analyzeIntent(q, history) {
+    const trimmed = q.trim();
+    const qLen = trimmed.length;
+    const recentMsgs = (history || []).filter(h => h.role === 'user').map(h => h.content).slice(-6);
 
-app.post('/api/analyze', async (req, res) => {
-    const { section, query, user, expert, history, dialect } = req.body;
-    if (!section || !query) return res.status(400).json({ error: 'بيانات ناقصة' });
-    if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
+    // 🎯 حالات خاصة
+    const isGreeting = /^(مرحبا|مرحباً|أهلا|أهلاً|السلام عليكم|وعليكم السلام|هلا|يا هلا|صباح الخير|صباح النور|مساء الخير|مساء النور|كيف حالك|كيفك|كيف الحال|شلونك|شو أخبارك|hi|hello|hey|هاي)/i.test(trimmed) && qLen < 35;
+    const isFarewell = /^(مع السلامة|وداعا|وداعاً|باي|في أمان الله|سلام|بسلامة|تصبح على خير|الى اللقاء|إلى اللقاء)/i.test(trimmed) && qLen < 25;
+    const isThanks = /^(شكرا|شكراً|مشكور|مشكورة|تسلم|تسلمين|يعطيك العافية|يعطيكم العافية|جزاك الله|بارك الله)/i.test(trimmed) && qLen < 40;
+    const isRude = /(غبي|أحمق|احمق|حمار|كلب|زبالة|تفو|قذر|خنزير|حقير|تافه|سافل|وقح)/i.test(trimmed);
+    const isGibberish = /^[\s\W_]+$/.test(trimmed) || /(.)\1{4,}/.test(trimmed);
+    const shortMsgCount = recentMsgs.filter(m => m.trim().length < 8).length;
+    const isVeryShort = qLen > 0 && qLen < 8;
+    let trollScore = 0;
+    if (isVeryShort && shortMsgCount >= 5) trollScore += 2;
+    if (isGibberish) trollScore += 2;
 
-    const userKey = getUserKey(user, section);
-    const session = getSession(userKey);
-    session.lastActivity = Date.now();
-    session.messageCount++;
+    // 🎯 خارج الموضوع
+    const isOffTopic = /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|طقس|سيارة|زواج|طلاق)/i.test(trimmed) && !/(استثمار|مال|سوق|ذهب|سهم|عملة|تضخم|فائدة|ميزانية|محفظة)/i.test(trimmed);
 
-    // 🚫 كولداون
-    if (session.cooldownUntil && Date.now() < session.cooldownUntil) {
-        const remaining = Math.ceil((session.cooldownUntil - Date.now()) / 60000);
-        return res.status(429).json({
-            error: 'cooldown_active',
-            cooldown: true,
-            remainingMinutes: remaining,
-            reason: session.closeReason,
-            message: COOLDOWN_MESSAGES[session.closeReason]?.(remaining) || `المحادثة مغلقة. عُد بعد ${remaining} دقيقة.`
-        });
+    // 📏 طول الرد
+    const wantsBrief = /(باختصار|اختصار|بسرعة|مختصر|لا تطول|لا تطل)/i.test(trimmed);
+    const wantsDetail = /(فصّل|فصل|أشرح|اشرح|بالتفصيل|تفاصيل|موسع|مفصل)/i.test(trimmed);
+    const wantsAdvice = /(تنصحني|توصيتك|رايك|رأيك|شو رأيك|ماذا تنصح|بم تنصح)/i.test(trimmed);
+    const wantsAnalysis = /(حلل|تحليل|قيّم|درس|تتوقع|توقعك|ما توقعاتك)/i.test(trimmed);
+
+    let lengthHint = 'medium';
+    if (isGreeting || isFarewell || isThanks) lengthHint = 'very_short';
+    else if (wantsBrief || isVeryShort) lengthHint = 'very_short';
+    else if (qLen < 40) lengthHint = 'short';
+    else if (qLen >= 150 || wantsDetail || wantsAnalysis) lengthHint = 'long';
+
+    let styleHint = 'default';
+    if (wantsAnalysis) styleHint = 'analysis';
+    else if (wantsAdvice) styleHint = 'advice';
+    else if (wantsDetail) styleHint = 'detail';
+
+    // 🎭 الحالة
+    let state = 'calm';
+    if (isRude) state = 'rude';
+    else if (trollScore >= 3) state = 'trolling';
+    else if (isOffTopic) state = 'offtopic';
+    else if (isThanks || isFarewell) state = 'done';
+    else if (/(حزين|زعلان|مكسور|مكتئب)/i.test(trimmed)) state = 'sad';
+    else if (/(زهقت|تعبت|يئست|خسرت|محبط)/i.test(trimmed)) state = 'frustrated';
+    else if (/(قلق|خايف|خوف|متوتر)/i.test(trimmed)) state = 'worried';
+    else if (/(غاضب|معصب|منرفز)/i.test(trimmed)) state = 'angry';
+    else if (/(محتار|ملخبط|مو فاهم|غامض)/i.test(trimmed)) state = 'confused';
+    else if (/(متحمس|حماس|فرحان)/i.test(trimmed)) state = 'excited';
+    else if (/(ملل|طفش|زهقان)/i.test(trimmed)) state = 'bored';
+
+    return {
+        isGreeting, isFarewell, isThanks, isRude, isOffTopic,
+        trollScore, lengthHint, styleHint, state, qLen,
+        isDone: isThanks || isFarewell
+    };
+}
+
+// ============================================================
+// 🎭 منع تكرار الشخصية (mood + opener)
+// ============================================================
+const MOODS = ['neutral','warm','professional','casual','analytical','concise','thoughtful','patient','curious','blunt'];
+
+const OPENERS = {
+    very_short: ['شوف.','بصراحة؟','همم.','طيب.','أها.','تمام.'],
+    short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،'],
+    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','خلني أكون صريح،'],
+    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','الأمر يحتاج تفصيل.']
+};
+
+function buildPersona(history, session, intent) {
+    const availableMoods = MOODS.filter(m => !session.usedOpeners.includes('m_' + m));
+    let mood;
+    if (availableMoods.length) {
+        mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
+    } else {
+        session.usedOpeners = session.usedOpeners.filter(x => !x.startsWith('m_'));
+        mood = MOODS[Math.floor(Math.random() * MOODS.length)];
     }
+    session.usedOpeners.push('m_' + mood);
+    if (session.usedOpeners.length > 20) session.usedOpeners.shift();
 
-    // 🚻 كشف الجنس
-    const userGender = detectUserGender(user?.firstName);
+    const openerList = OPENERS[intent.lengthHint] || OPENERS.medium;
+    const available = openerList.filter(o => !session.usedOpeners.includes('o_' + o));
+    const opener = available.length
+        ? available[Math.floor(Math.random() * available.length)]
+        : null;
+    if (opener) session.usedOpeners.push('o_' + opener);
 
-    // 🛡️ الوقاحة
-    if (/(غبي|أحمق|احمق|حمار|كلب|زبالة|تفو|قذر|حقير|تافه|سافل|وقح)/i.test(query)) {
-        session.rudeCount = (session.rudeCount || 0) + 1;
-        const level = session.rudeCount >= 2 ? 'level2' : 'level1';
-        if (session.rudeCount >= 3) {
-            session.cooldownUntil = Date.now() + COOLDOWNS.rude;
-            session.closeReason = 'rude';
-            return res.json({
-                replies: [RUDE_RESPONSES.level3[0]],
-                closed: true,
-                closeReason: 'rude',
-                cooldownMinutes: 30
-            });
-        }
-        return res.json({ replies: [pickRandom(RUDE_RESPONSES[level])], model: 'local-rude' });
-    }
+    return { mood, opener };
+}
 
-    // 🤝 الذكاء الاجتماعي
-    const social = detectSocial(query);
-    if (social) {
-        const reply = buildSocialReply(social.types);
-        if (social.isPure) {
-            return res.json({ replies: [reply], model: 'local-social', timing: { delayMs: 800 + Math.random() * 1000 } });
-        }
-    }
-
-    // 🎯 تحليل النية
+// ============================================================
+// 🎯 بناء البرومبت — النسخة الموحّدة
+// ============================================================
+function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender) {
+    const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
+    const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
+    const sectionVocab = SECTION_VOCAB[section] || [];
     const intent = analyzeIntent(query, history);
-    intent.rudeCount = session.rudeCount || 0;
+    const emotion = detectEmotion(query);
+    const seed = Math.floor(Math.random() * 99999);
 
-    // 🚪 الإغلاق
-    const closeDecision = shouldClose(intent, history);
-    if (closeDecision.close) {
-        const reason = closeDecision.reason;
-        session.cooldownUntil = Date.now() + COOLDOWNS[reason];
-        session.closeReason = reason;
-        let replies = [];
-        if (reason === 'user_done') replies = [pickRandom(CLOSINGS)];
-        else if (reason === 'trolling') replies = [TROLL_RESPONSES.level3[0]];
-        else if (reason === 'bored') replies = ['يبدو الموضوع ما شدك. إذا احتجت شي محدد، أنا موجود.'];
-        else if (reason === 'deep_close') replies = ['محادثة طويلة ومفيدة. أنا هنا وقت ما تحتاج.'];
-        return res.json({
-            replies,
-            model: 'local',
-            closed: true,
-            closeReason: reason,
-            cooldownMinutes: Math.floor(COOLDOWNS[reason] / 60000)
-        });
-    }
+    const now = new Date();
+    const hour = now.getHours();
+    const isLateNight = hour >= 23 || hour < 6;
+    const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
 
-    if (intent.trollScore >= 3 && intent.trollScore < 6) {
-        const level = intent.trollScore >= 5 ? 'level2' : 'level1';
-        return res.json({ replies: [pickRandom(TROLL_RESPONSES[level])], model: 'local' });
-    }
-
-    // ✅ أسئلة استباقية لمعرفة النية (قبل استدعاء Gemini)
-    const clarifyQ = pickClarify(intent);
-    if (clarifyQ && session.askCount < 2) {
-        session.askCount++;
-        return res.json({
-            replies: [clarifyQ],
-            model: 'local-clarify',
-            askIntent: true,
-            timing: { delayMs: 1200 + Math.random() * 1500 }
-        });
-    }
-
-    // 🎭 بناء الشخصية + الرد من Gemini
-    const persona = buildPersona(section, history, session);
-
-    try {
-        const prompt = buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender);
-        const result = await callGemini(prompt);
-        const replies = extractReplies(result.text, result.truncated);
-        const timing = getTiming(session);
-
-        if (timing.speed === 'slow' && timing.note && replies.length) {
-            replies[0] = `${timing.note}.\n${replies[0]}`;
-        }
-
-        res.json({ replies, model: result.model, mood: persona.mood, userGender, timing });
-    } catch (e) {
-        res.status(500).json({ error: 'فشل التحليل', details: e.message });
-    }
-});
-
-app.listen(PORT, () => {
-    console.log(`✅ الخادم على البورت ${PORT}`);
-    console.log(`🚻 كشف الجنس: نشط`);
-    console.log(`🎯 أسئلة استباقية: نشطة`);
-    console.log(`🚪 إغلاق فعلي + كولداون: نشط`);
-});
+    const hasHistory = history && history.length > 1;
+    const historyText = hasHistory
+        ? '\n--- سجل الحوار ---\n' + history.slice(-6).map(h =>
+            `${h.role === 'user' ? (user?.firstName || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 200)}`
+          ).join('\n') + '\n---
