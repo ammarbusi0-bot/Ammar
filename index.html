@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مركز التحليل المالي المتقدم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>منصة الاستشارات المالية المتقدمة</title>
 
 <script>
 (function prewarm() {
@@ -17,426 +17,566 @@
     setTimeout(wake, 8000);
 })();
 
-// ✅ حفظ الثيم المفضل
 (function initTheme() {
-    const saved = localStorage.getItem('ammar_theme') || 'light';
+    const saved = localStorage.getItem('profin_theme') || 'light';
     document.documentElement.setAttribute('data-theme', saved);
 })();
 </script>
 
 <style>
     :root {
-        --primary: #0f1729;
-        --secondary: #1e3a5f;
-        --accent: #d4af37;
-        --accent-light: #f4d47a;
-        --bg: #f0f2f7;
-        --card: #ffffff;
-        --text: #1a202c;
-        --muted: #64748b;
-        --user-bubble: linear-gradient(135deg, #dcf8c6, #c9ebaa);
+        /* ثيم فاتح — واتساب احترافي */
+        --primary: #0b1e3f;
+        --secondary: #16375c;
+        --accent: #c9a44c;
+        --accent-soft: #e6c976;
+        --app-bg: #d3dae0;
+        --chat-bg: #ece5dd;
+        --chat-pattern: rgba(11,30,63,0.035);
+        --user-bubble: #d9fdd3;
+        --user-bubble-tail: #d9fdd3;
         --expert-bubble: #ffffff;
+        --expert-bubble-tail: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --muted-2: #94a3b8;
+        --border: rgba(0,0,0,0.08);
+        --time-color: #667781;
+        --check-sent: #8696a0;
+        --check-read: #53bdeb;
         --online: #22c55e;
-        --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-        --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-        --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
-        --chat-bg: #eae6df;
-        --msg-area-bg: #efeae2;
-        --border: rgba(0,0,0,0.06);
-        --header-text: #ffffff;
+        --danger: #b91c1c;
+        --danger-bg: #fee2e2;
+        --shadow-sm: 0 1px 2px rgba(11,20,26,0.08);
+        --shadow-md: 0 4px 14px rgba(11,20,26,0.10);
+        --shadow-lg: 0 14px 50px rgba(11,20,26,0.18);
+        --card-bg: #ffffff;
+        --input-bg: #ffffff;
     }
-    
-    /* ✅ الثيم الداكن */
+
     [data-theme="dark"] {
-        --primary: #0a0e1a;
-        --secondary: #1e293b;
-        --accent: #d4af37;
-        --accent-light: #f4d47a;
-        --bg: #0f1729;
-        --card: #1a2235;
-        --text: #e2e8f0;
-        --muted: #94a3b8;
-        --user-bubble: linear-gradient(135deg, #2d5f3f, #1e4d2f);
-        --expert-bubble: #1a2235;
-        --chat-bg: #0f1729;
-        --msg-area-bg: #131c30;
-        --border: rgba(255,255,255,0.08);
-        --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-        --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-        --shadow-lg: 0 10px 40px rgba(0,0,0,0.5);
+        --primary: #0b141a;
+        --secondary: #1a2430;
+        --accent: #c9a44c;
+        --accent-soft: #e6c976;
+        --app-bg: #0b141a;
+        --chat-bg: #0b141a;
+        --chat-pattern: rgba(201,164,76,0.04);
+        --user-bubble: #005c4b;
+        --user-bubble-tail: #005c4b;
+        --expert-bubble: #202c33;
+        --expert-bubble-tail: #202c33;
+        --text: #e9edef;
+        --muted: #8696a0;
+        --muted-2: #667781;
+        --border: rgba(255,255,255,0.06);
+        --time-color: #8696a0;
+        --check-sent: #8696a0;
+        --check-read: #53bdeb;
+        --danger: #fca5a5;
+        --danger-bg: #4c1d1d;
+        --card-bg: #111b21;
+        --input-bg: #2a3942;
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+        --shadow-md: 0 4px 14px rgba(0,0,0,0.5);
+        --shadow-lg: 0 14px 50px rgba(0,0,0,0.6);
     }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body { 
-        font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif; 
-        background: var(--bg); color: var(--text); 
-        min-height: 100vh; line-height: 1.6;
-        transition: background 0.4s ease, color 0.4s ease;
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+        height: 100%;
+        font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif;
+        background: var(--app-bg);
+        color: var(--text);
+        line-height: 1.65;
+        transition: background 0.35s ease, color 0.35s ease;
+        overflow-x: hidden;
     }
-    
+
     /* ============ Splash ============ */
-    #splash { 
-        position: fixed; inset: 0; 
-        background: linear-gradient(135deg, #0f1729 0%, #1e3a5f 100%);
+    #splash {
+        position: fixed; inset: 0;
+        background: radial-gradient(circle at 30% 20%, #142b52 0%, #0b1e3f 45%, #05101f 100%);
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        z-index: 9999; color: white;
-        transition: opacity 0.7s ease;
+        z-index: 9999; color: white; transition: opacity 0.7s ease;
     }
     #splash.fade { opacity: 0; pointer-events: none; }
-    
     .splash-logo {
-        width: 100px; height: 100px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        width: 110px; height: 110px; border-radius: 30px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
         display: flex; align-items: center; justify-content: center;
-        font-size: 46px; margin-bottom: 30px;
-        animation: pulse 2s infinite;
-        box-shadow: 0 0 60px rgba(212, 175, 55, 0.5);
+        font-size: 52px; margin-bottom: 28px;
+        box-shadow: 0 20px 60px rgba(201,164,76,0.4), inset 0 -4px 12px rgba(0,0,0,0.2);
+        animation: floaty 3s ease-in-out infinite;
     }
-    @keyframes pulse { 
-        0%, 100% { transform: scale(1); } 
-        50% { transform: scale(1.08); } 
+    @keyframes floaty {
+        0%, 100% { transform: translateY(0) rotate(-2deg); }
+        50%      { transform: translateY(-10px) rotate(2deg); }
     }
-    .splash-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
-    .splash-sub { color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
-    .splash-progress { width: 300px; height: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
-    .splash-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 3px; transition: width 0.5s ease; }
-    .splash-msg { color: var(--accent-light); font-size: 14px; min-height: 22px; }
-    
+    .splash-title { font-size: 24px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
+    .splash-sub { color: #94a3b8; font-size: 13.5px; margin-bottom: 38px; letter-spacing: 0.5px; }
+    .splash-progress { width: min(320px, 78vw); height: 4px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
+    .splash-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); border-radius: 3px; transition: width 0.5s ease; }
+    .splash-msg { color: var(--accent-soft); font-size: 13px; min-height: 22px; opacity: 0.85; }
+
     /* ============ Header ============ */
-    header { 
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white; padding: 16px 20px; text-align: center;
-        border-bottom: 3px solid var(--accent);
+    header {
+        background: linear-gradient(135deg, #071630 0%, #12294a 55%, #0b1e3f 100%);
+        color: white; padding: 16px 20px;
+        text-align: center;
+        border-bottom: 2px solid var(--accent);
         box-shadow: var(--shadow-md);
-        position: relative;
+        position: relative; z-index: 10;
     }
-    header h1 { font-size: 20px; margin: 0; letter-spacing: -0.3px; }
-    header p { font-size: 12.5px; color: #94a3b8; margin: 4px 0 0; }
-    
-    /* ✅ زر الثيم الداكن */
+    header h1 {
+        font-size: 19px; font-weight: 800; letter-spacing: -0.3px;
+        background: linear-gradient(90deg, #fff, #e9d9a8);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    header p { font-size: 12px; color: #94a3b8; margin-top: 4px; letter-spacing: 0.3px; }
+
     .theme-toggle {
-        position: absolute; top: 15px; left: 20px;
-        background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.15);
+        position: absolute; top: 50%; transform: translateY(-50%); left: 16px;
+        background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.12);
         color: white; width: 38px; height: 38px; border-radius: 50%;
-        cursor: pointer; font-size: 18px;
+        cursor: pointer; font-size: 17px;
         display: flex; align-items: center; justify-content: center;
-        transition: all 0.3s;
+        transition: all 0.25s;
     }
-    .theme-toggle:hover { background: rgba(255,255,255,0.2); transform: rotate(20deg) scale(1.1); }
-    
+    .theme-toggle:hover { background: rgba(201,164,76,0.25); border-color: var(--accent); transform: translateY(-50%) rotate(15deg); }
+
     /* ============ User bar ============ */
-    .user-bar { 
-        background: rgba(15, 23, 41, 0.95); backdrop-filter: blur(10px);
-        color: white; padding: 10px 20px; 
+    .user-bar {
+        background: rgba(7, 22, 48, 0.95); backdrop-filter: blur(12px);
+        color: white; padding: 10px 18px;
         display: none; justify-content: space-between; align-items: center;
-        font-size: 14px; box-shadow: var(--shadow-sm);
+        font-size: 13.5px;
+        border-bottom: 1px solid rgba(201,164,76,0.18);
+        position: sticky; top: 0; z-index: 9;
     }
-    .user-bar.show { display: flex; }
-    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-bar.show { display: flex; animation: slideDown 0.4s ease; }
+    @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+    .user-info { display: flex; align-items: center; gap: 11px; }
     .avatar-sm {
-        width: 34px; height: 34px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent-light));
-        color: var(--primary); display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 14px;
+        width: 36px; height: 36px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+        color: #0b1e3f; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 14px;
+        box-shadow: 0 0 0 2px rgba(201,164,76,0.3);
     }
+    .user-bar .actions { display: flex; gap: 8px; }
     .user-bar button {
-        background: transparent; color: #94a3b8;
-        border: 1px solid #334155; padding: 5px 14px; border-radius: 6px;
-        cursor: pointer; font-size: 12px; transition: all 0.2s;
+        background: transparent; color: #cbd5e1;
+        border: 1px solid rgba(148,163,184,0.3); padding: 6px 13px; border-radius: 8px;
+        cursor: pointer; font-size: 12px; font-family: inherit;
+        transition: all 0.2s;
     }
     .user-bar button:hover { color: white; border-color: var(--accent); }
-    
-    .container { max-width: 1050px; margin: 30px auto; padding: 0 20px; }
-    
+    .user-bar button.danger { color: #fca5a5; border-color: rgba(252,165,165,0.3); }
+    .user-bar button.danger:hover { background: rgba(220,38,38,0.15); border-color: #ef4444; color: white; }
+
+    .container { max-width: 1080px; margin: 30px auto; padding: 0 20px; }
+
     /* ============ Welcome ============ */
     #welcome {
-        background: var(--card); border-radius: 16px; padding: 45px;
-        box-shadow: var(--shadow-lg); max-width: 520px; margin: 40px auto;
+        background: var(--card-bg); border-radius: 20px; padding: 44px 40px;
+        box-shadow: var(--shadow-lg); max-width: 560px; margin: 30px auto;
         text-align: center; display: none;
-    }
-    #welcome.show { display: block; animation: slideUp 0.5s ease; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    
-    #welcome h2 { color: var(--primary); font-size: 26px; margin-bottom: 8px; }
-    [data-theme="dark"] #welcome h2 { color: var(--accent); }
-    #welcome .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
-    
-    .form-group { text-align: right; margin-bottom: 18px; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary); font-size: 14px; }
-    [data-theme="dark"] .form-group label { color: var(--accent); }
-    .form-group input, .form-group select, .form-group textarea {
-        width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0;
-        border-radius: 10px; font-size: 14px; font-family: inherit;
-        transition: border 0.2s, box-shadow 0.2s;
-        background: var(--card); color: var(--text);
-    }
-    [data-theme="dark"] .form-group input,
-    [data-theme="dark"] .form-group select,
-    [data-theme="dark"] .form-group textarea {
-        border-color: rgba(255,255,255,0.1);
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        outline: none; border-color: var(--secondary);
-        box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
-    }
-    .form-group textarea { min-height: 80px; resize: vertical; }
-    
-    .btn-primary {
-        width: 100%; padding: 14px; border: none; border-radius: 10px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white; font-size: 16px; font-weight: 700; cursor: pointer;
-        transition: transform 0.15s, box-shadow 0.2s;
-        box-shadow: 0 4px 12px rgba(15, 23, 41, 0.2);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15, 23, 41, 0.3); }
-    
-    /* ============ Sections ============ */
-    #home { display: none; }
-    #home.show { display: block; }
-    #home h2 { text-align: center; margin-bottom: 30px; color: var(--primary); font-size: 22px; }
-    [data-theme="dark"] #home h2 { color: var(--accent); }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-    .card {
-        background: var(--card); border-radius: 14px; padding: 22px;
-        box-shadow: var(--shadow-sm); cursor: pointer;
-        border-top: 4px solid var(--secondary);
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--border);
         position: relative; overflow: hidden;
     }
-    .card::before {
-        content: ''; position: absolute; top: 0; right: 0;
-        width: 0; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(212,175,55,0.08));
-        transition: width 0.4s;
+    #welcome::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
     }
-    .card:hover::before { width: 100%; }
+    #welcome.show { display: block; animation: slideUp 0.5s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    .welcome-icon {
+        width: 72px; height: 72px; margin: 0 auto 16px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 10px 30px rgba(201,164,76,0.35);
+    }
+    #welcome h2 { color: var(--text); font-size: 24px; margin-bottom: 6px; font-weight: 800; }
+    #welcome .sub { color: var(--muted); font-size: 13.5px; margin-bottom: 26px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { text-align: right; margin-bottom: 14px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+        display: block; font-weight: 700; margin-bottom: 7px;
+        color: var(--text); font-size: 13px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%; padding: 12px 15px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px; font-size: 14px;
+        font-family: inherit; transition: all 0.2s;
+        background: var(--card-bg); color: var(--text);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none; border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(201,164,76,0.12);
+    }
+    .form-group textarea { min-height: 76px; resize: vertical; }
+
+    .btn-primary {
+        width: 100%; padding: 14px; border: none; border-radius: 12px;
+        background: linear-gradient(135deg, #0b1e3f, #1e3a5f);
+        color: white; font-size: 15.5px; font-weight: 800;
+        cursor: pointer; font-family: inherit;
+        transition: transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 6px 18px rgba(11,30,63,0.28);
+        margin-top: 10px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(11,30,63,0.35); }
+
+    /* ============ Home / Sections ============ */
+    #home { display: none; }
+    #home.show { display: block; }
+    #home h2 {
+        text-align: center; margin-bottom: 8px;
+        color: var(--text); font-size: 22px; font-weight: 800;
+    }
+    #home .home-sub {
+        text-align: center; color: var(--muted);
+        font-size: 13.5px; margin-bottom: 28px;
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+    .card {
+        background: var(--card-bg); border-radius: 16px; padding: 22px;
+        box-shadow: var(--shadow-sm); cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative; overflow: hidden;
+        display: flex; flex-direction: column; gap: 10px;
+    }
+    .card::after {
+        content: ''; position: absolute; bottom: 0; right: 0;
+        width: 100%; height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+        transform: scaleX(0); transform-origin: right;
+        transition: transform 0.4s ease;
+    }
+    .card:hover::after { transform: scaleX(1); }
     .card:hover {
-        transform: translateY(-6px);
+        transform: translateY(-5px);
         box-shadow: var(--shadow-lg);
-        border-color: var(--accent);
+        border-color: rgba(201,164,76,0.35);
     }
-    .card h3 { color: var(--primary); margin-bottom: 8px; font-size: 17px; position: relative; }
-    [data-theme="dark"] .card h3 { color: var(--accent); }
-    .card p { color: var(--muted); font-size: 13.5px; line-height: 1.6; position: relative; }
-    
+    .card-icon {
+        width: 46px; height: 46px; border-radius: 13px;
+        background: linear-gradient(135deg, rgba(201,164,76,0.15), rgba(201,164,76,0.28));
+        display: flex; align-items: center; justify-content: center;
+        font-size: 22px; border: 1px solid rgba(201,164,76,0.25);
+    }
+    .card h3 { color: var(--text); font-size: 16px; font-weight: 800; }
+    .card p { color: var(--muted); font-size: 13px; line-height: 1.65; }
+
     /* ============ Chat ============ */
-    #chat { 
-        display: none; max-width: 800px; margin: 20px auto;
-        background: var(--chat-bg); border-radius: 16px;
+    #chat {
+        display: none; max-width: 850px; margin: 16px auto;
+        background: var(--chat-bg); border-radius: 18px;
         box-shadow: var(--shadow-lg); overflow: hidden;
+        border: 1px solid var(--border);
     }
-    #chat.show { display: block; }
-    
+    #chat.show { display: block; animation: slideUp 0.4s ease; }
+
     .chat-header {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white; padding: 14px 20px;
-        display: flex; align-items: center; gap: 14px;
+        background: linear-gradient(135deg, #071630, #12294a);
+        color: white; padding: 12px 16px;
+        display: flex; align-items: center; gap: 12px;
+        border-bottom: 1px solid rgba(201,164,76,0.2);
+        position: relative;
     }
     .expert-avatar {
-        width: 48px; height: 48px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent-light));
-        color: var(--primary); display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 20px; position: relative;
+        width: 46px; height: 46px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+        color: #0b1e3f; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 18px; position: relative; flex-shrink: 0;
     }
     .expert-avatar::after {
         content: ''; position: absolute; bottom: 1px; right: 1px;
         width: 12px; height: 12px; background: var(--online);
-        border: 2.5px solid var(--primary); border-radius: 50%;
-        animation: onlinePulse 2s infinite;
+        border: 2.5px solid #071630; border-radius: 50%;
+        transition: background 0.3s;
     }
-    @keyframes onlinePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
-    
-    .expert-info h3 { font-size: 16px; font-weight: 700; }
-    .expert-info p { font-size: 12px; color: #94a3b8; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--online); display: inline-block; }
-    
+    .expert-avatar.offline::after { background: #94a3b8; }
+    .expert-avatar.typing::after { background: var(--online); animation: pulse-dot 1s infinite; }
+    @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
+
+    .expert-info { flex: 1; min-width: 0; }
+    .expert-info h3 {
+        font-size: 15px; font-weight: 700;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .expert-info p {
+        font-size: 11.5px; color: #94a3b8; margin-top: 1px;
+        display: flex; align-items: center; gap: 5px;
+        transition: color 0.3s;
+    }
+    .expert-info p.typing-status { color: #6ee7b7; }
+
     .btn-back {
-        margin-left: auto; background: rgba(255,255,255,0.1);
-        color: white; border: 1px solid rgba(255,255,255,0.2);
-        padding: 7px 14px; border-radius: 8px; cursor: pointer;
-        font-size: 12px; transition: background 0.2s;
+        margin-right: auto;
+        background: rgba(255,255,255,0.08);
+        color: white; border: 1px solid rgba(255,255,255,0.14);
+        padding: 7px 13px; border-radius: 9px;
+        cursor: pointer; font-size: 12px; font-family: inherit;
+        transition: all 0.2s; flex-shrink: 0;
     }
-    .btn-back:hover { background: rgba(255,255,255,0.2); }
-    
-    .progress-bar { height: 3px; background: var(--border); overflow: hidden; display: none; }
+    .btn-back:hover { background: rgba(201,164,76,0.2); border-color: var(--accent); }
+
+    .progress-bar { height: 2.5px; background: rgba(0,0,0,0.05); overflow: hidden; display: none; }
     .progress-bar.show { display: block; }
     .progress-fill {
         height: 100%; width: 0%; transition: width 0.5s ease;
-        background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
-        background-size: 200% 100%; animation: shimmer 2s linear infinite;
+        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+        background-size: 200% 100%; animation: shimmer 1.8s linear infinite;
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    
+
     #messages {
-        padding: 24px 20px; min-height: 380px; max-height: 520px;
-        overflow-y: auto; background: var(--msg-area-bg);
-        background-image: 
-            radial-gradient(circle at 20% 30%, rgba(212,175,55,0.03) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(30,58,95,0.03) 0%, transparent 50%);
+        padding: 26px 18px 20px;
+        min-height: 420px; max-height: 58vh;
+        overflow-y: auto; background: var(--chat-bg);
+        background-image:
+            radial-gradient(circle at 15% 20%, var(--chat-pattern) 0%, transparent 40%),
+            radial-gradient(circle at 85% 75%, var(--chat-pattern) 0%, transparent 40%),
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23000' stroke-opacity='0.03' stroke-width='1'><circle cx='15' cy='15' r='3'/><circle cx='45' cy='45' r='3'/><path d='M30 8 L32 12 L30 16 L28 12 Z'/><path d='M52 22 L54 25 L52 28 L50 25 Z'/></g></svg>");
         scroll-behavior: smooth;
-        transition: background 0.4s ease;
+        transition: background-color 0.4s ease;
+    }
+    [data-theme="dark"] #messages {
+        background-image:
+            radial-gradient(circle at 15% 20%, var(--chat-pattern) 0%, transparent 40%),
+            radial-gradient(circle at 85% 75%, var(--chat-pattern) 0%, transparent 40%),
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23ffffff' stroke-opacity='0.02' stroke-width='1'><circle cx='15' cy='15' r='3'/><circle cx='45' cy='45' r='3'/><path d='M30 8 L32 12 L30 16 L28 12 Z'/><path d='M52 22 L54 25 L52 28 L50 25 Z'/></g></svg>");
     }
     #messages::-webkit-scrollbar { width: 6px; }
     #messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
-    
-    .bubble-wrap { display: flex; margin-bottom: 14px; animation: msgIn 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
-    @keyframes msgIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    
-    .bubble-wrap.user { justify-content: flex-start; }
-    .bubble-wrap.expert { justify-content: flex-end; }
-    
+    [data-theme="dark"] #messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+    /* ============ Bubbles (WhatsApp style) ============ */
+    .bubble-wrap {
+        display: flex; margin-bottom: 10px;
+        animation: msgIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0 4px;
+    }
+    @keyframes msgIn {
+        from { opacity: 0; transform: translateY(8px) scale(0.96); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .bubble-wrap.user { justify-content: flex-end; }
+    .bubble-wrap.expert { justify-content: flex-start; }
+
     .bubble {
-        max-width: 80%; padding: 12px 16px; border-radius: 16px;
-        font-size: 14.5px; line-height: 1.75; word-wrap: break-word;
-        box-shadow: var(--shadow-sm); position: relative;
+        max-width: 78%; padding: 8px 12px 6px;
+        border-radius: 10px;
+        font-size: 14.5px; line-height: 1.75;
+        word-wrap: break-word;
+        box-shadow: 0 1px 0.5px rgba(11,20,26,0.13);
+        position: relative;
     }
     .bubble-wrap.user .bubble {
         background: var(--user-bubble);
-        border-top-right-radius: 4px;
+        color: var(--text);
+        border-top-right-radius: 3px;
+        margin-right: 6px;
+    }
+    .bubble-wrap.user .bubble::after {
+        content: '';
+        position: absolute; top: 0; right: -7px;
+        width: 10px; height: 14px;
+        background: var(--user-bubble-tail);
+        clip-path: polygon(0 0, 100% 0, 0 100%);
     }
     .bubble-wrap.expert .bubble {
         background: var(--expert-bubble);
-        border-top-left-radius: 4px;
+        color: var(--text);
+        border-top-left-radius: 3px;
+        margin-left: 6px;
     }
-    
-    .sender { font-size: 11.5px; font-weight: 700; color: var(--secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-    [data-theme="dark"] .sender { color: var(--accent); }
-    .sender::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
-    
-    .bubble-content { white-space: pre-wrap; }
-    .bubble-content strong { color: var(--primary); font-weight: 700; }
-    [data-theme="dark"] .bubble-content strong { color: var(--accent-light); }
-    
-    /* ============ علامات القراءة ============ */
-    .time-row { 
-        display: flex; align-items: center; justify-content: flex-end; 
-        gap: 4px; margin-top: 6px; 
+    .bubble-wrap.expert .bubble::after {
+        content: '';
+        position: absolute; top: 0; left: -7px;
+        width: 10px; height: 14px;
+        background: var(--expert-bubble-tail);
+        clip-path: polygon(100% 0, 0 0, 100% 100%);
     }
-    .time { font-size: 10px; color: var(--muted); direction: ltr; }
-    .checks { font-size: 11px; color: var(--muted); direction: ltr; transition: color 0.3s; display: inline-block; }
-    .checks.sent { color: var(--muted); }
-    .checks.delivered { color: #94a3b8; letter-spacing: -3px; }
-    .checks.read { color: #3b82f6; letter-spacing: -3px; }
-    
+
+    .sender {
+        font-size: 11.5px; font-weight: 800;
+        color: #c9a44c; margin-bottom: 2px;
+        display: flex; align-items: center; gap: 5px;
+    }
+    .bubble-wrap.user .sender { color: #0b6b3a; }
+    [data-theme="dark"] .bubble-wrap.user .sender { color: #7ee0a6; }
+
+    .bubble-content {
+        white-space: pre-wrap;
+        padding-bottom: 14px;
+    }
+    .bubble-content strong { color: inherit; font-weight: 800; }
+
+    .time-row {
+        position: absolute; bottom: 3px; left: 10px;
+        display: flex; align-items: center; gap: 3px;
+        font-size: 10.5px; color: var(--time-color);
+        direction: ltr;
+    }
+    .bubble-wrap.user .time-row { left: 10px; right: auto; }
+    .bubble-wrap.expert .time-row { left: auto; right: 10px; }
+
+    .checks { font-size: 11px; display: inline-block; transition: color 0.3s; }
+    .checks.sent { color: var(--check-sent); letter-spacing: -2px; }
+    .checks.delivered { color: var(--check-sent); letter-spacing: -3px; }
+    .checks.read { color: var(--check-read); letter-spacing: -3px; }
+
     /* ============ Typing ============ */
-    .typing { display: inline-flex; gap: 5px; padding: 6px 4px; }
+    .typing { display: inline-flex; gap: 4px; padding: 6px 2px 14px; }
     .typing span {
-        width: 8px; height: 8px; background: var(--muted);
-        border-radius: 50%; animation: dotTyping 1.4s infinite;
+        width: 7px; height: 7px; background: var(--muted);
+        border-radius: 50%; animation: dotTyping 1.3s infinite;
     }
-    .typing span:nth-child(2) { animation-delay: 0.2s; }
-    .typing span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dotTyping { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
-    
-    /* ============ Waiting ============ */
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes dotTyping {
+        0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+        30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ============ Waiting bubble ============ */
     .waiting-bubble {
-        background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
-        border-right: 4px solid var(--accent);
+        background: linear-gradient(135deg, #fffdf5, #fdf7e4) !important;
+        border-right: 3px solid var(--accent);
     }
     [data-theme="dark"] .waiting-bubble {
-        background: linear-gradient(135deg, #2a2410, #3d3117) !important;
-        color: #fbbf24;
+        background: linear-gradient(135deg, #1a2430, #232d3a) !important;
+        color: #fcd34d !important;
     }
-    .waiting-header { font-weight: 700; margin-bottom: 10px; font-size: 14px; }
-    .waiting-steps { display: flex; flex-direction: column; gap: 7px; }
+    .waiting-bubble::after { display: none; }
+    .waiting-header {
+        font-weight: 800; margin-bottom: 8px; font-size: 13.5px;
+        color: #92400e;
+    }
+    [data-theme="dark"] .waiting-header { color: var(--accent-soft); }
+    .waiting-steps { display: flex; flex-direction: column; gap: 6px; }
     .wstep {
         display: flex; align-items: center; gap: 8px;
-        font-size: 12.5px; opacity: 0.35;
+        font-size: 12px; opacity: 0.35;
         transition: opacity 0.4s, color 0.3s;
-        padding-right: 6px;
+        color: #78350f;
     }
-    [data-theme="light"] .wstep { color: #78350f; }
     [data-theme="dark"] .wstep { color: #fcd34d; }
     .wstep.active { opacity: 1; font-weight: 700; }
     .wstep.done { opacity: 0.9; color: #16a34a; }
-    .wstep-icon { 
-        display: inline-flex; width: 20px; height: 20px; 
+    [data-theme="dark"] .wstep.done { color: #4ade80; }
+    .wstep-icon {
+        display: inline-flex; width: 18px; height: 18px;
         align-items: center; justify-content: center;
-        font-size: 12px;
+        font-size: 11px;
     }
-    
+
     /* ============ Suggestion chips ============ */
     .suggestions {
-        display: flex; flex-wrap: wrap; gap: 8px;
-        padding: 12px 20px; background: var(--card);
+        display: flex; flex-wrap: wrap; gap: 7px;
+        padding: 11px 18px;
+        background: var(--card-bg);
         border-top: 1px solid var(--border);
     }
     .chip {
-        background: transparent; border: 1.5px solid var(--secondary);
-        color: var(--secondary); padding: 7px 15px; border-radius: 20px;
-        font-size: 12.5px; cursor: pointer; font-weight: 600;
+        background: transparent;
+        border: 1.5px solid rgba(201,164,76,0.5);
+        color: var(--accent);
+        padding: 6px 14px; border-radius: 18px;
+        font-size: 12px; cursor: pointer;
+        font-weight: 700; font-family: inherit;
         transition: all 0.2s;
     }
-    [data-theme="dark"] .chip { color: var(--accent); border-color: var(--accent); }
-    .chip:hover { background: var(--secondary); color: white; transform: translateY(-1px); }
-    [data-theme="dark"] .chip:hover { background: var(--accent); color: var(--primary); }
-    
+    .chip:hover {
+        background: var(--accent); color: #0b1e3f;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(201,164,76,0.3);
+    }
+
     /* ============ Input area ============ */
     .input-area {
-        background: var(--card); padding: 14px 16px;
-        display: flex; gap: 12px; align-items: flex-end;
+        background: var(--card-bg); padding: 12px 14px;
+        display: flex; gap: 10px; align-items: flex-end;
         border-top: 1px solid var(--border);
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
     }
     .input-area textarea {
-        flex: 1; padding: 11px 16px; border: 1.5px solid #e2e8f0;
-        border-radius: 22px; resize: none; min-height: 44px; max-height: 120px;
-        font-family: inherit; font-size: 14px; outline: none;
-        transition: border 0.2s, box-shadow 0.2s;
-        background: var(--card); color: var(--text);
+        flex: 1; padding: 11px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 22px; resize: none;
+        min-height: 42px; max-height: 120px;
+        font-family: inherit; font-size: 14px;
+        outline: none; transition: all 0.2s;
+        background: var(--input-bg); color: var(--text);
     }
-    [data-theme="dark"] .input-area textarea { border-color: rgba(255,255,255,0.1); }
-    .input-area textarea:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(30,58,95,0.08); }
+    .input-area textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(201,164,76,0.12);
+    }
     .send-btn {
-        width: 46px; height: 46px; border-radius: 50%; border: none;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white; font-size: 18px; cursor: pointer; display: flex;
-        align-items: center; justify-content: center;
+        width: 44px; height: 44px; border-radius: 50%; border: none;
+        background: linear-gradient(135deg, #0b1e3f, #1e3a5f);
+        color: white; font-size: 17px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
         transition: transform 0.15s, box-shadow 0.2s;
-        box-shadow: 0 4px 12px rgba(15,23,41,0.25);
+        box-shadow: 0 4px 12px rgba(11,30,63,0.3);
+        flex-shrink: 0;
     }
-    .send-btn:hover:not(:disabled) { transform: scale(1.06); }
-    .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
-    
-    /* ============ حالة "غير متصل" ============ */
-    .expert-avatar.offline::after { background: #94a3b8; animation: none; }
-    .status-text { transition: color 0.3s; }
-    
+    .send-btn:hover:not(:disabled) { transform: scale(1.08); box-shadow: 0 6px 18px rgba(11,30,63,0.4); }
+    .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+
+    /* ============ Error bubble ============ */
     .error-bubble {
-        background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
-        border-right: 4px solid #dc2626; color: #991b1b;
+        background: var(--danger-bg) !important;
+        border-right: 3px solid var(--danger);
+        color: var(--danger) !important;
     }
-    [data-theme="dark"] .error-bubble {
-        background: linear-gradient(135deg, #4c1d1d, #6b2020) !important;
-        color: #fca5a5;
-    }
-    
-    @media (max-width: 600px) {
-        .container { padding: 0 12px; }
-        #welcome { padding: 30px 24px; }
-        .bubble { max-width: 88%; font-size: 14px; }
+    .error-bubble::after { display: none; }
+
+    @media (max-width: 620px) {
+        .container { padding: 0 12px; margin: 14px auto; }
+        #welcome { padding: 32px 22px; border-radius: 16px; }
+        .form-grid { grid-template-columns: 1fr; }
+        .bubble { max-width: 86%; font-size: 14px; }
         header h1 { font-size: 16px; }
-        .theme-toggle { width: 32px; height: 32px; font-size: 15px; top: 12px; left: 12px; }
+        header p { font-size: 11px; }
+        .theme-toggle { width: 34px; height: 34px; font-size: 15px; left: 12px; }
+        #messages { padding: 18px 12px; max-height: 56vh; }
+        .grid { grid-template-columns: 1fr; gap: 12px; }
+        .chat-header { padding: 10px 12px; }
+        .expert-avatar { width: 42px; height: 42px; font-size: 16px; }
+        .user-bar { padding: 8px 12px; font-size: 12.5px; }
+        .user-bar button { padding: 5px 10px; font-size: 11px; }
     }
 </style>
 </head>
 <body>
 
 <div id="splash">
-    <div class="splash-logo">📊</div>
-    <div class="splash-title">مركز التحليل المالي المتقدم</div>
-    <div class="splash-sub">فريق من المحللين المتخصصين في خدمتك</div>
+    <div class="splash-logo">💼</div>
+    <div class="splash-title">منصة الاستشارات المالية</div>
+    <div class="splash-sub">نخبة من المحللين المتخصصين</div>
     <div class="splash-progress"><div class="splash-fill" id="splashFill"></div></div>
     <div class="splash-msg" id="splashMsg">جاري تجهيز بيئة العمل...</div>
 </div>
 
 <header>
     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="تبديل الوضع">🌙</button>
-    <h1>مركز التحليل المالي والاقتصادي المتقدم</h1>
-    <p>فريق من المحللين المتخصصين في خدمتك</p>
+    <h1>منصة الاستشارات المالية المتقدمة</h1>
+    <p>فريق نخبة من المحللين المتخصصين في خدمتك</p>
 </header>
 
 <div class="user-bar" id="userBar">
@@ -444,83 +584,133 @@
         <div class="avatar-sm" id="userAvatar">؟</div>
         <span id="userGreeting">مرحباً</span>
     </div>
-    <button onclick="resetUser()">🔄 تغيير البيانات</button>
+    <div class="actions">
+        <button onclick="resetUser()">✏️ تعديل</button>
+        <button class="danger" onclick="deleteAllData()">🗑️ مسح بياناتي</button>
+    </div>
 </div>
 
 <div class="container">
 
+    <!-- Welcome / Form -->
     <div id="welcome">
-        <h2>👋 أهلاً بك</h2>
-        <p class="sub">قبل أن نبدأ، نحتاج بعض المعلومات لنقدّم لك خدمة أفضل</p>
-        
-        <div class="form-group">
-            <label>ما اسمك الكريم؟</label>
-            <input type="text" id="inName" placeholder="مثال: عبدالله" maxlength="30">
+        <div class="welcome-icon">👤</div>
+        <h2>أهلاً بك في المنصة</h2>
+        <p class="sub">قبل البدء، نحتاج بياناتك الأساسية لنقدّم استشارة مخصصة ودقيقة</p>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>الاسم الأول *</label>
+                <input type="text" id="inFirstName" placeholder="مثال: عبدالله" maxlength="30">
+            </div>
+            <div class="form-group">
+                <label>اسم العائلة / الكنية *</label>
+                <input type="text" id="inLastName" placeholder="مثال: المنصور" maxlength="30">
+            </div>
+            <div class="form-group">
+                <label>العمر *</label>
+                <input type="number" id="inAge" placeholder="مثال: 32" min="15" max="100">
+            </div>
+            <div class="form-group">
+                <label>البلد *</label>
+                <select id="inCountry">
+                    <option value="">اختر البلد</option>
+                    <option>السعودية</option>
+                    <option>الإمارات</option>
+                    <option>الكويت</option>
+                    <option>قطر</option>
+                    <option>البحرين</option>
+                    <option>عُمان</option>
+                    <option>الأردن</option>
+                    <option>مصر</option>
+                    <option>العراق</option>
+                    <option>سوريا</option>
+                    <option>لبنان</option>
+                    <option>فلسطين</option>
+                    <option>اليمن</option>
+                    <option>المغرب</option>
+                    <option>الجزائر</option>
+                    <option>تونس</option>
+                    <option>ليبيا</option>
+                    <option>السودان</option>
+                    <option>موريتانيا</option>
+                    <option>الصومال</option>
+                    <option>جيبوتي</option>
+                    <option>تركيا</option>
+                    <option>أخرى</option>
+                </select>
+            </div>
+            <div class="form-group full">
+                <label>مستوى الخبرة المالية *</label>
+                <select id="inExp">
+                    <option value="مبتدئ — لا خبرة سابقة">🌱 مبتدئ — لا خبرة سابقة</option>
+                    <option value="متوسط — لديه معرفة عامة" selected>📘 متوسط — معرفة عامة</option>
+                    <option value="متقدم — يتعامل مع أسواق متعددة">🎓 متقدم — أسواق متعددة</option>
+                    <option value="محترف — خلفية مالية أو استثمارية">💼 محترف — خلفية استثمارية</option>
+                </select>
+            </div>
+            <div class="form-group full">
+                <label>سبب الاستشارة (اختياري)</label>
+                <textarea id="inReason" placeholder="مثال: أرغب بتخصيص محفظة استثمارية، أو تقييم قرار شراء ذهب، أو تخطيط مالي للأسر..."></textarea>
+            </div>
         </div>
-        <div class="form-group">
-            <label>كم عمرك؟</label>
-            <input type="number" id="inAge" placeholder="مثال: 32" min="15" max="100">
-        </div>
-        <div class="form-group">
-            <label>ما خلفيتك المالية؟</label>
-            <select id="inExp">
-                <option value="مبتدئ تماماً">🌱 مبتدئ</option>
-                <option value="متوسط الخبرة" selected>📘 متوسط</option>
-                <option value="محترف في المجال المالي">🎓 محترف</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>لماذا تزورنا؟ (اختياري)</label>
-            <textarea id="inReason" placeholder="مثال: أريد استشارة حول شراء الذهب..."></textarea>
-        </div>
-        
-        <button class="btn-primary" onclick="saveUser()">دخول المنصة</button>
+
+        <button class="btn-primary" onclick="saveUser()">الدخول إلى المنصة</button>
     </div>
 
+    <!-- Home -->
     <div id="home">
-        <h2>اختر القسم التخصصي:</h2>
+        <h2>اختر التخصص الاستشاري</h2>
+        <p class="home-sub">كل قسم يقوده محلل متخصص بخبرة عملية في مجاله</p>
         <div class="grid">
             <div class="card" onclick="openSection('gold')">
-                <h3>💎 الذهب والمعادن الثمينة</h3>
-                <p>تحليل حركة السبائك، الذهب، الفضة، وتأثير التضخم والسياسة النقدية.</p>
+                <div class="card-icon">💎</div>
+                <h3>أسواق الذهب والمعادن الثمينة</h3>
+                <p>تحليل حركة السبائك والأونصة، التحوط ضد التضخم، والتخصيص الأمثل في المحفظة.</p>
             </div>
             <div class="card" onclick="openSection('stocks')">
-                <h3>📊 الأسهم والأسواق المالية</h3>
-                <p>تقييم الشركات، قراءة القوائم المالية، واتجاهات الاستثمار.</p>
+                <div class="card-icon">📈</div>
+                <h3>الأسواق المالية والأسهم</h3>
+                <p>تقييم الشركات، قراءة القوائم المالية، بناء محفظة متوازنة، وإدارة المخاطر.</p>
             </div>
             <div class="card" onclick="openSection('macro')">
-                <h3>🌍 الاقتصاد الكلي</h3>
-                <p>قرارات البنوك المركزية، أسعار الفائدة، التضخم، وسلاسل الإمداد.</p>
+                <div class="card-icon">🌍</div>
+                <h3>الاقتصاد الكلي والسياسات النقدية</h3>
+                <p>قرارات الفيدرالي، أسعار الفائدة، التضخم، والدورات الاقتصادية وأثرها على الأصول.</p>
             </div>
             <div class="card" onclick="openSection('geopolitical')">
-                <h3>🧭 التحليل الجيوسياسي</h3>
-                <p>تأثير الأزمات والتوترات السياسية على أسواق الطاقة والتجارة.</p>
+                <div class="card-icon">🧭</div>
+                <h3>الجيوسياسة وأثرها على الأسواق</h3>
+                <p>تحليل الأزمات والتوترات الدولية، أثرها على الطاقة، التجارة، وسلاسل الإمداد.</p>
             </div>
             <div class="card" onclick="openSection('budget')">
-                <h3>💼 الميزانية والثروات</h3>
-                <p>تخطيط المداخيل، استراتيجيات الادخار، وهيكلة الخروج من الديون.</p>
+                <div class="card-icon">🎯</div>
+                <h3>التخطيط المالي الشخصي</h3>
+                <p>بناء الميزانية، استراتيجيات الادخار، هيكلة الديون، والتخطيط للتقاعد.</p>
             </div>
             <div class="card" onclick="openSection('crypto')">
-                <h3>🔐 الأصول الرقمية</h3>
-                <p>اتجاهات البيتكوين، تقنيات البلوكشين، وتحليل المخاطر.</p>
+                <div class="card-icon">🔗</div>
+                <h3>الأصول الرقمية والبلوكشين</h3>
+                <p>تحليل بيتكوين والإيثيريوم، تقييم المخاطر، والتنظيم العالمي المتسارع.</p>
             </div>
         </div>
     </div>
 
+    <!-- Chat -->
     <div id="chat">
         <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
         <div class="chat-header">
             <div class="expert-avatar" id="expAvatar">؟</div>
             <div class="expert-info">
                 <h3 id="expName">جاري الاتصال...</h3>
-                <p id="expRole"><span class="status-dot"></span><span class="status-text">متصل الآن</span></p>
+                <p id="expRole"><span class="status-text">متصل الآن</span></p>
             </div>
             <button class="btn-back" onclick="goBack()">← رجوع</button>
         </div>
         <div id="messages"></div>
         <div class="suggestions" id="suggestions"></div>
         <div class="input-area">
-            <textarea id="input" placeholder="اكتب رسالتك..." rows="1"></textarea>
+            <textarea id="input" placeholder="اكتب استفسارك..." rows="1"></textarea>
             <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
         </div>
     </div>
@@ -529,75 +719,75 @@
 
 <script>
 // ============================================================
-// 👥 فريق المحللين — قائمة موسّعة (36 محللاً)
+// 👥 فريق المحللين — نسخة موسّعة واحترافية
 // ============================================================
 const EXPERTS = {
     gold: [
-        { name: 'سارة العتيبي', role: 'محللة معادن ثمينة', years: '8 سنوات خبرة' },
-        { name: 'أحمد الراشد', role: 'خبير أسواق السلع', years: '15 سنة خبرة' },
-        { name: 'ريم الفهد', role: 'محللة ذهب أولى', years: '10 سنوات خبرة' },
-        { name: 'محمد الغانم', role: 'مستشار معادن استراتيجي', years: '12 سنة خبرة' },
-        { name: 'نوف الشمري', role: 'محللة فضة وبلاتين', years: '6 سنوات خبرة' },
-        { name: 'بدر السبيعي', role: 'خبير تحوط بالمعادن', years: '14 سنة خبرة' }
+        { name: 'سارة العتيبي', role: 'محللة معادن ثمينة أولى', years: '8 سنوات' },
+        { name: 'أحمد الراشد', role: 'خبير أسواق السلع', years: '15 سنة' },
+        { name: 'ريم الفهد', role: 'محللة ذهب وفضة', years: '10 سنوات' },
+        { name: 'محمد الغانم', role: 'مستشار معادن استراتيجي', years: '12 سنة' },
+        { name: 'نوف الشمري', role: 'محللة فضة وبلاتين', years: '6 سنوات' },
+        { name: 'بدر السبيعي', role: 'خبير تحوط بالمعادن', years: '14 سنة' }
     ],
     stocks: [
-        { name: 'خالد المنصور', role: 'مستشار أسواق مالية', years: '12 سنة خبرة' },
-        { name: 'نورة السالم', role: 'محللة أسهم', years: '7 سنوات خبرة' },
-        { name: 'فيصل الدوسري', role: 'خبير تداول مؤسسي', years: '16 سنة خبرة' },
-        { name: 'هيا العلي', role: 'محللة قطاعات تقنية', years: '9 سنوات خبرة' },
-        { name: 'سلطان القحطاني', role: 'مستشار استثمار بديل', years: '11 سنة خبرة' },
-        { name: 'دانة الفايز', role: 'محللة أسواق ناشئة', years: '8 سنوات خبرة' }
+        { name: 'خالد المنصور', role: 'مستشار أسواق مالية', years: '12 سنة' },
+        { name: 'نورة السالم', role: 'محللة أسهم قطاعية', years: '7 سنوات' },
+        { name: 'فيصل الدوسري', role: 'خبير تداول مؤسسي', years: '16 سنة' },
+        { name: 'هيا العلي', role: 'محللة قطاع التقنية', years: '9 سنوات' },
+        { name: 'سلطان القحطاني', role: 'مستشار استثمار بديل', years: '11 سنة' },
+        { name: 'دانة الفايز', role: 'محللة أسواق ناشئة', years: '8 سنوات' }
     ],
     macro: [
-        { name: 'د. فهد الحربي', role: 'محلل اقتصادي أكاديمي', years: '18 سنة خبرة' },
-        { name: 'ليلى القحطاني', role: 'محللة سياسات نقدية', years: '9 سنوات خبرة' },
-        { name: 'د. ماجد العمر', role: 'خبير تضخم وفائدة', years: '20 سنة خبرة' },
-        { name: 'سارة الأنصاري', role: 'محللة اقتصاد دولي', years: '10 سنوات خبرة' },
-        { name: 'مشعل الحمود', role: 'مستشار اقتصادي', years: '13 سنة خبرة' },
-        { name: 'لطيفة الزهراني', role: 'محللة أسواق السندات', years: '11 سنة خبرة' }
+        { name: 'د. فهد الحربي', role: 'محلل اقتصادي أكاديمي', years: '18 سنة' },
+        { name: 'ليلى القحطاني', role: 'محللة سياسات نقدية', years: '9 سنوات' },
+        { name: 'د. ماجد العمر', role: 'خبير تضخم وفائدة', years: '20 سنة' },
+        { name: 'سارة الأنصاري', role: 'محللة اقتصاد دولي', years: '10 سنوات' },
+        { name: 'مشعل الحمود', role: 'مستشار اقتصادي', years: '13 سنة' },
+        { name: 'لطيفة الزهراني', role: 'محللة أسواق السندات', years: '11 سنة' }
     ],
     geopolitical: [
-        { name: 'عمر الدوسري', role: 'محلل جيوسياسي', years: '14 سنة خبرة' },
-        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة خبرة' },
-        { name: 'طارق المطيري', role: 'محلل صراعات وأسواق', years: '16 سنة خبرة' },
-        { name: 'أمل الحسن', role: 'محللة سياسات الطاقة', years: '9 سنوات خبرة' },
-        { name: 'خالد الغريب', role: 'خبير ممرات تجارية', years: '12 سنة خبرة' },
-        { name: 'روان العنزي', role: 'محللة مخاطر جيوسياسية', years: '7 سنوات خبرة' }
+        { name: 'عمر الدوسري', role: 'محلل جيوسياسي', years: '14 سنة' },
+        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة' },
+        { name: 'طارق المطيري', role: 'محلل صراعات وأسواق', years: '16 سنة' },
+        { name: 'أمل الحسن', role: 'محللة سياسات الطاقة', years: '9 سنوات' },
+        { name: 'خالد الغريب', role: 'خبير ممرات تجارية', years: '12 سنة' },
+        { name: 'روان العنزي', role: 'محللة مخاطر جيوسياسية', years: '7 سنوات' }
     ],
     budget: [
-        { name: 'منى الغامدي', role: 'مدرّبة مالية شخصية', years: '6 سنوات خبرة' },
-        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات', years: '13 سنة خبرة' },
-        { name: 'هند الرشيد', role: 'مخططة مالية معتمدة', years: '10 سنوات خبرة' },
-        { name: 'يوسف العامري', role: 'مستشار تخطيط تقاعدي', years: '15 سنة خبرة' },
-        { name: 'شهد باحمدان', role: 'مدرّبة ميزانية أسرية', years: '8 سنوات خبرة' },
-        { name: 'مازن الشريف', role: 'خبير إدارة ديون', years: '12 سنة خبرة' }
+        { name: 'منى الغامدي', role: 'مدرّبة مالية شخصية', years: '6 سنوات' },
+        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات', years: '13 سنة' },
+        { name: 'هند الرشيد', role: 'مخططة مالية معتمدة', years: '10 سنوات' },
+        { name: 'يوسف العامري', role: 'مستشار تخطيط تقاعدي', years: '15 سنة' },
+        { name: 'شهد باحمدان', role: 'مدرّبة ميزانية أسرية', years: '8 سنوات' },
+        { name: 'مازن الشريف', role: 'خبير إعادة هيكلة الديون', years: '12 سنة' }
     ],
     crypto: [
-        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات خبرة' },
-        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات خبرة' },
-        { name: 'راكان الصقر', role: 'محلل بيتكوين أول', years: '7 سنوات خبرة' },
-        { name: 'جواهر المالكي', role: 'خبيرة تنظيم أصول رقمية', years: '6 سنوات خبرة' },
-        { name: 'عدنان بخاري', role: 'محلل DeFi و Web3', years: '4 سنوات خبرة' },
-        { name: 'ليان الجهني', role: 'محللة مخاطر كريبتو', years: '5 سنوات خبرة' }
+        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات' },
+        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات' },
+        { name: 'راكان الصقر', role: 'محلل بيتكوين أول', years: '7 سنوات' },
+        { name: 'جواهر المالكي', role: 'خبيرة تنظيم أصول رقمية', years: '6 سنوات' },
+        { name: 'عدنان بخاري', role: 'محلل DeFi و Web3', years: '4 سنوات' },
+        { name: 'ليان الجهني', role: 'محللة مخاطر كريبتو', years: '5 سنوات' }
     ]
 };
 
-const SECTIONS = { 
-    gold: 'الذهب والمعادن', 
-    stocks: 'الأسهم', 
-    macro: 'الاقتصاد الكلي', 
-    geopolitical: 'الجيوسياسي', 
-    budget: 'الميزانية', 
-    crypto: 'الأصول الرقمية' 
+const SECTIONS = {
+    gold: 'أسواق الذهب والمعادن',
+    stocks: 'الأسواق المالية والأسهم',
+    macro: 'الاقتصاد الكلي',
+    geopolitical: 'الجيوسياسة والأسواق',
+    budget: 'التخطيط المالي الشخصي',
+    crypto: 'الأصول الرقمية'
 };
 
 const SUGGESTIONS = {
-    gold: ['هل الوقت مناسب للشراء؟', 'توقعك لسعر الأونصة؟', 'كيف أتحوط ضد التضخم؟'],
-    stocks: ['أفضل القطاعات حالياً؟', 'كيف أقيّم شركة؟', 'نصائح للمبتدئين'],
-    macro: ['تأثير قرارات الفيدرالي؟', 'توقعك للتضخم؟', 'أفضل الأصول الآن؟'],
-    geopolitical: ['تأثير التوترات على النفط؟', 'الحروب والأسواق؟'],
-    budget: ['كيف أنظم راتبي؟', 'أفضل طريقة للادخار؟', 'الخروج من الديون؟'],
-    crypto: ['توقعك للبيتكوين؟', 'هل هي آمنة؟', 'مشروع واعد؟']
+    gold: ['هل التوقيت مناسب للشراء؟', 'ما نسبة الذهب في المحفظة؟', 'كيف أتحوط ضد التضخم؟'],
+    stocks: ['كيف أقيّم شركة؟', 'أفضل القطاعات دفاعياً؟', 'أساسيات بناء محفظة'],
+    macro: ['أثر رفع الفائدة على الأسهم؟', 'توقعات التضخم؟', 'متى يبدأ التيسير؟'],
+    geopolitical: ['أثر التوترات على النفط؟', 'هل الذهب ملاذ آمن؟'],
+    budget: ['كيف أنظم دخلي؟', 'خطة ادخار 40%؟', 'الخروج من الديون'],
+    crypto: ['نسبة الكريبتو في المحفظة؟', 'ما معايير المشروع الجاد؟', 'كيف أحمي أصولي؟']
 };
 
 let user = null, section = null, expert = null, history = [], busy = false;
@@ -608,28 +798,27 @@ function toggleTheme() {
     const current = document.documentElement.getAttribute('data-theme') || 'light';
     const next = current === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('ammar_theme', next);
+    localStorage.setItem('profin_theme', next);
     document.getElementById('themeBtn').textContent = next === 'light' ? '🌙' : '☀️';
 }
-
 function initThemeBtn() {
     const current = document.documentElement.getAttribute('data-theme') || 'light';
     document.getElementById('themeBtn').textContent = current === 'light' ? '🌙' : '☀️';
 }
 
 // ============ Splash ============
-const SPLASH_MSGS = ['جاري تجهيز بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'مراجعة الأسواق...', 'تجهيز فريق الاستقبال...'];
+const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'مزامنة الأسواق...', 'تجهيز فريق الاستقبال...'];
 let splashP = 0, splashMsgIdx = 0;
 
 function startSplash() {
     const fill = document.getElementById('splashFill');
     const msg = document.getElementById('splashMsg');
     const interval = setInterval(() => {
-        splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.5, 85);
+        splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
         fill.style.width = splashP + '%';
         const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
         if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
-        
+
         if (splashP >= 100) {
             clearInterval(interval);
             setTimeout(() => {
@@ -657,28 +846,33 @@ setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
 // ============ User ============
 function loadUser() {
-    const s = localStorage.getItem('ammar_user');
+    const s = localStorage.getItem('profin_user');
     if (s) {
         try {
             user = JSON.parse(s);
+            if (!user.firstName) throw new Error('legacy');
             showUserBar();
             return true;
-        } catch (e) { localStorage.removeItem('ammar_user'); }
+        } catch (e) { localStorage.removeItem('profin_user'); }
     }
     return false;
 }
 
 function saveUser() {
-    const name = document.getElementById('inName').value.trim();
+    const firstName = document.getElementById('inFirstName').value.trim();
+    const lastName = document.getElementById('inLastName').value.trim();
     const age = document.getElementById('inAge').value.trim();
+    const country = document.getElementById('inCountry').value;
     const exp = document.getElementById('inExp').value;
     const reason = document.getElementById('inReason').value.trim();
-    
-    if (!name || name.length < 2) { alert('أدخل اسماً صحيحاً'); return; }
+
+    if (!firstName || firstName.length < 2) { alert('أدخل الاسم الأول بشكل صحيح'); return; }
+    if (!lastName || lastName.length < 2) { alert('أدخل اسم العائلة / الكنية'); return; }
     if (!age || age < 15 || age > 100) { alert('أدخل عمراً صحيحاً (15-100)'); return; }
-    
-    user = { name, age, experience: exp, reason };
-    localStorage.setItem('ammar_user', JSON.stringify(user));
+    if (!country) { alert('اختر البلد'); return; }
+
+    user = { firstName, lastName, age, country, experience: exp, reason };
+    localStorage.setItem('profin_user', JSON.stringify(user));
     showUserBar();
     document.getElementById('welcome').classList.remove('show');
     document.getElementById('home').classList.add('show');
@@ -686,15 +880,42 @@ function saveUser() {
 
 function showUserBar() {
     document.getElementById('userBar').classList.add('show');
-    document.getElementById('userAvatar').innerText = user.name.charAt(0);
-    document.getElementById('userGreeting').innerText = `مرحباً ${user.name}`;
+    document.getElementById('userAvatar').innerText = user.firstName.charAt(0);
+    document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
 function resetUser() {
-    if (confirm('مسح بياناتك والبدء من جديد؟')) {
+    if (!confirm('تعديل بياناتك؟ سيتم العودة إلى نموذج التسجيل.')) return;
+    localStorage.removeItem('profin_user');
+    user = null;
+    document.getElementById('userBar').classList.remove('show');
+    document.getElementById('home').classList.remove('show');
+    document.getElementById('chat').classList.remove('show');
+    document.getElementById('welcome').classList.add('show');
+    // تعبئة الحقول بالبيانات السابقة إن أمكن
+}
+
+function deleteAllData() {
+    if (!confirm('⚠️ سيتم مسح جميع بياناتك المخزّنة في هذا المتصفح نهائياً (الاسم، العمر، البلد، الخبرة، الإعدادات). هل أنت متأكد؟')) return;
+    if (!confirm('تأكيد أخير: لا يمكن استرجاع البيانات بعد الحذف. هل نكمل؟')) return;
+
+    try {
+        localStorage.removeItem('profin_user');
+        localStorage.removeItem('profin_theme');
+        localStorage.removeItem('profin_history');
         localStorage.removeItem('ammar_user');
-        location.reload();
-    }
+        localStorage.removeItem('ammar_theme');
+        sessionStorage.clear();
+        // مسح الكوكيز المرتبطة بالنطاق
+        document.cookie.split(';').forEach(c => {
+            const k = c.split('=')[0].trim();
+            document.cookie = k + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+        });
+    } catch (e) { /* تجاهل */ }
+
+    user = null; section = null; expert = null; history = [];
+    alert('✅ تم مسح جميع البيانات بنجاح. سيتم إعادة تحميل المنصة.');
+    location.reload();
 }
 
 // ============ Sections ============
@@ -707,25 +928,25 @@ function openSection(s) {
     section = s;
     expert = pickExpert(s);
     history = [];
-    
+
     document.getElementById('home').classList.remove('show');
     document.getElementById('chat').classList.add('show');
-    
+
     document.getElementById('expAvatar').innerText = expert.name.charAt(0);
     document.getElementById('expName').innerText = expert.name;
-    document.getElementById('expRole').innerHTML = `<span class="status-dot"></span><span class="status-text">متصل الآن</span>`;
+    document.getElementById('expRole').innerHTML = `<span class="status-text">متصل الآن</span>`;
     document.getElementById('messages').innerHTML = '';
-    
+
     showSuggestions(s);
-    
+
     setTimeout(() => {
         const hour = new Date().getHours();
         const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
-        const welcome = `${greet} ${user.name} 🌟\nأنا ${expert.name}، ${expert.role}.\nخبرتي ${expert.years} في ${SECTIONS[s]}.\n\nكيف أقدر أساعدك اليوم؟`;
+        const welcome = `${greet} ${user.firstName}.\nأنا ${expert.name}، ${expert.role}، خبرة ${expert.years} في ${SECTIONS[s]}.\n\nما هو استفسارك؟ سأجيبك بتحليل مبني على المعطيات، وإن احتجت معلومات إضافية سأسألك عنها أولاً.`;
         addBubble('expert', welcome);
         history.push({ role: 'assistant', content: welcome });
     }, 700);
-    
+
     setTimeout(() => document.getElementById('input').focus(), 600);
 }
 
@@ -765,67 +986,59 @@ function formatText(text) {
     return html;
 }
 
-// ============ الحالة "غير متصل" ============
 function setExpertStatus(status) {
     const el = document.querySelector('.expert-info .status-text');
+    const info = document.querySelector('.expert-info p');
     const avatar = document.getElementById('expAvatar');
     if (!el) return;
-    
+
     if (status === 'offline') {
         el.textContent = 'غير متصل';
-        el.style.color = '#94a3b8';
-        avatar.classList.add('offline');
+        if (info) info.classList.remove('typing-status');
+        avatar.classList.add('offline'); avatar.classList.remove('typing');
     } else if (status === 'typing') {
         el.textContent = 'يكتب الآن...';
-        el.style.color = '#22c55e';
-        avatar.classList.remove('offline');
+        if (info) info.classList.add('typing-status');
+        avatar.classList.remove('offline'); avatar.classList.add('typing');
     } else {
         el.textContent = 'متصل الآن';
-        el.style.color = '';
-        avatar.classList.remove('offline');
+        if (info) info.classList.remove('typing-status');
+        avatar.classList.remove('offline', 'typing');
     }
 }
 
-// ============ إضافة فقاعة ============
 function addBubble(who, text, isError = false) {
     const wrap = document.createElement('div');
     wrap.className = `bubble-wrap ${who}`;
-    const name = who === 'user' ? user.name : (expert ? expert.name : 'النظام');
-    
+    const name = who === 'user' ? user.firstName : (expert ? expert.name : 'النظام');
+
     wrap.innerHTML = `
         <div class="bubble ${isError ? 'error-bubble' : ''}">
             <div class="sender">${name}</div>
-            <div class="bubble-content">${isError ? text : formatText(text)}</div>
+            <div class="bubble-content">${isError ? esc(text) : formatText(text)}</div>
             <div class="time-row">
-                <span class="time">${timeNow()}</span>
                 ${who === 'user' ? '<span class="checks sent">✓</span>' : ''}
+                <span class="time">${timeNow()}</span>
             </div>
         </div>
     `;
     const m = document.getElementById('messages');
     m.appendChild(wrap);
     m.scrollTop = m.scrollHeight;
-    
-    // ✅ علامات القراءة — تتحول تدريجياً (بعد القراءة فقط)
+
     if (who === 'user') {
         const checksEl = wrap.querySelector('.checks');
-        // بعد 1.5 ثانية → صحين رمادية (delivered - تم التوصيل)
         setTimeout(() => {
-            if (checksEl) {
+            if (checksEl && !checksEl.classList.contains('read')) {
                 checksEl.textContent = '✓✓';
                 checksEl.classList.add('delivered');
                 checksEl.classList.remove('sent');
             }
-        }, 1500);
-        // ✅ لا تتحول إلى زرقاء إلا عندما "يقرأها" المحلل — ستُدار من دالة الرد
+        }, 1400);
         wrap.dataset.pendingRead = 'true';
-        wrap.dataset.checksId = 'ck-' + Date.now() + Math.random().toString(36).slice(2,6);
-        const ck = wrap.querySelector('.checks');
-        if (ck) ck.id = wrap.dataset.checksId;
     }
 }
 
-// ✅ تعليم آخر رسائل المستخدم كمقروءة (تُستدعى عندما يبدأ المحلل بالكتابة)
 function markAllUserMessagesAsRead() {
     const pending = document.querySelectorAll('[data-pending-read="true"]');
     pending.forEach(wrap => {
@@ -850,7 +1063,6 @@ function startProgress() {
         fill.style.width = p + '%';
     }, 400);
 }
-
 function finishProgress() {
     clearInterval(progressTimer);
     const fill = document.getElementById('progressFill');
@@ -861,15 +1073,15 @@ function finishProgress() {
     }, 500);
 }
 
-// ============ Waiting Bubble — إعادة تصميم ============
+// ============ Waiting bubble ============
 const WSTEPS = [
-    { icon: '📡', text: 'الاتصال بقواعد بيانات الأسواق...' },
-    { icon: '📊', text: 'سحب آخر التسعيرات اللحظية...' },
-    { icon: '🔎', text: 'تحليل المؤشرات الفنية...' },
-    { icon: '⚖️', text: 'تقييم التوازن بين المخاطر والعائد...' },
-    { icon: '🧩', text: 'ربط العوامل الاقتصادية الكلية...' },
+    { icon: '📡', text: 'الاتصال بمصادر البيانات...' },
+    { icon: '📊', text: 'سحب أحدث القراءات السوقية...' },
+    { icon: '🔎', text: 'تحليل المؤشرات الأساسية...' },
+    { icon: '⚖️', text: 'تقييم المخاطر مقابل العائد...' },
+    { icon: '🧩', text: 'ربط السياق الاقتصادي الكلي...' },
     { icon: '💡', text: 'صياغة الرأي والسيناريوهات...' },
-    { icon: '📝', text: 'مراجعة نهائية وإعداد الرد...' }
+    { icon: '📝', text: 'مراجعة نهائية للرد...' }
 ];
 
 function showWaiting() {
@@ -881,13 +1093,13 @@ function showWaiting() {
     w.innerHTML = `
         <div class="bubble waiting-bubble">
             <div class="sender">${expert.name}</div>
-            <div class="waiting-header">✍️ جاري إعداد التحليل...</div>
+            <div class="waiting-header">⏳ جاري إعداد التحليل...</div>
             <div class="waiting-steps">${stepsHtml}</div>
         </div>
     `;
     m.appendChild(w);
     m.scrollTop = m.scrollHeight;
-    
+
     let i = 0;
     waitingTimer = setInterval(() => {
         const steps = document.querySelectorAll('#waiting .wstep');
@@ -935,29 +1147,25 @@ async function sendMsg() {
     const input = document.getElementById('input');
     const text = input.value.trim();
     if (!text || busy) return;
-    
+
     input.value = '';
+    input.style.height = 'auto';
     addBubble('user', text);
     history.push({ role: 'user', content: text });
     document.getElementById('suggestions').style.display = 'none';
-    
+
     busy = true;
     document.getElementById('sendBtn').disabled = true;
-    
-    // ✅ 1) ابدأ بحالة "غير متصل" — كأنه خرج من المحادثة
+
     setExpertStatus('offline');
-    
-    // ✅ 2) انتظر قليلاً ثم أظهر "غير متصل" بشكل واضح
-    await sleep(600 + Math.random() * 600);
-    
-    // ✅ 3) ابدأ الـ waiting bubble
+    await sleep(500 + Math.random() * 500);
+
     showWaiting();
     startProgress();
-    
-    // ✅ 4) تعليم الرسائل كمقروءة (بعد أن "رأى" المحلل الرسالة)
-    await sleep(800);
+
+    await sleep(700);
     markAllUserMessagesAsRead();
-    
+
     try {
         const res = await fetch('https://ammar-e0tp.onrender.com/api/analyze', {
             method: 'POST',
@@ -967,52 +1175,47 @@ async function sendMsg() {
                 history: history.slice(-6)
             })
         });
-        
+
         const raw = await res.text();
         let data = {};
         try { data = JSON.parse(raw); } catch (e) {
             hideWaiting(); finishProgress();
             setExpertStatus('online');
-            addBubble('expert', `⚠️ خطأ (${res.status})`, true);
+            addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
             return;
         }
-        
+
         if (!res.ok) {
             hideWaiting(); finishProgress();
             setExpertStatus('online');
-            addBubble('expert', `⚠️ خطأ: ${data.error || ''}\n${data.details || ''}`, true);
+            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}\n${data.details || ''}`, true);
             return;
         }
-        
+
         hideWaiting();
         finishProgress();
-        
-        // ✅ 5) العودة للوضع النشط
         setExpertStatus('online');
-        
+
         const replies = data.replies || [data.answer].filter(Boolean);
-        
-        // ✅ 6) عرض الردود مع فاصل زمني طبيعي
+
         for (let i = 0; i < replies.length; i++) {
             if (i > 0) {
-                // ✅ قبل كل رد إضافي: اظهر "يكتب" + "غير متصل" لفترة
                 setExpertStatus('offline');
-                await sleep(1500 + Math.random() * 1500);
+                await sleep(1300 + Math.random() * 1300);
                 showTyping();
-                await sleep(800 + Math.random() * 1000);
+                await sleep(700 + Math.random() * 900);
                 hideTyping();
                 await sleep(300);
             }
             addBubble('expert', replies[i]);
             history.push({ role: 'assistant', content: replies[i] });
-            
-            if (i < replies.length - 1) await sleep(600);
+            if (i < replies.length - 1) await sleep(500);
         }
-        
+
     } catch (e) {
         hideWaiting(); finishProgress();
         setExpertStatus('online');
-        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}\n\n💡 جرّب مرة أخرى.`, true);
+        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}\n\nجرّب مرة أخرى.`, true);
     } finally {
         busy = false;
         document.getElementById('sendBtn').disabled = false;
@@ -1025,9 +1228,15 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 document.addEventListener('DOMContentLoaded', () => {
     const inp = document.getElementById('input');
-    if (inp) inp.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-    });
+    if (inp) {
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+        });
+        inp.addEventListener('input', () => {
+            inp.style.height = 'auto';
+            inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+        });
+    }
 });
 </script>
 
