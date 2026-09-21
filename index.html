@@ -202,6 +202,7 @@
         background: var(--chat-bg); border-radius: 18px;
         box-shadow: var(--shadow-lg); overflow: hidden;
         border: 1px solid var(--border);
+        position: relative;
     }
     #chat.show { display: block; animation: slideUp 0.4s ease; }
     .chat-header {
@@ -312,6 +313,7 @@
         transition: all 0.2s; background: var(--input-bg); color: var(--text);
     }
     .input-area textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,164,76,0.12); }
+    .input-area textarea:disabled { opacity: 0.5; cursor: not-allowed; }
     .send-btn {
         width: 44px; height: 44px; border-radius: 50%; border: none;
         background: linear-gradient(135deg, #0b1e3f, #1e3a5f);
@@ -324,6 +326,67 @@
     .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
     .error-bubble { background: var(--danger-bg) !important; border-right: 3px solid var(--danger); color: var(--danger) !important; }
     .error-bubble::after { display: none; }
+
+    /* ✅ شاشة الإغلاق + العدّاد التنازلي */
+    .closed-overlay {
+        position: absolute; inset: 0;
+        background: rgba(11,30,63,0.88);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: none; flex-direction: column;
+        align-items: center; justify-content: center;
+        z-index: 100; color: white;
+        padding: 20px; text-align: center;
+        animation: overlayFadeIn 0.4s ease;
+    }
+    .closed-overlay.show { display: flex; }
+    @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .closed-icon {
+        width: 70px; height: 70px; border-radius: 50%;
+        background: rgba(201,164,76,0.15);
+        border: 2px solid var(--accent);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px; margin-bottom: 18px;
+        animation: lockPulse 2s infinite;
+    }
+    @keyframes lockPulse {
+        0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(201,164,76,0.4); }
+        50% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(201,164,76,0); }
+    }
+    .closed-overlay h3 {
+        font-size: 20px; margin-bottom: 10px;
+        color: var(--accent); font-weight: 800;
+    }
+    .closed-overlay p {
+        font-size: 14px; color: #cbd5e1;
+        max-width: 340px; line-height: 1.75;
+        margin-bottom: 20px;
+    }
+    .countdown {
+        font-size: 44px; font-weight: 800;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+        font-family: 'Segoe UI', monospace;
+        padding: 18px 32px;
+        border: 2px solid var(--accent);
+        border-radius: 16px;
+        background: rgba(201,164,76,0.1);
+        margin-bottom: 18px;
+        letter-spacing: 2px;
+        min-width: 180px;
+    }
+    .closed-overlay .return-btn {
+        background: var(--accent); color: #0b1e3f;
+        border: none; padding: 12px 28px; border-radius: 10px;
+        font-weight: 800; cursor: pointer; font-size: 14px;
+        font-family: inherit; transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 6px 18px rgba(201,164,76,0.35);
+    }
+    .closed-overlay .return-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 26px rgba(201,164,76,0.5);
+    }
+
     @media (max-width: 620px) {
         .container { padding: 0 12px; margin: 14px auto; }
         #welcome { padding: 32px 22px; border-radius: 16px; }
@@ -337,6 +400,8 @@
         .chat-header { padding: 10px 12px; }
         .expert-avatar { width: 42px; height: 42px; font-size: 16px; }
         .user-bar { padding: 8px 12px; font-size: 12.5px; }
+        .countdown { font-size: 36px; padding: 14px 24px; }
+        .closed-icon { width: 60px; height: 60px; font-size: 26px; }
     }
 </style>
 </head>
@@ -410,6 +475,15 @@
     </div>
 
     <div id="chat">
+        <!-- ✅ شاشة الإغلاق -->
+        <div class="closed-overlay" id="closedOverlay">
+            <div class="closed-icon">🔒</div>
+            <h3>أُغلقت المحادثة</h3>
+            <p id="closedReason">يبدو أن الاستشارة انتهت. يمكنك العودة بعد:</p>
+            <div class="countdown" id="countdown">00:00</div>
+            <button class="return-btn" onclick="goBack()">اختر قسماً آخر</button>
+        </div>
+
         <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
         <div class="chat-header">
             <div class="expert-avatar" id="expAvatar">؟</div>
@@ -429,6 +503,9 @@
 </div>
 
 <script>
+// ============================================================
+// البيانات الأساسية
+// ============================================================
 const DIALECTS = {
     saudi: { flag: '🇸🇦', country: 'السعودية' }, emirati: { flag: '🇦🇪', country: 'الإمارات' },
     kuwaiti: { flag: '🇰🇼', country: 'الكويت' }, qatari: { flag: '🇶🇦', country: 'قطر' },
@@ -513,12 +590,6 @@ const SECTION_INFO = {
     crypto: { icon: '🔗', title: 'الأصول الرقمية والبلوكشين', desc: 'تحليل بيتكوين والإيثيريوم، تقييم المخاطر، والتنظيم العالمي المتسارع.', online: 4 }
 };
 
-const SECTIONS = {
-    gold: 'أسواق الذهب والمعادن', stocks: 'الأسواق المالية والأسهم',
-    macro: 'الاقتصاد الكلي', geopolitical: 'الجيوسياسة والأسواق',
-    budget: 'التخطيط المالي الشخصي', crypto: 'الأصول الرقمية'
-};
-
 const SUGGESTIONS = {
     gold: ['هل التوقيت مناسب للشراء؟', 'ما نسبة الذهب في المحفظة؟', 'كيف أتحوط ضد التضخم؟'],
     stocks: ['كيف أقيّم شركة؟', 'أفضل القطاعات دفاعياً؟', 'أساسيات بناء محفظة'],
@@ -534,9 +605,14 @@ const CONVERSATIONS = {};
 const LAST_EXPERTS = {};
 const RESET_MIN_MS = 3 * 60 * 1000;
 const RESET_MAX_MS = 5 * 60 * 1000;
+const CLOSE_KEY = 'profin_closed_until';
+let countdownTimer = null;
 
 function getRandomResetDelay() { return Math.floor(RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS)); }
 
+// ============================================================
+// الثيم
+// ============================================================
 function toggleTheme() {
     const current = document.documentElement.getAttribute('data-theme') || 'light';
     const next = current === 'light' ? 'dark' : 'light';
@@ -549,6 +625,9 @@ function initThemeBtn() {
     document.getElementById('themeBtn').textContent = c === 'light' ? '🌙' : '☀️';
 }
 
+// ============================================================
+// Splash
+// ============================================================
 const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
 let splashP = 0, splashMsgIdx = 0;
 
@@ -598,6 +677,9 @@ function buildSectionGrid() {
 startSplash();
 setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
+// ============================================================
+// المستخدم
+// ============================================================
 function loadUser() {
     const s = localStorage.getItem('profin_user');
     if (s) {
@@ -635,6 +717,9 @@ function showUserBar() {
     document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
+// ============================================================
+// الأقسام
+// ============================================================
 function pickDifferentExpert(s) {
     const list = EXPERTS[s];
     const last = LAST_EXPERTS[s];
@@ -647,6 +732,18 @@ function pickDifferentExpert(s) {
 
 function openSection(s) {
     section = s;
+
+    // ✅ التحقق من الإغلاق أولاً
+    const closedInfo = getClosureInfo(s);
+    if (closedInfo && Date.now() < closedInfo.until) {
+        document.getElementById('home').classList.remove('show');
+        document.getElementById('chat').classList.add('show');
+        // إعداد المحادثة أولاً ليكون هناك محتوى خلف النافذة
+        setupChatForSection(s, false);
+        setTimeout(() => showClosedOverlay(closedInfo.until, closedInfo.reason), 200);
+        return;
+    }
+
     if (CONVERSATIONS[s]) {
         const c = CONVERSATIONS[s];
         if (c.resetTimer) { clearTimeout(c.resetTimer); c.resetTimer = null; }
@@ -656,13 +753,32 @@ function openSection(s) {
         document.getElementById('messages').innerHTML = c.html;
         if (c.suggestionsHidden) document.getElementById('suggestions').style.display = 'none';
         else showSuggestions(s);
+        document.getElementById('home').classList.remove('show');
+        document.getElementById('chat').classList.add('show');
+        document.getElementById('closedOverlay').classList.remove('show');
+        document.getElementById('input').disabled = false;
+        document.getElementById('sendBtn').disabled = false;
+        setTimeout(() => document.getElementById('input').focus(), 600);
     } else {
-        expert = pickDifferentExpert(s);
-        history = [];
-        renderExpertHeader();
-        document.getElementById('messages').innerHTML = '';
-        showSuggestions(s);
-        CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false, resetTimer: null };
+        setupChatForSection(s, true);
+    }
+}
+
+function setupChatForSection(s, showWelcome) {
+    expert = pickDifferentExpert(s);
+    history = [];
+    renderExpertHeader();
+    document.getElementById('messages').innerHTML = '';
+    showSuggestions(s);
+    document.getElementById('closedOverlay').classList.remove('show');
+    document.getElementById('input').disabled = false;
+    document.getElementById('sendBtn').disabled = false;
+    CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false, resetTimer: null };
+
+    document.getElementById('home').classList.remove('show');
+    document.getElementById('chat').classList.add('show');
+
+    if (showWelcome) {
         setTimeout(() => {
             const hour = new Date().getHours();
             const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
@@ -678,9 +794,12 @@ function openSection(s) {
             CONVERSATIONS[s].html = document.getElementById('messages').innerHTML;
         }, 700);
     }
-    document.getElementById('home').classList.remove('show');
-    document.getElementById('chat').classList.add('show');
-    setTimeout(() => document.getElementById('input').focus(), 600);
+
+    setTimeout(() => {
+        if (!document.getElementById('input').disabled) {
+            document.getElementById('input').focus();
+        }
+    }, 600);
 }
 
 function renderExpertHeader() {
@@ -697,7 +816,11 @@ function showSuggestions(s) {
     c.style.display = 'flex';
 }
 
-function useSug(t) { document.getElementById('input').value = t; document.getElementById('input').focus(); }
+function useSug(t) {
+    if (document.getElementById('input').disabled) return;
+    document.getElementById('input').value = t;
+    document.getElementById('input').focus();
+}
 
 function goBack() {
     if (section && CONVERSATIONS[section]) {
@@ -710,11 +833,16 @@ function goBack() {
         c.resetAt = Date.now() + delay;
         c.resetTimer = setTimeout(() => { delete CONVERSATIONS[section]; }, delay);
     }
+    clearInterval(countdownTimer);
+    document.getElementById('closedOverlay').classList.remove('show');
     document.getElementById('chat').classList.remove('show');
     document.getElementById('home').classList.add('show');
     section = null; expert = null; history = [];
 }
 
+// ============================================================
+// أدوات
+// ============================================================
 function timeNow() {
     const d = new Date();
     return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
@@ -725,6 +853,7 @@ function formatText(text) {
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     return html;
 }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function setExpertStatus(status) {
     const el = document.querySelector('.expert-info .status-text');
@@ -769,7 +898,7 @@ function addBubble(who, text, isError = false) {
     }
 }
 
-function markAllUserMessagesAsRead() {
+function markAllRead() {
     document.querySelectorAll('[data-pending-read="true"]').forEach(wrap => {
         const ck = wrap.querySelector('.checks');
         if (ck) { ck.textContent = '✓✓'; ck.classList.add('read'); ck.classList.remove('delivered', 'sent'); }
@@ -803,7 +932,6 @@ const ACK_MESSAGES = [
     '📩 سيعالج فريق العمل رسالتك خلال لحظات...',
     '📩 تم استلام رسالتك. نعمل عليها الآن...'
 ];
-
 function showAck() {
     const m = document.getElementById('messages');
     const w = document.createElement('div');
@@ -829,12 +957,108 @@ function showTyping() {
 function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); setExpertStatus('online'); }
 
 // ============================================================
-// ✅ sendMsg — محدّث لدعم التوقيت المتغير من السيرفر
+// 🚪 نظام الإغلاق الفعلي + العدّاد التنازلي
+// ============================================================
+function getClosureInfo(s) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        const entry = stored[s];
+        if (!entry) return null;
+        if (Date.now() >= entry.until) {
+            delete stored[s];
+            localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+            return null;
+        }
+        return entry;
+    } catch (e) { return null; }
+}
+
+function setClosureInfo(s, until, reason) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        stored[s] = { until, reason };
+        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+    } catch (e) {}
+}
+
+function clearClosureInfo(s) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        delete stored[s];
+        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+    } catch (e) {}
+}
+
+function isChatClosed() {
+    if (!section) return false;
+    const info = getClosureInfo(section);
+    return info && Date.now() < info.until;
+}
+
+function closeChat(seconds, reason) {
+    const until = Date.now() + seconds * 1000;
+    setClosureInfo(section, until, reason);
+    showClosedOverlay(until, reason);
+}
+
+function showClosedOverlay(until, reason) {
+    const overlay = document.getElementById('closedOverlay');
+    const countdownEl = document.getElementById('countdown');
+    const reasonEl = document.getElementById('closedReason');
+
+    const reasonText = {
+        user_done: 'انتهت الاستشارة بناءً على رغبتك.',
+        trolling: 'أُغلقت بسبب محتوى غير جدي.',
+        bored: 'يبدو أن الموضوع ما شدك.',
+        deep_close: 'محادثة طويلة — نأخذ استراحة قصيرة.',
+        rude: 'أُغلقت بسبب الإساءة.'
+    }[reason] || 'المحادثة مغلقة مؤقتاً.';
+
+    reasonEl.textContent = reasonText + ' يمكنك العودة بعد:';
+    overlay.classList.add('show');
+
+    // ✅ تعطيل الإدخال فعلياً
+    document.getElementById('input').disabled = true;
+    document.getElementById('input').placeholder = 'المحادثة مغلقة مؤقتاً...';
+    document.getElementById('sendBtn').disabled = true;
+
+    function tick() {
+        const remaining = Math.max(0, Math.floor((until - Date.now()) / 1000));
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        countdownEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+        if (remaining <= 0) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+            overlay.classList.remove('show');
+            const s = section;
+            if (s) clearClosureInfo(s);
+            document.getElementById('input').disabled = false;
+            document.getElementById('input').placeholder = 'اكتب استفسارك...';
+            document.getElementById('sendBtn').disabled = false;
+            addBubble('expert', 'أهلاً بعودتك. تفضل بأي سؤال.', false);
+        }
+    }
+    tick();
+    clearInterval(countdownTimer);
+    countdownTimer = setInterval(tick, 1000);
+}
+
+// ============================================================
+// ✅ إرسال الرسائل — مع الإغلاق الفعلي والتوقيت المتغيّر
 // ============================================================
 async function sendMsg() {
     const input = document.getElementById('input');
     const text = input.value.trim();
     if (!text || busy) return;
+
+    // ✅ رفض الإرسال إذا كانت المحادثة مغلقة
+    if (isChatClosed()) {
+        const info = getClosureInfo(section);
+        if (info) showClosedOverlay(info.until, info.reason);
+        return;
+    }
 
     input.value = '';
     input.style.height = 'auto';
@@ -849,9 +1073,8 @@ async function sendMsg() {
 
     busy = true;
     document.getElementById('sendBtn').disabled = true;
-
     setExpertStatus('busy');
-    await sleep(600 + Math.random() * 600);
+    await sleep(500 + Math.random() * 400);
 
     const fetchPromise = fetch('https://ammar-e0tp.onrender.com/api/analyze', {
         method: 'POST',
@@ -866,7 +1089,7 @@ async function sendMsg() {
     showAck();
     startProgress();
     await sleep(700);
-    markAllUserMessagesAsRead();
+    markAllRead();
 
     try {
         const res = await fetchPromise;
@@ -878,16 +1101,18 @@ async function sendMsg() {
             return;
         }
 
-        // ✅ إذا كان هناك cooldown
+        // ✅ Cooldown من السيرفر
         if (res.status === 429 && data.cooldown) {
             hideAck(); finishProgress(); setExpertStatus('online');
-            addBubble('expert', `⏱️ ${data.message || 'المحادثة في فترة انتظار'}`, true);
+            busy = false;
+            document.getElementById('sendBtn').disabled = false;
+            closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
             return;
         }
 
         if (!res.ok) {
             hideAck(); finishProgress(); setExpertStatus('online');
-            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}\n${data.details || ''}`, true);
+            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
             return;
         }
 
@@ -896,22 +1121,16 @@ async function sendMsg() {
 
         // ✅ التوقيت المتغيّر من السيرفر
         const serverDelay = data.timing?.delayMs || (1500 + Math.random() * 2500);
-        const elapsed = 700; // الوقت المستهلك فعلاً
-        const remainingDelay = Math.max(400, serverDelay - elapsed);
-        console.log(`⏱️ تأخير السيرفر: ${serverDelay}ms | المتبقي: ${remainingDelay}ms`);
+        const remainingDelay = Math.max(400, serverDelay - 700);
 
         setExpertStatus('typing');
         await sleep(remainingDelay);
 
-        const replies = data.replies || [data.answer].filter(Boolean);
-
-        // ✅ عرض الرسائل الأولى (بدون typing بينها إن كانت قصيرة)
+        const replies = data.replies || [];
         for (let i = 0; i < replies.length; i++) {
             hideTyping();
             addBubble('expert', replies[i]);
             history.push({ role: 'assistant', content: replies[i] });
-
-            // إذا كان هناك رسالة أخرى → typing قصير
             if (i < replies.length - 1) {
                 setExpertStatus('busy');
                 await sleep(600 + Math.random() * 500);
@@ -926,10 +1145,9 @@ async function sendMsg() {
             CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
         }
 
-        if (data.closed) {
-            setTimeout(() => {
-                addBubble('expert', `🔒 أُغلقت الجلسة. يمكنك العودة بعد ${data.cooldownMinutes} دقيقة أو اختيار قسم آخر.`, true);
-            }, 800);
+        // ✅ إغلاق فعلي إذا قرر السيرفر
+        if (data.closed && data.cooldownMinutes) {
+            setTimeout(() => closeChat(data.cooldownMinutes * 60, data.closeReason), 900);
         }
 
     } catch (e) {
@@ -937,14 +1155,16 @@ async function sendMsg() {
         addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}`, true);
     } finally {
         busy = false;
-        document.getElementById('sendBtn').disabled = false;
-        document.getElementById('input').focus();
+        if (!isChatClosed()) {
+            document.getElementById('sendBtn').disabled = false;
+        }
         setExpertStatus('online');
     }
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
+// ============================================================
+// الأحداث
+// ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     const inp = document.getElementById('input');
     if (inp) {
