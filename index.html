@@ -5,43 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>منصة استشارات forG — محللون عرب بلهجات محلية</title>
-<meta name="description" content="منصة forG: استشارات مالية وعامة من محللين عرب في 17 دولة، بلهجات محلية. ذهب، أسهم، اقتصاد، جيوسياسة، ميزانية، وكريبتو.">
-<meta name="author" content="منصة استشارات forG">
-<meta name="keywords" content="استشارات مالية, ذهب, أسهم, كريبتو, اقتصاد, جيوسياسة, ميزانية, تخطيط مالي, محللين عرب">
-
+<meta name="description" content="منصة forG: استشارات مالية وعامة من محللين عرب في 17 دولة، بلهجات محلية.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ammar-e0tp.onrender.com/">
-<meta property="og:title" content="منصة استشارات forG — استشارات مالية عربية بلهجات محلية">
-<meta property="og:description" content="محللون عرب يتحدثون لغتك. استشارات في الذهب والأسهم والاقتصاد والكريبتو — كلٌّ بلهجته.">
+<meta property="og:title" content="منصة استشارات forG — استشارات مالية عربية">
+<meta property="og:description" content="محللون عرب يتحدثون لغتك. استشارات بلهجات محلية.">
 <meta property="og:site_name" content="منصة استشارات forG">
 <meta property="og:locale" content="ar_SA">
-<meta property="og:image" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="منصة استشارات forG — نخبة المحللين العرب">
-<meta name="twitter:description" content="محللون عرب يتحدثون لغتك. استشارات فورية بلهجات محلية.">
-<meta name="twitter:image" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
-
 <meta name="theme-color" content="#0a1628">
-<meta name="msapplication-TileColor" content="#0a1628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="forG">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="application-name" content="forG">
-<meta name="format-detection" content="telephone=no">
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d4af37'/%3E%3Cstop offset='100%25' stop-color='%23f0d977'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%230a1628'/%3E%3Ctext x='50' y='70' font-family='Arial,sans-serif' font-size='56' font-weight='900' fill='url(%23g)' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a1628'/%3E%3Ctext x='50' y='70' font-family='Arial' font-size='56' font-weight='900' fill='%23d4af37' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
 <script>
 (function prewarm() {
-    const wake = () => fetch('https://ammar-e0tp.onrender.com/', { cache: 'no-store' })
+    const wake = () => fetch('/api/status', { cache: 'no-store' })
         .then(r => r.json()).then(() => {
             window.SERVER_READY = true;
             document.dispatchEvent(new Event('serverReady'));
@@ -51,635 +34,567 @@
     setTimeout(wake, 8000);
 })();
 (function initTheme() {
-    const saved = localStorage.getItem('forg_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
+    try {
+        const saved = localStorage.getItem('forg_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
 })();
 </script>
 
 <style>
-    :root {
-        --primary: #0a1628; --secondary: #142c4a;
-        --accent: #d4af37; --accent-soft: #f0d977; --accent-dark: #a8862a;
-        --app-bg: #cfd6de;
-        --chat-bg: linear-gradient(180deg, #e8e2d9 0%, #ebe5dc 100%);
-        --user-bubble: linear-gradient(135deg, #d9fdd3 0%, #c8f5c1 100%);
-        --expert-bubble: #ffffff;
-        --text: #0f172a; --muted: #64748b; --border: rgba(0,0,0,0.08);
-        --time-color: #667781;
-        --online: #22c55e; --busy: #f59e0b;
-        --check-sent: #667781; --check-read: #53bdeb;
-        --shadow-md: 0 8px 24px rgba(10,22,40,0.10), 0 2px 6px rgba(10,22,40,0.06);
-        --shadow-xl: 0 32px 80px rgba(10,22,40,0.28), 0 12px 28px rgba(10,22,40,0.15);
-        --card-bg: #ffffff; --input-bg: #ffffff;
-        --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-        --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    [data-theme="dark"] {
-        --primary: #080e17; --secondary: #16232f;
-        --app-bg: #080e17;
-        --chat-bg: linear-gradient(180deg, #0a1118 0%, #0d141c 100%);
-        --user-bubble: linear-gradient(135deg, #005c4b 0%, #00735c 100%);
-        --expert-bubble: #1e2a33;
-        --text: #e9edef; --muted: #8696a0; --border: rgba(255,255,255,0.06);
-        --time-color: #8696a0;
-        --check-sent: #8696a0; --check-read: #53bdeb;
-        --card-bg: #0f1a22; --input-bg: #222f3a;
-        --shadow-md: 0 8px 24px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
-        --shadow-xl: 0 32px 80px rgba(0,0,0,0.75), 0 12px 28px rgba(0,0,0,0.55);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body {
-        height: 100%;
-        font-family: 'Cairo', 'Tajawal', 'Segoe UI', 'Tahoma', system-ui, sans-serif;
-        background: var(--app-bg); color: var(--text); line-height: 1.7;
-        overflow-x: hidden; transition: background 0.4s var(--ease-smooth), color 0.4s var(--ease-smooth);
-    }
-    button { font-family: inherit; }
+:root {
+    --primary: #0a1628; --secondary: #142c4a;
+    --accent: #d4af37; --accent-soft: #f0d977; --accent-dark: #a8862a;
+    --app-bg: #cfd6de;
+    --chat-bg: linear-gradient(180deg, #e8e2d9 0%, #ebe5dc 100%);
+    --user-bubble: linear-gradient(135deg, #d9fdd3 0%, #c8f5c1 100%);
+    --expert-bubble: #ffffff;
+    --text: #0f172a; --muted: #64748b; --border: rgba(0,0,0,0.08);
+    --time-color: #667781;
+    --online: #22c55e; --busy: #f59e0b;
+    --check-sent: #667781; --check-read: #53bdeb;
+    --shadow-md: 0 8px 24px rgba(10,22,40,0.10);
+    --shadow-xl: 0 32px 80px rgba(10,22,40,0.28);
+    --card-bg: #ffffff; --input-bg: #ffffff;
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-theme="dark"] {
+    --app-bg: #080e17;
+    --chat-bg: linear-gradient(180deg, #0a1118 0%, #0d141c 100%);
+    --user-bubble: linear-gradient(135deg, #005c4b 0%, #00735c 100%);
+    --expert-bubble: #1e2a33;
+    --text: #e9edef; --muted: #8696a0; --border: rgba(255,255,255,0.06);
+    --time-color: #8696a0;
+    --card-bg: #0f1a22; --input-bg: #222f3a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+    height: 100%;
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', 'Tahoma', system-ui, sans-serif;
+    background: var(--app-bg); color: var(--text); line-height: 1.7;
+    overflow-x: hidden;
+    transition: background 0.4s var(--ease-smooth), color 0.4s var(--ease-smooth);
+}
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
 
-    /* Splash */
-    #splash {
-        position: fixed; inset: 0;
-        background: radial-gradient(circle at 30% 20%, #102b4e 0%, #0a1628 45%, #030912 100%);
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        z-index: 9999; color: white; transition: opacity 0.9s var(--ease-smooth);
-        overflow: hidden;
-    }
-    #splash::before {
-        content: ''; position: absolute; inset: 0;
-        background:
-            radial-gradient(circle at 70% 80%, rgba(212,175,55,0.14), transparent 50%),
-            radial-gradient(circle at 20% 60%, rgba(212,175,55,0.10), transparent 45%);
-        animation: bgShift 10s ease-in-out infinite alternate;
-    }
-    @keyframes bgShift { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
-    #splash.fade { opacity: 0; pointer-events: none; }
-    .splash-logo {
-        width: 128px; height: 128px; border-radius: 38px;
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 45%, var(--accent) 100%);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 62px; margin-bottom: 30px; position: relative;
-        box-shadow: 0 28px 80px rgba(212,175,55,0.5), inset 0 3px 0 rgba(255,255,255,0.5);
-        animation: floaty 3.5s ease-in-out infinite;
-    }
-    @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
-    .splash-title {
-        font-family: 'Tajawal', sans-serif;
-        font-size: 32px; font-weight: 800; margin-bottom: 8px;
-        background: linear-gradient(90deg, #fff 20%, #f0d977 50%, #fff 80%);
-        background-size: 200% auto;
-        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-        animation: shine 3s linear infinite; position: relative; z-index: 2;
-    }
-    @keyframes shine { to { background-position: 200% center; } }
-    .splash-title .brand {
-        font-weight: 400; font-size: 24px; padding: 2px 10px;
-        border: 1.5px solid rgba(212,175,55,0.5); border-radius: 8px;
-        background: rgba(212,175,55,0.08); margin-right: 8px; display: inline-block;
-    }
-    .splash-sub { color: #94a3b8; font-size: 14px; margin-bottom: 48px; position: relative; z-index: 2; }
-    .splash-progress {
-        width: min(340px, 78vw); height: 4px;
-        background: rgba(255,255,255,0.08); border-radius: 4px;
-        overflow: hidden; margin-bottom: 22px; position: relative; z-index: 2;
-    }
-    .splash-fill {
-        height: 100%; width: 0%; border-radius: 4px;
-        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
-        background-size: 200% 100%;
-        transition: width 0.5s var(--ease-smooth);
-        animation: shimmer 1.8s linear infinite;
-    }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .splash-msg { color: var(--accent-soft); font-size: 13.5px; min-height: 24px; position: relative; z-index: 2; }
+#splash {
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at 30% 20%, #102b4e 0%, #0a1628 45%, #030912 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 9999; color: white; transition: opacity 0.9s var(--ease-smooth);
+    overflow: hidden; padding: 20px;
+}
+#splash.fade { opacity: 0; pointer-events: none; }
+.splash-logo {
+    width: 128px; height: 128px; border-radius: 38px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft) 45%, var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 62px; margin-bottom: 30px;
+    box-shadow: 0 28px 80px rgba(212,175,55,0.5);
+    animation: floaty 3.5s ease-in-out infinite;
+}
+@keyframes floaty { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+.splash-title {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 28px; font-weight: 800; margin-bottom: 8px; text-align: center;
+    background: linear-gradient(90deg, #fff 20%, #f0d977 50%, #fff 80%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+}
+@keyframes shine { to { background-position: 200% center; } }
+.splash-title .brand {
+    font-weight: 400; font-size: 22px; padding: 2px 10px;
+    border: 1.5px solid rgba(212,175,55,0.5); border-radius: 8px;
+    background: rgba(212,175,55,0.08); margin-right: 8px; display: inline-block;
+}
+.splash-sub { color: #94a3b8; font-size: 13px; margin-bottom: 48px; text-align: center; }
+.splash-progress {
+    width: min(340px, 78vw); height: 4px;
+    background: rgba(255,255,255,0.08); border-radius: 4px;
+    overflow: hidden; margin-bottom: 22px;
+}
+.splash-fill {
+    height: 100%; width: 0%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+    background-size: 200% 100%;
+    transition: width 0.5s var(--ease-smooth);
+    animation: shimmer 1.8s linear infinite;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.splash-msg { color: var(--accent-soft); font-size: 13px; min-height: 24px; text-align: center; }
 
-    #startBtn {
-        display: none; margin-top: 24px; padding: 15px 48px;
-        border: none; border-radius: 14px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 50%, var(--accent));
-        background-size: 200% auto;
-        color: #0a1628; font-weight: 800; font-size: 16px;
-        cursor: pointer; position: relative; z-index: 5;
-        box-shadow: 0 14px 38px rgba(212,175,55,0.5), inset 0 2px 0 rgba(255,255,255,0.5);
-        transition: all 0.4s var(--ease-smooth);
-        animation: startBtnPulse 2.2s ease-in-out infinite;
-    }
-    #splash.waiting #startBtn { display: inline-block; }
-    @keyframes startBtnPulse {
-        0%,100% { box-shadow: 0 14px 38px rgba(212,175,55,0.5); }
-        50% { box-shadow: 0 18px 46px rgba(212,175,55,0.75); }
-    }
+#startBtn {
+    display: none; margin-top: 24px; padding: 15px 48px;
+    border: none; border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft) 50%, var(--accent));
+    color: #0a1628; font-weight: 800; font-size: 16px;
+    box-shadow: 0 14px 38px rgba(212,175,55,0.5);
+    transition: all 0.4s var(--ease-smooth);
+    animation: startBtnPulse 2.2s ease-in-out infinite;
+}
+#splash.waiting #startBtn { display: inline-block; }
+#startBtn:hover { transform: translateY(-3px); }
+@keyframes startBtnPulse {
+    0%,100% { box-shadow: 0 14px 38px rgba(212,175,55,0.5); }
+    50% { box-shadow: 0 18px 46px rgba(212,175,55,0.75); }
+}
 
-    #musicToggle {
-        position: fixed; top: 78px; left: 16px;
-        width: 42px; height: 42px; border-radius: 50%;
-        background: rgba(10,22,40,0.85); backdrop-filter: blur(14px);
-        border: 1.5px solid rgba(212,175,55,0.4);
-        color: var(--accent-soft); font-size: 17px;
-        display: none; align-items: center; justify-content: center;
-        cursor: pointer; z-index: 998;
-        transition: all 0.35s var(--ease-bounce);
-    }
-    #musicToggle.show { display: flex; }
-    #musicToggle.muted { color: #94a3b8; border-color: rgba(148,163,184,0.4); }
+#musicToggle {
+    position: fixed; top: 78px; left: 16px;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(10,22,40,0.85); backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(212,175,55,0.4);
+    color: var(--accent-soft); font-size: 17px;
+    display: none; align-items: center; justify-content: center;
+    z-index: 998; transition: all 0.35s var(--ease-bounce);
+}
+#musicToggle.show { display: flex; }
+#musicToggle.muted { color: #94a3b8; border-color: rgba(148,163,184,0.4); }
 
-    /* Header */
-    header {
-        background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98) 55%, rgba(10,22,40,0.98));
-        color: white; padding: 20px; text-align: center;
-        border-bottom: 2px solid transparent;
-        border-image: linear-gradient(90deg, transparent, var(--accent), transparent) 1;
-        position: relative; z-index: 10;
-    }
-    header h1 {
-        font-family: 'Tajawal', sans-serif; font-size: 22px; font-weight: 800;
-        background: linear-gradient(90deg, #fff 30%, #f0d977 70%, #fff 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-        animation: shine 4s linear infinite; position: relative; z-index: 2;
-    }
-    header h1 .brand {
-        display: inline-block; font-weight: 400; font-size: 18px;
-        padding: 2px 10px; margin-right: 6px;
-        border: 1.5px solid rgba(212,175,55,0.55); border-radius: 7px;
-        -webkit-text-fill-color: var(--accent-soft);
-        color: var(--accent-soft); background: rgba(212,175,55,0.08);
-    }
-    header p { font-size: 12px; color: #94a3b8; margin-top: 6px; position: relative; z-index: 2; }
-    .theme-toggle {
-        position: absolute; top: 50%; transform: translateY(-50%); left: 16px;
-        background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.14);
-        color: white; width: 42px; height: 42px; border-radius: 50%;
-        cursor: pointer; font-size: 18px;
-        display: flex; align-items: center; justify-content: center;
-        transition: all 0.4s var(--ease-bounce); z-index: 5;
-    }
-    .theme-toggle:hover { background: rgba(212,175,55,0.25); border-color: var(--accent); transform: translateY(-50%) rotate(25deg) scale(1.1); }
+header {
+    background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98) 55%, rgba(10,22,40,0.98));
+    color: white; padding: 20px; text-align: center;
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, transparent, var(--accent), transparent) 1;
+    position: relative; z-index: 10;
+}
+header h1 {
+    font-family: 'Tajawal', sans-serif; font-size: 22px; font-weight: 800;
+    background: linear-gradient(90deg, #fff 30%, #f0d977 70%, #fff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: shine 4s linear infinite;
+}
+header h1 .brand {
+    display: inline-block; font-weight: 400; font-size: 18px;
+    padding: 2px 10px; margin-right: 6px;
+    border: 1.5px solid rgba(212,175,55,0.55); border-radius: 7px;
+    -webkit-text-fill-color: var(--accent-soft);
+    color: var(--accent-soft); background: rgba(212,175,55,0.08);
+}
+header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+.theme-toggle {
+    position: absolute; top: 50%; transform: translateY(-50%); left: 16px;
+    background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.14);
+    color: white; width: 42px; height: 42px; border-radius: 50%;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.4s var(--ease-bounce);
+}
+.theme-toggle:hover { background: rgba(212,175,55,0.25); border-color: var(--accent); }
 
-    .user-bar {
-        background: linear-gradient(135deg, rgba(10,22,40,0.96), rgba(20,44,74,0.96));
-        color: white; padding: 12px 22px;
-        display: none; justify-content: flex-start; align-items: center;
-        font-size: 14px; font-weight: 600;
-        border-bottom: 1px solid rgba(212,175,55,0.18);
-        position: sticky; top: 0; z-index: 9;
-    }
-    .user-bar.show { display: flex; }
-    .user-info { display: flex; align-items: center; gap: 14px; }
-    .avatar-sm {
-        width: 42px; height: 42px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-        color: #0a1628; display: flex; align-items: center; justify-content: center;
-        font-weight: 800; font-size: 16px;
-        box-shadow: 0 0 0 3px rgba(212,175,55,0.25), 0 6px 18px rgba(212,175,55,0.35);
-    }
+.user-bar {
+    background: linear-gradient(135deg, rgba(10,22,40,0.96), rgba(20,44,74,0.96));
+    color: white; padding: 12px 22px;
+    display: none; align-items: center; font-size: 14px; font-weight: 600;
+    border-bottom: 1px solid rgba(212,175,55,0.18);
+    position: sticky; top: 0; z-index: 9;
+}
+.user-bar.show { display: flex; }
+.user-info { display: flex; align-items: center; gap: 14px; }
+.avatar-sm {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+    color: #0a1628; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.25), 0 6px 18px rgba(212,175,55,0.35);
+}
 
-    .container { max-width: 1100px; margin: 34px auto; padding: 0 22px; }
+.container { max-width: 1100px; margin: 34px auto; padding: 0 22px; }
 
-    /* Welcome */
-    #welcome {
-        background: var(--card-bg); border-radius: 28px; padding: 52px 48px 46px;
-        box-shadow: var(--shadow-xl); max-width: 620px; margin: 30px auto;
-        text-align: center; display: none;
-        border: 1px solid var(--border); position: relative; overflow: hidden;
-    }
-    #welcome::before {
-        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
-        background: linear-gradient(90deg, transparent, var(--accent), var(--accent-soft), var(--accent), transparent);
-        background-size: 200% 100%; animation: shimmer 3s linear infinite;
-    }
-    #welcome.show { display: block; }
-    .welcome-icon {
-        width: 88px; height: 88px; margin: 0 auto 22px; border-radius: 28px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
-        display: flex; align-items: center; justify-content: center; font-size: 40px;
-        box-shadow: 0 18px 48px rgba(212,175,55,0.45); animation: floaty 4s ease-in-out infinite;
-    }
-    #welcome h2 { font-family: 'Tajawal', sans-serif; font-size: 27px; margin-bottom: 8px; font-weight: 800; }
-    #welcome .sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { text-align: right; margin-bottom: 14px; }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; }
-    .form-group input, .form-group select, .form-group textarea {
-        width: 100%; padding: 13px 16px;
-        border: 1.5px solid var(--border); border-radius: 14px;
-        font-size: 14.5px; font-family: inherit;
-        background: var(--card-bg); color: var(--text);
-        transition: all 0.3s var(--ease-smooth);
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        outline: none; border-color: var(--accent);
-        box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
-    }
-    .form-group textarea { min-height: 82px; resize: vertical; }
-    .btn-primary {
-        width: 100%; padding: 16px; border: none; border-radius: 15px;
-        background: linear-gradient(135deg, #0a1628, #1c3a5c 50%, #0a1628);
-        background-size: 200% auto; color: white;
-        font-size: 16px; font-weight: 800; cursor: pointer;
-        transition: all 0.4s var(--ease-smooth); margin-top: 14px;
-        box-shadow: 0 10px 28px rgba(10,22,40,0.35);
-    }
-    .btn-primary:hover { transform: translateY(-3px); background-position: 200% center; }
+#welcome {
+    background: var(--card-bg); border-radius: 28px; padding: 52px 48px 46px;
+    box-shadow: var(--shadow-xl); max-width: 620px; margin: 30px auto;
+    text-align: center; display: none;
+    border: 1px solid var(--border); position: relative; overflow: hidden;
+}
+#welcome.show { display: block; }
+.welcome-icon {
+    width: 88px; height: 88px; margin: 0 auto 22px; border-radius: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
+    display: flex; align-items: center; justify-content: center; font-size: 40px;
+    box-shadow: 0 18px 48px rgba(212,175,55,0.45);
+    animation: floaty 4s ease-in-out infinite;
+}
+#welcome h2 { font-family: 'Tajawal', sans-serif; font-size: 26px; margin-bottom: 8px; font-weight: 800; }
+#welcome .sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { text-align: right; margin-bottom: 14px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 13px 16px;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-size: 14.5px;
+    background: var(--card-bg); color: var(--text);
+    transition: all 0.3s var(--ease-smooth);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+}
+.form-group textarea { min-height: 82px; resize: vertical; }
+.btn-primary {
+    width: 100%; padding: 16px; border: none; border-radius: 15px;
+    background: linear-gradient(135deg, #0a1628, #1c3a5c 50%, #0a1628);
+    color: white; font-size: 16px; font-weight: 800;
+    transition: all 0.4s var(--ease-smooth); margin-top: 14px;
+    box-shadow: 0 10px 28px rgba(10,22,40,0.35);
+}
+.btn-primary:hover { transform: translateY(-3px); }
 
-    /* Home */
-    #home { display: none; }
-    #home.show { display: block; }
-    #home h2 { font-family: 'Tajawal', sans-serif; text-align: center; margin-bottom: 10px; font-size: 26px; font-weight: 800; }
-    #home .home-sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 36px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 20px; }
-    .card {
-        background: var(--card-bg); border-radius: 22px; padding: 28px 26px;
-        box-shadow: var(--shadow-md); cursor: pointer;
-        border: 1px solid var(--border);
-        transition: all 0.45s var(--ease-smooth);
-        position: relative; overflow: hidden;
-        display: flex; flex-direction: column; gap: 14px;
-    }
-    .card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 28px 60px rgba(10,22,40,0.25), 0 0 0 1px rgba(212,175,55,0.35);
-        border-color: rgba(212,175,55,0.45);
-    }
-    .card-icon {
-        width: 58px; height: 58px; border-radius: 18px;
-        background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.34));
-        display: flex; align-items: center; justify-content: center;
-        font-size: 26px; border: 1.5px solid rgba(212,175,55,0.32);
-    }
-    .card h3 { color: var(--text); font-size: 17px; font-weight: 800; line-height: 1.4; }
-    .card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; }
-    .card-badge {
-        position: absolute; top: 18px; left: 18px;
-        background: rgba(34,197,94,0.15); color: #16a34a;
-        padding: 5px 12px; border-radius: 14px;
-        font-size: 11px; font-weight: 700;
-        display: flex; align-items: center; gap: 6px;
-        border: 1px solid rgba(34,197,94,0.25);
-    }
-    .card-badge::before {
-        content: ''; width: 7px; height: 7px; border-radius: 50%;
-        background: #22c55e; animation: pulse-badge 2s infinite;
-    }
-    @keyframes pulse-badge { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
+#home { display: none; }
+#home.show { display: block; }
+#home h2 { font-family: 'Tajawal', sans-serif; text-align: center; margin-bottom: 10px; font-size: 26px; font-weight: 800; }
+#home .home-sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 36px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 20px; }
+.card {
+    background: var(--card-bg); border-radius: 22px; padding: 28px 26px;
+    box-shadow: var(--shadow-md); cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.45s var(--ease-smooth);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; gap: 14px;
+}
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 28px 60px rgba(10,22,40,0.25), 0 0 0 1px rgba(212,175,55,0.35);
+    border-color: rgba(212,175,55,0.45);
+}
+.card-icon {
+    width: 58px; height: 58px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.34));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; border: 1.5px solid rgba(212,175,55,0.32);
+}
+.card h3 { color: var(--text); font-size: 17px; font-weight: 800; line-height: 1.4; }
+.card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; }
+.card-badge {
+    position: absolute; top: 18px; left: 18px;
+    background: rgba(34,197,94,0.15); color: #16a34a;
+    padding: 5px 12px; border-radius: 14px;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(34,197,94,0.25);
+}
+.card-badge::before {
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e; animation: pulse-badge 2s infinite;
+}
+@keyframes pulse-badge { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
 
-    /* Chat */
-    #chat {
-        display: none; max-width: 880px; margin: 20px auto;
-        background: var(--chat-bg); border-radius: 24px;
-        box-shadow: var(--shadow-xl); overflow: hidden;
-        border: 1px solid var(--border); position: relative;
-    }
-    #chat.show { display: block; }
-    .chat-header {
-        background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98));
-        color: white; padding: 15px 20px;
-        display: flex; align-items: center; gap: 14px;
-        border-bottom: 1px solid rgba(212,175,55,0.20);
-        position: relative; z-index: 5;
-    }
-    .expert-avatar {
-        width: 52px; height: 52px; border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
-        color: #0a1628; display: flex; align-items: center; justify-content: center;
-        font-weight: 800; font-size: 20px; position: relative; flex-shrink: 0;
-    }
-    .expert-avatar.switching { animation: avatarSwitch 0.8s var(--ease-bounce); }
-    @keyframes avatarSwitch {
-        0% { transform: scale(1) rotate(0deg); }
-        40% { transform: scale(0.7) rotate(-180deg); opacity: 0.5; }
-        100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-    .expert-avatar::after {
-        content: ''; position: absolute; bottom: 1px; right: 1px;
-        width: 14px; height: 14px; background: var(--online);
-        border: 3px solid #050d18; border-radius: 50%;
-    }
-    .expert-avatar.busy::after { background: var(--busy); }
-    .expert-avatar.typing::after { background: var(--online); animation: pulse-dot 1.1s infinite; }
-    @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 9px rgba(34,197,94,0); } }
-    .expert-info { flex: 1; min-width: 0; }
-    .expert-info h3 { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .expert-info p { font-size: 12px; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-    .expert-info p.typing-status { color: #6ee7b7; }
-    .expert-info p.busy-status { color: #fbbf24; }
-    .flag-badge {
-        display: inline-flex; align-items: center; gap: 4px;
-        background: rgba(212,175,55,0.20); color: var(--accent-soft);
-        padding: 3px 9px; border-radius: 9px;
-        font-size: 10.5px; font-weight: 700;
-        border: 1px solid rgba(212,175,55,0.25);
-    }
-    .expert-timer {
-        display: inline-flex; align-items: center; gap: 4px;
-        background: rgba(212,175,55,0.15);
-        color: var(--accent-soft);
-        padding: 3px 9px; border-radius: 9px;
-        font-size: 10.5px; font-weight: 700;
-        border: 1px solid rgba(212,175,55,0.25);
-        font-variant-numeric: tabular-nums;
-    }
-    .expert-timer.warning {
-        background: rgba(245,158,11,0.2);
-        color: #fbbf24;
-        border-color: rgba(245,158,11,0.4);
-        animation: timerPulse 2s infinite;
-    }
-    @keyframes timerPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
-    .btn-back {
-        margin-right: auto;
-        background: rgba(255,255,255,0.07); color: white;
-        border: 1.5px solid rgba(255,255,255,0.14);
-        padding: 9px 16px; border-radius: 11px; cursor: pointer;
-        font-size: 12.5px; font-weight: 700;
-        transition: all 0.3s var(--ease-smooth);
-        flex-shrink: 0;
-    }
-    .btn-back:hover { background: rgba(212,175,55,0.22); border-color: var(--accent); }
+#chat {
+    display: none; max-width: 880px; margin: 20px auto;
+    background: var(--chat-bg); border-radius: 24px;
+    box-shadow: var(--shadow-xl); overflow: hidden;
+    border: 1px solid var(--border); position: relative;
+}
+#chat.show { display: block; }
+.chat-header {
+    background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98));
+    color: white; padding: 15px 20px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid rgba(212,175,55,0.20);
+    position: relative; z-index: 5;
+}
+.expert-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
+    color: #0a1628; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 20px; position: relative; flex-shrink: 0;
+}
+.expert-avatar.switching { animation: avatarSwitch 0.8s var(--ease-bounce); }
+@keyframes avatarSwitch {
+    0% { transform: scale(1) rotate(0deg); }
+    40% { transform: scale(0.7) rotate(-180deg); opacity: 0.5; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.expert-avatar::after {
+    content: ''; position: absolute; bottom: 1px; right: 1px;
+    width: 14px; height: 14px; background: var(--online);
+    border: 3px solid #050d18; border-radius: 50%;
+}
+.expert-avatar.busy::after { background: var(--busy); }
+.expert-avatar.typing::after { background: var(--online); animation: pulse-dot 1.1s infinite; }
+@keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 9px rgba(34,197,94,0); } }
+.expert-info { flex: 1; min-width: 0; }
+.expert-info h3 { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.expert-info p { font-size: 12px; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.expert-info p.typing-status { color: #6ee7b7; }
+.expert-info p.busy-status { color: #fbbf24; }
+.flag-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(212,175,55,0.20); color: var(--accent-soft);
+    padding: 3px 9px; border-radius: 9px;
+    font-size: 10.5px; font-weight: 700;
+    border: 1px solid rgba(212,175,55,0.25);
+}
+.expert-timer {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(212,175,55,0.15);
+    color: var(--accent-soft);
+    padding: 3px 9px; border-radius: 9px;
+    font-size: 10.5px; font-weight: 700;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-variant-numeric: tabular-nums;
+}
+.expert-timer.warning {
+    background: rgba(245,158,11,0.2);
+    color: #fbbf24;
+    border-color: rgba(245,158,11,0.4);
+    animation: timerPulse 2s infinite;
+}
+@keyframes timerPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
+.btn-back {
+    margin-right: auto;
+    background: rgba(255,255,255,0.07); color: white;
+    border: 1.5px solid rgba(255,255,255,0.14);
+    padding: 9px 16px; border-radius: 11px;
+    font-size: 12.5px; font-weight: 700;
+    transition: all 0.3s var(--ease-smooth);
+    flex-shrink: 0;
+}
+.btn-back:hover { background: rgba(212,175,55,0.22); border-color: var(--accent); }
 
-    .progress-bar { height: 3px; background: rgba(0,0,0,0.06); overflow: hidden; display: none; position: relative; z-index: 4; }
-    .progress-bar.show { display: block; }
-    .progress-fill {
-        height: 100%; width: 0%;
-        background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
-        background-size: 200% 100%;
-        transition: width 0.5s var(--ease-smooth);
-        animation: shimmer 1.6s linear infinite;
-    }
+.progress-bar { height: 3px; background: rgba(0,0,0,0.06); overflow: hidden; display: none; position: relative; z-index: 4; }
+.progress-bar.show { display: block; }
+.progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-soft), var(--accent));
+    background-size: 200% 100%;
+    transition: width 0.5s var(--ease-smooth);
+    animation: shimmer 1.6s linear infinite;
+}
 
-    #messages {
-        padding: 28px 20px 22px; min-height: 440px; max-height: 60vh;
-        overflow-y: auto; background: var(--chat-bg); scroll-behavior: smooth;
-    }
-    #messages::-webkit-scrollbar { width: 7px; }
-    #messages::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 4px; }
-    .bubble-wrap { display: flex; margin-bottom: 12px; animation: msgIn 0.42s var(--ease-smooth); padding: 0 4px; }
-    @keyframes msgIn { from { opacity: 0; transform: translateY(12px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    .bubble-wrap.user { justify-content: flex-end; }
-    .bubble-wrap.expert { justify-content: flex-start; }
-    .bubble {
-        max-width: 78%; padding: 11px 15px 8px; border-radius: 14px;
-        font-size: 14.5px; line-height: 1.78; word-wrap: break-word; position: relative;
-    }
-    .bubble-wrap.user .bubble {
-        background: var(--user-bubble); color: var(--text);
-        border-top-right-radius: 4px; margin-right: 8px;
-    }
-    .bubble-wrap.expert .bubble {
-        background: var(--expert-bubble); color: var(--text);
-        border-top-left-radius: 4px; margin-left: 8px;
-        border: 1px solid rgba(0,0,0,0.03);
-    }
-    .sender { font-size: 12px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
-    .bubble-wrap.user .sender { color: #0b6b3a; }
-    [data-theme="dark"] .bubble-wrap.user .sender { color: #7ee0a6; }
-    .bubble-content { white-space: pre-wrap; padding-bottom: 15px; }
-    .bubble-content strong { font-weight: 800; }
-    .time-row {
-        position: absolute; bottom: 4px; left: 12px;
-        display: flex; align-items: center; gap: 4px;
-        font-size: 10.5px; color: var(--time-color); direction: ltr;
-    }
-    .bubble-wrap.expert .time-row { left: auto; right: 12px; }
-    .checks { font-size: 11px; }
-    .checks.sent { color: var(--check-sent); letter-spacing: -2px; }
-    .checks.delivered { color: var(--check-sent); letter-spacing: -3px; }
-    .checks.read { color: var(--check-read); letter-spacing: -3px; }
-    .typing { display: inline-flex; gap: 5px; padding: 8px 3px 16px; }
-    .typing span { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: dotTyping 1.35s infinite; opacity: 0.7; }
-    .typing span:nth-child(2) { animation-delay: 0.16s; }
-    .typing span:nth-child(3) { animation-delay: 0.32s; }
-    @keyframes dotTyping { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+#messages {
+    padding: 28px 20px 22px; min-height: 440px; max-height: 60vh;
+    overflow-y: auto; background: var(--chat-bg); scroll-behavior: smooth;
+}
+#messages::-webkit-scrollbar { width: 7px; }
+#messages::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 4px; }
+.bubble-wrap { display: flex; margin-bottom: 12px; animation: msgIn 0.42s var(--ease-smooth); padding: 0 4px; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(12px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.bubble-wrap.user { justify-content: flex-end; }
+.bubble-wrap.expert { justify-content: flex-start; }
+.bubble {
+    max-width: 78%; padding: 11px 15px 8px; border-radius: 14px;
+    font-size: 14.5px; line-height: 1.78; word-wrap: break-word; position: relative;
+}
+.bubble-wrap.user .bubble {
+    background: var(--user-bubble); color: var(--text);
+    border-top-right-radius: 4px; margin-right: 8px;
+}
+.bubble-wrap.expert .bubble {
+    background: var(--expert-bubble); color: var(--text);
+    border-top-left-radius: 4px; margin-left: 8px;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+.sender { font-size: 12px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+.bubble-wrap.user .sender { color: #0b6b3a; }
+[data-theme="dark"] .bubble-wrap.user .sender { color: #7ee0a6; }
+.bubble-content { white-space: pre-wrap; padding-bottom: 15px; }
+.bubble-content strong { font-weight: 800; }
+.time-row {
+    position: absolute; bottom: 4px; left: 12px;
+    display: flex; align-items: center; gap: 4px;
+    font-size: 10.5px; color: var(--time-color); direction: ltr;
+}
+.bubble-wrap.expert .time-row { left: auto; right: 12px; }
+.checks { font-size: 11px; }
+.checks.sent { color: var(--check-sent); letter-spacing: -2px; }
+.checks.delivered { color: var(--check-sent); letter-spacing: -3px; }
+.checks.read { color: var(--check-read); letter-spacing: -3px; }
+.typing { display: inline-flex; gap: 5px; padding: 8px 3px 16px; }
+.typing span { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: dotTyping 1.35s infinite; opacity: 0.7; }
+.typing span:nth-child(2) { animation-delay: 0.16s; }
+.typing span:nth-child(3) { animation-delay: 0.32s; }
+@keyframes dotTyping { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
 
-    /* Warning bubble */
-    .warning-bubble {
-        background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(240,217,119,0.08));
-        border: 1.5px solid rgba(212,175,55,0.4);
-        border-radius: 16px;
-        padding: 16px 18px 14px;
-        margin: 12px auto;
-        max-width: 86%;
-        animation: msgIn 0.45s var(--ease-smooth);
-        position: relative;
-    }
-    .warning-bubble .warning-head {
-        display: flex; align-items: center; gap: 8px;
-        font-weight: 800; color: var(--accent);
-        margin-bottom: 10px; font-size: 14px;
-    }
-    .warning-bubble .warning-head .icon { font-size: 18px; }
-    .warning-bubble .warning-body { font-size: 13.5px; line-height: 1.85; color: var(--text); }
-    .warning-bubble .warning-body strong { color: var(--accent-dark); }
-    .warning-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
-    .warning-btn {
-        flex: 1; min-width: 130px;
-        padding: 12px 14px; border-radius: 12px;
-        font-weight: 700; font-size: 12.5px;
-        border: none; cursor: pointer;
-        transition: all 0.3s var(--ease-smooth);
-        display: flex; align-items: center; justify-content: center;
-        gap: 6px; line-height: 1.4; text-align: center;
-    }
-    .warning-btn.wait { background: linear-gradient(135deg, #0a1628, #1c3a5c); color: white; }
-    .warning-btn.switch { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); color: #0a1628; }
-    .warning-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(10,22,40,0.25); }
-    .warning-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .warning-bubble.resolved .warning-actions { display: none; }
-    .warning-bubble.resolved::after {
-        content: '✓ تم الاختيار';
-        display: block; margin-top: 10px; text-align: center;
-        font-size: 11.5px; color: var(--muted); font-weight: 700;
-    }
+.warning-bubble {
+    background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(240,217,119,0.08));
+    border: 1.5px solid rgba(212,175,55,0.4);
+    border-radius: 16px;
+    padding: 16px 18px 14px;
+    margin: 12px auto;
+    max-width: 86%;
+    animation: msgIn 0.45s var(--ease-smooth);
+    position: relative;
+}
+.warning-bubble .warning-head {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 800; color: var(--accent);
+    margin-bottom: 10px; font-size: 14px;
+}
+.warning-bubble .warning-head .icon { font-size: 18px; }
+.warning-bubble .warning-body { font-size: 13.5px; line-height: 1.85; color: var(--text); }
+.warning-bubble .warning-body strong { color: var(--accent-dark); }
+.warning-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.warning-btn {
+    flex: 1; min-width: 130px;
+    padding: 12px 14px; border-radius: 12px;
+    font-weight: 700; font-size: 12.5px;
+    border: none;
+    transition: all 0.3s var(--ease-smooth);
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; line-height: 1.4; text-align: center;
+}
+.warning-btn.wait { background: linear-gradient(135deg, #0a1628, #1c3a5c); color: white; }
+.warning-btn.switch { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); color: #0a1628; }
+.warning-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(10,22,40,0.25); }
+.warning-bubble.resolved .warning-actions { display: none; }
 
-    /* Waiting overlay */
-    .waiting-overlay {
-        position: absolute; inset: 0;
-        background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.98) 0%, rgba(5,13,24,0.99) 80%);
-        backdrop-filter: blur(24px);
-        display: none; flex-direction: column;
-        align-items: center; justify-content: center;
-        z-index: 100; color: white;
-        padding: 28px; text-align: center;
-    }
-    .waiting-overlay.show { display: flex; animation: overlayIn 0.55s var(--ease-smooth); }
-    @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+.waiting-overlay, .closed-overlay {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.98) 0%, rgba(5,13,24,0.99) 80%);
+    backdrop-filter: blur(24px);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 100; color: white;
+    padding: 28px; text-align: center;
+}
+.waiting-overlay.show, .closed-overlay.show { display: flex; }
+.waiting-ring, .lock-shell { position: relative; width: 150px; height: 150px; margin-bottom: 26px; }
+.waiting-ring svg, .lock-shell svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.waiting-ring-bg, .lock-ring-bg { fill: none; stroke: rgba(212,175,55,0.14); stroke-width: 3; }
+.waiting-ring-progress { fill: none; stroke: #d4af37; stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.lock-ring-progress { fill: none; stroke: #d4af37; stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.waiting-core, .lock-core {
+    position: absolute; inset: 22px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #1a2b45 0%, #0a1628 100%);
+    border: 2px solid rgba(212,175,55,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    box-shadow: inset 0 3px 16px rgba(212,175,55,0.20), 0 16px 40px rgba(0,0,0,0.55);
+}
+.waiting-emoji, .lock-emoji { display: inline-block; animation: lockWiggle 4s ease-in-out infinite; }
+@keyframes lockWiggle { 0%,100% { transform: rotate(0deg); } 45% { transform: rotate(-8deg); } 55% { transform: rotate(8deg); } }
+.waiting-overlay h3, .closed-overlay h3 {
+    font-family: 'Tajawal', sans-serif; font-size: 22px;
+    margin-bottom: 12px; color: var(--accent-soft); font-weight: 800;
+}
+.waiting-overlay .waiting-sub, .closed-overlay .reason-text {
+    font-size: 13.5px; color: #cbd5e1; max-width: 400px;
+    line-height: 1.85; margin-bottom: 20px;
+}
+.closed-overlay .reason-text .highlight { color: var(--accent-soft); font-weight: 700; }
+.waiting-clock {
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 52px; font-weight: 800;
+    color: var(--accent-soft); font-variant-numeric: tabular-nums;
+    margin: 14px 0 6px; line-height: 1;
+}
+.waiting-clock-label {
+    font-size: 11.5px; color: #64748b;
+    letter-spacing: 2px; margin-bottom: 26px;
+    text-transform: uppercase;
+}
+.waiting-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.waiting-btn {
+    padding: 14px 28px; border-radius: 14px;
+    font-weight: 800; font-size: 13.5px;
+    border: none;
+    transition: all 0.4s var(--ease-smooth);
+}
+.waiting-btn.cancel {
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+    color: #0a1628;
+    box-shadow: 0 12px 32px rgba(212,175,55,0.45);
+}
+.waiting-btn.cancel:hover { transform: translateY(-4px) scale(1.02); }
 
-    .waiting-ring { position: relative; width: 150px; height: 150px; margin-bottom: 26px; z-index: 2; }
-    .waiting-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
-    .waiting-ring-bg { fill: none; stroke: rgba(212,175,55,0.14); stroke-width: 3; }
-    .waiting-ring-progress { fill: none; stroke: url(#goldGradWait); stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-    .waiting-core {
-        position: absolute; inset: 22px; border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #1a2b45 0%, #0a1628 100%);
-        border: 2px solid rgba(212,175,55,0.4);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 38px;
-        box-shadow: inset 0 3px 16px rgba(212,175,55,0.20), 0 16px 40px rgba(0,0,0,0.55);
-    }
-    .waiting-emoji { display: inline-block; animation: lockWiggle 4s ease-in-out infinite; }
-    @keyframes lockWiggle { 0%,100% { transform: rotate(0deg); } 45% { transform: rotate(-8deg); } 55% { transform: rotate(8deg); } }
+.countdown-display {
+    display: flex; align-items: baseline; gap: 6px; justify-content: center;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 60px; font-weight: 800;
+    color: var(--accent-soft); font-variant-numeric: tabular-nums;
+    margin-bottom: 10px; line-height: 1;
+}
+.countdown-display .unit { font-size: 17px; font-weight: 600; color: rgba(212,175,55,0.7); margin-right: 6px; margin-left: 14px; }
+.countdown-hint {
+    font-size: 12px; color: #64748b; letter-spacing: 2px;
+    margin-bottom: 30px; text-transform: uppercase;
+}
+.return-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
+    color: #0a1628; border: none;
+    padding: 16px 38px; border-radius: 15px;
+    font-weight: 800; font-size: 15px;
+    box-shadow: 0 12px 32px rgba(212,175,55,0.45);
+    transition: all 0.4s var(--ease-smooth);
+}
+.return-btn:hover { transform: translateY(-4px) scale(1.03); }
 
-    .waiting-overlay h3 {
-        font-family: 'Tajawal', sans-serif; font-size: 22px;
-        margin-bottom: 10px; color: var(--accent-soft); font-weight: 800;
-        z-index: 2; position: relative;
-    }
-    .waiting-overlay .waiting-sub {
-        font-size: 13.5px; color: #cbd5e1; max-width: 400px;
-        line-height: 1.85; margin-bottom: 20px;
-        z-index: 2; position: relative;
-    }
-    .waiting-clock {
-        font-family: 'SF Mono', 'Consolas', monospace;
-        font-size: 52px; font-weight: 800;
-        color: var(--accent-soft); font-variant-numeric: tabular-nums;
-        margin: 14px 0 6px; z-index: 2; position: relative; line-height: 1;
-    }
-    .waiting-clock-label {
-        font-size: 11.5px; color: #64748b;
-        letter-spacing: 2px; margin-bottom: 26px;
-        text-transform: uppercase; z-index: 2; position: relative;
-    }
-    .waiting-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; z-index: 2; position: relative; }
-    .waiting-btn {
-        padding: 14px 28px; border-radius: 14px;
-        font-weight: 800; font-size: 13.5px;
-        border: none; cursor: pointer;
-        transition: all 0.4s var(--ease-smooth);
-        font-family: inherit;
-    }
-    .waiting-btn.cancel {
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-        color: #0a1628;
-        box-shadow: 0 12px 32px rgba(212,175,55,0.45);
-    }
-    .waiting-btn.cancel:hover { transform: translateY(-4px) scale(1.02); }
+.suggestions { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 20px; background: var(--card-bg); border-top: 1px solid var(--border); }
+.chip {
+    background: transparent;
+    border: 1.5px solid rgba(212,175,55,0.55);
+    color: var(--accent);
+    padding: 8px 16px; border-radius: 22px;
+    font-size: 12.5px; font-weight: 700;
+    transition: all 0.3s var(--ease-smooth);
+}
+.chip:hover { color: #0a1628; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); border-color: transparent; }
+.input-area {
+    background: var(--card-bg); padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-end;
+    border-top: 1px solid var(--border);
+}
+.input-area textarea {
+    flex: 1; padding: 13px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 26px; resize: none;
+    min-height: 46px; max-height: 130px;
+    font-size: 14.5px; outline: none;
+    transition: all 0.3s var(--ease-smooth);
+    background: var(--input-bg); color: var(--text);
+}
+.input-area textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(212,175,55,0.15); }
+.input-area textarea:disabled { opacity: 0.55; cursor: not-allowed; }
+.send-btn {
+    width: 50px; height: 50px; border-radius: 50%; border: none;
+    background: linear-gradient(135deg, #0a1628, #1c3a5c 50%, #0a1628);
+    color: white; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.35s var(--ease-bounce);
+    box-shadow: 0 8px 20px rgba(10,22,40,0.35);
+    flex-shrink: 0;
+}
+.send-btn:hover:not(:disabled) { transform: scale(1.12); }
+.send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
 
-    /* Closed overlay */
-    .closed-overlay {
-        position: absolute; inset: 0;
-        background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.97) 0%, rgba(5,13,24,0.99) 80%);
-        backdrop-filter: blur(24px);
-        display: none; flex-direction: column;
-        align-items: center; justify-content: center;
-        z-index: 100; color: white;
-        padding: 28px; text-align: center;
-    }
-    .closed-overlay.show { display: flex; animation: overlayIn 0.55s var(--ease-smooth); }
-    .lock-shell { position: relative; width: 150px; height: 150px; margin-bottom: 30px; z-index: 2; }
-    .lock-shell svg { position: absolute; inset: 0; transform: rotate(-90deg); }
-    .lock-ring-bg { fill: none; stroke: rgba(212,175,55,0.14); stroke-width: 3; }
-    .lock-ring-progress { fill: none; stroke: url(#goldGrad); stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-    .lock-core {
-        position: absolute; inset: 22px; border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #1a2b45, #0a1628);
-        border: 2px solid rgba(212,175,55,0.4);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 38px;
-        box-shadow: inset 0 3px 16px rgba(212,175,55,0.20), 0 16px 40px rgba(0,0,0,0.55);
-    }
-    .lock-emoji { display: inline-block; animation: lockWiggle 4s ease-in-out infinite; }
-    .closed-overlay h3 {
-        font-family: 'Tajawal', sans-serif; font-size: 24px;
-        margin-bottom: 12px; color: var(--accent-soft); font-weight: 800;
-    }
-    .closed-overlay .reason-text {
-        font-size: 14px; color: #cbd5e1; max-width: 380px;
-        line-height: 1.9; margin-bottom: 26px;
-    }
-    .closed-overlay .reason-text .highlight { color: var(--accent-soft); font-weight: 700; }
-    .countdown-display {
-        display: flex; align-items: baseline; gap: 6px;
-        font-family: 'SF Mono', 'Consolas', monospace;
-        font-size: 60px; font-weight: 800;
-        color: var(--accent-soft); font-variant-numeric: tabular-nums;
-        margin-bottom: 10px; line-height: 1;
-    }
-    .countdown-display .unit { font-size: 17px; font-weight: 600; color: rgba(212,175,55,0.7); margin-right: 6px; margin-left: 14px; }
-    .countdown-hint {
-        font-size: 12px; color: #64748b; letter-spacing: 2px;
-        margin-bottom: 30px; text-transform: uppercase;
-    }
-    .return-btn {
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
-        color: #0a1628; border: none;
-        padding: 16px 38px; border-radius: 15px;
-        font-weight: 800; cursor: pointer; font-size: 15px;
-        box-shadow: 0 12px 32px rgba(212,175,55,0.45);
-        transition: all 0.4s var(--ease-smooth);
-    }
-    .return-btn:hover { transform: translateY(-4px) scale(1.03); }
-
-    /* Suggestions + Input */
-    .suggestions { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 20px; background: var(--card-bg); border-top: 1px solid var(--border); }
-    .chip {
-        background: transparent;
-        border: 1.5px solid rgba(212,175,55,0.55);
-        color: var(--accent);
-        padding: 8px 16px; border-radius: 22px;
-        font-size: 12.5px; cursor: pointer; font-weight: 700;
-        transition: all 0.3s var(--ease-smooth);
-    }
-    .chip:hover { color: #0a1628; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); border-color: transparent; }
-    .input-area {
-        background: var(--card-bg); padding: 14px 16px;
-        display: flex; gap: 12px; align-items: flex-end;
-        border-top: 1px solid var(--border);
-    }
-    .input-area textarea {
-        flex: 1; padding: 13px 20px;
-        border: 1.5px solid var(--border);
-        border-radius: 26px; resize: none;
-        min-height: 46px; max-height: 130px;
-        font-family: inherit; font-size: 14.5px; outline: none;
-        transition: all 0.3s var(--ease-smooth);
-        background: var(--input-bg); color: var(--text);
-    }
-    .input-area textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(212,175,55,0.15); }
-    .input-area textarea:disabled { opacity: 0.55; cursor: not-allowed; }
-    .send-btn {
-        width: 50px; height: 50px; border-radius: 50%; border: none;
-        background: linear-gradient(135deg, #0a1628, #1c3a5c 50%, #0a1628);
-        color: white; font-size: 20px; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        transition: all 0.35s var(--ease-bounce);
-        box-shadow: 0 8px 20px rgba(10,22,40,0.35);
-        flex-shrink: 0;
-    }
-    .send-btn:hover:not(:disabled) { transform: scale(1.12); }
-    .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
-
-    @media (max-width: 640px) {
-        .container { padding: 0 14px; margin: 16px auto; }
-        #welcome { padding: 38px 26px 32px; border-radius: 22px; }
-        #welcome h2 { font-size: 22px; }
-        .form-grid { grid-template-columns: 1fr; }
-        .bubble { max-width: 88%; font-size: 14px; }
-        header { padding: 16px 18px; }
-        header h1 { font-size: 17px; }
-        header h1 .brand { font-size: 15px; padding: 2px 8px; }
-        .theme-toggle { width: 38px; height: 38px; left: 12px; }
-        #musicToggle { top: 68px; left: 12px; width: 38px; height: 38px; }
-        #messages { padding: 20px 12px; max-height: 58vh; }
-        .chat-header { padding: 12px 14px; }
-        .expert-avatar { width: 46px; height: 46px; font-size: 18px; }
-        .expert-info h3 { font-size: 14.5px; }
-        .waiting-ring, .lock-shell { width: 120px; height: 120px; }
-        .waiting-core, .lock-core { font-size: 30px; inset: 18px; }
-        .waiting-clock { font-size: 42px; }
-        .countdown-display { font-size: 46px; }
-        .waiting-actions { flex-direction: column; width: 100%; }
-        .waiting-btn { width: 100%; }
-        .warning-actions { flex-direction: column; }
-        .warning-btn { width: 100%; }
-    }
+@media (max-width: 640px) {
+    .container { padding: 0 14px; margin: 16px auto; }
+    #welcome { padding: 38px 26px 32px; border-radius: 22px; }
+    #welcome h2 { font-size: 22px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .bubble { max-width: 88%; font-size: 14px; }
+    header { padding: 16px 18px; }
+    header h1 { font-size: 17px; }
+    header h1 .brand { font-size: 15px; padding: 2px 8px; }
+    .theme-toggle { width: 38px; height: 38px; left: 12px; }
+    #musicToggle { top: 68px; left: 12px; width: 38px; height: 38px; }
+    #messages { padding: 20px 12px; max-height: 58vh; }
+    .chat-header { padding: 12px 14px; }
+    .expert-avatar { width: 46px; height: 46px; font-size: 18px; }
+    .expert-info h3 { font-size: 14.5px; }
+    .waiting-ring, .lock-shell { width: 120px; height: 120px; }
+    .waiting-core, .lock-core { font-size: 30px; inset: 18px; }
+    .waiting-clock { font-size: 42px; }
+    .countdown-display { font-size: 46px; }
+    .waiting-actions { flex-direction: column; width: 100%; }
+    .waiting-btn { width: 100%; }
+    .warning-actions { flex-direction: column; }
+    .warning-btn { width: 100%; }
+}
 </style>
 </head>
 <body>
 
-<audio id="bgMusic" loop preload="auto" playsinline crossorigin="anonymous">
+<audio id="bgMusic" loop preload="auto" playsinline>
     <source src="https://cdn.jsdelivr.net/gh/ammarbusi0-bot/Ammar@main/VID_20260921_231229_590.mp4" type="audio/mp4">
-    <source src="https://raw.githubusercontent.com/ammarbusi0-bot/Ammar/main/VID_20260921_231229_590.mp4" type="audio/mp4">
 </audio>
 
 <button id="musicToggle" onclick="toggleMusic()" title="الموسيقى">🎵</button>
@@ -725,8 +640,7 @@
                     <option>سوريا</option><option>لبنان</option><option>فلسطين</option>
                     <option>اليمن</option><option>المغرب</option><option>الجزائر</option>
                     <option>تونس</option><option>ليبيا</option><option>السودان</option>
-                    <option>موريتانيا</option><option>الصومال</option><option>جيبوتي</option>
-                    <option>تركيا</option><option>أخرى</option>
+                    <option>أخرى</option>
                 </select>
             </div>
             <div class="form-group full">
@@ -756,13 +670,6 @@
         <div class="waiting-overlay" id="waitingOverlay">
             <div class="waiting-ring">
                 <svg viewBox="0 0 130 130">
-                    <defs>
-                        <linearGradient id="goldGradWait" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#d4af37"/>
-                            <stop offset="50%" stop-color="#f0d977"/>
-                            <stop offset="100%" stop-color="#d4af37"/>
-                        </linearGradient>
-                    </defs>
                     <circle class="waiting-ring-bg" cx="65" cy="65" r="58"/>
                     <circle class="waiting-ring-progress" id="waitingRing" cx="65" cy="65" r="58"/>
                 </svg>
@@ -780,13 +687,6 @@
         <div class="closed-overlay" id="closedOverlay">
             <div class="lock-shell">
                 <svg viewBox="0 0 130 130">
-                    <defs>
-                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#d4af37"/>
-                            <stop offset="50%" stop-color="#f0d977"/>
-                            <stop offset="100%" stop-color="#d4af37"/>
-                        </linearGradient>
-                    </defs>
                     <circle class="lock-ring-bg" cx="65" cy="65" r="58"/>
                     <circle class="lock-ring-progress" id="lockRing" cx="65" cy="65" r="58"/>
                 </svg>
@@ -820,9 +720,11 @@
 </div>
 
 <script>
-/* ═══ الموسيقى ═══ */
+/* ═══════════════════════════════════════════════════════════
+   الموسيقى
+   ═══════════════════════════════════════════════════════════ */
 const MUSIC_VOLUME = 0.35;
-let musicStarted = false, musicMuted = false, splashDone = false;
+let musicStarted = false, musicMuted = false;
 
 function startMusic() {
     if (musicStarted || musicMuted) return;
@@ -853,12 +755,10 @@ function toggleMusic() {
         btn.classList.add('muted'); btn.textContent = '🔇';
     }
 }
-function onStartClick() { startMusic(); splashDone = true; }
-['touchstart', 'click', 'keydown', 'pointerdown'].forEach(evt => {
-    document.addEventListener(evt, function firstTouch() { startMusic(); }, { once: true, passive: true });
-});
 
-/* ═══ البيانات ═══ */
+/* ═══════════════════════════════════════════════════════════
+   البيانات الثابتة
+   ═══════════════════════════════════════════════════════════ */
 const DIALECTS = {
     saudi: { flag: '🇸🇦', country: 'السعودية' }, emirati: { flag: '🇦🇪', country: 'الإمارات' },
     kuwaiti: { flag: '🇰🇼', country: 'الكويت' }, qatari: { flag: '🇶🇦', country: 'قطر' },
@@ -956,70 +856,51 @@ const REACTIONS = {
     saudi: ['تمام.', 'طيب.', 'خلني أشوف.', 'زين.'],
     emirati: ['تمام.', 'خلني أفكر.', 'إن شاء الله.'],
     kuwaiti: ['زين.', 'خلني أشوف.', 'إي والله.'],
-    qatari: ['تمام.', 'خلني أشوف.', 'أوكي.'],
-    bahraini: ['أوكي.', 'خلني أشوف.', 'زين.'],
-    omani: ['تمام.', 'طيب.', 'خلني أفكر.'],
     egyptian: ['ماشي.', 'طيب.', 'ثانية أشوف.'],
     syrian: ['طيب.', 'خليني شوف.', 'تمام.'],
     lebanese: ['طيب.', 'خليني فكر.', 'أوكي.'],
     jordanian: ['طيب.', 'خليني أفكر.', 'ماشي.'],
-    palestinian: ['طيب.', 'خليني أشوف.', 'ماشي.'],
     iraqi: ['زين.', 'خليني أشوف.', 'تمام.'],
-    yemeni: ['طيب.', 'خليني شوف.', 'زين.'],
     moroccan: ['واخا.', 'خليني نشوف.', 'صافي.'],
-    algerian: ['واخا.', 'خليني نشوف.', 'صافي.'],
     tunisian: ['باهي.', 'خليني نشوف.', 'صافي.'],
     sudanese: ['طيب.', 'خليني أشوف.', 'زين.']
 };
 const LATE_NIGHT_REACTIONS = ['أوكي.', 'خلني أشوف.', 'لحظة.', 'دقيقة.'];
 
 const DELAY_EXCUSES = {
-    slow_net: ['لحظة، النت عندي شوي ضعيف.', 'ثانية، الاتصال بيفصل عندي.', 'دقيقة، الإنترنت عندنا ضعيف.'],
-    checking: ['دقيقة، أراجع الشارت.', 'لحظة أشوف الأرقام.', 'ثانية، أتحقق من البيانات.'],
-    thinking: ['خليني أفكر شوي.', 'أحتاج دقيقة أفكر.', 'لحظة أرتب أفكاري.'],
-    busy_moment: ['دقيقة عندي اتصال ثاني.', 'لحظة، زميل يسألني.', 'ثانية، عندي أحد.'],
-    away_generic: ['سامحني، كنت بعيد عن الجهاز.', 'أعتذر على التأخير — كنت مشغول لحظتها.']
+    slow_net: ['لحظة، النت عندي شوي ضعيف.', 'ثانية، الاتصال بيفصل عندي.'],
+    checking: ['دقيقة، أراجع الشارت.', 'لحظة أشوف الأرقام.'],
+    thinking: ['خليني أفكر شوي.', 'أحتاج دقيقة أفكر.'],
+    busy_moment: ['دقيقة عندي اتصال ثاني.', 'لحظة، زميل يسألني.']
 };
 
-/* ═══ إعدادات وقت دوام المحلل ═══ */
+/* ═══════════════════════════════════════════════════════════
+   إعدادات وقت دوام المحلل
+   ═══════════════════════════════════════════════════════════ */
 const EXPERT_BASE_MS = 10 * 60 * 1000;
 const EXPERT_INCREMENT_MS = 5 * 60 * 1000;
 const EXPERT_MAX_MS = 30 * 60 * 1000;
 const WARNING_BEFORE_MS = 2 * 60 * 1000;
-
 const RETURN_TIME_RANGES = [[20, 40], [30, 60], [60, 90], [60, 120]];
 
-/* ═══ الحالة العامة ═══ */
+/* ═══════════════════════════════════════════════════════════
+   الحالة العامة
+   ═══════════════════════════════════════════════════════════ */
 let user = null, section = null, expert = null, history = [], busy = false;
 let progressTimer = null, delayExcuseTimer = null;
 let expertWarningTimer = null, expertExpireTimer = null, expertTickTimer = null;
 let waitingTickTimer = null, countdownTimer = null;
 let handoffInProgress = false;
+let splashDone = false;
 
 const CONVERSATIONS = {}, LAST_EXPERTS = {}, SESSIONS = {};
 const RESET_MIN_MS = 3 * 60 * 1000;
 const RESET_MAX_MS = 5 * 60 * 1000;
 const CLOSE_KEY = 'forg_closed_until';
 
-function getExpertTimeLimit(handoffCount) {
-    return Math.min(EXPERT_BASE_MS + handoffCount * EXPERT_INCREMENT_MS, EXPERT_MAX_MS);
-}
-function getReturnMinutes(handoffCount) {
-    const [min, max] = RETURN_TIME_RANGES[Math.min(handoffCount, RETURN_TIME_RANGES.length - 1)];
-    return Math.floor(min + Math.random() * (max - min));
-}
-function getSession(s) {
-    if (!SESSIONS[s]) {
-        SESSIONS[s] = {
-            handoffCount: 0, expertStartTime: Date.now(),
-            expertTimeLimit: EXPERT_BASE_MS, warned: false,
-            waitState: null, originalExpert: null
-        };
-    }
-    return SESSIONS[s];
-}
-
-/* ═══ أدوات عامة ═══ */
+/* ═══════════════════════════════════════════════════════════
+   أدوات عامة
+   ═══════════════════════════════════════════════════════════ */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 function esc(t) { const d = document.createElement('div'); d.innerText = t; return d.innerHTML; }
 function timeNow() {
@@ -1077,13 +958,32 @@ function getDelayExcuse() {
     const group = groups[Math.floor(Math.random() * groups.length)];
     return group[Math.floor(Math.random() * group.length)];
 }
+function getExpertTimeLimit(handoffCount) {
+    return Math.min(EXPERT_BASE_MS + handoffCount * EXPERT_INCREMENT_MS, EXPERT_MAX_MS);
+}
+function getReturnMinutes(handoffCount) {
+    const [min, max] = RETURN_TIME_RANGES[Math.min(handoffCount, RETURN_TIME_RANGES.length - 1)];
+    return Math.floor(min + Math.random() * (max - min));
+}
+function getSession(s) {
+    if (!SESSIONS[s]) {
+        SESSIONS[s] = {
+            handoffCount: 0, expertStartTime: Date.now(),
+            expertTimeLimit: EXPERT_BASE_MS, warned: false,
+            waitState: null, originalExpert: null
+        };
+    }
+    return SESSIONS[s];
+}
 
-/* ═══ Theme ═══ */
+/* ═══════════════════════════════════════════════════════════
+   Theme
+   ═══════════════════════════════════════════════════════════ */
 function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') || 'light';
     const next = cur === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('forg_theme', next);
+    try { localStorage.setItem('forg_theme', next); } catch (e) {}
     document.getElementById('themeBtn').textContent = next === 'light' ? '🌙' : '☀️';
 }
 function initThemeBtn() {
@@ -1091,64 +991,81 @@ function initThemeBtn() {
     document.getElementById('themeBtn').textContent = c === 'light' ? '🌙' : '☀️';
 }
 
-/* ═══ Splash ═══ */
-const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
+/* ═══════════════════════════════════════════════════════════
+   Splash
+   ═══════════════════════════════════════════════════════════ */
+const SPLASH_MSGS = [
+    'جاري تهيئة بيئة العمل...',
+    'الاتصال بالخادم...',
+    'تحميل بيانات المحللين...',
+    'اختيار فريق من 17 دولة...',
+    'تجهيز فريق الاستقبال...'
+];
 let splashP = 0, splashMsgIdx = 0;
+
+function finishSplash() {
+    if (splashDone) return;
+    splashDone = true;
+}
+
+function onStartClick() {
+    startMusic();
+    finishSplash();
+}
 
 function startSplash() {
     const fill = document.getElementById('splashFill');
     const msg = document.getElementById('splashMsg');
+    const splashEl = document.getElementById('splash');
+
     const interval = setInterval(() => {
         if (splashDone) splashP = 100;
-        else splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
+        else if (window.SERVER_READY) splashP = Math.min(splashP + 8, 100);
+        else splashP = Math.min(splashP + 1.2, 88);
+
         fill.style.width = splashP + '%';
         const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
         if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
+
         if (splashP >= 100) {
             clearInterval(interval);
             setTimeout(() => {
-                document.getElementById('splash').classList.add('fade');
+                splashEl.classList.add('fade');
                 setTimeout(() => {
-                    document.getElementById('splash').style.display = 'none';
+                    splashEl.style.display = 'none';
                     initView();
-                }, 800);
-            }, 400);
+                }, 700);
+            }, 300);
         }
     }, 200);
-    setTimeout(() => {
-        if (!window.SERVER_READY && splashP < 100) document.getElementById('splash').classList.add('waiting');
-    }, 4000);
-}
-function initView() {
-    initThemeBtn();
-    buildSectionGrid();
-    if (loadUser()) document.getElementById('home').classList.add('show');
-    else document.getElementById('welcome').classList.add('show');
-}
-function buildSectionGrid() {
-    document.getElementById('sectionGrid').innerHTML = Object.entries(SECTION_INFO).map(([key, info]) => `
-        <div class="card" onclick="openSection('${key}')">
-            <div class="card-badge">${info.online} متصل</div>
-            <div class="card-icon">${info.icon}</div>
-            <h3>${info.title}</h3>
-            <p>${info.desc}</p>
-        </div>
-    `).join('');
-}
-startSplash();
-setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
-/* ═══ المستخدم ═══ */
+    /* إظهار زر البدء بعد 4 ثوانٍ — مضمون */
+    setTimeout(() => {
+        if (!splashDone) splashEl.classList.add('waiting');
+    }, 4000);
+
+    /* إجبار الإغلاق بعد 15 ثانية */
+    setTimeout(() => {
+        if (!splashDone) {
+            splashDone = true;
+            if (!window.SERVER_READY) window.SERVER_READY = true;
+        }
+    }, 15000);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   المستخدم
+   ═══════════════════════════════════════════════════════════ */
 function loadUser() {
-    const s = localStorage.getItem('forg_user');
-    if (s) {
-        try {
+    try {
+        const s = localStorage.getItem('forg_user');
+        if (s) {
             user = JSON.parse(s);
-            if (!user.firstName) throw new Error();
+            if (!user || !user.firstName) throw new Error();
             showUserBar();
             return true;
-        } catch (e) { localStorage.removeItem('forg_user'); }
-    }
+        }
+    } catch (e) { try { localStorage.removeItem('forg_user'); } catch (_) {} }
     return false;
 }
 function saveUser() {
@@ -1163,7 +1080,7 @@ function saveUser() {
     if (!age || age < 15 || age > 100) return alert('أدخل عمراً صحيحاً');
     if (!country) return alert('اختر البلد');
     user = { firstName, lastName, age, country, experience: exp, reason };
-    localStorage.setItem('forg_user', JSON.stringify(user));
+    try { localStorage.setItem('forg_user', JSON.stringify(user)); } catch (e) {}
     showUserBar();
     document.getElementById('welcome').classList.remove('show');
     document.getElementById('home').classList.add('show');
@@ -1174,9 +1091,33 @@ function showUserBar() {
     document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
-/* ═══ اختيار المحلل ═══ */
+/* ═══════════════════════════════════════════════════════════
+   واجهة الأقسام
+   ═══════════════════════════════════════════════════════════ */
+function initView() {
+    initThemeBtn();
+    buildSectionGrid();
+    if (loadUser()) document.getElementById('home').classList.add('show');
+    else document.getElementById('welcome').classList.add('show');
+}
+function buildSectionGrid() {
+    const html = Object.entries(SECTION_INFO).map(([key, info]) => `
+        <div class="card" onclick="openSection('${key}')">
+            <div class="card-badge">${info.online} متصل</div>
+            <div class="card-icon">${info.icon}</div>
+            <h3>${info.title}</h3>
+            <p>${info.desc}</p>
+        </div>
+    `).join('');
+    document.getElementById('sectionGrid').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   اختيار المحلل
+   ═══════════════════════════════════════════════════════════ */
 function pickDifferentExpert(s) {
     const list = EXPERTS[s];
+    if (!list || !list.length) return null;
     const last = LAST_EXPERTS[s];
     const candidates = (last && list.length > 1) ? list.filter(e => e.name !== last.name) : list;
     const picked = candidates[Math.floor(Math.random() * candidates.length)];
@@ -1184,7 +1125,9 @@ function pickDifferentExpert(s) {
     return picked;
 }
 
-/* ═══ فتح قسم ═══ */
+/* ═══════════════════════════════════════════════════════════
+   فتح قسم
+   ═══════════════════════════════════════════════════════════ */
 function openSection(s) {
     section = s;
     getSession(s);
@@ -1202,9 +1145,9 @@ function openSection(s) {
         const c = CONVERSATIONS[s];
         if (c.resetTimer) { clearTimeout(c.resetTimer); c.resetTimer = null; }
         expert = c.expert;
-        history = c.history;
+        history = c.history || [];
         renderExpertHeader();
-        document.getElementById('messages').innerHTML = c.html;
+        document.getElementById('messages').innerHTML = c.html || '';
         if (c.suggestionsHidden) document.getElementById('suggestions').style.display = 'none';
         else showSuggestions(s);
         document.getElementById('home').classList.remove('show');
@@ -1238,6 +1181,7 @@ function openSection(s) {
 
 function setupChatForSection(s, showWelcome) {
     expert = pickDifferentExpert(s);
+    if (!expert) return alert('خطأ في تحميل المحلل');
     history = [];
     renderExpertHeader();
     document.getElementById('messages').innerHTML = '';
@@ -1261,18 +1205,19 @@ function setupChatForSection(s, showWelcome) {
 
     if (showWelcome) {
         setTimeout(async () => {
+            if (section !== s) return;
             const hour = new Date().getHours();
             const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
             const welcomes = [
-                `${greet} ${user.firstName}.\nعندنا ضغوطات اليوم، لكن فريق العمل سيعالج رسالتك.\nمعك ${expert.name}، ${expert.role} بخبرة ${expert.years}.\nتفضل بسؤالك وأنا بالخدمة.`,
-                `${greet}.\nالمنصة مزدحمة قليلاً، بتحمّلنا شوي؟\nأنا ${expert.name}، ${expert.role}.\nاكتب سؤالك وسأعود إليك بأسرع وقت.`,
-                `${greet} ${user.firstName}.\nنعتذر مسبقاً إذا تأخرنا قليلاً، في ضغوطات.\nمعك ${expert.name}، ${expert.role}.\nتفضل بسؤالك.`
+                `${greet} ${user.firstName}.\nمعك ${expert.name}، ${expert.role} بخبرة ${expert.years}.\nتفضل بسؤالك وأنا بالخدمة.`,
+                `${greet}.\nأنا ${expert.name}، ${expert.role}.\nاكتب سؤالك وسأعود إليك بأسرع وقت.`
             ];
             const welcome = welcomes[Math.floor(Math.random() * welcomes.length)];
             setExpertStatus('typing');
             showTypingIndicator();
             await sleep(calcHumanTypingTime(welcome));
             hideTypingIndicator();
+            if (section !== s) return;
             addBubble('expert', welcome);
             history.push({ role: 'assistant', content: welcome, at: Date.now() });
             if (CONVERSATIONS[s]) {
@@ -1284,12 +1229,14 @@ function setupChatForSection(s, showWelcome) {
     } else {
         startExpertTimer();
     }
+
     setTimeout(() => {
         if (!document.getElementById('input').disabled) document.getElementById('input').focus();
     }, 600);
 }
 
 function renderExpertHeader() {
+    if (!expert) return;
     const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي' };
     const avatar = document.getElementById('expAvatar');
     const info = document.querySelector('.expert-info p');
@@ -1302,4 +1249,830 @@ function renderExpertHeader() {
 
 function showSuggestions(s) {
     const c = document.getElementById('suggestions');
-    c.innerHTML = (SUGGESTIONS[s] || []).map(t => `<div class="chip" onclick="useSug('${t.replace(/'/g, "\\'")}')">${t}</div>`
+    const list = SUGGESTIONS[s] || [];
+    c.innerHTML = list.map(t => `<div class="chip" onclick="useSug(${JSON.stringify(t).replace(/"/g, '&quot;')})">${esc(t)}</div>`).join('');
+    c.style.display = 'flex';
+}
+function useSug(t) {
+    if (document.getElementById('input').disabled) return;
+    document.getElementById('input').value = t;
+    document.getElementById('input').focus();
+}
+
+function goBack() {
+    if (section && CONVERSATIONS[section]) {
+        const c = CONVERSATIONS[section];
+        c.html = document.getElementById('messages').innerHTML;
+        c.history = history;
+        c.suggestionsHidden = document.getElementById('suggestions').style.display === 'none';
+        if (c.resetTimer) clearTimeout(c.resetTimer);
+        const secAtTime = section;
+        const delay = RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS);
+        c.resetTimer = setTimeout(() => { delete CONVERSATIONS[secAtTime]; }, delay);
+    }
+    clearTimeout(expertWarningTimer);
+    clearTimeout(expertExpireTimer);
+    clearInterval(expertTickTimer);
+    clearInterval(waitingTickTimer);
+    clearInterval(countdownTimer);
+    clearTimeout(delayExcuseTimer);
+    handoffInProgress = false;
+    document.getElementById('closedOverlay').classList.remove('show');
+    document.getElementById('waitingOverlay').classList.remove('show');
+    document.getElementById('chat').classList.remove('show');
+    document.getElementById('home').classList.add('show');
+    section = null; expert = null; history = [];
+}
+
+/* ═══════════════════════════════════════════════════════════
+   مؤقت دوام المحلل
+   ═══════════════════════════════════════════════════════════ */
+function startExpertTimer() {
+    if (!section) return;
+    const sess = getSession(section);
+    sess.expertStartTime = Date.now();
+    sess.expertTimeLimit = getExpertTimeLimit(sess.handoffCount);
+    sess.warned = false;
+    resumeExpertTimer();
+}
+
+function resumeExpertTimer() {
+    if (!section) return;
+    clearTimeout(expertWarningTimer);
+    clearTimeout(expertExpireTimer);
+    clearInterval(expertTickTimer);
+    if (handoffInProgress) return;
+    if (document.getElementById('waitingOverlay').classList.contains('show')) return;
+    if (document.getElementById('closedOverlay').classList.contains('show')) return;
+
+    const sess = getSession(section);
+    const elapsed = Date.now() - sess.expertStartTime;
+    const remaining = Math.max(0, sess.expertTimeLimit - elapsed);
+    const untilWarning = Math.max(0, remaining - WARNING_BEFORE_MS);
+
+    updateExpertTimerBadge();
+    expertTickTimer = setInterval(updateExpertTimerBadge, 1000);
+
+    if (remaining <= 0) {
+        if (!sess.warned) {
+            showExpertWarning();
+            expertExpireTimer = setTimeout(() => handleExpertTimeUp(), WARNING_BEFORE_MS);
+        } else {
+            autoSwitchExpert();
+        }
+        return;
+    }
+
+    if (!sess.warned) {
+        expertWarningTimer = setTimeout(() => showExpertWarning(), untilWarning);
+    }
+    expertExpireTimer = setTimeout(() => handleExpertTimeUp(), remaining);
+}
+
+function updateExpertTimerBadge() {
+    const timerEl = document.getElementById('expTimer');
+    if (!timerEl || !section) return;
+    const sess = getSession(section);
+    const remaining = Math.max(0, sess.expertTimeLimit - (Date.now() - sess.expertStartTime));
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    timerEl.textContent = `⏱ ${m}:${String(s).padStart(2,'0')}`;
+    if (remaining <= WARNING_BEFORE_MS) timerEl.classList.add('warning');
+    else timerEl.classList.remove('warning');
+}
+
+function pauseExpertTimer() {
+    clearTimeout(expertWarningTimer);
+    clearTimeout(expertExpireTimer);
+    clearInterval(expertTickTimer);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   تحذير انتهاء الوقت
+   ═══════════════════════════════════════════════════════════ */
+async function showExpertWarning() {
+    if (!section || handoffInProgress) return;
+    if (document.getElementById('waitingOverlay').classList.contains('show')) return;
+    if (document.getElementById('closedOverlay').classList.contains('show')) return;
+    const sess = getSession(section);
+    if (sess.warned) return;
+    sess.warned = true;
+
+    const returnMinutes = getReturnMinutes(sess.handoffCount);
+    sess.waitState = { returnMinutes, originalExpert: expert };
+
+    const warningMsg = `سامحني، باقي عندي دقيقتين بس وأنتهي.`;
+    setExpertStatus('typing');
+    showTypingIndicator();
+    await sleep(calcHumanTypingTime(warningMsg));
+    hideTypingIndicator();
+    addBubble('expert', warningMsg);
+
+    await sleep(700);
+    addWarningCard(expert.name, returnMinutes);
+}
+
+function addWarningCard(expertName, returnMinutes) {
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'warning-bubble';
+    w.id = 'warningCard';
+    w.innerHTML = `
+        <div class="warning-head">
+            <span class="icon">⏳</span>
+            <span>خياران قبل أن أنتهي</span>
+        </div>
+        <div class="warning-body">
+            <strong>أنا ${esc(expertName)}</strong>، ودوامي ينتهي بعد دقيقتين.<br>
+            تحب <strong>تنتظرني</strong> وأرجع لك بعد <strong>${returnMinutes} دقيقة</strong>؟<br>
+            أو <strong>أحوّلك لزميل</strong> الآن؟
+        </div>
+        <div class="warning-actions">
+            <button class="warning-btn wait" onclick="chooseWait(${returnMinutes})">
+                ⏳ انتظرك ترجع بعد ${returnMinutes} دقيقة
+            </button>
+            <button class="warning-btn switch" onclick="chooseSwitchNow()">
+                🔄 حوّلني لزميل
+            </button>
+        </div>
+    `;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+}
+
+function resolveWarningCard(choice) {
+    const card = document.getElementById('warningCard');
+    if (!card) return;
+    card.classList.add('resolved');
+    const actions = card.querySelector('.warning-actions');
+    if (actions) actions.remove();
+    const footer = document.createElement('div');
+    footer.style.cssText = 'margin-top:10px;text-align:center;font-size:11.5px;color:var(--muted);font-weight:700;';
+    footer.textContent = choice === 'wait' ? '✓ اخترت الانتظار' : '✓ اخترت التبديل';
+    card.appendChild(footer);
+}
+
+async function handleExpertTimeUp() {
+    if (!section || handoffInProgress) return;
+    const sess = getSession(section);
+    if (!sess.waitState || !sess.waitState.chosen) autoSwitchExpert();
+}
+
+async function autoSwitchExpert() {
+    if (!section || handoffInProgress) return;
+    handoffInProgress = true;
+    resolveWarningCard('switch');
+    await sleep(400);
+
+    const farewell = 'أعتذر، لازم أروح. بحوّلك لزميلي.';
+    setExpertStatus('typing');
+    showTypingIndicator();
+    await sleep(calcHumanTypingTime(farewell));
+    hideTypingIndicator();
+    addBubble('expert', farewell);
+    history.push({ role: 'assistant', content: farewell, at: Date.now() });
+    await sleep(1200);
+    await doHandoff();
+}
+
+async function chooseWait(returnMinutes) {
+    if (!section || handoffInProgress) return;
+    const sess = getSession(section);
+    sess.waitState = { ...sess.waitState, chosen: 'wait', returnMinutes, waitStartTime: Date.now() };
+    resolveWarningCard('wait');
+    pauseExpertTimer();
+
+    const bye = `طيب، أنتظرك. أرجع لك بعد ${returnMinutes} دقيقة.`;
+    setExpertStatus('typing');
+    showTypingIndicator();
+    await sleep(calcHumanTypingTime(bye));
+    hideTypingIndicator();
+    addBubble('expert', bye);
+    history.push({ role: 'assistant', content: bye, at: Date.now() });
+
+    if (CONVERSATIONS[section]) {
+        CONVERSATIONS[section].history = history;
+        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+    }
+
+    await sleep(800);
+    showWaitingOverlay(returnMinutes);
+}
+
+async function chooseSwitchNow() {
+    if (!section || handoffInProgress) return;
+    const sess = getSession(section);
+    sess.waitState = { ...sess.waitState, chosen: 'switch' };
+    resolveWarningCard('switch');
+    handoffInProgress = true;
+    pauseExpertTimer();
+    await sleep(400);
+
+    const farewell = 'طيب، بحوّلك لزميلي الحين.';
+    setExpertStatus('typing');
+    showTypingIndicator();
+    await sleep(calcHumanTypingTime(farewell));
+    hideTypingIndicator();
+    addBubble('expert', farewell);
+    history.push({ role: 'assistant', content: farewell, at: Date.now() });
+    await sleep(1200);
+    await doHandoff();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   التبديل الفعلي
+   ═══════════════════════════════════════════════════════════ */
+async function doHandoff() {
+    if (!section) { handoffInProgress = false; return; }
+    const secAtTime = section;
+    const sess = getSession(section);
+    const oldExpert = expert;
+
+    addSystemBubble('تم تحويلك إلى محلل آخر');
+    await sleep(1400);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
+
+    const newExpert = pickDifferentExpert(section);
+    if (!newExpert) { handoffInProgress = false; return; }
+    expert = newExpert;
+
+    const avatar = document.getElementById('expAvatar');
+    const nameEl = document.getElementById('expName');
+    avatar.classList.add('switching');
+    nameEl.classList.add('switching');
+    await sleep(400);
+    renderExpertHeader();
+    avatar.classList.remove('switching');
+    nameEl.classList.remove('switching');
+
+    sess.handoffCount++;
+    sess.warned = false;
+    sess.waitState = null;
+    sess.expertStartTime = Date.now();
+    sess.expertTimeLimit = getExpertTimeLimit(sess.handoffCount);
+
+    await sleep(1000);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
+
+    let greeting = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
+    let greetingTypingMs = 2200;
+
+    try {
+        const lastUserMsg = [...history].reverse().find(h => h.role === 'user')?.content || '';
+        const gr = await fetch('/api/handoff', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                section, newExpert, oldExpert, lastUserMsg, user,
+                dialect: newExpert.dialect,
+                handoffCount: sess.handoffCount - 1
+            })
+        });
+        if (gr.ok) {
+            const gd = await gr.json();
+            if (gd.replies && gd.replies[0]) {
+                greeting = gd.replies[0];
+                greetingTypingMs = gd.timing?.perReply?.[0] || 2200;
+            }
+        }
+    } catch (e) { /* fallback */ }
+
+    if (section !== secAtTime) { handoffInProgress = false; return; }
+
+    setExpertStatus('typing');
+    showTypingIndicator();
+    await sleep(greetingTypingMs);
+    hideTypingIndicator();
+    addBubble('expert', greeting);
+    history.push({ role: 'assistant', content: greeting, at: Date.now() });
+
+    if (CONVERSATIONS[section]) {
+        CONVERSATIONS[section].expert = newExpert;
+        CONVERSATIONS[section].history = history;
+        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+    }
+
+    handoffInProgress = false;
+    resumeExpertTimer();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   الانتظار
+   ═══════════════════════════════════════════════════════════ */
+function showWaitingOverlay(returnMinutes) {
+    const overlay = document.getElementById('waitingOverlay');
+    const clockEl = document.getElementById('waitingClock');
+    const titleEl = document.getElementById('waitingTitle');
+    const subEl = document.getElementById('waitingSub');
+    const ring = document.getElementById('waitingRing');
+    const radius = 58;
+    const circumference = 2 * Math.PI * radius;
+    ring.style.strokeDasharray = `${circumference} ${circumference}`;
+
+    const sess = getSession(section);
+    if (!sess.waitState) return;
+    const returnAt = sess.waitState.waitStartTime + returnMinutes * 60 * 1000;
+    const totalMs = returnMinutes * 60 * 1000;
+    const safeTotal = Math.max(totalMs, 1000);
+
+    titleEl.textContent = `في انتظار ${sess.waitState.originalExpert.name}`;
+    subEl.textContent = `${sess.waitState.originalExpert.name} ستعود بعد ${returnMinutes} دقيقة. يمكنك الانتظار أو التبديل لزميل.`;
+    overlay.classList.add('show');
+    document.getElementById('input').disabled = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    const tick = () => {
+        const remaining = Math.max(0, returnAt - Date.now());
+        const m = Math.floor(remaining / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        clockEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        const ratio = Math.max(0, Math.min(1, remaining / safeTotal));
+        ring.style.strokeDashoffset = circumference * (1 - ratio);
+        if (remaining <= 0) {
+            clearInterval(waitingTickTimer);
+            endWaiting('returned');
+        }
+    };
+    tick();
+    waitingTickTimer = setInterval(tick, 1000);
+}
+
+async function cancelWaiting() {
+    if (!section) return;
+    clearInterval(waitingTickTimer);
+    const sess = getSession(section);
+    sess.waitState = null;
+    document.getElementById('waitingOverlay').classList.remove('show');
+    document.getElementById('input').disabled = false;
+    document.getElementById('sendBtn').disabled = false;
+
+    handoffInProgress = true;
+    addSystemBubble('ألغيت الانتظار — جاري التبديل لزميل');
+    await sleep(1200);
+    await doHandoff();
+}
+
+async function endWaiting(reason) {
+    clearInterval(waitingTickTimer);
+    document.getElementById('waitingOverlay').classList.remove('show');
+    document.getElementById('input').disabled = false;
+    document.getElementById('sendBtn').disabled = false;
+
+    if (!section) return;
+    const secAtTime = section;
+    const sess = getSession(section);
+    if (reason === 'returned' && sess.waitState?.originalExpert) {
+        expert = sess.waitState.originalExpert;
+        sess.waitState = null;
+        sess.warned = false;
+        sess.expertStartTime = Date.now();
+        sess.expertTimeLimit = getExpertTimeLimit(sess.handoffCount);
+        renderExpertHeader();
+
+        addSystemBubble(`${expert.name} عاد الآن`);
+        await sleep(800);
+        if (section !== secAtTime) return;
+
+        const greeting = `أهلاً، رجعت. نكمل من وين توقفنا؟`;
+        setExpertStatus('typing');
+        showTypingIndicator();
+        await sleep(calcHumanTypingTime(greeting));
+        hideTypingIndicator();
+        addBubble('expert', greeting);
+        history.push({ role: 'assistant', content: greeting, at: Date.now() });
+
+        if (CONVERSATIONS[section]) {
+            CONVERSATIONS[section].expert = expert;
+            CONVERSATIONS[section].history = history;
+            CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+        }
+
+        resumeExpertTimer();
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   عرض الرسائل
+   ═══════════════════════════════════════════════════════════ */
+function setExpertStatus(status) {
+    const el = document.querySelector('.expert-info .status-text');
+    const info = document.querySelector('.expert-info p');
+    const avatar = document.getElementById('expAvatar');
+    if (!el) return;
+    avatar.classList.remove('busy', 'typing');
+    info.classList.remove('typing-status', 'busy-status');
+    if (status === 'busy') { el.textContent = 'مشغول قليلاً...'; info.classList.add('busy-status'); avatar.classList.add('busy'); }
+    else if (status === 'typing') { el.textContent = 'يكتب الآن...'; info.classList.add('typing-status'); avatar.classList.add('typing'); }
+    else { el.textContent = 'متصل الآن'; }
+}
+
+function addBubble(who, text, isError) {
+    const wrap = document.createElement('div');
+    wrap.className = `bubble-wrap ${who}`;
+    const name = who === 'user' ? (user?.firstName || 'أنت') : (expert ? expert.name : 'النظام');
+    wrap.innerHTML = `
+        <div class="bubble">
+            <div class="sender">${esc(name)}</div>
+            <div class="bubble-content">${isError ? esc(text) : formatText(text)}</div>
+            <div class="time-row">
+                ${who === 'user' ? '<span class="checks sent">✓</span>' : ''}
+                <span class="time">${timeNow()}</span>
+            </div>
+        </div>
+    `;
+    const m = document.getElementById('messages');
+    m.appendChild(wrap);
+    m.scrollTop = m.scrollHeight;
+    if (who === 'user') {
+        const ck = wrap.querySelector('.checks');
+        setTimeout(() => {
+            if (ck && !ck.classList.contains('read')) {
+                ck.textContent = '✓✓';
+                ck.classList.add('delivered');
+                ck.classList.remove('sent');
+            }
+        }, 900 + Math.random() * 800);
+        wrap.dataset.pendingRead = 'true';
+    }
+    return wrap;
+}
+
+function addSystemBubble(text) {
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'system-bubble';
+    w.style.cssText = 'text-align:center;margin:16px auto;max-width:82%;background:rgba(212,175,55,0.10);color:var(--muted);padding:8px 16px;border-radius:18px;font-size:12px;font-weight:600;border:1px solid rgba(212,175,55,0.20);';
+    w.textContent = text;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+}
+
+function markLastUserRead() {
+    const pending = document.querySelectorAll('[data-pending-read="true"]');
+    if (!pending.length) return;
+    const lastWrap = pending[pending.length - 1];
+    const ck = lastWrap.querySelector('.checks');
+    if (ck) {
+        ck.textContent = '✓✓';
+        ck.classList.add('read');
+        ck.classList.remove('delivered', 'sent');
+    }
+    lastWrap.dataset.pendingRead = 'false';
+}
+
+function startProgress() {
+    const bar = document.getElementById('progressBar');
+    const fill = document.getElementById('progressFill');
+    bar.classList.add('show');
+    let p = 0;
+    progressTimer = setInterval(() => {
+        p = Math.min(p + Math.random() * 4, 88);
+        fill.style.width = p + '%';
+    }, 400);
+}
+function finishProgress() {
+    clearInterval(progressTimer);
+    const fill = document.getElementById('progressFill');
+    fill.style.width = '100%';
+    setTimeout(() => {
+        document.getElementById('progressBar').classList.remove('show');
+        fill.style.width = '0%';
+    }, 500);
+}
+
+function showTypingIndicator() {
+    if (document.getElementById('typing-indicator')) return;
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'bubble-wrap expert';
+    w.id = 'typing-indicator';
+    const name = expert ? expert.name : 'المحلل';
+    w.innerHTML = `<div class="bubble"><div class="sender">${esc(name)}</div><div class="typing"><span></span><span></span><span></span></div></div>`;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+    setExpertStatus('typing');
+}
+function hideTypingIndicator() {
+    const t = document.getElementById('typing-indicator');
+    if (t) t.remove();
+    setExpertStatus('online');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   إغلاق مؤقت
+   ═══════════════════════════════════════════════════════════ */
+function getClosureInfo(s) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        const entry = stored[s];
+        if (!entry) return null;
+        if (Date.now() >= entry.until) {
+            delete stored[s];
+            localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+            return null;
+        }
+        return entry;
+    } catch (e) { return null; }
+}
+function setClosureInfo(s, until, reason) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        stored[s] = { until, reason };
+        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+    } catch (e) {}
+}
+function clearClosureInfo(s) {
+    try {
+        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
+        delete stored[s];
+        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
+    } catch (e) {}
+}
+function isChatClosed() {
+    if (!section) return false;
+    const info = getClosureInfo(section);
+    return !!(info && Date.now() < info.until);
+}
+function closeChat(seconds, reason) {
+    const until = Date.now() + seconds * 1000;
+    setClosureInfo(section, until, reason);
+    showClosedOverlay(until, reason);
+}
+
+function showClosedOverlay(until, reason) {
+    pauseExpertTimer();
+    const overlay = document.getElementById('closedOverlay');
+    const reasonEl = document.getElementById('closedReason');
+    const ring = document.getElementById('lockRing');
+    const cdMin = document.getElementById('cdMin');
+    const cdSec = document.getElementById('cdSec');
+
+    const reasonText = {
+        user_done: 'انتهت الاستشارة بناءً على <span class="highlight">رغبتك</span>. شكراً لتواصلك.',
+        trolling: 'أُغلقت بسبب <span class="highlight">محتوى غير جدي</span>. نأمل عودتك بجدية.',
+        bored: 'يبدو أن الموضوع <span class="highlight">ما شدّك</span>. نأخذ استراحة قصيرة.',
+        deep_close: '<span class="highlight">محادثة طويلة</span> — نأخذ استراحة قصيرة قبل المتابعة.',
+        rude: 'أُغلقت بسبب <span class="highlight">الإساءة</span>. نحن هنا لمساعدتك باحترام.',
+        wants_else: 'يبدو أنك <span class="highlight">تفضّل موضوعاً آخر</span>. اختر قسماً جديداً.',
+        inactivity: 'يبدو أنك <span class="highlight">مشغول حالياً</span>. نأخذ استراحة، ونحن هنا عندما تعود.'
+    }[reason] || 'المحادثة مغلقة مؤقتاً. يمكنك العودة بعد انتهاء العدّ التنازلي.';
+
+    reasonEl.innerHTML = reasonText;
+    overlay.classList.add('show');
+
+    document.getElementById('input').disabled = true;
+    document.getElementById('input').placeholder = 'المحادثة مغلقة مؤقتاً...';
+    document.getElementById('sendBtn').disabled = true;
+
+    const initialTotal = Math.max(1, Math.floor((until - Date.now()) / 1000));
+    const radius = 58;
+    const circumference = 2 * Math.PI * radius;
+    ring.style.strokeDasharray = `${circumference} ${circumference}`;
+
+    const tick = () => {
+        const remaining = Math.max(0, Math.floor((until - Date.now()) / 1000));
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        cdMin.textContent = String(m).padStart(2,'0');
+        cdSec.textContent = String(s).padStart(2,'0');
+        const ratio = Math.max(0, Math.min(1, remaining / initialTotal));
+        ring.style.strokeDashoffset = circumference * (1 - ratio);
+
+        if (remaining <= 0) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+            overlay.classList.remove('show');
+            const s2 = section;
+            if (s2) clearClosureInfo(s2);
+            document.getElementById('input').disabled = false;
+            document.getElementById('input').placeholder = 'اكتب استفسارك...';
+            document.getElementById('sendBtn').disabled = false;
+            if (s2) {
+                const sess = getSession(s2);
+                sess.handoffCount = 0;
+                sess.warned = false;
+                sess.waitState = null;
+                const newExpert = pickDifferentExpert(s2);
+                expert = newExpert;
+                renderExpertHeader();
+                setTimeout(async () => {
+                    if (section !== s2 || !newExpert) return;
+                    const greeting = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
+                    setExpertStatus('typing');
+                    showTypingIndicator();
+                    await sleep(calcHumanTypingTime(greeting));
+                    hideTypingIndicator();
+                    addBubble('expert', greeting);
+                    history.push({ role: 'assistant', content: greeting, at: Date.now() });
+                    if (CONVERSATIONS[s2]) {
+                        CONVERSATIONS[s2].expert = newExpert;
+                        CONVERSATIONS[s2].history = history;
+                        CONVERSATIONS[s2].html = document.getElementById('messages').innerHTML;
+                    }
+                    startExpertTimer();
+                }, 600);
+            }
+        }
+    };
+    tick();
+    clearInterval(countdownTimer);
+    countdownTimer = setInterval(tick, 1000);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   عذر التأخر
+   ═══════════════════════════════════════════════════════════ */
+function scheduleDelayExcuse() {
+    clearTimeout(delayExcuseTimer);
+    delayExcuseTimer = setTimeout(async () => {
+        if (!busy || isChatClosed()) return;
+        const excuse = getDelayExcuse();
+        setExpertStatus('typing');
+        showTypingIndicator();
+        await sleep(calcHumanTypingTime(excuse));
+        hideTypingIndicator();
+        addBubble('expert', excuse);
+        history.push({ role: 'assistant', content: excuse, at: Date.now() });
+        setExpertStatus('busy');
+    }, 7000 + Math.random() * 3000);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   إرسال رسالة
+   ═══════════════════════════════════════════════════════════ */
+async function sendMsg() {
+    const input = document.getElementById('input');
+    const text = input.value.trim();
+    if (!text || busy) return;
+
+    if (isChatClosed()) {
+        const info = getClosureInfo(section);
+        if (info) showClosedOverlay(info.until, info.reason);
+        return;
+    }
+    if (handoffInProgress) return;
+    if (document.getElementById('waitingOverlay').classList.contains('show')) return;
+
+    const secAtTime = section;
+    input.value = '';
+    input.style.height = 'auto';
+    addBubble('user', text);
+    history.push({ role: 'user', content: text, at: Date.now() });
+    document.getElementById('suggestions').style.display = 'none';
+
+    if (section && CONVERSATIONS[section]?.resetTimer) {
+        clearTimeout(CONVERSATIONS[section].resetTimer);
+        CONVERSATIONS[section].resetTimer = null;
+    }
+
+    busy = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    setExpertStatus('online');
+    await sleep(calcReadDelay(text));
+    if (section !== secAtTime) { busy = false; return; }
+    markLastUserRead();
+
+    await sleep(400 + Math.random() * 600);
+    if (section !== secAtTime) { busy = false; return; }
+    setExpertStatus('busy');
+    startProgress();
+    scheduleDelayExcuse();
+
+    const sess = getSession(section);
+    const isAfterHandoff = sess.handoffCount > 0 && history.filter(h => h.role === 'user').length === 1;
+
+    const fetchPromise = fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            section, query: text, user, expert,
+            history: history.slice(-6),
+            dialect: expert.dialect,
+            context: { type: isAfterHandoff ? 'handoff' : 'normal', gapMs: 0 }
+        })
+    });
+
+    try {
+        const res = await fetchPromise;
+        clearTimeout(delayExcuseTimer);
+        const raw = await res.text();
+        let data = {};
+        try { data = JSON.parse(raw); } catch (e) {
+            finishProgress(); setExpertStatus('online');
+            addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
+            busy = false;
+            if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
+            return;
+        }
+
+        if (res.status === 429 && data.cooldown) {
+            finishProgress(); setExpertStatus('online');
+            busy = false;
+            document.getElementById('sendBtn').disabled = false;
+            closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
+            return;
+        }
+        if (!res.ok) {
+            finishProgress(); setExpertStatus('online');
+            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
+            busy = false;
+            if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
+            return;
+        }
+        finishProgress();
+
+        const replies = data.replies || [];
+        if (section !== secAtTime) { busy = false; return; }
+
+        if (replies.length > 0 && Math.random() < 0.4) {
+            const reaction = getReaction(expert.dialect);
+            setExpertStatus('typing');
+            showTypingIndicator();
+            await sleep(calcHumanTypingTime(reaction));
+            hideTypingIndicator();
+            if (section !== secAtTime) { busy = false; return; }
+            addBubble('expert', reaction);
+            history.push({ role: 'assistant', content: reaction, at: Date.now() });
+            await sleep(500 + Math.random() * 700);
+        } else {
+            await sleep(700 + Math.random() * 900);
+        }
+
+        for (let i = 0; i < replies.length; i++) {
+            const segments = splitIntoMessages(replies[i]);
+            for (let j = 0; j < segments.length; j++) {
+                const seg = segments[j];
+                setExpertStatus('typing');
+                showTypingIndicator();
+                await sleep(calcHumanTypingTime(seg));
+                hideTypingIndicator();
+                if (section !== secAtTime) { busy = false; return; }
+                addBubble('expert', seg);
+                history.push({ role: 'assistant', content: seg, at: Date.now() });
+                if (j < segments.length - 1) {
+                    setExpertStatus('busy');
+                    await sleep(600 + Math.random() * 900);
+                }
+            }
+            if (i < replies.length - 1) {
+                setExpertStatus('busy');
+                await sleep(500 + Math.random() * 800);
+            }
+        }
+
+        if (section && CONVERSATIONS[section]) {
+            CONVERSATIONS[section].history = history;
+            CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+        }
+
+        if (data.closed && data.cooldownMinutes) {
+            setTimeout(() => closeChat(data.cooldownMinutes * 60, data.closeReason), 1200);
+        }
+    } catch (e) {
+        clearTimeout(delayExcuseTimer);
+        finishProgress(); setExpertStatus('online');
+        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.`, true);
+    } finally {
+        busy = false;
+        if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
+        setExpertStatus('online');
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   التهيئة
+   ═══════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    const inp = document.getElementById('input');
+    if (inp) {
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+        });
+        inp.addEventListener('input', () => {
+            inp.style.height = 'auto';
+            inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+        });
+    }
+    /* بدء الـ splash */
+    startSplash();
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!section) return;
+    if (document.hidden) pauseExpertTimer();
+    else resumeExpertTimer();
+});
+
+window.addEventListener('beforeunload', () => {
+    pauseExpertTimer();
+});
+
+/* بدء الموسيقى عند أول تفاعل */
+['touchstart', 'click', 'keydown', 'pointerdown'].forEach(evt => {
+    document.addEventListener(evt, function firstTouch() { startMusic(); }, { once: true, passive: true });
+});
+</script>
+
+</body>
+</html>
