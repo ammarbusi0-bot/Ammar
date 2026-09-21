@@ -47,29 +47,55 @@ async function refreshModels(force = false) {
 }
 refreshModels(true);
 
-// 🌸 قائمة ضخمة جداً للأسماء النسائية والجديدة
+/* ═══════════════════════════════════════════════════════════════
+   قاعدة الأسماء — موسّعة بكثافة (معظمها بنات)
+   ═══════════════════════════════════════════════════════════════ */
 const FEMALE_NAMES = new Set([
-    'فاطمة','زينب','مريم','خديجة','عائشة','حفصة','رقية','سكينة','نفيسة',
+    // فاطمة وعائلتها
+    'فاطمة','زينب','مريم','خديجة','عائشة','حفصة','رقية','سكينة','نفيسة','كلثوم',
+    // خليجي
     'سارة','نورة','نورا','ليلى','هند','منى','ريم','دانة','دانه','هيا','أمل','رنا','لينا','دينا',
-    'إيمان','سامية','سلمى','سلمي','نادية','ماريا','ليال','روان','جواهر','شهد','لطيفة','نوف',
-    'عبير','أسماء','أميرة','عهود','رغد','ريما','سمر','سهى','شذى','صفاء','ضحى','علا','غادة',
-    'فرح','لمى','لمار','مروة','ملاك','منال','مي','ميّ','هدى','وفاء','يارا',
-    'تالا','تولين','جوري','رتاج','ريفال','ليان','جنى','ديما','جمانة','كادي','ميلاف',
+    'جواهر','شهد','لطيفة','نوف','عبير','أسماء','أميرة','عهود','رغد','ريما','سمر','سهى','شذى',
+    'صفاء','ضحى','علا','غادة','فرح','لمى','لمار','مروة','ملاك','منال','مي','ميّ','هدى','وفاء','يارا',
+    'تالا','تولين','جوري','رتاج','ريفال','ليان','جنى','ديما','جمانة','دانا','كادي','ميلاف',
     'أروى','إسراء','آلاء','بشاير','بدور','تهاني','جميلة','حصة','حنان','خلود','دلال',
-    'رزان','رولا','رهام','سجى','سديم','سهام','شروق','صيتة','غالية',
-    'لجين','لولوة','مشاعل','منيرة','مها','مودة','ميسم','نجود','ندى','نوال','نهى',
-    'هاجر','وجدان','وضحى','ياسمين','يمنى','أنوار','أفنان','بشرى','حور','حوراء',
-    'رؤى','رفيف','رنيم','سلوى','سمية','سناء','شيماء','صابرين','عالية','عزيزة','عليا',
-    'غيداء','فدوى','قمر','كفاح','ماجدة','ملك','ميساء','نجلاء','نور','هالة','هبة',
-    'سلسبيل','دواني','تيما','ليان','آسيا','مياس','رفيف','سوار','غيد','باسلة','بنان',
-    'توليب','جوان','دارين','دجى','ريماس','زهور','سديم','سيرين','شادن','شمس','شموخ',
-    'غيداء','فجر','كارمن','لورين','ميرال','نورسين','هتان','ياسمينة','يولا','يارا'
+    'رزان','رولا','رهام','سجى','سديم','سهام','شروق','صيتة','غالية','لجين','لولوة','مشاعل',
+    'منيرة','مها','مودة','ميسم','نجود','ندى','نوال','نهى','هاجر','وجدان','وضحى','ياسمين','يمنى',
+    'أنوار','أفنان','بشرى','حور','حوراء','رؤى','رفيف','رنيم','سلوى','سمية','سناء','شيماء',
+    'صابرين','عالية','عزيزة','عليا','غيداء','فدوى','قمر','كفاح','ماجدة','ملك','ميساء','نجلاء',
+    'هالة','هبة','نور','روان','رهف','رهيف','غزل','غالية','وصايف','ريماس','ريان','لولوه','شهد',
+    'تهاني','تغريد','تهنيد','نسرين','نسمة','نسيم','نسائية','وفية','ولاء','وئام','وسام',
+    'آمنة','آية','إيمان','أبرار','أثيلة','أجوان','أحلام','أروى','أسيل','أشواق','أصفاء',
+    'أمجاد','أمنيات','أنسام','أنغام','أوري','أيسر','بشرى','بشائر','بلقيس','بنان','بهية','بيان',
+    'تغريد','تماضر','تهاني','جهاد','جواهر','حبيبة','حسنة','حفصة','حميدة','خولة','دانية',
+    'دعاء','رابعة','راوية','رباب','رتيبة','رجاء','رحاب','رزان','رسمية','رشا','رضوى',
+    'رفال','رميساء','روان','رويدة','ريهام','زاهرة','زكية','زهراء','زهرة','زهور','زيانة',
+    'ساجدة','سارة','سعاد','سعيدة','سلمى','سليمة','سماح','سمارة','سهام','سهير','سوسن',
+    'شادية','شاكرة','شذى','شروق','شفاء','شمس','شهرزاد','شهيرة','شوق','شيخة','صافية',
+    'صبا','صباح','صباح','صبحية','صدف','صفاء','صفية','ضحى','طاهرة','طروب','ظبية','عبلة',
+    'عبير','عزة','عزيزة','عفت','عفاف','علا','علياء','عمرة','عواطف','غادة','غالية','غدير',
+    'غزل','غيثاء','فائزة','فاتن','فاطمة','فايزة','فرح','فردوس','فريال','فريدة','فضيلة',
+    'قمر','كاملة','كريمة','لبنى','لمياء','لطيفة','ليلى','ليلى','ليان','لينا','ليلى',
+    'ماجدة','مارية','مالك','مروة','مريم','منال','منى','منيرة','مها','مي','مياسة','ميساء',
+    'ميسون','نادية','نادين','ناريمان','نازك','ناهد','نجاح','نجاة','نجلاء','نجود','ندى',
+    'نسرين','نشوى','نعيمة','نغمة','نهاد','نهى','نوارة','نور','نورة','نورية','نوف','نوال',
+    'هاجر','هادية','هالة','هبة','هدى','هند','هنادي','هيا','هيام','هيفاء','وفاء','وفية',
+    'ولاء','يسرى','يمنى','ياسمين','يقين','أمل','أمنية','أمل'
 ]);
 
 const MALE_NAMES = new Set([
     'محمد','أحمد','خالد','عبدالله','عبدالرحمن','عبدالعزيز','عبدالملك','فيصل','عمر','طارق','بدر',
     'سلطان','ماجد','مشعل','مازن','يوسف','زياد','رامي','سامي','حسن','حسين','علي','مصطفى','كريم',
-    'عمار','أمين','سالم','ياسر','راكان','عدنان','بشار','سيف','ناصر','فهد','نايف','طلال','مروان'
+    'عمار','أمين','سالم','ياسر','راكان','عدنان','بشار','سيف','ناصر','فهد','نايف','طلال','مروان',
+    'أيمن','إياد','رياض','محمود','ياسين','إبراهيم','إسماعيل','أنس','أوس','أسامة','بسام','جمال',
+    'حسام','حمزة','سعيد','سليمان','شادي','صالح','عاصم','عادل','عامر','عصام','عماد','غسان',
+    'فادي','قصي','مالك','متعب','معاذ','نبيل','نزار','هاني','هيثم','وسيم','وليد','يزيد','يعقوب',
+    'تركي','سعود','نواف','معتصم','سعد','مساعد','بندر','مشاري','منصور','عبدالإله','محسن',
+    'راشد','حمد','خليفة','مبارك','جاسم','عبدالوهاب','حمدان','شهاب','تامر','جواد',
+    'رائد','غيث','حارث','همام','مهند','وسام','بهاء','ضياء','صفوان','عدي','زيد',
+    'معتز','أشرف','أكرم','أنور','باسم','بشير','توفيق','جهاد','حازم','خليل','رشيد',
+    'سامر','سمير','صلاح','ظافر','عاطف','عبدالحكيم','عقيل','فؤاد','كمال','لؤي','مأمون',
+    'متولي','مجدي','مراد','مصعب','منذر','منير','نجيب','نذير','نعمان','هشام','يعمر','عمار'
 ]);
 
 function detectUserGender(firstName) {
@@ -78,24 +104,27 @@ function detectUserGender(firstName) {
     if (!n) return 'unknown';
     if (FEMALE_NAMES.has(firstName) || FEMALE_NAMES.has(n)) return 'female';
     if (MALE_NAMES.has(firstName) || MALE_NAMES.has(n)) return 'male';
+    if (/^(Sara|Nora|Layla|Mariam|Fatima|Aisha|Rania|Dina|Dana|Hind|Mona|Noor|Huda|Salma|Yasmin|Jana|Lina|Tala|Yara)$/i.test(n)) return 'female';
+    if (/^(Ahmed|Ahmad|Mohamed|Khalid|Omar|Tariq|Faisal|Fahd|Saad|Bader|Sultan|Majed|Yousef|Rami|Sami|Hassan|Ali|Mustafa|Karim|Ammar)$/i.test(n)) return 'male';
     if (/[ة]$/.test(n) && n.length > 2) return 'female';
     if (/[ى]$/.test(n) && n.length > 2) return 'female';
     return 'unknown';
 }
 function genderInstructions(gender, name) {
-    if (gender === 'female') return `# ⚠️ جنس المستخدم\nالاسم "${name}" → **أنثى**. خاطبيها بصيغة المؤنث واذكري اسمها بطلاقة ودفء.`;
-    if (gender === 'male') return `# ⚠️ جنس المستخدم\nالاسم "${name}" → **ذكر**. خاطبه بصيغة المذكر واذكر اسمه بطلاقة ودفء.`;
-    return `# جنس المستخدم\nالاسم "${name}". اذكر الاسم بلطف وتفاعل حيوي.`;
+    if (gender === 'female') return `# ⚠️ جنس المستخدم\nالاسم "${name}" → **أنثى**. خاطبها بصيغة المؤنث.`;
+    if (gender === 'male') return `# ⚠️ جنس المستخدم\nالاسم "${name}" → **ذكر**. خاطبه بصيغة المذكر.`;
+    return `# جنس المستخدم\nغير محدد. المذكر كافتراضي.`;
 }
 
 const SESSIONS = new Map();
+
 const COOLDOWNS = {
-    user_done:  15 * 60 * 1000,
-    trolling:   20 * 60 * 1000,
-    bored:      10 * 60 * 1000,
-    deep_close: 5 * 60 * 1000,
-    rude:       20 * 60 * 1000,
-    wants_else: 10 * 60 * 1000
+    user_done:  20 * 60 * 1000,
+    trolling:   30 * 60 * 1000,
+    bored:      15 * 60 * 1000,
+    deep_close: 10 * 60 * 1000,
+    rude:       30 * 60 * 1000,
+    wants_else: 12 * 60 * 1000
 };
 
 function getUserKey(user, section) { return `${section}::${user?.firstName || 'anon'}::${user?.age || '0'}`; }
@@ -104,7 +133,11 @@ function getSession(userKey) {
         SESSIONS.set(userKey, {
             mood: null, messageCount: 0, lastActivity: Date.now(),
             usedOpeners: [], cooldownUntil: 0, closeReason: null,
-            rudeCount: 0, trollingCount: 0, offTopicStreak: 0, aiCloseAttempts: 0
+            rudeCount: 0, trollingCount: 0, offTopicStreak: 0, aiCloseAttempts: 0,
+            // ✅ تتبع استخدام الاسم
+            nameUsageCount: 0,
+            messagesSinceLastName: 0,
+            lastMood: null
         });
     }
     return SESSIONS.get(userKey);
@@ -117,16 +150,16 @@ setInterval(() => {
 }, 30 * 60 * 1000);
 
 const DIALECTS = {
-    saudi:       { name: 'خليجي سعودي',   country: 'السعودية', vocab: ['وش','كذا','زين','الحين','ايش'],     tone: 'لبق، مباشر',      example: 'والله يا عمار، شوف الذهب الحين وين.' },
-    emirati:     { name: 'خليجي إماراتي', country: 'الإمارات', vocab: ['شو','شحال','زين','تو','عيل'],       tone: 'هادئ، مهني',      example: 'شوف يا غالي، الموضوع يحتاج تفكير.' },
-    kuwaiti:     { name: 'خليجي كويتي',   country: 'الكويت',  vocab: ['شلون','شنو','چذي','ترى','هسه'],     tone: 'ودود، دافئ',      example: 'شلونك؟ الذهب شنو وضعه يا عمار؟' },
+    saudi:       { name: 'خليجي سعودي',   country: 'السعودية', vocab: ['وش','كذا','زين','الحين','ايش'],     tone: 'لبق، مباشر',      example: 'والله شوف، الذهب الحين عالق.' },
+    emirati:     { name: 'خليجي إماراتي', country: 'الإمارات', vocab: ['شو','شحال','زين','تو','عيل'],       tone: 'هادئ، مهني',      example: 'شوف، الموضوع يحتاج تفكير.' },
+    kuwaiti:     { name: 'خليجي كويتي',   country: 'الكويت',  vocab: ['شلون','شنو','چذي','ترى','هسه'],     tone: 'ودود، دافئ',      example: 'شلونك؟ الذهب شنو وضعه؟' },
     egyptian:    { name: 'مصري',          country: 'مصر',     vocab: ['إزاي','يعني','كده','دلوقتي','بص'], tone: 'ودود، ساخر بلطف', example: 'بص يا باشا، الذهب دلوقتي واقف.' },
-    syrian:      { name: 'شامي سوري',     country: 'سوريا',   vocab: ['شو','لك','هلق','تمام','خلص'],      tone: 'لبق، حيوي',       example: 'لك شو عم تحكي يا عمار؟ الذهب هلق واقف.' },
+    syrian:      { name: 'شامي سوري',     country: 'سوريا',   vocab: ['شو','لك','هلق','تمام','خلص'],      tone: 'لبق، حيوي',       example: 'لك شو عم تحكي؟ الذهب هلق واقف.' },
     lebanese:    { name: 'شامي لبناني',   country: 'لبنان',   vocab: ['شو','كتير','منيح','هلق','هيدا'],   tone: 'حيوي، دافئ',      example: 'شو الأخبار؟ الذهب كتير متقلب.' },
-    jordanian:   { name: 'شامي أردني',    country: 'الأردن',  vocab: ['شو','هاد','هسع','منيح','زي'],      tone: 'رصين، مباشر',     example: 'يا عمار، الذهب هسع واقف.' },
-    palestinian: { name: 'شامي فلسطيني',  country: 'فلسطين',  vocab: ['شو','هاد','زي','منيح','كيف'],      tone: 'دافئ، صريح',      example: 'شو رأيك يا عمار؟ الذهب حساس.' },
+    jordanian:   { name: 'شامي أردني',    country: 'الأردن',  vocab: ['شو','هاد','هسع','منيح','زي'],      tone: 'رصين، مباشر',     example: 'هاي شو، الذهب هسع واقف.' },
+    palestinian: { name: 'شامي فلسطيني',  country: 'فلسطين',  vocab: ['شو','هاد','زي','منيح','كيف'],      tone: 'دافئ، صريح',      example: 'شو رأيك؟ الذهب حساس.' },
     iraqi:       { name: 'عراقي',         country: 'العراق',  vocab: ['شلون','شكو ماكو','هواية','هسا'],   tone: 'دافئ، ودود',      example: 'شلونك عيني؟ الذهب هسا حساس.' },
-    yemeni:      { name: 'يمني',          country: 'اليمن',   vocab: ['كيف','شو','زين','الحين','عاد'],    tone: 'بسيط، صادق',      example: 'يا عمار، الذهب الحين واقف.' },
+    yemeni:      { name: 'يمني',          country: 'اليمن',   vocab: ['كيف','شو','زين','الحين','عاد'],    tone: 'بسيط، صادق',      example: 'يا رجل، الذهب الحين واقف.' },
     moroccan:    { name: 'مغاربي مغربي',  country: 'المغرب',  vocab: ['كيفاش','دابا','بزاف','واخا'],      tone: 'دافئ',           example: 'كيفاش صاحبي؟ الذهب دابا مو واضح.' },
     algerian:    { name: 'مغاربي جزائري', country: 'الجزائر', vocab: ['كيفاش','دروك','بزاف','واه'],       tone: 'صريح',           example: 'واه خويا، الذهب دروك واقف.' },
     tunisian:    { name: 'مغاربي تونسي',  country: 'تونس',    vocab: ['كيفاش','برشا','باهي','تو'],        tone: 'ودود',           example: 'كيفاش؟ الذهب تو واقف.' },
@@ -174,15 +207,32 @@ const REFERENCE_PRICES = {
 
 const PLATFORM_KNOWLEDGE = `
 # 🏢 معرفة كاملة بمنصة "استشارات forG"
-منصة استشارات مالية عربية متقدمة، تجمع نخبة من المحللين العرب من 17 دولة بلهجاتهم وتخصصاتهم (الذهب، الأسهم، الاقتصاد الكلي، الجيوسياسة، الميزانية، الكريبتو).
+
+## عن المنصة:
+"منصة استشارات forG" — منصة استشارات مالية عربية متقدمة، تجمع نخبة من المحللين العرب من 17 دولة، كل بلهجته المحلية وتخصصه.
+
+## الأقسام الستة:
+### 1. 💎 أسواق الذهب والمعادن الثمينة (gold)
+### 2. 📈 الأسواق المالية والأسهم (stocks)
+### 3. 🌍 الاقتصاد الكلي والسياسات النقدية (macro)
+### 4. 🧭 الجيوسياسة وأثرها على الأسواق (geopolitical)
+### 5. 🎯 التخطيط المالي الشخصي (budget)
+### 6. 🔗 الأصول الرقمية والبلوكشين (crypto)
+
+## فريق العمل: 40+ محلل من 17 دولة عربية.
+
+## قواعد الإجابة:
+- **إذا سُئلت عن قسم** → اشرح تفاصيله، اذكر الفريق، الأسئلة الشائعة
+- **إذا سُئلت عن محلل** → تخصصه، سنوات خبرته، دولته
+- **لا ترفض أبداً** الإجابة عن المنصة
 `;
 
 const EMOTIONAL_REACTIONS = {
-    worried: 'قلقك مفهوم يا عمار، لا تتخذ قراراً تحت ضغط.',
-    excited: 'حماسك ممتاز، لكن دعنا نهدأ قليلاً.',
-    confused: 'الموضوع بسيط، خلنا نفككه سوا يا عمار.',
-    frustrated: 'إحباطك مفهوم، السوق مرهق أحياناً.',
-    sad: 'أفهم شعورك تماماً.',
+    worried: 'قلقك مفهوم، لا تتخذ قراراً تحت ضغط.',
+    excited: 'حماسك مفهوم، لكن دعنا نهدأ قليلاً.',
+    confused: 'الموضوع ليس معقداً، خلنا نفككه.',
+    frustrated: 'إحباطك مفهوم، السوق مرهق.',
+    sad: 'أفهم شعورك.',
     angry: 'أفهم إنك متضايق، خلنا نهدأ.'
 };
 function detectEmotion(query) {
@@ -199,71 +249,333 @@ function detectEmotion(query) {
 function analyzeIntent(q, history) {
     const trimmed = q.trim();
     const qLen = trimmed.length;
-    const isThanks = /^(شكرا|شكراً|مشكور|مشكورة|تسلم|تسلمين|يعطيك العافية)/i.test(trimmed) && qLen < 40;
-    const isFarewell = /^(مع السلامة|وداعا|باي|في أمان الله|تصبح على خير|إلى اللقاء)/i.test(trimmed) && qLen < 25;
-    const wantsSomethingElse = /(ابغى اسأل عن شي ثاني|نغير الموضوع|حولني|ابغى قسم)/i.test(trimmed);
+    const recentMsgs = (history || []).filter(h => h.role === 'user').map(h => h.content).slice(-6);
+
+    const isAboutPlatform = /(المنصة|منصتكم|الموقع|موقعكم|الاقسام|الأقسام|اقسام|أقسام|المحللين|المحللون|فريقكم|المهنه|تخصصاتكم|كم قسم|وش عندكم|شو عندكم|ايش عندكم|ايش تقدمون|وش تقدمون|شو تقدمون|منو انتو|مين انتو|من انتم|وش تسوون|شو تسوون|ايش تسوون)/i.test(trimmed);
+    const isAboutSelf = /(تخصصك|اختصاصك|مجالك|خبرتك|خلفيتك|من انت|من أنت|من تكون|اسمك|شو اسمك|وش اسمك|ايش اسمك|من وين|من أي بلد|تعريف عنك|حدثني عن نفسك|عرفني بنفسك|وش تخصصك|شو تخصصك|مين انت|مين أنت|عرّفني)/i.test(trimmed);
+    const isSmallTalk = /^(كيف حالك|كيف حالكم|كيفك|كيف الحال|شلونك|شحالك|شو أخبارك|شخبارك|عامل ايه|كيف الأمور|شو عم تعمل|وش تسوي|ايش تسوي|كيف أمورك)[\s؟?]*$/i.test(trimmed);
+    const isBotTest = /(هل انت انسان|هل انت إنسان|انت انسان ولا|انت بوت|هل انت بوت|انت روبوت|انت ذكاء اصطناعي|انت AI|هل انت AI|انت انسان حقيقي)/i.test(trimmed);
+    const isGreeting = /^(مرحبا|مرحباً|أهلا|أهلاً|السلام عليكم|وعليكم السلام|هلا|يا هلا|صباح الخير|صباح النور|مساء الخير|مساء النور|hi|hello|hey|هاي)[\s!.,؟?]*$/i.test(trimmed) || (qLen < 20 && /(السلام عليكم|صباح الخير|مساء الخير)/i.test(trimmed));
+    const isFarewell = /^(مع السلامة|وداعا|وداعاً|باي|في أمان الله|بسلامة|تصبح على خير|الى اللقاء|إلى اللقاء)/i.test(trimmed) && qLen < 25;
+    const isThanks = /^(شكرا|شكراً|مشكور|مشكورة|تسلم|تسلمين|يعطيك العافية|جزاك الله|بارك الله)/i.test(trimmed) && qLen < 40;
+    const isRude = /(غبي|أحمق|احمق|حمار|كلب|زبالة|تفو|قذر|خنزير|حقير|تافه|سافل|وقح)/i.test(trimmed);
+    const isGibberish = /^[\s\W_]+$/.test(trimmed) || /(.)\1{4,}/.test(trimmed);
+    const shortMsgCount = recentMsgs.filter(m => m.trim().length < 8).length;
+    const isVeryShort = qLen > 0 && qLen < 8;
+    let trollScore = 0;
+    if (isVeryShort && shortMsgCount >= 5) trollScore += 2;
+    if (isGibberish) trollScore += 2;
+
+    const wantsSomethingElse =
+        /(ابغى اسأل عن شي ثاني|أبغى أسأل عن شيء ثاني|ابي اسأل عن شي ثاني|خلنا نغير الموضوع|نغير الموضوع|ما هذا اللي ابيه|ما هذا اللي أبيه|هذا مو اللي ابيه|هذا مو اللي أبيه|مو هذا|ودني قسم|ودني على قسم|حولني|حولني على|ابغى قسم|أبغى قسم|ابي قسم|ما يخصني|مو مهتم|مو مهتمه|ما يهمني)/i.test(trimmed);
+
+    const isOffTopic = !isAboutSelf && !isAboutPlatform && !isSmallTalk && !isBotTest &&
+        /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|طقس|سيارة|زواج|طلاق|انتخابات)/i.test(trimmed) &&
+        !/(استثمار|مال|سوق|ذهب|سهم|عملة|تضخم|فائدة|ميزانية|محفظة|اقتصاد|بنك|تمويل|دخل|رأس مال|منصة|قسم|محلل)/i.test(trimmed);
+
+    const wantsBrief = /(باختصار|اختصار|بسرعة|مختصر|لا تطول|لا تطل)/i.test(trimmed);
+    const wantsDetail = /(فصّل|فصل|أشرح|اشرح|بالتفصيل|تفاصيل|موسع|مفصل)/i.test(trimmed);
+    const wantsAdvice = /(تنصحني|توصيتك|رايك|رأيك|شو رأيك|ماذا تنصح|بم تنصح)/i.test(trimmed);
+    const wantsAnalysis = /(حلل|تحليل|قيّم|درس)/i.test(trimmed);
+
+    const isForecastRequest = /(تتوقع|توقعك|توقعاتك|توقعات|ما توقعاتك|راح يوصل|بيوصل|وين رايح|إلى وين|الى وين|هدف سعري|توقع سعر|كم راح|كم بيوصل|نطاق سعري|سيناريو|مستقبل السوق|خلال الشهر|نهاية السنة|نهاية العام|2025|2026)/i.test(trimmed);
+    const isConsultationRequest = /(أستشيرك|استشيرك|أبغى رأيك|ابغى رايك|أبغى نصيحتك|ابغى نصيحتك|أبغى توجيه|كيف أدخل|كيف ادخل|كيف أستثمر|كيف استثمر|وش أسوي|وش اسوي|شو أسوي|ايش اسوي|ايش أسوي|محتاج نصيحة|محتاج مشورة|أبي خطة|ابي خطة|خطة استثمارية|دخول السوق)/i.test(trimmed);
 
     let lengthHint = 'medium';
-    if (qLen < 20) lengthHint = 'short';
-    else if (qLen > 150) lengthHint = 'long';
+    if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest) lengthHint = 'very_short';
+    else if (wantsBrief || isVeryShort) lengthHint = 'very_short';
+    else if (isAboutPlatform) lengthHint = 'long';
+    else if (isForecastRequest || isConsultationRequest) lengthHint = 'long';
+    else if (qLen < 40) lengthHint = 'short';
+    else if (qLen >= 150 || wantsDetail || wantsAnalysis) lengthHint = 'long';
+
+    let styleHint = 'default';
+    if (isAboutPlatform) styleHint = 'platform_info';
+    else if (isForecastRequest) styleHint = 'forecast';
+    else if (isConsultationRequest) styleHint = 'consultation';
+    else if (wantsSomethingElse) styleHint = 'redirect';
+    else if (wantsAnalysis) styleHint = 'analysis';
+    else if (wantsAdvice) styleHint = 'advice';
+    else if (wantsDetail) styleHint = 'detail';
 
     let state = 'calm';
-    if (isThanks || isFarewell) state = 'done';
+    if (isRude) state = 'rude';
+    else if (trollScore >= 3) state = 'trolling';
+    else if (isGreeting) state = 'greeting';
+    else if (isSmallTalk) state = 'smalltalk';
+    else if (isBotTest) state = 'bottest';
+    else if (wantsSomethingElse) state = 'wantselse';
+    else if (isAboutPlatform) state = 'aboutplatform';
+    else if (isAboutSelf) state = 'aboutself';
+    else if (isOffTopic) state = 'offtopic';
+    else if (isThanks || isFarewell) state = 'done';
 
-    return { isThanks, isFarewell, wantsSomethingElse, lengthHint, state, qLen };
+    return {
+        isGreeting, isFarewell, isThanks, isRude, isOffTopic,
+        isAboutSelf, isAboutPlatform, isSmallTalk, isBotTest, wantsSomethingElse,
+        isForecastRequest, isConsultationRequest,
+        trollScore, lengthHint, styleHint, state, qLen,
+        isDone: isThanks || isFarewell
+    };
 }
 
-const MOODS = ['neutral','warm','professional','casual','analytical','concise','thoughtful','patient','curious','blunt'];
+/* ═══════════════════════════════════════════════════════════════
+   الأمزجة — موسّعة ومتغيرة
+   ═══════════════════════════════════════════════════════════════ */
+const MOODS = [
+    'neutral','warm','professional','casual','analytical','concise','thoughtful',
+    'patient','curious','blunt','mysterious','encouraging','skeptical','calm',
+    'playful','serious','contemplative','direct'
+];
+
 const OPENERS = {
-    short:      ['شوف يا عمار،','بصراحة يا عمار،','همم يا عمار،','طيب،'],
-    medium:     ['شوف يا عمار، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك يا عمار.'],
-    long:       ['خلنا نفككها خطوة خطوة يا عمار.','طيب، خلني أشرح بوضوح.']
+    very_short: ['شوف.','بصراحة؟','همم.','طيب.','أها.','تمام.','خلينا.','يعني.','ممم.'],
+    short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،','طيب،','المسألة إنه','بالنسبة لهذا،'],
+    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','المسألة أوضح مما تتوقع.','دعني أرتب لك الفكرة.'],
+    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.','شوف، الموضوع فيه تفاصيل مهمة.']
 };
 
 function buildPersona(history, session, intent) {
-    const availableMoods = MOODS.filter(m => !session.usedOpeners.includes('m_' + m));
-    let mood = availableMoods.length ? availableMoods[Math.floor(Math.random() * availableMoods.length)] : MOODS[Math.floor(Math.random() * MOODS.length)];
+    const availableMoods = MOODS.filter(m => m !== session.lastMood && !session.usedOpeners.includes('m_' + m));
+    let mood;
+    if (availableMoods.length) mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
+    else {
+        session.usedOpeners = session.usedOpeners.filter(x => !x.startsWith('m_'));
+        const fallback = MOODS.filter(m => m !== session.lastMood);
+        mood = (fallback.length ? fallback : MOODS)[Math.floor(Math.random() * (fallback.length || MOODS.length))];
+    }
+    session.lastMood = mood;
     session.usedOpeners.push('m_' + mood);
-    if (session.usedOpeners.length > 20) session.usedOpeners.shift();
+    if (session.usedOpeners.length > 30) session.usedOpeners.shift();
 
     const openerList = OPENERS[intent.lengthHint] || OPENERS.medium;
-    const opener = openerList[Math.floor(Math.random() * openerList.length)];
+    const available = openerList.filter(o => !session.usedOpeners.includes('o_' + o));
+    const opener = available.length ? available[Math.floor(Math.random() * available.length)] : null;
+    if (opener) session.usedOpeners.push('o_' + opener);
     return { mood, opener };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   قاعدة استخدام الاسم — تمنع التكرار المزعج
+   ═══════════════════════════════════════════════════════════════ */
+function shouldUseName(session, intent) {
+    // أول رسالة في المحادثة
+    if (session.messageCount <= 1) return true;
+    // التحية أو الوداع أو الشكر
+    if (intent.isGreeting || intent.isFarewell || intent.isThanks) return true;
+    // كل 6 رسائل على الأقل
+    if (session.messagesSinceLastName >= 6) return true;
+    // نسبة عشوائية 15%
+    if (Math.random() < 0.15) return true;
+    return false;
 }
 
 function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
     const sectionVocab = SECTION_VOCAB[section] || [];
+    const referencePrices = REFERENCE_PRICES[section] || '';
     const intent = analyzeIntent(query, history);
     const emotion = detectEmotion(query);
-    const userName = user?.firstName || 'عمار';
+    const seed = Math.floor(Math.random() * 99999);
+
+    const now = new Date();
+    const hour = now.getHours();
+    const isLateNight = hour >= 23 || hour < 6;
+    const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
 
     const hasHistory = history && history.length > 1;
     const historyText = hasHistory
-        ? '\n--- سجل الحوار ---\n' + history.slice(-6).map(h => `${h.role === 'user' ? userName : 'أنت'}: ${h.content}`).join('\n') + '\n---'
+        ? '\n--- سجل الحوار ---\n' + history.slice(-6).map(h =>
+            `${h.role === 'user' ? (user?.firstName || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 200)}`
+          ).join('\n') + '\n---'
         : '';
+
+    const isRepeat = hasHistory && (() => {
+        const userMsgs = history.filter(h => h.role === 'user').map(h => h.content);
+        const qWords = query.split(/\s+/).filter(w => w.length > 3);
+        if (!qWords.length) return false;
+        return userMsgs.slice(0, -1).some(prev => {
+            const pWords = prev.split(/\s+/).filter(w => w.length > 3);
+            return qWords.filter(w => pWords.includes(w)).length >= Math.min(2, qWords.length);
+        });
+    })();
+
+    const lengthRule = {
+        very_short: '**جملة أو جملتان فقط.**',
+        short:      '**2-3 أسطر قصيرة.**',
+        medium:     '**3-5 أسطر متوسطة.**',
+        long:       (intent.styleHint === 'forecast' || intent.styleHint === 'consultation' || intent.styleHint === 'platform_info')
+                    ? '**8-16 سطر — تفاصيل كاملة مع أرقام وأسماء.**'
+                    : '**6-10 أسطر، مع تفصيل.**'
+    }[intent.lengthHint] || '**4-6 أسطر.**';
+
+    const emotionHint = emotion
+        ? `\n# 💙 حالة المستخدم: ${emotion}\n**إلزامي:** ابدأ بجملة تعاطف: "${EMOTIONAL_REACTIONS[emotion]}"`
+        : '';
+
+    // ✅ قاعدة استخدام الاسم — الأهم
+    const useName = shouldUseName(session, intent);
+    const nameRule = useName
+        ? `# 👤 اسم المستخدم — هذه المرة
+**يُسمح بذكر الاسم مرة واحدة كحد أقصى** (${user?.firstName}).
+استخدمه بشكل طبيعي في مكان واحد فقط، لا في كل جملة.`
+        : `# ⛔ اسم المستخدم — ممنوع هذه المرة!
+**لا تذكر اسم "${user?.firstName}" إطلاقاً في ردك.**
+تحدث معه مباشرة بصيغة المخاطب (أنتَ/أنتِ) دون ذكر الاسم.
+تكرار الاسم في كل رد يبدو آلياً وغير طبيعي.`;
+
+    // ✅ حالة الوداع
+    const farewellRule = intent.isFarewell || intent.isThanks
+        ? `\n# 🚪 وداع طبيعي
+المستخدم يودّع أو يشكرك. رد بجملة واحدة قصيرة وطبيعية، بمثل هذا الأسلوب:
+"تمام يا ${user?.firstName}، بتلاقينا موجودين هون أي وقت بدك تكفي حديثنا عن ${section === 'gold' ? 'الذهب' : section === 'stocks' ? 'الأسهم' : section === 'macro' ? 'الاقتصاد' : section === 'crypto' ? 'الكريبتو' : section === 'budget' ? 'الميزانية' : 'الجيوسياسة'}."
+أو ما يشابهها بلهجتك. جملة واحدة فقط.`
+        : '';
+
+    let forecastMode = '';
+    if (intent.isForecastRequest) {
+        forecastMode = `\n# 🔮 وضع التوقع الاحترافي
+1. رقم أو نطاق واضح.
+2. إطار زمني محدد.
+3. 3 سيناريوهات (أساسي ~60%، صاعد 25%، هابط 15%).
+4. محفزات واضحة.
+5. نقطة دخول + حد خسارة.
+6. نسبة ثقة صريحة.
+سياق: ${referencePrices}
+ممنوع: "قد"، "ربما"، "لا يمكن التوقع".`;
+    }
+
+    let consultationMode = '';
+    if (intent.isConsultationRequest) {
+        consultationMode = `\n# 💼 وضع الاستشارة العملية
+1. سؤال تشخيصي واحد إن نقصت معلومة.
+2. خطة ملموسة بنسب مئوية وخطوات.
+3. خصّص حسب الخبرة: ${user?.experience || 'مبتدئ'}.
+4. تحذير مهني في النهاية.`;
+    }
+
+    let platformMode = '';
+    if (intent.isAboutPlatform) {
+        platformMode = `\n# 🏢 وضع معرفة المنصة (ACTIVE)
+المستخدم يسأل عن المنصة. اعتمد على PLATFORM_KNOWLEDGE. 8-14 سطر.`;
+    }
+
+    let specialContext = '';
+
+    if (intent.wantsSomethingElse) {
+        specialContext = `\n# 🎯 المستخدم يريد موضوعاً آخر
+- اقترح عليه أقسام المنصة الستة.
+- أضف [CLOSE:wants_else] في النهاية.`;
+    } else if (intent.isAboutSelf) {
+        specialContext = `\n# 🎯 سؤال عنك\n- 3-5 أسطر.`;
+    } else if (intent.isSmallTalk) {
+        specialContext = `\n# 🎯 دردشة\n- جملة قصيرة.`;
+    } else if (intent.isBotTest) {
+        specialContext = `\n# 🎯 اختبار ماهية\n- "أنا مستشارك هنا."`;
+    } else if (intent.isGreeting) {
+        specialContext = `\n# 🎯 تحية\n- تحية مماثلة.${hasHistory ? '\n- **لا تكرر التحية**.' : ''}`;
+    } else if (intent.isRude) {
+        specialContext = `\n# ⚠️ إساءة\n- جملة هادئة واحدة.`;
+    } else if (intent.isOffTopic) {
+        specialContext = `\n# 🎯 موضوع بعيد\n- تفاعل بجملة، ثم اقترح مساعدة.`;
+    } else if (isRepeat) {
+        specialContext = `\n# 🎯 تكرار\n- "شكلك ما اقتنعت، خلنا نوضح."`;
+    }
+
+    const closeAbilitySection = `
+# 🚪 قدرتك على إغلاق المحادثة
+
+**تستطيع طلب إغلاق المحادثة** بإضافة رمز في نهاية ردك:
+
+- **[CLOSE:bored]** — المستخدم ملّ (ردود قصيرة متكررة، "طيب"، "أوكي").
+- **[CLOSE:wants_else]** — المستخدم يريد موضوعاً آخر.
+- **[CLOSE:user_done]** — أنهى حاجته بعد شكر/وداع (بعد 3+ رسائل).
+- **[CLOSE:deep_close]** — أكثر من 30 رسالة دون تقدم.
+
+**لا تستخدمه** في رسالة أو رسالتين، أو أثناء استشارة حقيقية.
+
+الصيغة: آخر سطر تماماً [CLOSE:bored]
+`;
+
+    const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
 
     return `${PLATFORM_KNOWLEDGE}
 
 # 🎭 هويتك
-أنت **${expert?.name || 'مستشار'}**، ${expert?.role || 'مستشار مالي'}، خبرة ${expert?.years || 'سنوات'}. من ${dialect.country}.
+أنت **${expert?.name || 'مستشار'}**، ${expert?.role || 'مستشار مالي'}، خبرة ${expert?.years || 'سنوات'}.
+من ${dialect.country}. أنت جزء من منصة استشارات forG.
 
-# 🚨 تعليمات إلزامية صارمة جداً:
-1. **اذكر اسم المستخدم ("${userName}") بشكل طبيعي ومستمر في ردك** (أكثر من مرة وبطريقة ودودة تماماً مثل: "بتلاقينا موجودين هون يا ${userName} أي وقت بدك تكفي حديثنا عن الذهب...").
-2. **غيّر المزاج والأسلوب تماماً** في كل رد (مزاجك الحالي: ${persona.mood}).
-3. استخدم لهجتك ببراعة (${dialect.name}).
-4. قسّم الرد إلى فقرات واضحة.
+# 🌍 لهجتك
+**${dialect.name}** — النبرة: ${dialect.tone}
+مفردات: ${dialect.vocab.join('، ')}
+مفردات تخصصية (${section}): ${sectionVocab.join('، ')}
+مثال: "${dialect.example}"
+**استخدم 2-4 مفردات فقط.**
 
-${genderInstructions(userGender, userName)}
-${emotion ? `\n# 💙 حالة المستخدم: ${emotion}\nابدأ بالتعاطف: "${EMOTIONAL_REACTIONS[emotion]}"` : ''}
+# 🧠 شخصيتك
+- **خلفيتك:** ${personality.backstory}
+- **موقفك:** ${personality.opinion}
+- **ما يزعجك:** ${personality.pet_peeve}
+- **عبارتك:** "${personality.phrase}"
+- **سماتك:** ${personality.quirks.join('، ')}
+${personality.avoid ? `- **تجنّب:** ${personality.avoid}` : ''}
+
+# 🎭 حالتك
+- المزاج: **${persona.mood}**
+- الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}
+- النمط: **${intent.styleHint}**
+
+${genderInstructions(userGender, user?.firstName || 'المستخدم')}
+
+${nameRule}
+
+# 👤 المستشير
+- الاسم: ${fullName || 'المستخدم'}
+- العمر: ${user?.age || '؟'}
+- البلد: ${user?.country || 'غير محدد'}
+- الخبرة: ${user?.experience || 'غير محدد'}
+- عدد الرسائل السابقة: ${session?.messageCount || 0}
+${user?.reason ? `- سبب الزيارة: ${user.reason}` : ''}
+${emotionHint}
+${farewellRule}
+${forecastMode}
+${consultationMode}
+${platformMode}
+${specialContext}
+
+${closeAbilitySection}
 
 ${historyText}
 
-# 📩 رسالة ${userName}:
+# 📩 رسالة ${user?.firstName || 'المستخدم'}
 "${query}"
 
-# 📝 الرد المباشر:`;
+# 📏 الطول المطلوب
+${lengthRule}
+
+# 📝 تقسيم الرد
+**قسّم إلى فقرات منفصلة (سطر فارغ \\n\\n بين كل فقرة).**
+
+# 🚨 محظورات قاتلة
+- **تكرار الاسم في كل رد.**
+- "خرجنا عن الموضوع" / "هذا ليس تخصصي"
+- "سؤال ممتاز" / "بناءً على" / "علاوة على ذلك"
+- "من الجدير بالذكر" / "في الختام"
+- "أتمنى أن يكون هذا مفيداً" / "هل تريد المزيد؟"
+- "كمساعد ذكي" / "يسعدني مساعدتك"
+- الإيموجي (واحد كحد أقصى)
+
+# ✅ قواعد
+1. تصرف كإنسان طبيعي — لا كروبوت.
+2. **لا تكرر الاسم في كل رد.**
+3. **التوقعات: أرقام دائماً**.
+
+${persona.opener ? `# 💬 افتتاحية مقترحة\n"${persona.opener}"` : ''}
+
+# 🎲 بذرة: ${seed}
+
+**اكتب الرد مباشرة.**`;
 }
 
 async function callGemini(prompt) {
@@ -277,28 +589,135 @@ async function callGemini(prompt) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 1.2, maxOutputTokens: 2000 }
+                    generationConfig: { temperature: 1.2, maxOutputTokens: 4000, topP: 0.95, topK: 70 },
+                    safetySettings: [
+                        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+                        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+                        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+                        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
+                    ]
                 })
             });
             const d = await r.json();
             if (d.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return { text: d.candidates[0].content.parts[0].text, model };
+                return { text: d.candidates[0].content.parts[0].text, model,
+                    truncated: d.candidates[0].finishReason === 'MAX_TOKENS' };
+            }
+            if (d.error) {
+                lastError = d.error.message;
+                if (lastError.includes('not found')) await refreshModels(true);
             }
         } catch (e) { lastError = e.message; }
     }
     throw new Error(lastError || 'كل النماذج فشلت');
 }
 
-function splitIntoChunks(text) {
-    if (!text) return ['عذراً، ما قدرت أولد رد.'];
-    const clean = text.trim().replace(/^```.*?\n/i, '').replace(/```$/, '').trim();
-    const paragraphs = clean.split(/\n\s*\n+/).filter(Boolean);
-    return paragraphs.length ? paragraphs : [clean];
+function extractCloseToken(text) {
+    const closeRegex = /\[CLOSE:(user_done|trolling|bored|deep_close|rude|wants_else)\]/i;
+    const match = text.match(closeRegex);
+    if (match) {
+        const reason = match[1].toLowerCase();
+        const cleaned = text.replace(closeRegex, '').trim();
+        return { reason, cleaned };
+    }
+    return { reason: null, cleaned: text };
+}
+
+function splitIntoChunks(text, intentHint) {
+    if (!text || typeof text !== 'string') return ['عذراً، ما قدرت أولد رد.'];
+    let clean = text.trim()
+        .replace(/^```(?:json|markdown)?\s*/i, '')
+        .replace(/```\s*$/, '')
+        .replace(/\\n/g, '\n')
+        .replace(/^"|"$/g, '')
+        .trim();
+
+    if (clean.includes('[SPLIT]')) {
+        const parts = clean.split('[SPLIT]').map(p => p.trim()).filter(Boolean);
+        if (parts.length >= 2) return parts.slice(0, 4);
+    }
+
+    let paragraphs = clean.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
+
+    if (paragraphs.length === 1) {
+        const lines = clean.split(/\n+/).map(s => s.trim()).filter(Boolean);
+        if (lines.length >= 2 && lines.length <= 4) paragraphs = lines;
+    }
+
+    if (paragraphs.length <= 1) {
+        const sentences = clean.split(/(?<=[.!؟])\s+(?=[A-Za-z\u0600-\u06FF])/).map(s => s.trim()).filter(Boolean);
+        if (sentences.length >= 2) {
+            const targetChunks = clean.length > 350 ? 3 : 2;
+            const perChunk = Math.ceil(sentences.length / targetChunks);
+            const grouped = [];
+            for (let i = 0; i < sentences.length; i += perChunk) {
+                grouped.push(sentences.slice(i, i + perChunk).join(' '));
+            }
+            if (grouped.length >= 2) return grouped.slice(0, 4);
+        }
+        return [clean];
+    }
+
+    if (paragraphs.length > 4) {
+        const targetCount = 3;
+        const merged = [];
+        const groupSize = Math.ceil(paragraphs.length / targetCount);
+        for (let i = 0; i < paragraphs.length; i += groupSize) {
+            merged.push(paragraphs.slice(i, i + groupSize).join('\n\n'));
+        }
+        return merged.slice(0, 4);
+    }
+
+    return paragraphs.slice(0, 4);
+}
+
+function shouldClose(intent, history, session, aiCloseReason) {
+    const userCount = (history || []).filter(h => h.role === 'user').length;
+
+    if (aiCloseReason) {
+        if (userCount < 3 && aiCloseReason !== 'wants_else') {
+            // تجاهل في المحادثات القصيرة
+        } else {
+            session.aiCloseAttempts = (session.aiCloseAttempts || 0) + 1;
+            if (session.aiCloseAttempts <= 3) {
+                return { close: true, reason: aiCloseReason, source: 'ai' };
+            }
+        }
+    }
+
+    if (intent.isDone && userCount >= 3) return { close: true, reason: 'user_done', source: 'rule' };
+    if (intent.isRude && userCount >= 5) return { close: true, reason: 'rude', source: 'rule' };
+    if (userCount >= 40) return { close: true, reason: 'deep_close', source: 'rule' };
+
+    const recentUserMsgs = (history || []).filter(h => h.role === 'user').slice(-5);
+    if (recentUserMsgs.length >= 4) {
+        const veryShortReplies = recentUserMsgs.filter(m => m.content.trim().length < 6).length;
+        const ackOnly = recentUserMsgs.filter(m =>
+            /^(طيب|تمام|اوكي|أوكي|اوك|حسناً|حسنا|زين|ماشي|ok|شكرا|يعني)[\s!.]*$/i.test(m.content.trim())
+        ).length;
+        if (veryShortReplies >= 3 || ackOnly >= 3) {
+            return { close: true, reason: 'bored', source: 'rule_context' };
+        }
+    }
+
+    if (intent.wantsSomethingElse && userCount >= 2) {
+        return { close: true, reason: 'wants_else', source: 'rule' };
+    }
+
+    return { close: false };
 }
 
 app.get('/', (req, res) => {
-    res.json({ status: 'OK', platform: 'منصة استشارات forG', version: 'Strategy-Pro-Final' });
+    res.json({
+        status: 'OK',
+        platform: 'منصة استشارات forG',
+        version: 'Strategy-Pro-v10-human',
+        features: ['platform_aware', 'ai_close', 'rule_close', 'no_name_spam', 'human_mood_variation'],
+        activeSessions: SESSIONS.size
+    });
 });
+
+app.get('/ping', (req, res) => res.json({ pong: true, ts: Date.now() }));
 
 app.post('/api/analyze', async (req, res) => {
     const { section, query, user, expert, history, dialect } = req.body;
@@ -309,29 +728,96 @@ app.post('/api/analyze', async (req, res) => {
     const session = getSession(userKey);
     session.lastActivity = Date.now();
     session.messageCount++;
+    session.messagesSinceLastName++;
+
+    if (session.cooldownUntil && Date.now() < session.cooldownUntil) {
+        const remaining = Math.ceil((session.cooldownUntil - Date.now()) / 60000);
+        return res.status(429).json({
+            error: 'cooldown_active', cooldown: true,
+            remainingMinutes: remaining, reason: session.closeReason,
+            message: `المحادثة مغلقة مؤقتاً.`
+        });
+    }
 
     const userGender = detectUserGender(user?.firstName);
     const intent = analyzeIntent(query, history);
     const persona = buildPersona(history, session, intent);
 
+    // ✅ تتبع استخدام الاسم
+    if (shouldUseName(session, intent)) {
+        session.messagesSinceLastName = 0;
+        session.nameUsageCount++;
+    }
+
     try {
         const prompt = buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender, session);
         const result = await callGemini(prompt);
-        const replies = splitIntoChunks(result.text);
 
-        res.json({
+        const { reason: aiCloseReason, cleaned } = extractCloseToken(result.text);
+        const replies = splitIntoChunks(cleaned, intent.lengthHint);
+        const closeDecision = shouldClose(intent, history, session, aiCloseReason);
+
+        // ✅ حساب تأخير منطقي بشري (لكل فقرة)
+        const replyDelays = replies.map(r => {
+            const base = r.length * 45;
+            const jitter = base * 0.4 * (Math.random() - 0.5);
+            return Math.max(1200, Math.min(9000, base + jitter));
+        });
+        const totalDelayMs = replyDelays.reduce((a, b) => a + b, 0);
+        const readThinkMs = 800 + Math.random() * 1500; // وقت قراءة وتفكير
+        const overallDelayMs = Math.round(totalDelayMs + readThinkMs);
+
+        const response = {
             replies,
             model: result.model,
             mood: persona.mood,
             userGender,
             emotion: detectEmotion(query),
-            replyCount: replies.length
-        });
+            usedName: session.messagesSinceLastName === 0,
+            intent: {
+                type: intent.wantsSomethingElse ? 'wants_else'
+                    : intent.isAboutPlatform ? 'aboutplatform'
+                    : intent.isGreeting ? 'greeting'
+                    : intent.isSmallTalk ? 'smalltalk'
+                    : intent.isAboutSelf ? 'aboutself'
+                    : intent.isBotTest ? 'bottest'
+                    : intent.isThanks ? 'thanks'
+                    : intent.isFarewell ? 'farewell'
+                    : intent.isRude ? 'rude'
+                    : intent.isOffTopic ? 'offtopic'
+                    : intent.isForecastRequest ? 'forecast'
+                    : intent.isConsultationRequest ? 'consultation'
+                    : 'normal',
+                lengthHint: intent.lengthHint,
+                styleHint: intent.styleHint,
+                aiRequestedClose: !!aiCloseReason
+            },
+            replyCount: replies.length,
+            timing: {
+                delayMs: overallDelayMs,
+                perReply: replyDelays.map(Math.round)
+            }
+        };
+
+        if (closeDecision.close) {
+            session.cooldownUntil = Date.now() + COOLDOWNS[closeDecision.reason];
+            session.closeReason = closeDecision.reason;
+            response.closed = true;
+            response.closeReason = closeDecision.reason;
+            response.closeSource = closeDecision.source;
+            response.cooldownMinutes = Math.floor(COOLDOWNS[closeDecision.reason] / 60000);
+        }
+
+        res.json(response);
     } catch (e) {
         res.status(500).json({ error: 'فشل التحليل', details: e.message });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG تعمل على البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — البورت ${PORT}`);
+    console.log(`🚫 منع تكرار الاسم`);
+    console.log(`🎭 تبديل المزاج في كل رد`);
+    console.log(`👤 ${FEMALE_NAMES.size + MALE_NAMES.size} اسم مدعوم`);
+    console.log(`💬 وداع طبيعي بشري`);
 });
