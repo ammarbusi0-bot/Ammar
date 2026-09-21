@@ -2,8 +2,8 @@
    مولّد التطبيقات — المنطق الأمامي (نسخة نهائية نظيفة)
    ============================================================ */
 
-// ⚙️ عند النشر: غيّر إلى رابط سيرفرك (مثل https://my-app.onrender.com)
-const SERVER_URL = 'http://localhost:3000';
+// ⚙️ رابط سيرفر Render الخاص بك
+const SERVER_URL = 'https://ammar-e0tp.onrender.com';
 
 /* ------------------------------------------------------------
    عناصر الواجهة
@@ -24,7 +24,6 @@ const btnAndroid      = $('btnAndroid');
    أدوات مساعدة
    ------------------------------------------------------------ */
 
-// تنظيف اسم الملف مع حد أقصى للطول
 function safeFilename(name) {
     let cleaned = (name || 'app')
         .replace(/[\\/:*?"<>|\n\r\t]/g, '_')
@@ -33,13 +32,11 @@ function safeFilename(name) {
     return cleaned || 'app';
 }
 
-// تقصير الاسم لـ short_name (12 حرف كحد آمن)
 function toShortName(name, max = 12) {
     const t = (name || 'App').trim();
     return t.length <= max ? t : t.substring(0, max);
 }
 
-// تهريب النصوص المستخدمة داخل HTML (لمنع كسر المولَّد)
 function escapeHtml(str) {
     return String(str)
         .replace(/&/g, '&amp;')
@@ -135,7 +132,6 @@ btnPwa.addEventListener('click', async () => {
         const icon192 = generateIconBase64(192, appName, themeColor);
         const icon512 = generateIconBase64(512, appName, themeColor);
 
-        /* --- manifest.json --- */
         const manifest = {
             name: appName,
             short_name: toShortName(appName),
@@ -153,7 +149,6 @@ btnPwa.addEventListener('click', async () => {
             ]
         };
 
-        /* --- Service Worker (fallback آمن بدون undefined) --- */
         const swCode = `const CACHE_NAME = 'pwa-cache-v1';
 const ASSETS = [
     './', './index.html', './style.css', './script.js',
@@ -207,7 +202,6 @@ self.addEventListener('fetch', (event) => {
 });
 `;
 
-        /* --- index.html النهائي (مع وسوم iOS) --- */
         const fullHtml = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -215,11 +209,9 @@ self.addEventListener('fetch', (event) => {
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${escapeHtml(appName)}</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="${themeColor}">
 
-<!-- iOS PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -243,7 +235,6 @@ if ('serviceWorker' in navigator) {
 </body>
 </html>`;
 
-        /* --- إضافة الملفات --- */
         zip.file('index.html', fullHtml);
         zip.file('style.css', css);
         zip.file('script.js', js);
@@ -252,7 +243,6 @@ if ('serviceWorker' in navigator) {
         zip.file('icon-192.png', icon192, { base64: true });
         zip.file('icon-512.png', icon512, { base64: true });
 
-        /* --- README --- */
         zip.file('README.md', `# ${appName} — تطبيق PWA
 
 ## كيفية التشغيل
@@ -296,7 +286,6 @@ if ('serviceWorker' in navigator) {
    4. طلب مشروع Android من السيرفر
    ------------------------------------------------------------ */
 btnAndroid.addEventListener('click', async () => {
-    // تحقق فعلي من إعداد الرابط
     if (!SERVER_URL || SERVER_URL.trim() === '') {
         alert('⚠️ لم يتم ضبط SERVER_URL في app.js\nافتح الملف وضع رابط السيرفر.');
         return;
@@ -339,9 +328,9 @@ btnAndroid.addEventListener('click', async () => {
         alert(
             'تعذر التواصل مع سيرفر Android:\n\n' + err.message +
             '\n\nتأكد من:\n' +
-            '1) تشغيل السيرفر (npm start)\n' +
+            '1) أن سيرفر Render يعمل\n' +
             '2) صحة SERVER_URL في app.js\n' +
-            '3) عدم حجب الطلب من المتصفح (CORS)'
+            '3) أن أول طلب قد يستغرق ~50 ثانية للاستيقاظ'
         );
     } finally {
         btnAndroid.disabled = false;
