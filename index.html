@@ -16,6 +16,12 @@
     setTimeout(wake, 3000);
     setTimeout(wake, 8000);
 })();
+
+// ✅ حفظ الثيم المفضل
+(function initTheme() {
+    const saved = localStorage.getItem('ammar_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+})();
 </script>
 
 <style>
@@ -34,13 +40,39 @@
         --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
         --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
         --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --chat-bg: #eae6df;
+        --msg-area-bg: #efeae2;
+        --border: rgba(0,0,0,0.06);
+        --header-text: #ffffff;
     }
+    
+    /* ✅ الثيم الداكن */
+    [data-theme="dark"] {
+        --primary: #0a0e1a;
+        --secondary: #1e293b;
+        --accent: #d4af37;
+        --accent-light: #f4d47a;
+        --bg: #0f1729;
+        --card: #1a2235;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --user-bubble: linear-gradient(135deg, #2d5f3f, #1e4d2f);
+        --expert-bubble: #1a2235;
+        --chat-bg: #0f1729;
+        --msg-area-bg: #131c30;
+        --border: rgba(255,255,255,0.08);
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+        --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+        --shadow-lg: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body { 
         font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif; 
         background: var(--bg); color: var(--text); 
         min-height: 100vh; line-height: 1.6;
+        transition: background 0.4s ease, color 0.4s ease;
     }
     
     /* ============ Splash ============ */
@@ -62,8 +94,8 @@
         box-shadow: 0 0 60px rgba(212, 175, 55, 0.5);
     }
     @keyframes pulse { 
-        0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(212, 175, 55, 0.5); } 
-        50% { transform: scale(1.08); box-shadow: 0 0 80px rgba(212, 175, 55, 0.8); } 
+        0%, 100% { transform: scale(1); } 
+        50% { transform: scale(1.08); } 
     }
     .splash-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
     .splash-sub { color: #94a3b8; font-size: 14px; margin-bottom: 40px; }
@@ -74,12 +106,25 @@
     /* ============ Header ============ */
     header { 
         background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white; padding: 18px 20px; text-align: center;
+        color: white; padding: 16px 20px; text-align: center;
         border-bottom: 3px solid var(--accent);
         box-shadow: var(--shadow-md);
+        position: relative;
     }
-    header h1 { font-size: 22px; margin: 0; }
-    header p { font-size: 13px; color: #94a3b8; margin: 4px 0 0; }
+    header h1 { font-size: 20px; margin: 0; letter-spacing: -0.3px; }
+    header p { font-size: 12.5px; color: #94a3b8; margin: 4px 0 0; }
+    
+    /* ✅ زر الثيم الداكن */
+    .theme-toggle {
+        position: absolute; top: 15px; left: 20px;
+        background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.15);
+        color: white; width: 38px; height: 38px; border-radius: 50%;
+        cursor: pointer; font-size: 18px;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,0.2); transform: rotate(20deg) scale(1.1); }
     
     /* ============ User bar ============ */
     .user-bar { 
@@ -115,14 +160,22 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     
     #welcome h2 { color: var(--primary); font-size: 26px; margin-bottom: 8px; }
+    [data-theme="dark"] #welcome h2 { color: var(--accent); }
     #welcome .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
     
     .form-group { text-align: right; margin-bottom: 18px; }
     .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary); font-size: 14px; }
+    [data-theme="dark"] .form-group label { color: var(--accent); }
     .form-group input, .form-group select, .form-group textarea {
         width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0;
         border-radius: 10px; font-size: 14px; font-family: inherit;
         transition: border 0.2s, box-shadow 0.2s;
+        background: var(--card); color: var(--text);
+    }
+    [data-theme="dark"] .form-group input,
+    [data-theme="dark"] .form-group select,
+    [data-theme="dark"] .form-group textarea {
+        border-color: rgba(255,255,255,0.1);
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
         outline: none; border-color: var(--secondary);
@@ -143,6 +196,7 @@
     #home { display: none; }
     #home.show { display: block; }
     #home h2 { text-align: center; margin-bottom: 30px; color: var(--primary); font-size: 22px; }
+    [data-theme="dark"] #home h2 { color: var(--accent); }
     
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     .card {
@@ -165,12 +219,13 @@
         border-color: var(--accent);
     }
     .card h3 { color: var(--primary); margin-bottom: 8px; font-size: 17px; position: relative; }
+    [data-theme="dark"] .card h3 { color: var(--accent); }
     .card p { color: var(--muted); font-size: 13.5px; line-height: 1.6; position: relative; }
     
     /* ============ Chat ============ */
     #chat { 
         display: none; max-width: 800px; margin: 20px auto;
-        background: #eae6df; border-radius: 16px;
+        background: var(--chat-bg); border-radius: 16px;
         box-shadow: var(--shadow-lg); overflow: hidden;
     }
     #chat.show { display: block; }
@@ -206,7 +261,7 @@
     }
     .btn-back:hover { background: rgba(255,255,255,0.2); }
     
-    .progress-bar { height: 3px; background: rgba(0,0,0,0.06); overflow: hidden; display: none; }
+    .progress-bar { height: 3px; background: var(--border); overflow: hidden; display: none; }
     .progress-bar.show { display: block; }
     .progress-fill {
         height: 100%; width: 0%; transition: width 0.5s ease;
@@ -217,11 +272,12 @@
     
     #messages {
         padding: 24px 20px; min-height: 380px; max-height: 520px;
-        overflow-y: auto; background: #efeae2;
+        overflow-y: auto; background: var(--msg-area-bg);
         background-image: 
             radial-gradient(circle at 20% 30%, rgba(212,175,55,0.03) 0%, transparent 50%),
             radial-gradient(circle at 80% 70%, rgba(30,58,95,0.03) 0%, transparent 50%);
         scroll-behavior: smooth;
+        transition: background 0.4s ease;
     }
     #messages::-webkit-scrollbar { width: 6px; }
     #messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
@@ -247,22 +303,23 @@
     }
     
     .sender { font-size: 11.5px; font-weight: 700; color: var(--secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    [data-theme="dark"] .sender { color: var(--accent); }
     .sender::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
     
     .bubble-content { white-space: pre-wrap; }
     .bubble-content strong { color: var(--primary); font-weight: 700; }
+    [data-theme="dark"] .bubble-content strong { color: var(--accent-light); }
     
-    /* ============ WhatsApp-style checks ============ */
+    /* ============ علامات القراءة ============ */
     .time-row { 
         display: flex; align-items: center; justify-content: flex-end; 
         gap: 4px; margin-top: 6px; 
     }
     .time { font-size: 10px; color: var(--muted); direction: ltr; }
-    .checks { font-size: 11px; color: var(--muted); letter-spacing: -3px; direction: ltr; transition: color 0.3s; }
+    .checks { font-size: 11px; color: var(--muted); direction: ltr; transition: color 0.3s; display: inline-block; }
     .checks.sent { color: var(--muted); }
-    .checks.delivered { color: #94a3b8; }
-    .checks.read { color: #3b82f6; }
-    .checks.double { letter-spacing: -4px; margin-right: 1px; }
+    .checks.delivered { color: #94a3b8; letter-spacing: -3px; }
+    .checks.read { color: #3b82f6; letter-spacing: -3px; }
     
     /* ============ Typing ============ */
     .typing { display: inline-flex; gap: 5px; padding: 6px 4px; }
@@ -274,40 +331,54 @@
     .typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes dotTyping { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
     
-    /* ============ Waiting bubble ============ */
+    /* ============ Waiting ============ */
     .waiting-bubble {
         background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
         border-right: 4px solid var(--accent);
     }
-    .waiting-steps { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    [data-theme="dark"] .waiting-bubble {
+        background: linear-gradient(135deg, #2a2410, #3d3117) !important;
+        color: #fbbf24;
+    }
+    .waiting-header { font-weight: 700; margin-bottom: 10px; font-size: 14px; }
+    .waiting-steps { display: flex; flex-direction: column; gap: 7px; }
     .wstep {
         display: flex; align-items: center; gap: 8px;
-        font-size: 12.5px; color: #78350f; opacity: 0.35;
+        font-size: 12.5px; opacity: 0.35;
         transition: opacity 0.4s, color 0.3s;
+        padding-right: 6px;
     }
-    .wstep.active { opacity: 1; color: #92400e; font-weight: 700; }
-    .wstep.done { opacity: 0.85; color: #166534; }
-    .wstep-icon { display: inline-flex; width: 18px; justify-content: center; }
+    [data-theme="light"] .wstep { color: #78350f; }
+    [data-theme="dark"] .wstep { color: #fcd34d; }
+    .wstep.active { opacity: 1; font-weight: 700; }
+    .wstep.done { opacity: 0.9; color: #16a34a; }
+    .wstep-icon { 
+        display: inline-flex; width: 20px; height: 20px; 
+        align-items: center; justify-content: center;
+        font-size: 12px;
+    }
     
-    /* ============ Suggestions ============ */
+    /* ============ Suggestion chips ============ */
     .suggestions {
         display: flex; flex-wrap: wrap; gap: 8px;
-        padding: 12px 20px; background: rgba(255,255,255,0.6);
-        border-top: 1px solid rgba(0,0,0,0.05);
+        padding: 12px 20px; background: var(--card);
+        border-top: 1px solid var(--border);
     }
     .chip {
-        background: white; border: 1.5px solid var(--secondary);
+        background: transparent; border: 1.5px solid var(--secondary);
         color: var(--secondary); padding: 7px 15px; border-radius: 20px;
         font-size: 12.5px; cursor: pointer; font-weight: 600;
         transition: all 0.2s;
     }
+    [data-theme="dark"] .chip { color: var(--accent); border-color: var(--accent); }
     .chip:hover { background: var(--secondary); color: white; transform: translateY(-1px); }
+    [data-theme="dark"] .chip:hover { background: var(--accent); color: var(--primary); }
     
     /* ============ Input area ============ */
     .input-area {
-        background: white; padding: 14px 16px;
+        background: var(--card); padding: 14px 16px;
         display: flex; gap: 12px; align-items: flex-end;
-        border-top: 1px solid rgba(0,0,0,0.06);
+        border-top: 1px solid var(--border);
         box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
     }
     .input-area textarea {
@@ -315,7 +386,9 @@
         border-radius: 22px; resize: none; min-height: 44px; max-height: 120px;
         font-family: inherit; font-size: 14px; outline: none;
         transition: border 0.2s, box-shadow 0.2s;
+        background: var(--card); color: var(--text);
     }
+    [data-theme="dark"] .input-area textarea { border-color: rgba(255,255,255,0.1); }
     .input-area textarea:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(30,58,95,0.08); }
     .send-btn {
         width: 46px; height: 46px; border-radius: 50%; border: none;
@@ -325,19 +398,28 @@
         transition: transform 0.15s, box-shadow 0.2s;
         box-shadow: 0 4px 12px rgba(15,23,41,0.25);
     }
-    .send-btn:hover:not(:disabled) { transform: scale(1.06); box-shadow: 0 6px 18px rgba(15,23,41,0.35); }
-    .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+    .send-btn:hover:not(:disabled) { transform: scale(1.06); }
+    .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+    
+    /* ============ حالة "غير متصل" ============ */
+    .expert-avatar.offline::after { background: #94a3b8; animation: none; }
+    .status-text { transition: color 0.3s; }
     
     .error-bubble {
         background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
         border-right: 4px solid #dc2626; color: #991b1b;
+    }
+    [data-theme="dark"] .error-bubble {
+        background: linear-gradient(135deg, #4c1d1d, #6b2020) !important;
+        color: #fca5a5;
     }
     
     @media (max-width: 600px) {
         .container { padding: 0 12px; }
         #welcome { padding: 30px 24px; }
         .bubble { max-width: 88%; font-size: 14px; }
-        header h1 { font-size: 18px; }
+        header h1 { font-size: 16px; }
+        .theme-toggle { width: 32px; height: 32px; font-size: 15px; top: 12px; left: 12px; }
     }
 </style>
 </head>
@@ -352,6 +434,7 @@
 </div>
 
 <header>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="تبديل الوضع">🌙</button>
     <h1>مركز التحليل المالي والاقتصادي المتقدم</h1>
     <p>فريق من المحللين المتخصصين في خدمتك</p>
 </header>
@@ -398,27 +481,27 @@
         <h2>اختر القسم التخصصي:</h2>
         <div class="grid">
             <div class="card" onclick="openSection('gold')">
-                <h3>🟡 الذهب والمعادن الثمينة</h3>
+                <h3>💎 الذهب والمعادن الثمينة</h3>
                 <p>تحليل حركة السبائك، الذهب، الفضة، وتأثير التضخم والسياسة النقدية.</p>
             </div>
             <div class="card" onclick="openSection('stocks')">
-                <h3>📈 الأسهم والأسواق المالية</h3>
+                <h3>📊 الأسهم والأسواق المالية</h3>
                 <p>تقييم الشركات، قراءة القوائم المالية، واتجاهات الاستثمار.</p>
             </div>
             <div class="card" onclick="openSection('macro')">
-                <h3>🌐 الاقتصاد الكلي</h3>
+                <h3>🌍 الاقتصاد الكلي</h3>
                 <p>قرارات البنوك المركزية، أسعار الفائدة، التضخم، وسلاسل الإمداد.</p>
             </div>
             <div class="card" onclick="openSection('geopolitical')">
-                <h3>🗺️ التحليل الجيوسياسي</h3>
+                <h3>🧭 التحليل الجيوسياسي</h3>
                 <p>تأثير الأزمات والتوترات السياسية على أسواق الطاقة والتجارة.</p>
             </div>
             <div class="card" onclick="openSection('budget')">
-                <h3>💰 الميزانية والثروات</h3>
+                <h3>💼 الميزانية والثروات</h3>
                 <p>تخطيط المداخيل، استراتيجيات الادخار، وهيكلة الخروج من الديون.</p>
             </div>
             <div class="card" onclick="openSection('crypto')">
-                <h3>🔗 الأصول الرقمية</h3>
+                <h3>🔐 الأصول الرقمية</h3>
                 <p>اتجاهات البيتكوين، تقنيات البلوكشين، وتحليل المخاطر.</p>
             </div>
         </div>
@@ -430,7 +513,7 @@
             <div class="expert-avatar" id="expAvatar">؟</div>
             <div class="expert-info">
                 <h3 id="expName">جاري الاتصال...</h3>
-                <p id="expRole"><span class="status-dot"></span>متصل الآن</p>
+                <p id="expRole"><span class="status-dot"></span><span class="status-text">متصل الآن</span></p>
             </div>
             <button class="btn-back" onclick="goBack()">← رجوع</button>
         </div>
@@ -445,409 +528,38 @@
 </div>
 
 <script>
+// ============================================================
+// 👥 فريق المحللين — قائمة موسّعة (36 محللاً)
+// ============================================================
 const EXPERTS = {
     gold: [
         { name: 'سارة العتيبي', role: 'محللة معادن ثمينة', years: '8 سنوات خبرة' },
         { name: 'أحمد الراشد', role: 'خبير أسواق السلع', years: '15 سنة خبرة' },
-        { name: 'ريم الفهد', role: 'محللة ذهب أولى', years: '10 سنوات خبرة' }
+        { name: 'ريم الفهد', role: 'محللة ذهب أولى', years: '10 سنوات خبرة' },
+        { name: 'محمد الغانم', role: 'مستشار معادن استراتيجي', years: '12 سنة خبرة' },
+        { name: 'نوف الشمري', role: 'محللة فضة وبلاتين', years: '6 سنوات خبرة' },
+        { name: 'بدر السبيعي', role: 'خبير تحوط بالمعادن', years: '14 سنة خبرة' }
     ],
     stocks: [
         { name: 'خالد المنصور', role: 'مستشار أسواق مالية', years: '12 سنة خبرة' },
-        { name: 'نورة السالم', role: 'محللة أسهم', years: '7 سنوات خبرة' }
+        { name: 'نورة السالم', role: 'محللة أسهم', years: '7 سنوات خبرة' },
+        { name: 'فيصل الدوسري', role: 'خبير تداول مؤسسي', years: '16 سنة خبرة' },
+        { name: 'هيا العلي', role: 'محللة قطاعات تقنية', years: '9 سنوات خبرة' },
+        { name: 'سلطان القحطاني', role: 'مستشار استثمار بديل', years: '11 سنة خبرة' },
+        { name: 'دانة الفايز', role: 'محللة أسواق ناشئة', years: '8 سنوات خبرة' }
     ],
     macro: [
-        { name: 'د. فهد الحربي', role: 'محلل اقتصادي', years: '18 سنة خبرة' },
-        { name: 'ليلى القحطاني', role: 'محللة سياسات نقدية', years: '9 سنوات خبرة' }
+        { name: 'د. فهد الحربي', role: 'محلل اقتصادي أكاديمي', years: '18 سنة خبرة' },
+        { name: 'ليلى القحطاني', role: 'محللة سياسات نقدية', years: '9 سنوات خبرة' },
+        { name: 'د. ماجد العمر', role: 'خبير تضخم وفائدة', years: '20 سنة خبرة' },
+        { name: 'سارة الأنصاري', role: 'محللة اقتصاد دولي', years: '10 سنوات خبرة' },
+        { name: 'مشعل الحمود', role: 'مستشار اقتصادي', years: '13 سنة خبرة' },
+        { name: 'لطيفة الزهراني', role: 'محللة أسواق السندات', years: '11 سنة خبرة' }
     ],
     geopolitical: [
         { name: 'عمر الدوسري', role: 'محلل جيوسياسي', years: '14 سنة خبرة' },
-        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة خبرة' }
-    ],
-    budget: [
-        { name: 'منى الغامدي', role: 'مدرّبة مالية', years: '6 سنوات خبرة' },
-        { name: 'عبدالرحمن الزهراني', role: 'مستشار ثروات', years: '13 سنة خبرة' }
-    ],
-    crypto: [
-        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات خبرة' },
-        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات خبرة' }
-    ]
-};
-
-const SECTIONS = { gold: 'الذهب والمعادن', stocks: 'الأسهم', macro: 'الاقتصاد الكلي', geopolitical: 'الجيوسياسي', budget: 'الميزانية', crypto: 'الأصول الرقمية' };
-
-const SUGGESTIONS = {
-    gold: ['هل الوقت مناسب للشراء؟', 'توقعك لسعر الأونصة؟', 'كيف أتحوط ضد التضخم؟'],
-    stocks: ['أفضل القطاعات حالياً؟', 'كيف أقيّم شركة؟', 'نصائح للمبتدئين'],
-    macro: ['تأثير قرارات الفيدرالي؟', 'توقعك للتضخم؟', 'أفضل الأصول الآن؟'],
-    geopolitical: ['تأثير التوترات على النفط؟', 'الحروب والأسواق؟'],
-    budget: ['كيف أنظم راتبي؟', 'أفضل طريقة للادخار؟', 'الخروج من الديون؟'],
-    crypto: ['توقعك للبيتكوين؟', 'هل هي آمنة؟', 'مشروع واعد؟']
-};
-
-let user = null, section = null, expert = null, history = [], busy = false;
-let progressTimer = null, waitingTimer = null;
-
-// ============ Splash ============
-const SPLASH_MSGS = ['جاري تجهيز بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'مراجعة الأسواق...', 'تجهيز فريق الاستقبال...'];
-let splashP = 0, splashMsgIdx = 0;
-
-function startSplash() {
-    const fill = document.getElementById('splashFill');
-    const msg = document.getElementById('splashMsg');
-    const interval = setInterval(() => {
-        splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.5, 85);
-        fill.style.width = splashP + '%';
-        const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
-        if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
-        
-        if (splashP >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                document.getElementById('splash').classList.add('fade');
-                setTimeout(() => {
-                    document.getElementById('splash').style.display = 'none';
-                    initView();
-                }, 700);
-            }, 400);
-        }
-    }, 200);
-}
-
-function initView() {
-    if (loadUser()) {
-        document.getElementById('home').classList.add('show');
-    } else {
-        document.getElementById('welcome').classList.add('show');
-    }
-}
-
-startSplash();
-setTimeout(() => { window.SERVER_READY = true; }, 15000);
-
-// ============ User ============
-function loadUser() {
-    const s = localStorage.getItem('ammar_user');
-    if (s) {
-        try {
-            user = JSON.parse(s);
-            showUserBar();
-            return true;
-        } catch (e) { localStorage.removeItem('ammar_user'); }
-    }
-    return false;
-}
-
-function saveUser() {
-    const name = document.getElementById('inName').value.trim();
-    const age = document.getElementById('inAge').value.trim();
-    const exp = document.getElementById('inExp').value;
-    const reason = document.getElementById('inReason').value.trim();
-    
-    if (!name || name.length < 2) { alert('أدخل اسماً صحيحاً'); return; }
-    if (!age || age < 15 || age > 100) { alert('أدخل عمراً صحيحاً (15-100)'); return; }
-    
-    user = { name, age, experience: exp, reason };
-    localStorage.setItem('ammar_user', JSON.stringify(user));
-    showUserBar();
-    document.getElementById('welcome').classList.remove('show');
-    document.getElementById('home').classList.add('show');
-}
-
-function showUserBar() {
-    document.getElementById('userBar').classList.add('show');
-    document.getElementById('userAvatar').innerText = user.name.charAt(0);
-    document.getElementById('userGreeting').innerText = `مرحباً ${user.name}`;
-}
-
-function resetUser() {
-    if (confirm('مسح بياناتك والبدء من جديد؟')) {
-        localStorage.removeItem('ammar_user');
-        location.reload();
-    }
-}
-
-// ============ Sections ============
-function pickExpert(s) {
-    const list = EXPERTS[s];
-    return list[Math.floor(Math.random() * list.length)];
-}
-
-function openSection(s) {
-    section = s;
-    expert = pickExpert(s);
-    history = [];
-    
-    document.getElementById('home').classList.remove('show');
-    document.getElementById('chat').classList.add('show');
-    
-    document.getElementById('expAvatar').innerText = expert.name.charAt(0);
-    document.getElementById('expName').innerText = expert.name;
-    document.getElementById('expRole').innerHTML = `<span class="status-dot"></span>${expert.role} • ${expert.years}`;
-    document.getElementById('messages').innerHTML = '';
-    
-    showSuggestions(s);
-    
-    setTimeout(() => {
-        const hour = new Date().getHours();
-        const greet = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
-        const welcome = `${greet} ${user.name} 🌟\nأنا ${expert.name}، ${expert.role}.\nخبرتي ${expert.years} في ${SECTIONS[s]}.\n\nكيف أقدر أساعدك اليوم؟`;
-        addBubble('expert', welcome);
-        history.push({ role: 'assistant', content: welcome });
-    }, 700);
-    
-    setTimeout(() => document.getElementById('input').focus(), 600);
-}
-
-function showSuggestions(s) {
-    const c = document.getElementById('suggestions');
-    const list = SUGGESTIONS[s] || [];
-    c.innerHTML = list.map(t => `<div class="chip" onclick="useSug('${t.replace(/'/g, "\\'")}')">${t}</div>`).join('');
-    c.style.display = 'flex';
-}
-
-function useSug(t) {
-    document.getElementById('input').value = t;
-    document.getElementById('input').focus();
-}
-
-function goBack() {
-    document.getElementById('chat').classList.remove('show');
-    document.getElementById('home').classList.add('show');
-    section = null; expert = null; history = [];
-}
-
-// ============ Utils ============
-function timeNow() {
-    const d = new Date();
-    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-}
-
-function esc(t) {
-    const d = document.createElement('div');
-    d.innerText = t;
-    return d.innerHTML;
-}
-
-function formatText(text) {
-    let html = esc(text);
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    return html;
-}
-
-// ✅ توليد علامات الصح
-function getChecks(who) {
-    // المحلل: صحين زرقاء (مقروء)
-    // المستخدم: صح واحدة ثم تصبح صحين
-    if (who === 'expert') {
-        return `<span class="checks read double">✓✓</span>`;
-    }
-    return `<span class="checks sent" id="ck-${Date.now()}">✓</span>`;
-}
-
-function addBubble(who, text, isError = false) {
-    const wrap = document.createElement('div');
-    wrap.className = `bubble-wrap ${who}`;
-    const name = who === 'user' ? user.name : (expert ? expert.name : 'النظام');
-    const msgId = 'msg-' + Date.now() + Math.random().toString(36).slice(2, 6);
-    wrap.id = msgId;
-    
-    wrap.innerHTML = `
-        <div class="bubble ${isError ? 'error-bubble' : ''}">
-            <div class="sender">${name}</div>
-            <div class="bubble-content">${isError ? text : formatText(text)}</div>
-            <div class="time-row">
-                <span class="time">${timeNow()}</span>
-                ${getChecks(who)}
-            </div>
-        </div>
-    `;
-    const m = document.getElementById('messages');
-    m.appendChild(wrap);
-    m.scrollTop = m.scrollHeight;
-    
-    // ✅ تحديث علامات الصح تدريجياً للمستخدم
-    if (who === 'user') {
-        const checksEl = wrap.querySelector('.checks');
-        // بعد 800ms: تصبح صحين رمادية (delivered)
-        setTimeout(() => {
-            if (checksEl) {
-                checksEl.textContent = '✓✓';
-                checksEl.classList.add('double', 'delivered');
-                checksEl.classList.remove('sent');
-            }
-        }, 800);
-        // بعد 2000ms: تصبح صحين زرقاء (read)
-        setTimeout(() => {
-            if (checksEl) {
-                checksEl.classList.add('read');
-                checksEl.classList.remove('delivered');
-            }
-        }, 2000);
-    }
-}
-
-// ============ Progress ============
-function startProgress() {
-    const bar = document.getElementById('progressBar');
-    const fill = document.getElementById('progressFill');
-    bar.classList.add('show');
-    let p = 0;
-    progressTimer = setInterval(() => {
-        p = Math.min(p + Math.random() * 4, 88);
-        fill.style.width = p + '%';
-    }, 400);
-}
-
-function finishProgress() {
-    clearInterval(progressTimer);
-    const fill = document.getElementById('progressFill');
-    fill.style.width = '100%';
-    setTimeout(() => {
-        document.getElementById('progressBar').classList.remove('show');
-        fill.style.width = '0%';
-    }, 500);
-}
-
-// ============ Waiting Bubble ============
-const WSTEPS = [
-    { icon: '📊', text: 'مراجعة آخر تحديثات الأسواق...' },
-    { icon: '📈', text: 'تحليل المؤشرات الفنية...' },
-    { icon: '🔍', text: 'تقييم المخاطر...' },
-    { icon: '💭', text: 'صياغة التوصيات...' },
-    { icon: '✍️', text: 'إعداد التقرير...' }
-];
-
-function showWaiting() {
-    const m = document.getElementById('messages');
-    const w = document.createElement('div');
-    w.className = 'bubble-wrap expert';
-    w.id = 'waiting';
-    const stepsHtml = WSTEPS.map((s, i) => `<div class="wstep" data-i="${i}"><span class="wstep-icon">${s.icon}</span><span>${s.text}</span></div>`).join('');
-    w.innerHTML = `
-        <div class="bubble waiting-bubble">
-            <div class="sender">${expert.name}</div>
-            <div style="font-weight:700;color:#92400e;margin-bottom:6px;">🧠 جاري تحليل سؤالك...</div>
-            <div class="waiting-steps">${stepsHtml}</div>
-        </div>
-    `;
-    m.appendChild(w);
-    m.scrollTop = m.scrollHeight;
-    
-    let i = 0;
-    waitingTimer = setInterval(() => {
-        const steps = document.querySelectorAll('#waiting .wstep');
-        if (i > 0 && steps[i-1]) {
-            steps[i-1].classList.remove('active');
-            steps[i-1].classList.add('done');
-            steps[i-1].querySelector('.wstep-icon').textContent = '✓';
-        }
-        if (i < steps.length) { steps[i].classList.add('active'); i++; }
-        else { i = 0; steps.forEach(s => { s.classList.remove('active','done'); s.querySelector('.wstep-icon').textContent = WSTEPS[parseInt(s.dataset.i)].icon; }); }
-    }, 2400);
-}
-
-function hideWaiting() {
-    clearInterval(waitingTimer);
-    const w = document.getElementById('waiting');
-    if (w) w.remove();
-}
-
-function showTyping() {
-    const m = document.getElementById('messages');
-    const w = document.createElement('div');
-    w.className = 'bubble-wrap expert';
-    w.id = 'typing';
-    w.innerHTML = `
-        <div class="bubble">
-            <div class="sender">${expert.name}</div>
-            <div class="typing"><span></span><span></span><span></span></div>
-        </div>
-    `;
-    m.appendChild(w);
-    m.scrollTop = m.scrollHeight;
-}
-
-function hideTyping() {
-    const t = document.getElementById('typing');
-    if (t) t.remove();
-}
-
-// ============ Send ============
-async function sendMsg() {
-    const input = document.getElementById('input');
-    const text = input.value.trim();
-    if (!text || busy) return;
-    
-    input.value = '';
-    addBubble('user', text);
-    history.push({ role: 'user', content: text });
-    document.getElementById('suggestions').style.display = 'none';
-    
-    busy = true;
-    document.getElementById('sendBtn').disabled = true;
-    showWaiting();
-    startProgress();
-    
-    await new Promise(r => setTimeout(r, 400));
-    
-    try {
-        const res = await fetch('https://ammar-e0tp.onrender.com/api/analyze', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                section, query: text, user, expert,
-                history: history.slice(-6)
-            })
-        });
-        
-        const raw = await res.text();
-        let data = {};
-        try { data = JSON.parse(raw); } catch (e) {
-            hideWaiting(); finishProgress();
-            addBubble('expert', `⚠️ خطأ (${res.status})`, true);
-            return;
-        }
-        
-        if (!res.ok) {
-            hideWaiting(); finishProgress();
-            addBubble('expert', `⚠️ خطأ: ${data.error || ''}\n${data.details || ''}`, true);
-            return;
-        }
-        
-        hideWaiting();
-        finishProgress();
-        
-        const replies = data.replies || [data.answer].filter(Boolean);
-        
-        for (let i = 0; i < replies.length; i++) {
-            if (i > 0) {
-                showTyping();
-                await new Promise(r => setTimeout(r, 700 + Math.random() * 500));
-                hideTyping();
-            }
-            addBubble('expert', replies[i]);
-            history.push({ role: 'assistant', content: replies[i] });
-            
-            if (i < replies.length - 1) await new Promise(r => setTimeout(r, 400));
-        }
-        
-    } catch (e) {
-        hideWaiting(); finishProgress();
-        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}\n\n💡 جرّب مرة أخرى.`, true);
-    } finally {
-        busy = false;
-        document.getElementById('sendBtn').disabled = false;
-        document.getElementById('input').focus();
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const inp = document.getElementById('input');
-    if (inp) inp.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-    });
-});
-</script>
-
-</body>
-</html>
+        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة خبرة' },
+        { name: 'طارق المطيري', role: 'محلل صراعات وأسواق', years: '16 سنة خبرة' },
+        { name: 'أمل الحسن', role: 'محللة سياسات الطاقة', years: '9 سنوات خبرة' },
+        { name: 'خالد الغريب', role: 'خبير ممرات تجارية', years: '12 سنة خبرة' },
+        { name: 'روان العنزي', role: 'محللة مخاطر جيوسياسية', years: '7 سنوات خبرة' }
