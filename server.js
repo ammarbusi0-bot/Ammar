@@ -9,8 +9,8 @@ app.use(cors());
 // جلب مفتاح الـ API سراً من إعدادات Environment في Render
 const API_KEY = process.env.GEMINI_API_KEY;
 
-// اسم النموذج - محدّث
-const GEMINI_MODEL = 'gemini-2.0-flash';
+// ✅ النموذج المحدّث حسب طلب Google
+const GEMINI_MODEL = 'gemini-3.6-flash';
 
 // التحقق من المفتاح عند بدء التشغيل
 if (!API_KEY) {
@@ -30,7 +30,7 @@ const expertPersonas = {
     crypto: "أنت محلل أسواق أصول رقمية وتقنيات بلوكشين. تشرح اتجاهات الأصول المشفرة وتحذر الزائر بحزم ووضوح من المخاطر العالية والتقلبات العنيفة المحيطة بهذه الأسواق."
 };
 
-// ✅ مسار اختبار سريع للتأكد أن السيرفر يعمل والمفتاح مضبوط
+// مسار اختبار سريع
 app.get('/', (req, res) => {
     res.json({
         status: 'OK',
@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// ✅ مسار اختبار API مباشر (يتجاوز الواجهة)
+// مسار اختبار API مباشر
 app.get('/api/test', async (req, res) => {
     if (!API_KEY) {
         return res.status(500).json({
@@ -67,6 +67,7 @@ app.get('/api/test', async (req, res) => {
             res.json({
                 success: true,
                 message: 'الاتصال بـ Gemini ناجح ✅',
+                model: GEMINI_MODEL,
                 reply: data.candidates[0].content.parts[0].text
             });
         } else {
@@ -91,7 +92,6 @@ app.post('/api/analyze', async (req, res) => {
     console.log(`📥 طلب جديد - القسم: ${section}`);
     console.log(`📝 الاستفسار: ${query?.substring(0, 100)}...`);
 
-    // التحقق من المدخلات
     if (!section || !query) {
         return res.status(400).json({
             error: 'بيانات ناقصة',
@@ -106,7 +106,6 @@ app.post('/api/analyze', async (req, res) => {
         });
     }
 
-    // التحقق من المفتاح
     if (!API_KEY) {
         return res.status(500).json({
             error: 'مفتاح API غير مضبوط على السيرفر',
@@ -130,17 +129,14 @@ app.post('/api/analyze', async (req, res) => {
 
         const resData = await response.json();
 
-        // ✅ طباعة الرد الكامل في Logs
         console.log('📤 حالة HTTP من Google:', response.status);
         console.log('📤 رد Google الكامل:', JSON.stringify(resData, null, 2));
 
-        // ✅ نجاح
         if (resData.candidates && resData.candidates.length > 0) {
             const answer = resData.candidates[0].content.parts[0].text;
             return res.json({ answer });
         }
 
-        // ✅ استخراج الخطأ الحقيقي من Google
         let errorMessage = 'فشل توليد التحليل';
         let errorDetails = 'لم يُرجع النموذج أي رد';
 
@@ -169,7 +165,6 @@ app.post('/api/analyze', async (req, res) => {
     }
 });
 
-// معالج للأخطاء غير المتوقعة
 app.use((err, req, res, next) => {
     console.error('❌ خطأ غير متوقع:', err);
     res.status(500).json({
