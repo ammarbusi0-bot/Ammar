@@ -1,216 +1,789 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المحلل الاقتصادي المعتمد</title>
-    <style>
-        :root {
-            --primary-color: #1b263b;
-            --secondary-color: #415a77;
-            --accent-color: #d4af37;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
-        header { background-color: var(--primary-color); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--accent-color); }
-        header h1 { margin: 0; font-size: 24px; }
-        header p { margin: 5px 0 0; color: #adb5bd; font-size: 14px; }
-        
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        
-        #home-view h2 { text-align: center; margin-bottom: 25px; color: var(--primary-color); }
-        .grid-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .section-card { background: var(--card-bg); border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border-top: 4px solid var(--secondary-color); }
-        .section-card:hover { transform: translateY(-5px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); border-color: var(--accent-color); }
-        .section-card h3 { margin-top: 0; color: var(--primary-color); }
-        .section-card p { color: #666; font-size: 14px; line-height: 1.5; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة المحلل الاقتصادي المعتمد</title>
 
-        #chat-view { display: none; background: var(--card-bg); border-radius: 10px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .back-btn { background: none; border: none; color: var(--secondary-color); font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px; }
-        .back-btn:hover { color: var(--primary-color); }
-        
-        .expert-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-        .expert-header h2 { margin: 0; color: var(--primary-color); }
-        .expert-header p { margin: 5px 0 0; color: #777; font-size: 14px; }
+<!-- ✅ Pre-warm: إيقاظ السيرفر فوراً عند فتح الموقع -->
+<script>
+(function prewarm() {
+    const startTime = Date.now();
+    console.log('🔥 بدء تحضير السيرفر...');
+    
+    // إرسال 3 طلبات متتالية لضمان الاستيقاظ
+    const wakeUp = () => fetch('https://ammar-e0tp.onrender.com/', { cache: 'no-store' })
+        .then(r => r.json())
+        .then(d => {
+            const elapsed = Date.now() - startTime;
+            console.log(`✅ السيرفر جاهز في ${elapsed}ms`);
+            window.SERVER_READY = true;
+            window.SERVER_WAKE_TIME = elapsed;
+            document.dispatchEvent(new Event('serverReady'));
+        })
+        .catch(() => {});
+    
+    wakeUp();
+    setTimeout(wakeUp, 3000);
+    setTimeout(wakeUp, 8000);
+})();
+</script>
 
-        textarea { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 15px; box-sizing: border-box; resize: vertical; min-height: 100px; margin-bottom: 15px; }
-        button.submit-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: background 0.2s; }
-        button.submit-btn:hover { background-color: var(--secondary-color); }
-        button.submit-btn:disabled { background-color: #999; cursor: not-allowed; }
-
-        .result-box { margin-top: 25px; background: #f1f5f9; padding: 20px; border-radius: 8px; border-right: 4px solid var(--accent-color); line-height: 1.7; white-space: pre-wrap; display: none; }
-        .result-box.error { background: #fef2f2; border-right-color: #dc2626; color: #991b1b; }
-        .loading { color: #d97706; font-weight: bold; text-align: center; padding: 15px; }
-        .error-title { font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #dc2626; }
-        .error-details { background: #fff; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 13px; color: #555; white-space: pre-wrap; word-break: break-word; direction: ltr; text-align: left; }
-    </style>
+<style>
+    :root {
+        --primary-color: #1b263b;
+        --secondary-color: #415a77;
+        --accent-color: #d4af37;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #333333;
+        --bubble-user: #dcf8c6;
+        --bubble-expert: #ffffff;
+        --online: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; min-height: 100vh; }
+    
+    header { background-color: var(--primary-color); color: white; padding: 15px 20px; text-align: center; border-bottom: 4px solid var(--accent-color); }
+    header h1 { margin: 0; font-size: 22px; }
+    header p { margin: 5px 0 0; color: #adb5bd; font-size: 13px; }
+    
+    /* ============ شاشة الاستقبال ============ */
+    #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1b263b, #415a77); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: white; transition: opacity 0.6s ease; }
+    #splash-screen.fade-out { opacity: 0; pointer-events: none; }
+    
+    .splash-logo { width: 90px; height: 90px; border-radius: 50%; background: var(--accent-color); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 25px; animation: pulse 2s infinite; box-shadow: 0 0 40px rgba(212, 175, 55, 0.5); }
+    
+    @keyframes pulse { 
+        0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(212, 175, 55, 0.5); } 
+        50% { transform: scale(1.08); box-shadow: 0 0 60px rgba(212, 175, 55, 0.8); } 
+    }
+    
+    .splash-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+    .splash-subtitle { color: #adb5bd; font-size: 14px; margin-bottom: 40px; }
+    
+    .splash-progress { width: 280px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
+    .splash-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-color), #f4d47a); border-radius: 2px; transition: width 0.5s ease; }
+    
+    .splash-message { font-size: 14px; color: #d4af37; min-height: 22px; text-align: center; padding: 0 20px; }
+    
+    .splash-dots { margin-top: 20px; display: flex; gap: 8px; }
+    .splash-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); animation: dotPulse 1.4s infinite; }
+    .splash-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .splash-dots span:nth-child(3) { animation-delay: 0.4s; }
+    .splash-dots span.active { background: var(--accent-color); }
+    
+    @keyframes dotPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    
+    /* ============ واجهة رئيسية ============ */
+    .user-bar { background: #0f172a; color: white; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .user-bar .user-info { display: flex; align-items: center; gap: 8px; }
+    .user-bar .avatar-sm { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-color); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
+    .user-bar button { background: transparent; color: #adb5bd; border: 1px solid #475569; padding: 4px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+    .user-bar button:hover { color: white; border-color: var(--accent-color); }
+    
+    .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+    
+    #welcome-view { background: var(--card-bg); border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 500px; margin: 60px auto; text-align: center; }
+    #welcome-view h2 { color: var(--primary-color); margin-top: 0; }
+    #welcome-view p.sub { color: #666; margin-bottom: 25px; }
+    .form-group { text-align: right; margin-bottom: 18px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; color: var(--primary-color); font-size: 14px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; font-family: inherit; }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--secondary-color); }
+    
+    #home-view h2 { text-align: center; margin-bottom: 25px; color: var(--primary-color); }
+    .grid-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .section-card { background: var(--card-bg); border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border-top: 4px solid var(--secondary-color); }
+    .section-card:hover { transform: translateY(-5px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); border-color: var(--accent-color); }
+    .section-card h3 { margin-top: 0; color: var(--primary-color); }
+    .section-card p { color: #666; font-size: 14px; line-height: 1.5; }
+    
+    /* ============ المحادثة ============ */
+    #chat-view { display: none; background: #e5ddd5; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; max-width: 750px; margin: 20px auto; }
+    
+    .expert-header { background: var(--primary-color); color: white; padding: 12px 18px; display: flex; align-items: center; gap: 12px; position: relative; }
+    .expert-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--accent-color); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; position: relative; }
+    .expert-avatar::after { content: ''; position: absolute; bottom: 2px; right: 2px; width: 11px; height: 11px; background: var(--online); border: 2px solid var(--primary-color); border-radius: 50%; }
+    .expert-info h3 { margin: 0; font-size: 16px; }
+    .expert-info p { margin: 2px 0 0; font-size: 12px; color: #94a3b8; }
+    
+    .back-btn-header { margin-left: auto; background: transparent; border: 1px solid #475569; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+    .back-btn-header:hover { background: #334155; }
+    
+    #chat-messages { padding: 20px; min-height: 350px; max-height: 500px; overflow-y: auto; background: #efeae2; }
+    .bubble-wrapper { display: flex; margin-bottom: 12px; animation: fadeIn 0.3s ease; }
+    .bubble-wrapper.user { justify-content: flex-start; }
+    .bubble-wrapper.expert { justify-content: flex-end; }
+    
+    .bubble { max-width: 78%; padding: 10px 14px; border-radius: 12px; font-size: 14.5px; line-height: 1.7; white-space: pre-wrap; word-wrap: break-word; box-shadow: 0 1px 1px rgba(0,0,0,0.1); position: relative; }
+    .bubble-wrapper.user .bubble { background: var(--bubble-user); border-top-right-radius: 3px; }
+    .bubble-wrapper.expert .bubble { background: var(--bubble-expert); border-top-left-radius: 3px; }
+    .bubble .sender { font-size: 11.5px; font-weight: bold; color: var(--secondary-color); margin-bottom: 4px; }
+    .bubble .time { font-size: 10px; color: #94a3b8; margin-top: 6px; text-align: left; direction: ltr; }
+    
+    /* ============ مؤشر الكتابة الذكي ============ */
+    .typing-indicator { display: inline-flex; gap: 4px; padding: 12px 16px; }
+    .typing-indicator span { width: 8px; height: 8px; background: #94a3b8; border-radius: 50%; animation: typing 1.4s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-6px); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* ============ شريط التقدم داخل المحادثة ============ */
+    .progress-bar { height: 3px; background: rgba(0,0,0,0.08); overflow: hidden; position: relative; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-color), #f4d47a, var(--accent-color)); background-size: 200% 100%; animation: shimmer 2s linear infinite; transition: width 0.6s ease; }
+    
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
+    /* ============ فقاعة الانتظار الذكية ============ */
+    .waiting-bubble { background: linear-gradient(135deg, #fef3c7, #fde68a) !important; border-right: 4px solid var(--accent-color); }
+    .waiting-content { display: flex; flex-direction: column; gap: 10px; }
+    .waiting-message { font-weight: bold; color: #92400e; font-size: 14px; }
+    .waiting-steps { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; color: #78350f; }
+    .waiting-step { display: flex; align-items: center; gap: 8px; opacity: 0.4; transition: opacity 0.4s; }
+    .waiting-step.active { opacity: 1; font-weight: bold; }
+    .waiting-step.done { opacity: 0.9; }
+    .waiting-step.done .step-icon { color: #22c55e; }
+    .step-icon { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+    
+    .chat-input-area { background: #f0f0f0; padding: 12px; display: flex; gap: 10px; align-items: flex-end; border-top: 1px solid #ddd; }
+    .chat-input-area textarea { flex: 1; padding: 10px 14px; border: none; border-radius: 22px; resize: none; min-height: 42px; max-height: 100px; font-family: inherit; font-size: 14px; background: white; outline: none; }
+    .chat-input-area button { background: var(--primary-color); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .chat-input-area button:hover { background: var(--secondary-color); }
+    .chat-input-area button:disabled { background: #94a3b8; cursor: not-allowed; }
+    
+    .error-bubble { background: #fee2e2 !important; border-right: 4px solid #dc2626; color: #991b1b; }
+    
+    /* ============ اقتراحات سريعة ============ */
+    .quick-suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px; background: rgba(255,255,255,0.5); }
+    .suggestion-chip { background: white; border: 1px solid var(--secondary-color); color: var(--secondary-color); padding: 6px 14px; border-radius: 15px; font-size: 12.5px; cursor: pointer; transition: all 0.2s; }
+    .suggestion-chip:hover { background: var(--secondary-color); color: white; }
+</style>
 </head>
 <body>
 
+<!-- ✅ شاشة الاستقبال المتحركة -->
+<div id="splash-screen">
+    <div class="splash-logo">📊</div>
+    <div class="splash-title">مركز التحليل المالي المتقدم</div>
+    <div class="splash-subtitle">فريق من المحللين المتخصصين في خدمتك</div>
+    
+    <div class="splash-progress">
+        <div class="splash-progress-fill" id="splash-fill"></div>
+    </div>
+    
+    <div class="splash-message" id="splash-message">جاري تجهيز بيئة العمل...</div>
+    
+    <div class="splash-dots" id="splash-dots">
+        <span></span><span></span><span></span>
+    </div>
+</div>
+
 <header>
     <h1>مركز التحليل المالي والاقتصادي المتقدم</h1>
-    <p>استشارات وقراءات تحليلية متخصصة لأسواق المال والأعمال</p>
+    <p>فريق من المحللين المتخصصين في خدمتك</p>
 </header>
+
+<div id="user-bar" class="user-bar" style="display:none;">
+    <div class="user-info">
+        <div class="avatar-sm" id="user-avatar">؟</div>
+        <span id="user-greeting">مرحباً</span>
+    </div>
+    <button onclick="resetUser()">🔄 تغيير البيانات</button>
+</div>
 
 <div class="container">
 
-    <div id="home-view">
+    <div id="welcome-view" style="display:none;">
+        <h2>👋 أهلاً بك في منصتنا</h2>
+        <p class="sub">قبل أن نبدأ، نحتاج بعض المعلومات لنقدّم لك خدمة أفضل</p>
+        
+        <div class="form-group">
+            <label>ما اسمك الكريم؟</label>
+            <input type="text" id="input-name" placeholder="مثال: عبدالله" maxlength="30">
+        </div>
+        
+        <div class="form-group">
+            <label>كم عمرك؟</label>
+            <input type="number" id="input-age" placeholder="مثال: 32" min="15" max="100">
+        </div>
+        
+        <div class="form-group">
+            <label>ما خلفيتك في المجال المالي؟</label>
+            <select id="input-experience">
+                <option value="مبتدئ تماماً، لا خبرة سابقة">🌱 مبتدئ تماماً</option>
+                <option value="متوسط، لدي بعض المعرفة الأساسية" selected>📘 متوسط</option>
+                <option value="محترف، أعمل في المجال المالي">🎓 محترف</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>لماذا تزورنا اليوم؟ (اختياري)</label>
+            <textarea id="input-reason" placeholder="مثال: أريد استشارة حول شراء الذهب..."></textarea>
+        </div>
+        
+        <button onclick="saveUser()" style="width:100%; background:var(--primary-color); color:white; border:none; padding:14px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;">دخول المنصة</button>
+    </div>
+
+    <div id="home-view" style="display:none;">
         <h2>اختر القسم التخصصي للاستشارة:</h2>
         <div class="grid-sections">
-            <div class="section-card" onclick="openSection('gold', 'مكتب تحليل الذهب والمعادن الثمينة', 'تحليل حركة السبائك، الذهب، الفضة، وتأثير التضخم والسياسة النقدية.')">
+            <div class="section-card" onclick="openSection('gold')">
                 <h3>🟡 أسواق الذهب والمعادن الثمينة</h3>
-                <p>استشر الخبير في توقيتات الشراء والبيع، رصد حركة الأوقية عالمياً، ومعايير التحوط بالمعادن.</p>
+                <p>تحليل حركة السبائك، الذهب، الفضة، وتأثير التضخم والسياسة النقدية.</p>
             </div>
-            
-            <div class="section-card" onclick="openSection('stocks', 'مكتب الأسواق المالية والأسهم', 'تقييم الشركات، قراءة القوائم المالية، واتجاهات الاستثمار المؤسسي والفردي.')">
+            <div class="section-card" onclick="openSection('stocks')">
                 <h3>📈 الأسهم والأسواق المالية</h3>
-                <p>احصل على دراسات تحليلية لفرص الاستثمار في الأسهم وتقييم المخاطر المرتبطة بالقطاعات المختلفة.</p>
+                <p>تقييم الشركات، قراءة القوائم المالية، واتجاهات الاستثمار.</p>
             </div>
-
-            <div class="section-card" onclick="openSection('macro', 'مكتب الاقتصاد الكلي والسياسات النقدية', 'تحليل قرارات البنوك المركزية، أسعار الفائدة، التضخم، وسلاسل الإمداد.')">
+            <div class="section-card" onclick="openSection('macro')">
                 <h3>🌐 الاقتصاد الكلي والسياسات</h3>
-                <p>فهم عميق لتحركات المؤشرات الاقتصادية الكبرى وانعكاساتها المباشرة على الأصول النقدية.</p>
+                <p>قرارات البنوك المركزية، أسعار الفائدة، التضخم، وسلاسل الإمداد.</p>
             </div>
-
-            <div class="section-card" onclick="openSection('geopolitical', 'مكتب التحليل الجيوسياسي والاقتصادي', 'رصد تأثير الأزمات والتوترات السياسية على أسواق الطاقة والتجارة العالمية.')">
+            <div class="section-card" onclick="openSection('geopolitical')">
                 <h3>🗺️ التحليل الجيوسياسي</h3>
-                <p>قراءة استباقية للتقاطعات السياسية الدولية وتأثيراتها العميقة على أسعار النفط والممرات الملاحية.</p>
+                <p>تأثير الأزمات والتوترات السياسية على أسواق الطاقة والتجارة.</p>
             </div>
-
-            <div class="section-card" onclick="openSection('budget', 'مكتب الاستشارات المالية الشخصية وإدارة الميزانيات', 'تخطيط المداخيل، بناء استراتيجيات الادخار، وطرق هيكلة الخروج من الديون.')">
+            <div class="section-card" onclick="openSection('budget')">
                 <h3>💰 الميزانية وإدارة الثروات</h3>
-                <p>حلول عملية ومخصصة لتنظيم التدفقات النقدية الشخصية وتوزيع الأصول بشكل آمن ومدروس.</p>
+                <p>تخطيط المداخيل، استراتيجيات الادخار، وهيكلة الخروج من الديون.</p>
             </div>
-
-            <div class="section-card" onclick="openSection('crypto', 'مكتب أصول التشفير والأسواق الرقمية', 'متابعة اتجاهات البيتكوين، تقنيات البلوكشين، وتحليل المخاطر العالية المرتفعة.')">
+            <div class="section-card" onclick="openSection('crypto')">
                 <h3>🔗 الأصول الرقمية والعملات المشفرة</h3>
-                <p>رصد تقلبات السوق الرقمي، فهم التقنيات الناشئة، وتقييم الأخطار التنظيمية والمالية المحيطة بها.</p>
+                <p>اتجاهات البيتكوين، تقنيات البلوكشين، وتحليل المخاطر.</p>
             </div>
         </div>
     </div>
 
     <div id="chat-view">
-        <button class="back-btn" onclick="goBack()">← العودة للرئيسية</button>
-        <div class="expert-header">
-            <h2 id="expert-title">عنوان المكتب</h2>
-            <p id="expert-desc">وصف الاختصاص</p>
+        <div class="progress-bar" id="chat-progress" style="display:none;">
+            <div class="progress-fill" id="chat-progress-fill"></div>
         </div>
-
-        <label for="userQuery" style="font-weight: bold; margin-bottom: 8px; display: block;">اطرح استفسارك أو الحالة التي تريد تحليلها:</label>
-        <textarea id="userQuery" placeholder="اكتب سؤالك هنا بوضوح..."></textarea>
         
-        <button id="submitBtn" class="submit-btn" onclick="sendToExpert()">إرسال الاستشارة للتحليل</button>
-
-        <div id="resultBox" class="result-box"></div>
+        <div class="expert-header">
+            <div class="expert-avatar" id="expert-avatar">؟</div>
+            <div class="expert-info">
+                <h3 id="expert-name">جاري الاتصال...</h3>
+                <p id="expert-role">متصل الآن 🟢</p>
+            </div>
+            <button class="back-btn-header" onclick="goBack()">← رجوع</button>
+        </div>
+        
+        <div id="chat-messages"></div>
+        
+        <div class="quick-suggestions" id="quick-suggestions"></div>
+        
+        <div class="chat-input-area">
+            <textarea id="user-input" placeholder="اكتب رسالتك..." rows="1"></textarea>
+            <button id="send-btn" onclick="sendMessage()">➤</button>
+        </div>
     </div>
 
 </div>
 
 <script>
-    let currentSection = '';
+// ============ فريق المحللين ============
+const EXPERTS = {
+    gold: [
+        { name: 'سارة العتيبي', role: 'محللة معادن ثمينة', years: '8 سنوات خبرة', style: 'هادئة ودقيقة' },
+        { name: 'أحمد الراشد', role: 'خبير أسواق السلع', years: '15 سنة خبرة', style: 'مباشر وحازم' },
+        { name: 'ريم الفهد', role: 'محللة ذهب أولى', years: '10 سنوات خبرة', style: 'صبورة' }
+    ],
+    stocks: [
+        { name: 'خالد المنصور', role: 'مستشار أسواق مالية', years: '12 سنة خبرة', style: 'متحفظ' },
+        { name: 'نورة السالم', role: 'محللة أسهم', years: '7 سنوات خبرة', style: 'جسورة' }
+    ],
+    macro: [
+        { name: 'د. فهد الحربي', role: 'محلل اقتصادي أكاديمي', years: '18 سنة خبرة', style: 'عميق' },
+        { name: 'ليلى القحطاني', role: 'محللة سياسات نقدية', years: '9 سنوات خبرة', style: 'عملية' }
+    ],
+    geopolitical: [
+        { name: 'عمر الدوسري', role: 'محلل جيوسياسي', years: '14 سنة خبرة', style: 'استراتيجي' },
+        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة خبرة', style: 'متأنية' }
+    ],
+    budget: [
+        { name: 'منى الغامدي', role: 'مدرّبة مالية شخصية', years: '6 سنوات خبرة', style: 'ودودة' },
+        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات', years: '13 سنة خبرة', style: 'منظم' }
+    ],
+    crypto: [
+        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات خبرة', style: 'متحمس وحذر' },
+        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات خبرة', style: 'تقنية' }
+    ]
+};
 
-    function openSection(sectionKey, title, desc) {
-        currentSection = sectionKey;
-        document.getElementById('home-view').style.display = 'none';
-        document.getElementById('chat-view').style.display = 'block';
-        document.getElementById('expert-title').innerText = title;
-        document.getElementById('expert-desc').innerText = desc;
-        document.getElementById('userQuery').value = '';
-        const resultBox = document.getElementById('resultBox');
-        resultBox.style.display = 'none';
-        resultBox.className = 'result-box';
-        resultBox.innerText = '';
-    }
+const SECTION_TITLES = {
+    gold: 'الذهب والمعادن الثمينة',
+    stocks: 'الأسهم والأسواق المالية',
+    macro: 'الاقتصاد الكلي',
+    geopolitical: 'التحليل الجيوسياسي',
+    budget: 'الميزانية والثروات',
+    crypto: 'الأصول الرقمية'
+};
 
-    function goBack() {
-        document.getElementById('chat-view').style.display = 'none';
+const QUICK_SUGGESTIONS = {
+    gold: ['هل الوقت مناسب لشراء الذهب؟', 'ما توقعك لسعر الأونصة؟', 'كيف أتحوط ضد التضخم؟'],
+    stocks: ['ما أفضل القطاعات حالياً؟', 'كيف أقيّم شركة؟', 'نصائح للمبتدئين'],
+    macro: ['تأثير قرارات الفيدرالي؟', 'ما توقعك للتضخم؟', 'أفضل الأصول في هذه البيئة؟'],
+    geopolitical: ['كيف تؤثر التوترات على النفط؟', 'تأثير الحروب على الأسواق؟'],
+    budget: ['كيف أنظم راتبي؟', 'أفضل طريقة للادخار؟', 'كيف أخرج من الديون؟'],
+    crypto: ['ما توقعك للبيتكوين؟', 'هل العملات الرقمية آمنة؟', 'أنصحني بمشروع واعد']
+};
+
+// ============ الحالة ============
+let currentUser = null;
+let currentSection = null;
+let currentExpert = null;
+let conversationHistory = [];
+let isTyping = false;
+let progressInterval = null;
+let waitingInterval = null;
+
+// ============ شاشة الاستقبال الذكية ============
+const SPLASH_MESSAGES = [
+    'جاري تجهيز بيئة العمل...',
+    'الاتصال بالخادم...',
+    'تحميل قاعدة بيانات المحللين...',
+    'مراجعة آخر تحديثات الأسواق...',
+    'تجهيز فريق الاستقبال...',
+    'شبه جاهز...'
+];
+
+let splashProgress = 0;
+let splashMsgIndex = 0;
+let splashInterval = null;
+
+function startSplash() {
+    const fill = document.getElementById('splash-fill');
+    const message = document.getElementById('splash-message');
+    const dots = document.querySelectorAll('#splash-dots span');
+    
+    // تقدّم بطيء في البداية ثم يتسارع عند جهوزية السيرفر
+    splashInterval = setInterval(() => {
+        // لا تتجاوز 85% حتى يجهز السيرفر
+        if (window.SERVER_READY) {
+            splashProgress = Math.min(splashProgress + 8, 100);
+        } else {
+            splashProgress = Math.min(splashProgress + 1.5, 85);
+        }
+        
+        fill.style.width = splashProgress + '%';
+        
+        // تغيير الرسالة كل 20%
+        const newIndex = Math.min(Math.floor(splashProgress / 18), SPLASH_MESSAGES.length - 1);
+        if (newIndex !== splashMsgIndex) {
+            splashMsgIndex = newIndex;
+            message.textContent = SPLASH_MESSAGES[splashMsgIndex];
+        }
+        
+        // تفعيل النقاط
+        dots.forEach((d, i) => {
+            d.classList.toggle('active', i === splashMsgIndex % 3);
+        });
+        
+        // إخفاء الشاشة عند الاكتمال
+        if (splashProgress >= 100) {
+            clearInterval(splashInterval);
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    showInitialView();
+                }, 600);
+            }, 300);
+        }
+    }, 200);
+}
+
+function showInitialView() {
+    if (loadUser()) {
         document.getElementById('home-view').style.display = 'block';
+    } else {
+        document.getElementById('welcome-view').style.display = 'block';
     }
+}
 
-    async function sendToExpert() {
-        const userQuery = document.getElementById('userQuery').value.trim();
-        const resultBox = document.getElementById('resultBox');
-        const submitBtn = document.getElementById('submitBtn');
+// بدء شاشة الاستقبال
+startSplash();
 
-        if (!userQuery) {
-            alert('الرجاء كتابة الاستفسار أولاً!');
+// في حال جهز السيرفر بسرعة
+document.addEventListener('serverReady', () => {
+    const message = document.getElementById('splash-message');
+    if (message) message.textContent = '✅ جاهز!';
+});
+
+// في حال تأخر السيرفر أكثر من 15 ثانية، اسمح بالدخول على أي حال
+setTimeout(() => {
+    if (!window.SERVER_READY) {
+        console.log('⏰ انتهت المهلة، متابعة على أي حال');
+        window.SERVER_READY = true;
+    }
+}, 15000);
+
+// ============ إدارة المستخدم ============
+function loadUser() {
+    const saved = localStorage.getItem('ammar_user');
+    if (saved) {
+        try {
+            currentUser = JSON.parse(saved);
+            showUserBar();
+            document.getElementById('welcome-view').style.display = 'none';
+            return true;
+        } catch (e) { localStorage.removeItem('ammar_user'); }
+    }
+    return false;
+}
+
+function saveUser() {
+    const name = document.getElementById('input-name').value.trim();
+    const age = document.getElementById('input-age').value.trim();
+    const experience = document.getElementById('input-experience').value;
+    const reason = document.getElementById('input-reason').value.trim();
+    
+    if (!name || name.length < 2) { alert('الرجاء إدخال اسم صحيح'); return; }
+    if (!age || age < 15 || age > 100) { alert('الرجاء إدخال عمر صحيح'); return; }
+    
+    currentUser = { name, age, experience, reason, joinedAt: Date.now() };
+    localStorage.setItem('ammar_user', JSON.stringify(currentUser));
+    showUserBar();
+    
+    document.getElementById('welcome-view').style.display = 'none';
+    document.getElementById('home-view').style.display = 'block';
+}
+
+function showUserBar() {
+    document.getElementById('user-bar').style.display = 'flex';
+    document.getElementById('user-avatar').innerText = currentUser.name.charAt(0);
+    document.getElementById('user-greeting').innerText = `مرحباً ${currentUser.name}`;
+}
+
+function resetUser() {
+    if (confirm('هل تريد مسح بياناتك والبدء من جديد؟')) {
+        localStorage.removeItem('ammar_user');
+        location.reload();
+    }
+}
+
+// ============ الأقسام ============
+function pickRandomExpert(section) {
+    const list = EXPERTS[section];
+    return list[Math.floor(Math.random() * list.length)];
+}
+
+function openSection(section) {
+    currentSection = section;
+    currentExpert = pickRandomExpert(section);
+    conversationHistory = [];
+    
+    document.getElementById('home-view').style.display = 'none';
+    document.getElementById('chat-view').style.display = 'block';
+    
+    document.getElementById('expert-avatar').innerText = currentExpert.name.charAt(0);
+    document.getElementById('expert-name').innerText = currentExpert.name;
+    document.getElementById('expert-role').innerText = `${currentExpert.role} • ${currentExpert.years} • متصل 🟢`;
+    
+    document.getElementById('chat-messages').innerHTML = '';
+    
+    // إظهار الاقتراحات السريعة
+    showQuickSuggestions(section);
+    
+    // رسالة ترحيب
+    setTimeout(() => {
+        const welcome = generateWelcome(currentExpert, currentUser, section);
+        addExpertBubble(welcome);
+        conversationHistory.push({ role: 'assistant', content: welcome });
+    }, 700);
+    
+    setTimeout(() => document.getElementById('user-input').focus(), 500);
+}
+
+function showQuickSuggestions(section) {
+    const container = document.getElementById('quick-suggestions');
+    const suggestions = QUICK_SUGGESTIONS[section] || [];
+    
+    container.innerHTML = suggestions.map(s => 
+        `<div class="suggestion-chip" onclick="useSuggestion('${s.replace(/'/g, "\\'")}')">${s}</div>`
+    ).join('');
+}
+
+function useSuggestion(text) {
+    document.getElementById('user-input').value = text;
+    document.getElementById('user-input').focus();
+}
+
+function goBack() {
+    document.getElementById('chat-view').style.display = 'none';
+    document.getElementById('home-view').style.display = 'block';
+    currentSection = null;
+    currentExpert = null;
+    conversationHistory = [];
+}
+
+function generateWelcome(expert, user, section) {
+    const sectionName = SECTION_TITLES[section];
+    const hour = new Date().getHours();
+    let timeGreeting = hour < 12 ? 'صباح الخير' : (hour < 17 ? 'مساء الخير' : 'مساء النور');
+    
+    const welcomes = [
+        `${timeGreeting} ${user.name} 🌟\nأنا ${expert.name}، ${expert.role}.\nخبرتي ${expert.years} في ${sectionName}.\nكيف أقدر أساعدك اليوم؟`,
+        `${timeGreeting} ${user.name} 👋\nمعك ${expert.name} من فريق ${sectionName}.\nسعيدة بتواصلك.\nأخبرني، ما الذي تريد أن نحلله سويةً؟`,
+        `${timeGreeting} ${user.name}\nأنا ${expert.name}، ${expert.role}.\nأهلاً بك.\nما الذي يشغل بالك اليوم؟`
+    ];
+    
+    return welcomes[Math.floor(Math.random() * welcomes.length)];
+}
+
+// ============ أدوات ============
+function getCurrentTime() {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+}
+
+function addUserBubble(text) {
+    const messages = document.getElementById('chat-messages');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bubble-wrapper user';
+    wrapper.innerHTML = `
+        <div class="bubble">
+            <div class="sender">${currentUser.name}</div>
+            <div>${escapeHtml(text)}</div>
+            <div class="time">${getCurrentTime()}</div>
+        </div>
+    `;
+    messages.appendChild(wrapper);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function addExpertBubble(text, isError = false) {
+    const messages = document.getElementById('chat-messages');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bubble-wrapper expert';
+    wrapper.innerHTML = `
+        <div class="bubble ${isError ? 'error-bubble' : ''}">
+            <div class="sender">${currentExpert ? currentExpert.name : 'النظام'}</div>
+            <div>${isError ? text : escapeHtml(text)}</div>
+            <div class="time">${getCurrentTime()}</div>
+        </div>
+    `;
+    messages.appendChild(wrapper);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// ============ الانتظار الذكي ============
+const WAITING_STEPS = [
+    { icon: '📊', text: 'مراجعة آخر تحديثات الأسواق...' },
+    { icon: '📈', text: 'تحليل المؤشرات الفنية...' },
+    { icon: '🔍', text: 'تقييم المخاطر والعوامل المؤثرة...' },
+    { icon: '💭', text: 'صياغة التوصيات المناسبة...' },
+    { icon: '✍️', text: 'إعداد التقرير النهائي...' }
+];
+
+function showWaitingBubble() {
+    const messages = document.getElementById('chat-messages');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bubble-wrapper expert';
+    wrapper.id = 'waiting-bubble';
+    
+    const stepsHtml = WAITING_STEPS.map((s, i) => `
+        <div class="waiting-step" data-step="${i}">
+            <span class="step-icon">${s.icon}</span>
+            <span>${s.text}</span>
+        </div>
+    `).join('');
+    
+    wrapper.innerHTML = `
+        <div class="bubble waiting-bubble">
+            <div class="sender">${currentExpert.name}</div>
+            <div class="waiting-content">
+                <div class="waiting-message">🧠 جاري تحليل سؤالك...</div>
+                <div class="waiting-steps">${stepsHtml}</div>
+            </div>
+        </div>
+    `;
+    messages.appendChild(wrapper);
+    messages.scrollTop = messages.scrollHeight;
+    
+    // تفعيل الخطوات تدريجياً
+    let stepIndex = 0;
+    waitingInterval = setInterval(() => {
+        const steps = document.querySelectorAll('#waiting-bubble .waiting-step');
+        if (stepIndex > 0 && steps[stepIndex - 1]) {
+            steps[stepIndex - 1].classList.remove('active');
+            steps[stepIndex - 1].classList.add('done');
+            steps[stepIndex - 1].querySelector('.step-icon').textContent = '✅';
+        }
+        
+        if (stepIndex < steps.length) {
+            steps[stepIndex].classList.add('active');
+            stepIndex++;
+        } else {
+            // بعد اكتمال الخطوات، أعد الدورة
+            stepIndex = 0;
+            steps.forEach(s => {
+                s.classList.remove('active', 'done');
+                const icon = WAITING_STEPS[parseInt(s.dataset.step)].icon;
+                s.querySelector('.step-icon').textContent = icon;
+            });
+        }
+    }, 2500);
+}
+
+function hideWaitingBubble() {
+    clearInterval(waitingInterval);
+    const b = document.getElementById('waiting-bubble');
+    if (b) b.remove();
+}
+
+function startChatProgress() {
+    const bar = document.getElementById('chat-progress');
+    const fill = document.getElementById('chat-progress-fill');
+    bar.style.display = 'block';
+    
+    let p = 0;
+    progressInterval = setInterval(() => {
+        p = Math.min(p + Math.random() * 5, 88);
+        fill.style.width = p + '%';
+    }, 400);
+}
+
+function finishChatProgress() {
+    clearInterval(progressInterval);
+    const fill = document.getElementById('chat-progress-fill');
+    fill.style.width = '100%';
+    setTimeout(() => {
+        document.getElementById('chat-progress').style.display = 'none';
+        fill.style.width = '0%';
+    }, 500);
+}
+
+// ============ الإرسال ============
+async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const text = input.value.trim();
+    if (!text || isTyping) return;
+    
+    input.value = '';
+    addUserBubble(text);
+    conversationHistory.push({ role: 'user', content: text });
+    
+    // إخفاء الاقتراحات
+    document.getElementById('quick-suggestions').style.display = 'none';
+    
+    isTyping = true;
+    document.getElementById('send-btn').disabled = true;
+    
+    showWaitingBubble();
+    startChatProgress();
+    
+    // تأخير طبيعي إنساني
+    await new Promise(r => setTimeout(r, 400 + Math.random() * 400));
+    
+    try {
+        const response = await fetch('https://ammar-e0tp.onrender.com/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                section: currentSection,
+                query: text,
+                user: currentUser,
+                expert: currentExpert,
+                history: conversationHistory.slice(-6)
+            })
+        });
+        
+        const rawText = await response.text();
+        let resData = {};
+        try { resData = JSON.parse(rawText); }
+        catch (e) {
+            hideWaitingBubble();
+            finishChatProgress();
+            addExpertBubble(`⚠️ خطأ (${response.status}): ${rawText.substring(0,300)}`, true);
             return;
         }
-
-        // إظهار حالة التحميل
-        resultBox.style.display = 'block';
-        resultBox.className = 'result-box';
-        resultBox.innerHTML = '<div class="loading">⏳ جاري مراجعة المعطيات وإعداد التقرير التحليلي... يرجى الانتظار (قد يستغرق حتى دقيقة عند أول تشغيل)</div>';
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'جاري التحليل...';
-
-        try {
-            const response = await fetch('https://ammar-e0tp.onrender.com/api/analyze', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    section: currentSection,
-                    query: userQuery
-                })
-            });
-
-            // قراءة الرد كنص أولاً لتجنب أخطاء JSON
-            const rawText = await response.text();
-            let resData = {};
-            try {
-                resData = JSON.parse(rawText);
-            } catch (e) {
-                // الرد ليس JSON (قد يكون صفحة خطأ من Render)
-                resultBox.className = 'result-box error';
-                resultBox.innerHTML = `
-                    <div class="error-title">⚠️ رد غير صالح من الخادم (${response.status})</div>
-                    <div class="error-details">${rawText.substring(0, 500)}</div>
-                `;
-                return;
-            }
-
-            // ✅ إذا كانت حالة الاستجابة خطأ - اعرض التفاصيل
-            if (!response.ok) {
-                console.error('Server error:', resData);
-                resultBox.className = 'result-box error';
-                resultBox.innerHTML = `
-                    <div class="error-title">⚠️ خطأ من الخادم (كود: ${response.status})</div>
-                    <div style="margin-bottom:8px;">${resData.error || 'خطأ غير معروف'}</div>
-                    ${resData.details ? `<div class="error-details">${resData.details}</div>` : ''}
-                `;
-                return;
-            }
-
-            // ✅ نجاح - اعرض الرد
-            if (resData.answer) {
-                resultBox.className = 'result-box';
-                resultBox.innerText = resData.answer;
-            } else {
-                resultBox.className = 'result-box error';
-                resultBox.innerHTML = `
-                    <div class="error-title">⚠️ رد غير متوقع من الخادم</div>
-                    <div class="error-details">${JSON.stringify(resData, null, 2)}</div>
-                `;
-            }
-
-        } catch (error) {
-            console.error('Network error:', error);
-            resultBox.className = 'result-box error';
-            resultBox.innerHTML = `
-                <div class="error-title">⚠️ تعذر الاتصال بالخادم</div>
-                <div style="margin-bottom:8px;">${error.message}</div>
-                <div style="font-size:13px;color:#666;">
-                    💡 ملاحظة: قد يستغرق الخادم المجاني على Render من 30 إلى 60 ثانية للاستيقاظ في المرة الأولى. أعد المحاولة.
-                </div>
-            `;
-        } finally {
-            // إعادة تفعيل الزر
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'إرسال الاستشارة للتحليل';
+        
+        if (!response.ok) {
+            hideWaitingBubble();
+            finishChatProgress();
+            addExpertBubble(`⚠️ خطأ (${response.status}):\n${resData.error || ''}\n${resData.details || ''}`, true);
+            return;
         }
+        
+        // إخفاء الانتظار
+        hideWaitingBubble();
+        finishChatProgress();
+        
+        const replies = resData.replies || [resData.answer].filter(Boolean);
+        
+        // عرض الردود واحداً تلو الآخر
+        for (let i = 0; i < replies.length; i++) {
+            const reply = replies[i];
+            
+            // مؤشر كتابة قبل الرد
+            if (i > 0) {
+                showTypingSimple();
+                await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+                hideTypingSimple();
+            }
+            
+            addExpertBubble(reply);
+            conversationHistory.push({ role: 'assistant', content: reply });
+            
+            if (i < replies.length - 1) {
+                await new Promise(r => setTimeout(r, 500));
+            }
+        }
+        
+    } catch (error) {
+        hideWaitingBubble();
+        finishChatProgress();
+        addExpertBubble(`⚠️ تعذر الاتصال بالخادم.\n${error.message}`, true);
+    } finally {
+        isTyping = false;
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('user-input').focus();
     }
+}
+
+function showTypingSimple() {
+    const messages = document.getElementById('chat-messages');
+    const w = document.createElement('div');
+    w.className = 'bubble-wrapper expert';
+    w.id = 'typing-simple';
+    w.innerHTML = `
+        <div class="bubble">
+            <div class="sender">${currentExpert.name}</div>
+            <div class="typing-indicator"><span></span><span></span><span></span></div>
+        </div>
+    `;
+    messages.appendChild(w);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function hideTypingSimple() {
+    const t = document.getElementById('typing-simple');
+    if (t) t.remove();
+}
+
+// إرسال بمفتاح Enter
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('user-input');
+    if (input) {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+});
 </script>
 
 </body>
