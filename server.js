@@ -95,14 +95,13 @@ function genderInstructions(gender, name) {
 
 const SESSIONS = new Map();
 
-// ✅ فترات الإغلاق لكل سبب (بالملّي ثانية)
 const COOLDOWNS = {
-    user_done:  20 * 60 * 1000,   // 20 دقيقة — أنهى المستخدم
-    trolling:   30 * 60 * 1000,   // 30 دقيقة — عبث
-    bored:      15 * 60 * 1000,   // 15 دقيقة — ملّ أو ضاع
-    deep_close: 10 * 60 * 1000,   // 10 دقائق — محادثة طويلة
-    rude:       30 * 60 * 1000,   // 30 دقيقة — إساءة
-    wants_else: 12 * 60 * 1000    // 12 دقيقة — يريد شيئاً آخر
+    user_done:  20 * 60 * 1000,
+    trolling:   30 * 60 * 1000,
+    bored:      15 * 60 * 1000,
+    deep_close: 10 * 60 * 1000,
+    rude:       30 * 60 * 1000,
+    wants_else: 12 * 60 * 1000
 };
 
 function getUserKey(user, section) { return `${section}::${user?.firstName || 'anon'}::${user?.age || '0'}`; }
@@ -179,11 +178,12 @@ const REFERENCE_PRICES = {
     budget: 'التضخم العالمي: 2-5% سنوياً.'
 };
 
+// ✅ الاسم: "منصة استشارات forG"
 const PLATFORM_KNOWLEDGE = `
-# 🏢 معرفة كاملة بمنصة "الاسترات forG"
+# 🏢 معرفة كاملة بمنصة "استشارات forG"
 
 ## عن المنصة:
-"منصة الاسترات forG" — منصة استشارات مالية عربية متقدمة، تجمع نخبة من المحللين العرب من 17 دولة، كل بلهجته المحلية وتخصصه.
+"منصة استشارات forG" — منصة استشارات مالية عربية متقدمة، تجمع نخبة من المحللين العرب من 17 دولة، كل بلهجته المحلية وتخصصه.
 
 ## الأقسام الستة:
 
@@ -270,7 +270,6 @@ function analyzeIntent(q, history) {
     if (isVeryShort && shortMsgCount >= 5) trollScore += 2;
     if (isGibberish) trollScore += 2;
 
-    // ✅ كشف "يريد شيئاً آخر" — مؤشرات قوية
     const wantsSomethingElse =
         /(ابغى اسأل عن شي ثاني|أبغى أسأل عن شيء ثاني|ابي اسأل عن شي ثاني|خلنا نغير الموضوع|نغير الموضوع|ما هذا اللي ابيه|ما هذا اللي أبيه|هذا مو اللي ابيه|هذا مو اللي أبيه|مو هذا|ودني قسم|ودني على قسم|حولني|حولني على|ابغى قسم|أبغى قسم|ابي قسم|ما يخصني|مو مهتم|مو مهتمه|ما يهمني)/i.test(trimmed);
 
@@ -459,7 +458,6 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         specialContext = `\n# 🎯 الموقف: تكرار\n- "شكلك ما اقتنعت، خلنا نوضح."`;
     }
 
-    // ✅ قسم قدرة AI على الإغلاق
     const closeAbilitySection = `
 # 🚪 قدرتك على إغلاق المحادثة (مهم)
 
@@ -490,7 +488,7 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 
 # 🎭 هويتك
 أنت **${expert?.name || 'مستشار'}**، ${expert?.role || 'مستشار مالي'}، خبرة ${expert?.years || 'سنوات'}.
-من ${dialect.country}. أنت جزء من منصة الاسترات forG.
+من ${dialect.country}. أنت جزء من منصة استشارات forG.
 
 # 🌍 لهجتك
 **${dialect.name}** — النبرة: ${dialect.tone}
@@ -598,7 +596,6 @@ async function callGemini(prompt) {
     throw new Error(lastError || 'كل النماذج فشلت');
 }
 
-// ✅ استخراج رمز الإغلاق من رد AI
 function extractCloseToken(text) {
     const closeRegex = /\[CLOSE:(user_done|trolling|bored|deep_close|rude|wants_else)\]/i;
     const match = text.match(closeRegex);
@@ -658,31 +655,24 @@ function splitIntoChunks(text, intentHint) {
     return paragraphs.slice(0, 4);
 }
 
-// ✅ قرار الإغلاق — يجمع بين قواعد ثابتة + قرار AI
 function shouldClose(intent, history, session, aiCloseReason) {
     const userCount = (history || []).filter(h => h.role === 'user').length;
 
-    // أولاً: قرار AI (أولوية عالية)
     if (aiCloseReason) {
-        // تحقق من أن AI لا يستخدمها بشكل مبالغ فيه
         if (userCount < 3 && aiCloseReason !== 'wants_else') {
             // تجاهل قرار AI في المحادثات القصيرة جداً
         } else {
-            // سجل محاولات AI
             session.aiCloseAttempts = (session.aiCloseAttempts || 0) + 1;
-            // لا تسمح بالاستخدام أكثر من مرة كل 5 رسائل
             if (session.aiCloseAttempts <= 3) {
                 return { close: true, reason: aiCloseReason, source: 'ai' };
             }
         }
     }
 
-    // ثانياً: قواعد ثابتة
     if (intent.isDone && userCount >= 3) return { close: true, reason: 'user_done', source: 'rule' };
     if (intent.isRude && userCount >= 5) return { close: true, reason: 'rude', source: 'rule' };
     if (userCount >= 40) return { close: true, reason: 'deep_close', source: 'rule' };
 
-    // ✅ كشف الملل من السياق
     const recentUserMsgs = (history || []).filter(h => h.role === 'user').slice(-5);
     if (recentUserMsgs.length >= 4) {
         const veryShortReplies = recentUserMsgs.filter(m => m.content.trim().length < 6).length;
@@ -704,8 +694,8 @@ function shouldClose(intent, history, session, aiCloseReason) {
 app.get('/', (req, res) => {
     res.json({
         status: 'OK',
-        platform: 'منصة الاسترات forG',
-        version: 'Strategy-Pro-v8',
+        platform: 'منصة استشارات forG',
+        version: 'Strategy-Pro-v9',
         features: ['platform_aware', 'ai_close', 'rule_close', 'streaming', 'smart_split'],
         activeSessions: SESSIONS.size
     });
@@ -740,7 +730,6 @@ app.post('/api/analyze', async (req, res) => {
         const prompt = buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender, session);
         const result = await callGemini(prompt);
 
-        // ✅ استخراج رمز إغلاق AI (إن وُجد)
         const { reason: aiCloseReason, cleaned } = extractCloseToken(result.text);
 
         const replies = splitIntoChunks(cleaned, intent.lengthHint);
@@ -790,7 +779,8 @@ app.post('/api/analyze', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ منصة الاسترات forG — البورت ${PORT}`);
-    console.log(`🚪 AI يستطيع إغلاق المحادثة (bored/wants_else/user_done)`);
+    console.log(`✅ منصة استشارات forG — البورت ${PORT}`);
+    console.log(`👋 رسالة الترحيب مسموحة`);
+    console.log(`🚪 AI يستطيع إغلاق المحادثة`);
     console.log(`🧠 AI يعرف المنصة كاملة`);
 });
