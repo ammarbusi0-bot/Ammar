@@ -53,13 +53,10 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body {
-        height: 100%;
-        font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif;
-        background: var(--app-bg); color: var(--text);
-        line-height: 1.65; overflow-x: hidden;
+        height: 100%; font-family: 'Segoe UI', 'Tahoma', system-ui, -apple-system, sans-serif;
+        background: var(--app-bg); color: var(--text); line-height: 1.65; overflow-x: hidden;
         transition: background 0.35s, color 0.35s;
     }
-
     #splash {
         position: fixed; inset: 0;
         background: radial-gradient(circle at 30% 20%, #142b52 0%, #0b1e3f 45%, #05101f 100%);
@@ -81,7 +78,6 @@
     .splash-progress { width: min(320px, 78vw); height: 4px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
     .splash-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-soft)); transition: width 0.5s; }
     .splash-msg { color: var(--accent-soft); font-size: 13px; min-height: 22px; opacity: 0.85; }
-
     header {
         background: linear-gradient(135deg, #071630 0%, #12294a 55%, #0b1e3f 100%);
         color: white; padding: 16px 20px; text-align: center;
@@ -102,7 +98,6 @@
         display: flex; align-items: center; justify-content: center; transition: all 0.25s;
     }
     .theme-toggle:hover { background: rgba(201,164,76,0.25); border-color: var(--accent); transform: translateY(-50%) rotate(15deg); }
-
     .user-bar {
         background: rgba(7, 22, 48, 0.95); backdrop-filter: blur(12px);
         color: white; padding: 10px 18px;
@@ -119,9 +114,7 @@
         color: #0b1e3f; display: flex; align-items: center; justify-content: center;
         font-weight: 800; font-size: 14px; box-shadow: 0 0 0 2px rgba(201,164,76,0.3);
     }
-
     .container { max-width: 1080px; margin: 30px auto; padding: 0 20px; }
-
     #welcome {
         background: var(--card-bg); border-radius: 20px; padding: 44px 40px;
         box-shadow: var(--shadow-lg); max-width: 560px; margin: 30px auto;
@@ -152,20 +145,17 @@
         transition: all 0.2s; background: var(--card-bg); color: var(--text);
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        outline: none; border-color: var(--accent);
-        box-shadow: 0 0 0 4px rgba(201,164,76,0.12);
+        outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(201,164,76,0.12);
     }
     .form-group textarea { min-height: 76px; resize: vertical; }
     .btn-primary {
         width: 100%; padding: 14px; border: none; border-radius: 12px;
         background: linear-gradient(135deg, #0b1e3f, #1e3a5f);
         color: white; font-size: 15.5px; font-weight: 800;
-        cursor: pointer; font-family: inherit;
-        transition: transform 0.15s, box-shadow 0.2s;
+        cursor: pointer; font-family: inherit; transition: transform 0.15s, box-shadow 0.2s;
         box-shadow: 0 6px 18px rgba(11,30,63,0.28); margin-top: 10px;
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(11,30,63,0.35); }
-
     #home { display: none; }
     #home.show { display: block; }
     #home h2 { text-align: center; margin-bottom: 8px; color: var(--text); font-size: 22px; font-weight: 800; }
@@ -207,7 +197,6 @@
         background: #22c55e; animation: blink 1.5s infinite;
     }
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-
     #chat {
         display: none; max-width: 850px; margin: 16px auto;
         background: var(--chat-bg); border-radius: 18px;
@@ -254,7 +243,6 @@
         font-size: 12px; font-family: inherit; transition: all 0.2s; flex-shrink: 0;
     }
     .btn-back:hover { background: rgba(201,164,76,0.2); border-color: var(--accent); }
-
     .progress-bar { height: 2.5px; background: rgba(0,0,0,0.05); overflow: hidden; display: none; }
     .progress-bar.show { display: block; }
     .progress-fill {
@@ -263,7 +251,6 @@
         background-size: 200% 100%; animation: shimmer 1.8s linear infinite;
     }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
     #messages {
         padding: 26px 18px 20px; min-height: 420px; max-height: 58vh;
         overflow-y: auto; background: var(--chat-bg);
@@ -275,7 +262,6 @@
     #messages::-webkit-scrollbar { width: 6px; }
     #messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
     [data-theme="dark"] #messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
-
     .bubble-wrap { display: flex; margin-bottom: 10px; animation: msgIn 0.35s cubic-bezier(0.4, 0, 0.2, 1); padding: 0 4px; }
     @keyframes msgIn { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .bubble-wrap.user { justify-content: flex-end; }
@@ -300,22 +286,16 @@
     .checks.sent { color: var(--check-sent); letter-spacing: -2px; }
     .checks.delivered { color: var(--check-sent); letter-spacing: -3px; }
     .checks.read { color: var(--check-read); letter-spacing: -3px; }
-
     .typing { display: inline-flex; gap: 4px; padding: 6px 2px 14px; }
     .typing span { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: dotTyping 1.3s infinite; }
     .typing span:nth-child(2) { animation-delay: 0.15s; }
     .typing span:nth-child(3) { animation-delay: 0.3s; }
     @keyframes dotTyping { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-5px); opacity: 1; } }
-
-    .ack-bubble {
-        background: linear-gradient(135deg, #fffdf5, #fdf7e4) !important;
-        border-right: 3px solid var(--accent);
-    }
+    .ack-bubble { background: linear-gradient(135deg, #fffdf5, #fdf7e4) !important; border-right: 3px solid var(--accent); }
     [data-theme="dark"] .ack-bubble { background: linear-gradient(135deg, #1a2430, #232d3a) !important; color: #fcd34d !important; }
     .ack-bubble::after { display: none; }
     .ack-content { display: flex; align-items: center; gap: 10px; }
     .ack-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse-dot 1.2s infinite; flex-shrink: 0; }
-
     .suggestions { display: flex; flex-wrap: wrap; gap: 7px; padding: 11px 18px; background: var(--card-bg); border-top: 1px solid var(--border); }
     .chip {
         background: transparent; border: 1.5px solid rgba(201,164,76,0.5);
@@ -324,7 +304,6 @@
         transition: all 0.2s;
     }
     .chip:hover { background: var(--accent); color: #0b1e3f; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,164,76,0.3); }
-
     .input-area { background: var(--card-bg); padding: 12px 14px; display: flex; gap: 10px; align-items: flex-end; border-top: 1px solid var(--border); }
     .input-area textarea {
         flex: 1; padding: 11px 16px; border: 1.5px solid var(--border);
@@ -343,10 +322,8 @@
     }
     .send-btn:hover:not(:disabled) { transform: scale(1.08); }
     .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
-
     .error-bubble { background: var(--danger-bg) !important; border-right: 3px solid var(--danger); color: var(--danger) !important; }
     .error-bubble::after { display: none; }
-
     @media (max-width: 620px) {
         .container { padding: 0 12px; margin: 14px auto; }
         #welcome { padding: 32px 22px; border-radius: 16px; }
@@ -387,25 +364,14 @@
 </div>
 
 <div class="container">
-
     <div id="welcome">
         <div class="welcome-icon">👤</div>
         <h2>أهلاً بك في المنصة</h2>
         <p class="sub">بياناتك الأساسية لنقدّم استشارة مخصصة بلغة تناسبك</p>
-
         <div class="form-grid">
-            <div class="form-group">
-                <label>الاسم الأول *</label>
-                <input type="text" id="inFirstName" placeholder="مثال: عبدالله" maxlength="30">
-            </div>
-            <div class="form-group">
-                <label>اسم العائلة *</label>
-                <input type="text" id="inLastName" placeholder="مثال: المنصور" maxlength="30">
-            </div>
-            <div class="form-group">
-                <label>العمر *</label>
-                <input type="number" id="inAge" placeholder="مثال: 32" min="15" max="100">
-            </div>
+            <div class="form-group"><label>الاسم الأول *</label><input type="text" id="inFirstName" placeholder="مثال: عبدالله" maxlength="30"></div>
+            <div class="form-group"><label>اسم العائلة *</label><input type="text" id="inLastName" placeholder="مثال: المنصور" maxlength="30"></div>
+            <div class="form-group"><label>العمر *</label><input type="number" id="inAge" placeholder="مثال: 32" min="15" max="100"></div>
             <div class="form-group">
                 <label>البلد *</label>
                 <select id="inCountry">
@@ -434,7 +400,6 @@
                 <textarea id="inReason" placeholder="مثال: أرغب بتخصيص محفظة استثمارية..."></textarea>
             </div>
         </div>
-
         <button class="btn-primary" onclick="saveUser()">الدخول إلى المنصة</button>
     </div>
 
@@ -461,106 +426,91 @@
             <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
         </div>
     </div>
-
 </div>
 
 <script>
-// ============================================================
-// 🗺️ اللهجات العربية
-// ============================================================
 const DIALECTS = {
-    saudi:      { flag: '🇸🇦', country: 'السعودية', name: 'خليجي سعودي' },
-    emirati:    { flag: '🇦🇪', country: 'الإمارات', name: 'خليجي إماراتي' },
-    kuwaiti:    { flag: '🇰🇼', country: 'الكويت', name: 'خليجي كويتي' },
-    qatari:     { flag: '🇶🇦', country: 'قطر', name: 'خليجي قطري' },
-    bahraini:   { flag: '🇧🇭', country: 'البحرين', name: 'خليجي بحريني' },
-    omani:      { flag: '🇴🇲', country: 'عُمان', name: 'خليجي عماني' },
-    egyptian:   { flag: '🇪🇬', country: 'مصر', name: 'مصري' },
-    syrian:     { flag: '🇸🇾', country: 'سوريا', name: 'شامي سوري' },
-    lebanese:   { flag: '🇱🇧', country: 'لبنان', name: 'شامي لبناني' },
-    jordanian:  { flag: '🇯🇴', country: 'الأردن', name: 'شامي أردني' },
-    palestinian:{ flag: '🇵🇸', country: 'فلسطين', name: 'شامي فلسطيني' },
-    iraqi:      { flag: '🇮🇶', country: 'العراق', name: 'عراقي' },
-    yemeni:     { flag: '🇾🇪', country: 'اليمن', name: 'يمني' },
-    moroccan:   { flag: '🇲🇦', country: 'المغرب', name: 'مغاربي مغربي' },
-    algerian:   { flag: '🇩🇿', country: 'الجزائر', name: 'مغاربي جزائري' },
-    tunisian:   { flag: '🇹🇳', country: 'تونس', name: 'مغاربي تونسي' },
-    sudanese:   { flag: '🇸🇩', country: 'السودان', name: 'سوداني' }
+    saudi: { flag: '🇸🇦', country: 'السعودية' }, emirati: { flag: '🇦🇪', country: 'الإمارات' },
+    kuwaiti: { flag: '🇰🇼', country: 'الكويت' }, qatari: { flag: '🇶🇦', country: 'قطر' },
+    bahraini: { flag: '🇧🇭', country: 'البحرين' }, omani: { flag: '🇴🇲', country: 'عُمان' },
+    egyptian: { flag: '🇪🇬', country: 'مصر' }, syrian: { flag: '🇸🇾', country: 'سوريا' },
+    lebanese: { flag: '🇱🇧', country: 'لبنان' }, jordanian: { flag: '🇯🇴', country: 'الأردن' },
+    palestinian: { flag: '🇵🇸', country: 'فلسطين' }, iraqi: { flag: '🇮🇶', country: 'العراق' },
+    yemeni: { flag: '🇾🇪', country: 'اليمن' }, moroccan: { flag: '🇲🇦', country: 'المغرب' },
+    algerian: { flag: '🇩🇿', country: 'الجزائر' }, tunisian: { flag: '🇹🇳', country: 'تونس' },
+    sudanese: { flag: '🇸🇩', country: 'السودان' }
 };
 
-// ============================================================
-// 👥 فريق المحللين — 8 لكل قسم، بلهجات متنوعة
-// ============================================================
 const EXPERTS = {
     gold: [
-        { name: 'سارة العتيبي',   role: 'محللة معادن ثمينة أولى',  years: '8 سنوات',  dialect: 'saudi' },
-        { name: 'أحمد الراشد',    role: 'خبير أسواق السلع',        years: '15 سنة',  dialect: 'emirati' },
-        { name: 'ريم الفهد',      role: 'محللة ذهب وفضة',          years: '10 سنوات', dialect: 'kuwaiti' },
-        { name: 'حسن القيسي',     role: 'مستشار معادن استراتيجي',  years: '12 سنة',  dialect: 'iraqi' },
-        { name: 'ليال حداد',      role: 'محللة بلاتين وفضة',       years: '7 سنوات',  dialect: 'syrian' },
-        { name: 'ماريا نصر',      role: 'خبيرة تحوط بالمعادن',     years: '9 سنوات',  dialect: 'lebanese' },
-        { name: 'أمين بوعلام',    role: 'محلل معادن نادرة',         years: '11 سنة',  dialect: 'moroccan' },
-        { name: 'سالم الكثيري',   role: 'محلل أسواق الخليج',        years: '6 سنوات',  dialect: 'omani' }
+        { name: 'سارة العتيبي', role: 'محللة معادن ثمينة أولى', years: '8 سنوات', dialect: 'saudi' },
+        { name: 'أحمد الراشد', role: 'خبير أسواق السلع', years: '15 سنة', dialect: 'emirati' },
+        { name: 'ريم الفهد', role: 'محللة ذهب وفضة', years: '10 سنوات', dialect: 'kuwaiti' },
+        { name: 'حسن القيسي', role: 'مستشار معادن استراتيجي', years: '12 سنة', dialect: 'iraqi' },
+        { name: 'ليال حداد', role: 'محللة بلاتين وفضة', years: '7 سنوات', dialect: 'syrian' },
+        { name: 'ماريا نصر', role: 'خبيرة تحوط بالمعادن', years: '9 سنوات', dialect: 'lebanese' },
+        { name: 'أمين بوعلام', role: 'محلل معادن نادرة', years: '11 سنة', dialect: 'moroccan' },
+        { name: 'سالم الكثيري', role: 'محلل أسواق الخليج', years: '6 سنوات', dialect: 'omani' }
     ],
     stocks: [
-        { name: 'خالد المنصور',   role: 'مستشار أسواق مالية',      years: '12 سنة',  dialect: 'saudi' },
-        { name: 'محمد عبدالرحمن', role: 'محلل أسهم قطاعية',        years: '10 سنوات', dialect: 'egyptian' },
-        { name: 'فيصل الدوسري',   role: 'خبير تداول مؤسسي',        years: '16 سنة',  dialect: 'kuwaiti' },
-        { name: 'سامي خوري',      role: 'محلل قطاع التقنية',       years: '9 سنوات',  dialect: 'palestinian' },
-        { name: 'رامي الخطيب',    role: 'محلل أسواق ناشئة',        years: '8 سنوات',  dialect: 'jordanian' },
-        { name: 'نادية بلحاج',    role: 'محللة استثمار بديل',      years: '11 سنة',  dialect: 'algerian' },
-        { name: 'زياد الجابري',   role: 'محلل بنوك واستثمار',      years: '13 سنة',  dialect: 'iraqi' },
-        { name: 'طارق بن ياسين',  role: 'محلل أسهم دفاعية',        years: '7 سنوات',  dialect: 'tunisian' }
+        { name: 'خالد المنصور', role: 'مستشار أسواق مالية', years: '12 سنة', dialect: 'saudi' },
+        { name: 'محمد عبدالرحمن', role: 'محلل أسهم قطاعية', years: '10 سنوات', dialect: 'egyptian' },
+        { name: 'فيصل الدوسري', role: 'خبير تداول مؤسسي', years: '16 سنة', dialect: 'kuwaiti' },
+        { name: 'سامي خوري', role: 'محلل قطاع التقنية', years: '9 سنوات', dialect: 'palestinian' },
+        { name: 'رامي الخطيب', role: 'محلل أسواق ناشئة', years: '8 سنوات', dialect: 'jordanian' },
+        { name: 'نادية بلحاج', role: 'محللة استثمار بديل', years: '11 سنة', dialect: 'algerian' },
+        { name: 'زياد الجابري', role: 'محلل بنوك واستثمار', years: '13 سنة', dialect: 'iraqi' },
+        { name: 'طارق بن ياسين', role: 'محلل أسهم دفاعية', years: '7 سنوات', dialect: 'tunisian' }
     ],
     macro: [
-        { name: 'د. فهد الحربي',  role: 'محلل اقتصادي أكاديمي',    years: '18 سنة',  dialect: 'saudi' },
-        { name: 'د. ماجد العمر',  role: 'خبير تضخم وفائدة',        years: '20 سنة',  dialect: 'emirati' },
-        { name: 'أحمد الشربيني',  role: 'محلل سياسات نقدية',       years: '12 سنة',  dialect: 'egyptian' },
-        { name: 'د. غسان حبيب',   role: 'محلل اقتصاد دولي',        years: '16 سنة',  dialect: 'syrian' },
-        { name: 'منى بلقاسم',     role: 'محللة أسواق السندات',     years: '10 سنوات', dialect: 'moroccan' },
-        { name: 'حسين الجبوري',   role: 'مستشار اقتصادي',          years: '14 سنة',  dialect: 'iraqi' },
-        { name: 'سلمى بن علي',    role: 'محللة دورات اقتصادية',    years: '9 سنوات',  dialect: 'tunisian' },
-        { name: 'عبدالله الحارثي', role: 'محلل سياسات مالية',      years: '11 سنة',  dialect: 'omani' }
+        { name: 'د. فهد الحربي', role: 'محلل اقتصادي أكاديمي', years: '18 سنة', dialect: 'saudi' },
+        { name: 'د. ماجد العمر', role: 'خبير تضخم وفائدة', years: '20 سنة', dialect: 'emirati' },
+        { name: 'أحمد الشربيني', role: 'محلل سياسات نقدية', years: '12 سنة', dialect: 'egyptian' },
+        { name: 'د. غسان حبيب', role: 'محلل اقتصاد دولي', years: '16 سنة', dialect: 'syrian' },
+        { name: 'منى بلقاسم', role: 'محللة أسواق السندات', years: '10 سنوات', dialect: 'moroccan' },
+        { name: 'حسين الجبوري', role: 'مستشار اقتصادي', years: '14 سنة', dialect: 'iraqi' },
+        { name: 'سلمى بن علي', role: 'محللة دورات اقتصادية', years: '9 سنوات', dialect: 'tunisian' },
+        { name: 'عبدالله الحارثي', role: 'محلل سياسات مالية', years: '11 سنة', dialect: 'omani' }
     ],
     geopolitical: [
-        { name: 'عمر الدوسري',    role: 'محلل جيوسياسي',           years: '14 سنة',  dialect: 'saudi' },
-        { name: 'طارق المطيري',   role: 'محلل صراعات وأسواق',      years: '16 سنة',  dialect: 'kuwaiti' },
-        { name: 'منال الشهري',    role: 'خبيرة علاقات دولية',      years: '11 سنة',  dialect: 'emirati' },
-        { name: 'أمل الحسن',      role: 'محللة سياسات الطاقة',     years: '9 سنوات',  dialect: 'syrian' },
-        { name: 'رنا خوري',       role: 'محللة ممرات تجارية',      years: '10 سنوات', dialect: 'lebanese' },
-        { name: 'زيد العمري',     role: 'محلل مخاطر جيوسياسية',    years: '8 سنوات',  dialect: 'jordanian' },
-        { name: 'ياسر المقطري',   role: 'محلل جيوسياسة الشرق',     years: '12 سنة',  dialect: 'yemeni' },
-        { name: 'كريم بوزيد',     role: 'محلل علاقات شمال إفريقيا', years: '7 سنوات',  dialect: 'algerian' }
+        { name: 'عمر الدوسري', role: 'محلل جيوسياسي', years: '14 سنة', dialect: 'saudi' },
+        { name: 'طارق المطيري', role: 'محلل صراعات وأسواق', years: '16 سنة', dialect: 'kuwaiti' },
+        { name: 'منال الشهري', role: 'خبيرة علاقات دولية', years: '11 سنة', dialect: 'emirati' },
+        { name: 'أمل الحسن', role: 'محللة سياسات الطاقة', years: '9 سنوات', dialect: 'syrian' },
+        { name: 'رنا خوري', role: 'محللة ممرات تجارية', years: '10 سنوات', dialect: 'lebanese' },
+        { name: 'زيد العمري', role: 'محلل مخاطر جيوسياسية', years: '8 سنوات', dialect: 'jordanian' },
+        { name: 'ياسر المقطري', role: 'محلل جيوسياسة الشرق', years: '12 سنة', dialect: 'yemeni' },
+        { name: 'كريم بوزيد', role: 'محلل علاقات شمال إفريقيا', years: '7 سنوات', dialect: 'algerian' }
     ],
     budget: [
-        { name: 'منى الغامدي',    role: 'مدرّبة مالية شخصية',      years: '6 سنوات',  dialect: 'saudi' },
-        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات',  years: '13 سنة',  dialect: 'saudi' },
-        { name: 'هند الرشيد',     role: 'مخططة مالية معتمدة',      years: '10 سنوات', dialect: 'kuwaiti' },
-        { name: 'يوسف العامري',   role: 'مستشار تخطيط تقاعدي',     years: '15 سنة',  dialect: 'emirati' },
-        { name: 'دينا مصطفى',     role: 'مدرّبة ميزانية أسرية',    years: '8 سنوات',  dialect: 'egyptian' },
-        { name: 'لينا حمدان',     role: 'خبيرة إعادة هيكلة الديون', years: '11 سنة',  dialect: 'jordanian' },
-        { name: 'إيمان الشريف',   role: 'مدرّبة ادخار واستثمار',   years: '9 سنوات',  dialect: 'tunisian' },
-        { name: 'سامية بن عيسى',  role: 'مستشارة تخطيط مالي',      years: '12 سنة',  dialect: 'moroccan' }
+        { name: 'منى الغامدي', role: 'مدرّبة مالية شخصية', years: '6 سنوات', dialect: 'saudi' },
+        { name: 'عبدالرحمن الزهراني', role: 'مستشار إدارة ثروات', years: '13 سنة', dialect: 'saudi' },
+        { name: 'هند الرشيد', role: 'مخططة مالية معتمدة', years: '10 سنوات', dialect: 'kuwaiti' },
+        { name: 'يوسف العامري', role: 'مستشار تخطيط تقاعدي', years: '15 سنة', dialect: 'emirati' },
+        { name: 'دينا مصطفى', role: 'مدرّبة ميزانية أسرية', years: '8 سنوات', dialect: 'egyptian' },
+        { name: 'لينا حمدان', role: 'خبيرة إعادة هيكلة الديون', years: '11 سنة', dialect: 'jordanian' },
+        { name: 'إيمان الشريف', role: 'مدرّبة ادخار واستثمار', years: '9 سنوات', dialect: 'tunisian' },
+        { name: 'سامية بن عيسى', role: 'مستشارة تخطيط مالي', years: '12 سنة', dialect: 'moroccan' }
     ],
     crypto: [
-        { name: 'يوسف الشمري',    role: 'محلل أصول رقمية',         years: '5 سنوات',  dialect: 'saudi' },
-        { name: 'هند العمري',     role: 'خبيرة بلوكشين',           years: '8 سنوات',  dialect: 'emirati' },
-        { name: 'راكان الصقر',    role: 'محلل بيتكوين أول',        years: '7 سنوات',  dialect: 'kuwaiti' },
-        { name: 'زياد عبدالله',   role: 'محلل DeFi و Web3',        years: '4 سنوات',  dialect: 'egyptian' },
-        { name: 'رامي شاهين',     role: 'محلل تنظيم أصول رقمية',   years: '6 سنوات',  dialect: 'lebanese' },
-        { name: 'نور الدين',      role: 'محلل مخاطر كريبتو',        years: '5 سنوات',  dialect: 'moroccan' },
-        { name: 'سيف الدين',      role: 'محلل مشاريع بلوكشين',      years: '6 سنوات',  dialect: 'tunisian' },
-        { name: 'بشار النعيمي',   role: 'محلل عملات مستقرة',        years: '4 سنوات',  dialect: 'iraqi' }
+        { name: 'يوسف الشمري', role: 'محلل أصول رقمية', years: '5 سنوات', dialect: 'saudi' },
+        { name: 'هند العمري', role: 'خبيرة بلوكشين', years: '8 سنوات', dialect: 'emirati' },
+        { name: 'راكان الصقر', role: 'محلل بيتكوين أول', years: '7 سنوات', dialect: 'kuwaiti' },
+        { name: 'زياد عبدالله', role: 'محلل DeFi و Web3', years: '4 سنوات', dialect: 'egyptian' },
+        { name: 'رامي شاهين', role: 'محلل تنظيم أصول رقمية', years: '6 سنوات', dialect: 'lebanese' },
+        { name: 'نور الدين', role: 'محلل مخاطر كريبتو', years: '5 سنوات', dialect: 'moroccan' },
+        { name: 'سيف الدين', role: 'محلل مشاريع بلوكشين', years: '6 سنوات', dialect: 'tunisian' },
+        { name: 'بشار النعيمي', role: 'محلل عملات مستقرة', years: '4 سنوات', dialect: 'iraqi' }
     ]
 };
 
 const SECTION_INFO = {
-    gold:         { icon: '💎', title: 'أسواق الذهب والمعادن الثمينة', desc: 'تحليل حركة السبائك والأونصة، التحوط ضد التضخم، والتخصيص الأمثل في المحفظة.', online: 5 },
-    stocks:       { icon: '📈', title: 'الأسواق المالية والأسهم', desc: 'تقييم الشركات، قراءة القوائم المالية، بناء محفظة متوازنة، وإدارة المخاطر.', online: 4 },
-    macro:        { icon: '🌍', title: 'الاقتصاد الكلي والسياسات النقدية', desc: 'قرارات الفيدرالي، أسعار الفائدة، التضخم، والدورات الاقتصادية وأثرها على الأصول.', online: 6 },
+    gold: { icon: '💎', title: 'أسواق الذهب والمعادن الثمينة', desc: 'تحليل حركة السبائك والأونصة، التحوط ضد التضخم، والتخصيص الأمثل في المحفظة.', online: 5 },
+    stocks: { icon: '📈', title: 'الأسواق المالية والأسهم', desc: 'تقييم الشركات، قراءة القوائم المالية، بناء محفظة متوازنة، وإدارة المخاطر.', online: 4 },
+    macro: { icon: '🌍', title: 'الاقتصاد الكلي والسياسات النقدية', desc: 'قرارات الفيدرالي، أسعار الفائدة، التضخم، والدورات الاقتصادية وأثرها على الأصول.', online: 6 },
     geopolitical: { icon: '🧭', title: 'الجيوسياسة وأثرها على الأسواق', desc: 'تحليل الأزمات والتوترات الدولية، أثرها على الطاقة، التجارة، وسلاسل الإمداد.', online: 3 },
-    budget:       { icon: '🎯', title: 'التخطيط المالي الشخصي', desc: 'بناء الميزانية، استراتيجيات الادخار، هيكلة الديون، والتخطيط للتقاعد.', online: 5 },
-    crypto:       { icon: '🔗', title: 'الأصول الرقمية والبلوكشين', desc: 'تحليل بيتكوين والإيثيريوم، تقييم المخاطر، والتنظيم العالمي المتسارع.', online: 4 }
+    budget: { icon: '🎯', title: 'التخطيط المالي الشخصي', desc: 'بناء الميزانية، استراتيجيات الادخار، هيكلة الديون، والتخطيط للتقاعد.', online: 5 },
+    crypto: { icon: '🔗', title: 'الأصول الرقمية والبلوكشين', desc: 'تحليل بيتكوين والإيثيريوم، تقييم المخاطر، والتنظيم العالمي المتسارع.', online: 4 }
 };
 
 const SECTIONS = {
@@ -580,9 +530,17 @@ const SUGGESTIONS = {
 
 let user = null, section = null, expert = null, history = [], busy = false;
 let progressTimer = null;
-const CONVERSATIONS = {};
+const CONVERSATIONS = {};      // { section: { expert, history, html, suggestionsHidden, resetTimer, resetAt } }
+const LAST_EXPERTS = {};       // { section: expertObject } — آخر محلل لكل قسم (لتجنبه في المرة القادمة)
 
-// ============ Theme ============
+// ✅ مدة الانتظار قبل التصفير التلقائي (3-5 دقائق عشوائي)
+const RESET_MIN_MS = 3 * 60 * 1000;
+const RESET_MAX_MS = 5 * 60 * 1000;
+
+function getRandomResetDelay() {
+    return Math.floor(RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS));
+}
+
 function toggleTheme() {
     const current = document.documentElement.getAttribute('data-theme') || 'light';
     const next = current === 'light' ? 'dark' : 'light';
@@ -595,7 +553,6 @@ function initThemeBtn() {
     document.getElementById('themeBtn').textContent = c === 'light' ? '🌙' : '☀️';
 }
 
-// ============ Splash ============
 const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
 let splashP = 0, splashMsgIdx = 0;
 
@@ -645,7 +602,6 @@ function buildSectionGrid() {
 startSplash();
 setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
-// ============ User ============
 function loadUser() {
     const s = localStorage.getItem('profin_user');
     if (s) {
@@ -685,17 +641,32 @@ function showUserBar() {
     document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
-// ============ Sections ============
-function pickExpert(s) {
+// ✅ اختيار محلل مختلف عن السابق في نفس القسم
+function pickDifferentExpert(s) {
     const list = EXPERTS[s];
-    return list[Math.floor(Math.random() * list.length)];
+    const last = LAST_EXPERTS[s];
+    let candidates = list;
+    if (last && list.length > 1) {
+        candidates = list.filter(e => e.name !== last.name);
+    }
+    const picked = candidates[Math.floor(Math.random() * candidates.length)];
+    LAST_EXPERTS[s] = picked;
+    return picked;
 }
 
 function openSection(s) {
     section = s;
 
+    // هل هناك محادثة محفوظة (لم تُصفّر بعد)؟
     if (CONVERSATIONS[s]) {
         const c = CONVERSATIONS[s];
+
+        // ✅ إلغاء مؤقت التصفير — المستخدم عاد
+        if (c.resetTimer) {
+            clearTimeout(c.resetTimer);
+            c.resetTimer = null;
+        }
+
         expert = c.expert;
         history = c.history;
         renderExpertHeader();
@@ -706,12 +677,13 @@ function openSection(s) {
             showSuggestions(s);
         }
     } else {
-        expert = pickExpert(s);
+        // ✅ محادثة جديدة — اختر محللاً مختلفاً عن السابق
+        expert = pickDifferentExpert(s);
         history = [];
         renderExpertHeader();
         document.getElementById('messages').innerHTML = '';
         showSuggestions(s);
-        CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false };
+        CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false, resetTimer: null };
 
         setTimeout(() => {
             const hour = new Date().getHours();
@@ -735,7 +707,7 @@ function openSection(s) {
 }
 
 function renderExpertHeader() {
-    const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي', name: 'عربي' };
+    const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي' };
     document.getElementById('expAvatar').innerText = expert.name.charAt(0);
     document.getElementById('expName').innerText = expert.name;
     document.getElementById('expRole').innerHTML = `
@@ -756,18 +728,32 @@ function useSug(t) {
     document.getElementById('input').focus();
 }
 
+// ✅ عند الرجوع: احفظ الحالة وابدأ مؤقت التصفير العشوائي (3-5 دقائق)
 function goBack() {
     if (section && CONVERSATIONS[section]) {
-        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
-        CONVERSATIONS[section].history = history;
-        CONVERSATIONS[section].suggestionsHidden = document.getElementById('suggestions').style.display === 'none';
+        const c = CONVERSATIONS[section];
+        c.html = document.getElementById('messages').innerHTML;
+        c.history = history;
+        c.suggestionsHidden = document.getElementById('suggestions').style.display === 'none';
+
+        // إلغاء أي مؤقت سابق
+        if (c.resetTimer) clearTimeout(c.resetTimer);
+
+        // ✅ جدولة التصفير التلقائي
+        const delay = getRandomResetDelay();
+        c.resetAt = Date.now() + delay;
+        c.resetTimer = setTimeout(() => {
+            delete CONVERSATIONS[section];
+            console.log(`🔄 تم تصفير محادثة ${section} — محلل جديد في المرة القادمة`);
+        }, delay);
+
+        console.log(`⏱️ سيتم تصفير محادثة ${section} خلال ${Math.round(delay / 60000)} دقيقة`);
     }
     document.getElementById('chat').classList.remove('show');
     document.getElementById('home').classList.add('show');
     section = null; expert = null; history = [];
 }
 
-// ============ Utils ============
 function timeNow() {
     const d = new Date();
     return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
@@ -786,7 +772,6 @@ function setExpertStatus(status) {
     if (!el) return;
     avatar.classList.remove('offline', 'busy', 'typing');
     info.classList.remove('typing-status', 'busy-status');
-
     if (status === 'offline') { el.textContent = 'غير متصل'; avatar.classList.add('offline'); }
     else if (status === 'busy') { el.textContent = 'مشغول قليلاً...'; info.classList.add('busy-status'); avatar.classList.add('busy'); }
     else if (status === 'typing') { el.textContent = 'يكتب الآن...'; info.classList.add('typing-status'); avatar.classList.add('typing'); }
@@ -810,7 +795,6 @@ function addBubble(who, text, isError = false) {
     const m = document.getElementById('messages');
     m.appendChild(wrap);
     m.scrollTop = m.scrollHeight;
-
     if (who === 'user') {
         const ck = wrap.querySelector('.checks');
         setTimeout(() => {
@@ -916,6 +900,12 @@ async function sendMsg() {
     history.push({ role: 'user', content: text });
     document.getElementById('suggestions').style.display = 'none';
 
+    // ✅ إلغاء مؤقت التصفير — المستخدم يتفاعل
+    if (section && CONVERSATIONS[section]?.resetTimer) {
+        clearTimeout(CONVERSATIONS[section].resetTimer);
+        CONVERSATIONS[section].resetTimer = null;
+    }
+
     busy = true;
     document.getElementById('sendBtn').disabled = true;
 
@@ -949,6 +939,14 @@ async function sendMsg() {
             addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
             return;
         }
+
+        // ✅ إذا كان هناك cooldown من السيرفر
+        if (res.status === 429 && data.cooldown) {
+            hideAck(); finishProgress(); setExpertStatus('online');
+            addBubble('expert', `⏱️ ${data.message || 'المحادثة في فترة انتظار'}`, true);
+            return;
+        }
+
         if (!res.ok) {
             hideAck(); finishProgress(); setExpertStatus('online');
             addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}\n${data.details || ''}`, true);
@@ -977,9 +975,17 @@ async function sendMsg() {
             if (i < replies.length - 1) await sleep(500);
         }
 
+        // ✅ حفظ التحديث
         if (section && CONVERSATIONS[section]) {
             CONVERSATIONS[section].history = history;
             CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+        }
+
+        // ✅ إذا أُغلقت المحادثة من السيرفر
+        if (data.closed) {
+            setTimeout(() => {
+                addBubble('expert', `🔒 أُغلقت الجلسة. يمكنك العودة بعد ${data.cooldownMinutes} دقيقة أو اختيار قسم آخر.`, true);
+            }, 800);
         }
 
     } catch (e) {
