@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<title>منصة استشارات forG — نخبة المحللين العرب بلهجات محلية</title>
-<meta name="description" content="منصة استشارات forG: نخبة محللين عرب من 17 دولة يقدمون استشارات مالية بلهجات محلية. ذهب، أسهم، اقتصاد، جيوسياسة، ميزانية، وكريبتو.">
+<title>منصة استشارات forG — محللون عرب بلهجات محلية</title>
+<meta name="description" content="منصة forG: استشارات مالية وعامة من محللين عرب في 17 دولة، بلهجات محلية. ذهب، أسهم، اقتصاد، جيوسياسة، ميزانية، وكريبتو.">
 <meta name="author" content="منصة استشارات forG">
 <meta name="keywords" content="استشارات مالية, ذهب, أسهم, كريبتو, اقتصاد, جيوسياسة, ميزانية, تخطيط مالي, محللين عرب">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ammar-e0tp.onrender.com/">
 <meta property="og:title" content="منصة استشارات forG — استشارات مالية عربية بلهجات محلية">
-<meta property="og:description" content="40+ محلل من 17 دولة عربية. ذهب، أسهم، اقتصاد كلي، جيوسياسة، ميزانية، وكريبتو.">
+<meta property="og:description" content="محللون عرب يتحدثون لغتك. استشارات في الذهب والأسهم والاقتصاد والكريبتو — كلٌّ بلهجته.">
 <meta property="og:site_name" content="منصة استشارات forG">
 <meta property="og:locale" content="ar_SA">
 <meta property="og:image" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
@@ -21,7 +21,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="منصة استشارات forG — نخبة المحللين العرب">
-<meta name="twitter:description" content="40+ محلل من 17 دولة. ذهب، أسهم، اقتصاد، جيوسياسة، ميزانية، وكريبتو.">
+<meta name="twitter:description" content="محللون عرب يتحدثون لغتك. استشارات فورية بلهجات محلية.">
 <meta name="twitter:image" content="https://placehold.co/1200x630/0a1628/d4af37/png?text=forG&font=montserrat">
 
 <meta name="theme-color" content="#0a1628">
@@ -212,10 +212,7 @@
         transition: all 0.4s var(--ease-smooth);
         animation: startBtnPulse 2.2s ease-in-out infinite;
     }
-    #startBtn:hover {
-        transform: translateY(-3px) scale(1.04);
-        background-position: 200% center;
-    }
+    #startBtn:hover { transform: translateY(-3px) scale(1.04); background-position: 200% center; }
     #startBtn:active { transform: translateY(-1px) scale(1.01); }
     #splash.waiting #startBtn { display: inline-block; }
     @keyframes startBtnPulse {
@@ -236,11 +233,7 @@
         box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 0 0 3px rgba(212,175,55,0.08);
     }
     #musicToggle.show { display: flex; animation: fadeIn 0.6s var(--ease-smooth); }
-    #musicToggle:hover {
-        transform: scale(1.12) rotate(-6deg);
-        border-color: var(--accent);
-        box-shadow: 0 8px 24px rgba(212,175,55,0.35), 0 0 0 4px rgba(212,175,55,0.15);
-    }
+    #musicToggle:hover { transform: scale(1.12) rotate(-6deg); border-color: var(--accent); box-shadow: 0 8px 24px rgba(212,175,55,0.35), 0 0 0 4px rgba(212,175,55,0.15); }
     #musicToggle.muted { color: #94a3b8; border-color: rgba(148,163,184,0.4); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -351,10 +344,7 @@
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; position: relative; z-index: 2; }
     .form-group { text-align: right; margin-bottom: 14px; }
     .form-group.full { grid-column: 1 / -1; }
-    .form-group label {
-        display: block; font-weight: 700; margin-bottom: 8px;
-        color: var(--text); font-size: 13px;
-    }
+    .form-group label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--text); font-size: 13px; }
     .form-group input, .form-group select, .form-group textarea {
         width: 100%; padding: 13px 16px;
         border: 1.5px solid var(--border);
@@ -379,11 +369,7 @@
         margin-top: 14px; letter-spacing: 0.4px;
         position: relative; overflow: hidden;
     }
-    .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 40px rgba(10,22,40,0.45), 0 0 0 4px rgba(212,175,55,0.1);
-        background-position: 200% center;
-    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(10,22,40,0.45), 0 0 0 4px rgba(212,175,55,0.1); background-position: 200% center; }
 
     #home { display: none; }
     #home.show { display: block; animation: slideUp 0.6s var(--ease-smooth); }
@@ -449,12 +435,20 @@
         display: flex; align-items: center; gap: 14px;
         border-bottom: 1px solid rgba(212,175,55,0.20);
         position: relative; z-index: 5;
+        transition: background 0.5s var(--ease-smooth);
     }
     .expert-avatar {
         width: 52px; height: 52px; border-radius: 50%;
         background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
         color: #0a1628; display: flex; align-items: center; justify-content: center;
         font-weight: 800; font-size: 20px; position: relative; flex-shrink: 0;
+        transition: transform 0.5s var(--ease-bounce);
+    }
+    .expert-avatar.switching { animation: avatarSwitch 0.8s var(--ease-bounce); }
+    @keyframes avatarSwitch {
+        0% { transform: scale(1) rotate(0deg); }
+        40% { transform: scale(0.7) rotate(-180deg); opacity: 0.5; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
     }
     .expert-avatar::after {
         content: ''; position: absolute; bottom: 1px; right: 1px;
@@ -469,13 +463,15 @@
         50% { box-shadow: 0 0 0 9px rgba(34,197,94,0); }
     }
     .expert-info { flex: 1; min-width: 0; }
-    .expert-info h3 { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .expert-info h3 { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity 0.3s; }
+    .expert-info h3.switching { opacity: 0.3; }
     .expert-info p {
         font-size: 12px; color: #94a3b8; margin-top: 3px;
         display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
     }
     .expert-info p.typing-status { color: #6ee7b7; }
     .expert-info p.busy-status { color: #fbbf24; }
+    .expert-info p.offline-status { color: #94a3b8; }
     .flag-badge {
         display: inline-flex; align-items: center; gap: 4px;
         background: linear-gradient(135deg, rgba(212,175,55,0.20), rgba(212,175,55,0.10));
@@ -492,16 +488,9 @@
         font-size: 12.5px; transition: all 0.3s var(--ease-smooth);
         flex-shrink: 0; font-weight: 700;
     }
-    .btn-back:hover {
-        background: rgba(212,175,55,0.22);
-        border-color: var(--accent);
-        transform: translateX(3px);
-    }
+    .btn-back:hover { background: rgba(212,175,55,0.22); border-color: var(--accent); transform: translateX(3px); }
 
-    .progress-bar {
-        height: 3px; background: rgba(0,0,0,0.06); overflow: hidden;
-        display: none; position: relative; z-index: 4;
-    }
+    .progress-bar { height: 3px; background: rgba(0,0,0,0.06); overflow: hidden; display: none; position: relative; z-index: 4; }
     .progress-bar.show { display: block; }
     .progress-fill {
         height: 100%; width: 0%;
@@ -521,19 +510,9 @@
         scroll-behavior: smooth;
     }
     #messages::-webkit-scrollbar { width: 7px; }
-    #messages::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, rgba(212,175,55,0.4), rgba(212,175,55,0.25));
-        border-radius: 4px;
-    }
-    .bubble-wrap {
-        display: flex; margin-bottom: 12px;
-        animation: msgIn 0.42s var(--ease-smooth);
-        padding: 0 4px;
-    }
-    @keyframes msgIn {
-        from { opacity: 0; transform: translateY(12px) scale(0.95); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    #messages::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(212,175,55,0.4), rgba(212,175,55,0.25)); border-radius: 4px; }
+    .bubble-wrap { display: flex; margin-bottom: 12px; animation: msgIn 0.42s var(--ease-smooth); padding: 0 4px; }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(12px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .bubble-wrap.user { justify-content: flex-end; }
     .bubble-wrap.expert { justify-content: flex-start; }
     .bubble {
@@ -542,22 +521,17 @@
         position: relative;
     }
     .bubble-wrap.user .bubble {
-        background: var(--user-bubble);
-        color: var(--text);
+        background: var(--user-bubble); color: var(--text);
         border-top-right-radius: 4px; margin-right: 8px;
         box-shadow: 0 2px 6px rgba(11,107,58,0.12);
     }
     .bubble-wrap.expert .bubble {
-        background: var(--expert-bubble);
-        color: var(--text);
+        background: var(--expert-bubble); color: var(--text);
         border-top-left-radius: 4px; margin-left: 8px;
         box-shadow: 0 2px 8px rgba(10,22,40,0.08);
         border: 1px solid rgba(0,0,0,0.03);
     }
-    .sender {
-        font-size: 12px; font-weight: 800; color: var(--accent);
-        margin-bottom: 4px;
-    }
+    .sender { font-size: 12px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
     .bubble-wrap.user .sender { color: #0b6b3a; }
     [data-theme="dark"] .bubble-wrap.user .sender { color: #7ee0a6; }
     .bubble-content { white-space: pre-wrap; padding-bottom: 15px; }
@@ -574,28 +548,26 @@
     .checks.delivered { color: var(--check-sent); letter-spacing: -3px; }
     .checks.read { color: var(--check-read); letter-spacing: -3px; }
     .typing { display: inline-flex; gap: 5px; padding: 8px 3px 16px; }
-    .typing span {
-        width: 8px; height: 8px; background: var(--accent);
-        border-radius: 50%; animation: dotTyping 1.35s infinite;
-        opacity: 0.7;
-    }
+    .typing span { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: dotTyping 1.35s infinite; opacity: 0.7; }
     .typing span:nth-child(2) { animation-delay: 0.16s; }
     .typing span:nth-child(3) { animation-delay: 0.32s; }
-    @keyframes dotTyping {
-        0%,60%,100% { transform: translateY(0); opacity: 0.4; }
-        30% { transform: translateY(-6px); opacity: 1; }
-    }
+    @keyframes dotTyping { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
     .error-bubble {
         background: linear-gradient(135deg, var(--danger-bg), rgba(254,226,226,0.7)) !important;
         border-right: 3px solid var(--danger);
         color: var(--danger) !important;
     }
-
-    .suggestions {
-        display: flex; flex-wrap: wrap; gap: 9px;
-        padding: 14px 20px; background: var(--card-bg);
-        border-top: 1px solid var(--border);
+    .system-bubble {
+        text-align: center; margin: 16px auto; max-width: 82%;
+        background: rgba(212,175,55,0.10);
+        color: var(--muted);
+        padding: 8px 16px; border-radius: 18px;
+        font-size: 12px; font-weight: 600;
+        border: 1px solid rgba(212,175,55,0.20);
+        animation: msgIn 0.45s var(--ease-smooth);
     }
+
+    .suggestions { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 20px; background: var(--card-bg); border-top: 1px solid var(--border); }
     .chip {
         background: transparent;
         border: 1.5px solid rgba(212,175,55,0.55);
@@ -604,17 +576,8 @@
         font-size: 12.5px; cursor: pointer; font-weight: 700;
         transition: all 0.3s var(--ease-smooth);
     }
-    .chip:hover {
-        color: #0a1628;
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-        border-color: transparent;
-        transform: translateY(-2px);
-    }
-    .input-area {
-        background: var(--card-bg); padding: 14px 16px;
-        display: flex; gap: 12px; align-items: flex-end;
-        border-top: 1px solid var(--border);
-    }
+    .chip:hover { color: #0a1628; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); border-color: transparent; transform: translateY(-2px); }
+    .input-area { background: var(--card-bg); padding: 14px 16px; display: flex; gap: 12px; align-items: flex-end; border-top: 1px solid var(--border); }
     .input-area textarea {
         flex: 1; padding: 13px 20px;
         border: 1.5px solid var(--border);
@@ -624,10 +587,7 @@
         transition: all 0.3s var(--ease-smooth);
         background: var(--input-bg); color: var(--text);
     }
-    .input-area textarea:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
-    }
+    .input-area textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(212,175,55,0.15); }
     .input-area textarea:disabled { opacity: 0.55; cursor: not-allowed; }
     .send-btn {
         width: 50px; height: 50px; border-radius: 50%; border: none;
@@ -653,20 +613,12 @@
     .closed-overlay.show { display: flex; animation: overlayIn 0.55s var(--ease-smooth); }
     @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .lock-shell {
-        position: relative; width: 150px; height: 150px;
-        margin-bottom: 30px; z-index: 2;
-    }
+    .lock-shell { position: relative; width: 150px; height: 150px; margin-bottom: 30px; z-index: 2; }
     .lock-shell svg { position: absolute; inset: 0; transform: rotate(-90deg); }
     .lock-ring-bg { fill: none; stroke: rgba(212,175,55,0.14); stroke-width: 3; }
-    .lock-ring-progress {
-        fill: none; stroke: url(#goldGrad); stroke-width: 3.5;
-        stroke-linecap: round;
-        transition: stroke-dashoffset 1s linear;
-    }
+    .lock-ring-progress { fill: none; stroke: url(#goldGrad); stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
     .lock-core {
-        position: absolute; inset: 22px;
-        border-radius: 50%;
+        position: absolute; inset: 22px; border-radius: 50%;
         background: radial-gradient(circle at 30% 30%, #1a2b45 0%, #0a1628 100%);
         border: 2px solid rgba(212,175,55,0.4);
         display: flex; align-items: center; justify-content: center;
@@ -674,45 +626,20 @@
         box-shadow: inset 0 3px 16px rgba(212,175,55,0.20), 0 16px 40px rgba(0,0,0,0.55);
     }
     .lock-emoji { display: inline-block; animation: lockWiggle 4s ease-in-out infinite; }
-    @keyframes lockWiggle {
-        0%,100% { transform: rotate(0deg) scale(1); }
-        45% { transform: rotate(-8deg) scale(1.05); }
-        55% { transform: rotate(8deg) scale(1.05); }
-    }
+    @keyframes lockWiggle { 0%,100% { transform: rotate(0deg) scale(1); } 45% { transform: rotate(-8deg) scale(1.05); } 55% { transform: rotate(8deg) scale(1.05); } }
 
-    .closed-overlay h3 {
-        font-family: 'Tajawal', sans-serif;
-        font-size: 24px; margin-bottom: 12px;
-        color: var(--accent-soft); font-weight: 800;
-        z-index: 2; position: relative;
-    }
-    .closed-overlay .reason-text {
-        font-size: 14px; color: #cbd5e1;
-        max-width: 380px; line-height: 1.9;
-        margin-bottom: 26px; z-index: 2; position: relative;
-    }
+    .closed-overlay h3 { font-family: 'Tajawal', sans-serif; font-size: 24px; margin-bottom: 12px; color: var(--accent-soft); font-weight: 800; z-index: 2; position: relative; }
+    .closed-overlay .reason-text { font-size: 14px; color: #cbd5e1; max-width: 380px; line-height: 1.9; margin-bottom: 26px; z-index: 2; position: relative; }
     .closed-overlay .reason-text .highlight { color: var(--accent-soft); font-weight: 700; }
     .countdown-display {
         display: flex; align-items: baseline; gap: 6px;
         font-family: 'SF Mono', 'Consolas', 'Cairo', monospace;
         font-size: 60px; font-weight: 800;
-        color: var(--accent-soft);
-        font-variant-numeric: tabular-nums;
-        margin-bottom: 10px;
-        z-index: 2; position: relative; line-height: 1;
+        color: var(--accent-soft); font-variant-numeric: tabular-nums;
+        margin-bottom: 10px; z-index: 2; position: relative; line-height: 1;
     }
-    .countdown-display .unit {
-        font-size: 17px; font-weight: 600;
-        color: rgba(212,175,55,0.7);
-        margin-right: 6px; margin-left: 14px;
-    }
-    .countdown-hint {
-        font-size: 12px; color: #64748b;
-        letter-spacing: 2px; margin-bottom: 30px;
-        z-index: 2; position: relative;
-        text-transform: uppercase;
-        opacity: 0.7;
-    }
+    .countdown-display .unit { font-size: 17px; font-weight: 600; color: rgba(212,175,55,0.7); margin-right: 6px; margin-left: 14px; }
+    .countdown-hint { font-size: 12px; color: #64748b; letter-spacing: 2px; margin-bottom: 30px; z-index: 2; position: relative; text-transform: uppercase; opacity: 0.7; }
     .return-btn {
         background: linear-gradient(135deg, var(--accent), var(--accent-soft) 60%, var(--accent));
         color: #0a1628; border: none;
@@ -763,9 +690,6 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🎵 الموسيقى — تعمل من ملف الفيديو على GitHub
-     ═══════════════════════════════════════════════════════════════ -->
 <audio id="bgMusic" loop preload="auto" playsinline crossorigin="anonymous">
     <source src="https://cdn.jsdelivr.net/gh/ammarbusi0-bot/Ammar@main/VID_20260921_231229_590.mp4" type="audio/mp4">
     <source src="https://raw.githubusercontent.com/ammarbusi0-bot/Ammar/main/VID_20260921_231229_590.mp4" type="audio/mp4">
@@ -867,7 +791,7 @@
         </div>
 
         <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="chat-header">
+        <div class="chat-header" id="chatHeader">
             <div class="expert-avatar" id="expAvatar">؟</div>
             <div class="expert-info">
                 <h3 id="expName">...</h3>
@@ -886,19 +810,18 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   🎵 نظام الموسيقى
+   🎵 الموسيقى
    ═══════════════════════════════════════════════════════════════════ */
 const MUSIC_VOLUME = 0.35;
 let musicStarted = false;
 let musicMuted = false;
+let splashDone = false;
 
 function startMusic() {
     if (musicStarted || musicMuted) return;
     const music = document.getElementById('bgMusic');
     if (!music) return;
-
     music.volume = MUSIC_VOLUME;
-
     const playPromise = music.play();
     if (playPromise && typeof playPromise.then === 'function') {
         playPromise.then(() => {
@@ -907,20 +830,13 @@ function startMusic() {
             btn.classList.add('show');
             btn.classList.remove('muted');
             btn.textContent = '🎵';
-        }).catch(err => {
-            console.log('Music autoplay blocked:', err.message);
-        });
-    } else {
-        musicStarted = true;
-        document.getElementById('musicToggle').classList.add('show');
+        }).catch(() => {});
     }
 }
-
 function toggleMusic() {
     const music = document.getElementById('bgMusic');
     const btn = document.getElementById('musicToggle');
     if (!music) return;
-
     if (music.paused || musicMuted) {
         musicMuted = false;
         music.volume = MUSIC_VOLUME;
@@ -936,20 +852,13 @@ function toggleMusic() {
         btn.textContent = '🔇';
     }
 }
-
-function onStartClick() {
-    startMusic();
-    splashDone = true;
-}
-
+function onStartClick() { startMusic(); splashDone = true; }
 ['touchstart', 'click', 'keydown', 'pointerdown'].forEach(evt => {
-    document.addEventListener(evt, function firstTouch() {
-        startMusic();
-    }, { once: true, passive: true });
+    document.addEventListener(evt, function firstTouch() { startMusic(); }, { once: true, passive: true });
 });
 
 /* ═══════════════════════════════════════════════════════════════════
-   البيانات
+   📊 البيانات
    ═══════════════════════════════════════════════════════════════════ */
 const DIALECTS = {
     saudi: { flag: '🇸🇦', country: 'السعودية' }, emirati: { flag: '🇦🇪', country: 'الإمارات' },
@@ -1044,14 +953,72 @@ const SUGGESTIONS = {
     crypto: ['نسبة الكريبتو في المحفظة؟', 'ما معايير المشروع الجاد؟', 'كيف أحمي أصولي؟']
 };
 
+/* ═══════════════════════════════════════════════════════════════════
+   💬 ردود فعل قصيرة حسب اللهجة + وقت اليوم
+   ═══════════════════════════════════════════════════════════════════ */
+const REACTIONS = {
+    saudi: ['تمام.', 'طيب.', 'خلني أشوف.', 'زين.'],
+    emirati: ['تمام.', 'خلني أفكر.', 'إن شاء الله.'],
+    kuwaiti: ['زين.', 'خلني أشوف.', 'إي والله.'],
+    qatari: ['تمام.', 'خلني أشوف.', 'أوكي.'],
+    bahraini: ['أوكي.', 'خلني أشوف.', 'زين.'],
+    omani: ['تمام.', 'طيب.', 'خلني أفكر.'],
+    egyptian: ['ماشي.', 'طيب.', 'ثانية أشوف.'],
+    syrian: ['طيب.', 'خليني شوف.', 'تمام.'],
+    lebanese: ['طيب.', 'خليني فكر.', 'أوكي.'],
+    jordanian: ['طيب.', 'خليني أفكر.', 'ماشي.'],
+    palestinian: ['طيب.', 'خليني أشوف.', 'ماشي.'],
+    iraqi: ['زين.', 'خليني أشوف.', 'تمام.'],
+    yemeni: ['طيب.', 'خليني شوف.', 'زين.'],
+    moroccan: ['واخا.', 'خليني نشوف.', 'صافي.'],
+    algerian: ['واخا.', 'خليني نشوف.', 'صافي.'],
+    tunisian: ['باهي.', 'خليني نشوف.', 'صافي.'],
+    sudanese: ['طيب.', 'خليني أشوف.', 'زين.']
+};
+const LATE_NIGHT_REACTIONS = ['أوكي.', 'خلني أشوف.', 'لحظة.', 'دقيقة.'];
+
+/* ═══════════════════════════════════════════════════════════════════
+   ⏳ أعذار التأخر (يستخدمها المحلل عن نفسه فقط)
+   ═══════════════════════════════════════════════════════════════════ */
+const DELAY_EXCUSES = {
+    slow_net: ['لحظة، النت عندي شوي ضعيف.', 'ثانية، الاتصال بيفصل عندي.', 'دقيقة، الإنترنت عندنا ضعيف.'],
+    checking: ['دقيقة، أراجع الشارت.', 'لحظة أشوف الأرقام.', 'ثانية، أتحقق من البيانات.'],
+    thinking: ['خليني أفكر شوي.', 'أحتاج دقيقة أفكر.', 'لحظة أرتب أفكاري.'],
+    busy_moment: ['دقيقة عندي اتصال ثاني.', 'لحظة، زميل يسألني.', 'ثانية، عندي أحد.'],
+    away_generic: ['سامحني، كنت بعيد عن الجهاز.', 'أعتذر على التأخير — كنت مشغول لحظتها.']
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   👋 وداع المحلل عند انتهاء دوامه (انعدام نشاط المستخدم)
+   ═══════════════════════════════════════════════════════════════════ */
+const EXPERT_FAREWELLS = [
+    'أعتذر، عندي موعد ثاني. بحوّلك لزميلي.',
+    'سامحني، لازم أروح الآن. زميلي بيكمل معك.',
+    'انتهى وقتي معك. زميلي بيكمل من هنا.',
+    'للأسف عندي التزام. بحوّلك لزميل متخصص.'
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   🌐 الحالة العامة
+   ═══════════════════════════════════════════════════════════════════ */
 let user = null, section = null, expert = null, history = [], busy = false;
 let progressTimer = null;
+let delayExcuseTimer = null;
+let inactivityTimer = null;
+let countdownTimer = null;
+let handoffInProgress = false;
+
 const CONVERSATIONS = {};
 const LAST_EXPERTS = {};
+const SESSIONS = {}; // { section: { lastActivityAt, handoffCount } }
 const RESET_MIN_MS = 3 * 60 * 1000;
 const RESET_MAX_MS = 5 * 60 * 1000;
 const CLOSE_KEY = 'forg_closed_until';
-let countdownTimer = null;
+
+// مؤقت انعدام النشاط (المحلل يتغير/المحادثة تُغلق)
+const INACTIVITY_MIN_MS = 3 * 60 * 1000;   // 3 دقائق
+const INACTIVITY_MAX_MS = 4 * 60 * 1000;   // 4 دقائق
+const MAX_HANDOFFS = 3;                     // بعدها المحادثة تُغلق
 
 function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') || 'light';
@@ -1067,17 +1034,13 @@ function initThemeBtn() {
 
 const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
 let splashP = 0, splashMsgIdx = 0;
-let splashDone = false;
 
 function startSplash() {
     const fill = document.getElementById('splashFill');
     const msg = document.getElementById('splashMsg');
     const interval = setInterval(() => {
-        if (splashDone) {
-            splashP = 100;
-        } else {
-            splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
-        }
+        if (splashDone) splashP = 100;
+        else splashP = window.SERVER_READY ? Math.min(splashP + 10, 100) : Math.min(splashP + 1.4, 85);
         fill.style.width = splashP + '%';
         const idx = Math.min(Math.floor(splashP / 20), SPLASH_MSGS.length - 1);
         if (idx !== splashMsgIdx) { splashMsgIdx = idx; msg.textContent = SPLASH_MSGS[idx]; }
@@ -1092,24 +1055,16 @@ function startSplash() {
             }, 400);
         }
     }, 200);
-
     setTimeout(() => {
-        if (!window.SERVER_READY && splashP < 100) {
-            document.getElementById('splash').classList.add('waiting');
-        }
+        if (!window.SERVER_READY && splashP < 100) document.getElementById('splash').classList.add('waiting');
     }, 4000);
 }
-
 function initView() {
     initThemeBtn();
     buildSectionGrid();
-    if (loadUser()) {
-        document.getElementById('home').classList.add('show');
-    } else {
-        document.getElementById('welcome').classList.add('show');
-    }
+    if (loadUser()) document.getElementById('home').classList.add('show');
+    else document.getElementById('welcome').classList.add('show');
 }
-
 function buildSectionGrid() {
     const grid = document.getElementById('sectionGrid');
     grid.innerHTML = Object.entries(SECTION_INFO).map(([key, info]) => `
@@ -1160,6 +1115,187 @@ function showUserBar() {
     document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   🧠 دوال مساعدة
+   ═══════════════════════════════════════════════════════════════════ */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function calcHumanTypingTime(text) {
+    if (!text) return 1500;
+    let total = 0;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        let ms = 42;
+        if (ch === '،' || ch === ',') ms = 180;
+        else if (ch === '.' || ch === '!' || ch === '؟' || ch === '?') ms = 320;
+        else if (ch === '\n') ms = 380;
+        else if (ch === ' ') ms = 32;
+        else if (/[\u0600-\u06FF]/.test(ch)) ms = 42;
+        else if (/[0-9]/.test(ch)) ms = 55;
+        else ms = 60;
+        ms *= (0.7 + Math.random() * 0.6);
+        total += ms;
+    }
+    return Math.max(1200, Math.min(12000, total));
+}
+
+function calcReadDelay(userMsg) {
+    const len = userMsg.length;
+    if (len < 15)  return 500  + Math.random() * 700;
+    if (len < 60)  return 1200 + Math.random() * 1200;
+    if (len < 150) return 2200 + Math.random() * 1800;
+    return 3500 + Math.random() * 2500;
+}
+
+function splitIntoMessages(text) {
+    if (!text) return [];
+    if (text.includes('\n\n')) return text.split(/\n\n+/).map(s => s.trim()).filter(s => s.length > 0);
+    if (text.length < 180) return [text];
+    const sentences = text.split(/(?<=[.!?؟])\s+/).filter(s => s.trim());
+    if (sentences.length <= 1) return [text];
+    const targetChunks = text.length > 500 ? 3 : 2;
+    const perChunk = Math.ceil(sentences.length / targetChunks);
+    const chunks = [];
+    for (let i = 0; i < sentences.length; i += perChunk) {
+        chunks.push(sentences.slice(i, i + perChunk).join(' ').trim());
+    }
+    return chunks.filter(c => c.length > 0);
+}
+
+function getReaction(dialect) {
+    const h = new Date().getHours();
+    if (h >= 23 || h < 5) return LATE_NIGHT_REACTIONS[Math.floor(Math.random() * LATE_NIGHT_REACTIONS.length)];
+    const pool = REACTIONS[dialect] || ['تمام.'];
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function getDelayExcuse() {
+    const groups = Object.values(DELAY_EXCUSES);
+    const group = groups[Math.floor(Math.random() * groups.length)];
+    return group[Math.floor(Math.random() * group.length)];
+}
+
+function getFarewell() {
+    return EXPERT_FAREWELLS[Math.floor(Math.random() * EXPERT_FAREWELLS.length)];
+}
+
+function formatTimeGap(ms) {
+    const s = Math.floor(ms / 1000);
+    if (s < 60) return 'قبل لحظات';
+    const m = Math.floor(s / 60);
+    if (m < 60) return `قبل ${m} ${m === 1 ? 'دقيقة' : 'دقائق'}`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `قبل ${h} ${h === 1 ? 'ساعة' : 'ساعات'}`;
+    const d = Math.floor(h / 24);
+    return `قبل ${d} ${d === 1 ? 'يوم' : 'أيام'}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   📊 جلسات الأقسام (تتبع النشاط)
+   ═══════════════════════════════════════════════════════════════════ */
+function getSession(s) {
+    if (!SESSIONS[s]) SESSIONS[s] = { lastActivityAt: Date.now(), handoffCount: 0 };
+    return SESSIONS[s];
+}
+
+function markActivity() {
+    if (!section) return;
+    const sess = getSession(section);
+    sess.lastActivityAt = Date.now();
+}
+
+function scheduleInactivityCheck() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
+    if (!section) return;
+    if (isChatClosed()) return;
+    const delay = INACTIVITY_MIN_MS + Math.random() * (INACTIVITY_MAX_MS - INACTIVITY_MIN_MS);
+    inactivityTimer = setTimeout(() => handleInactivity(false), delay);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   🔄 تبديل المحلل عند انعدام النشاط
+   ═══════════════════════════════════════════════════════════════════ */
+async function handleInactivity(isReopen = false) {
+    if (!section || busy || handoffInProgress) return;
+    if (isChatClosed()) return;
+    if (!CONVERSATIONS[section]) return;
+    if (!expert) return;
+
+    // تحقق فعلي: هل انقضى الوقت المطلوب؟
+    const sess = getSession(section);
+    const elapsed = Date.now() - sess.lastActivityAt;
+    if (elapsed < INACTIVITY_MIN_MS) {
+        scheduleInactivityCheck();
+        return;
+    }
+
+    handoffInProgress = true;
+
+    // إذا استنفد عدد التحويلات → أغلق المحادثة
+    if (sess.handoffCount >= MAX_HANDOFFS) {
+        handoffInProgress = false;
+        closeChat(3 * 60, 'inactivity');
+        return;
+    }
+
+    // 1) وداع المحلل الحالي (فقط إذا كان المستخدم موجوداً — لا يُعاد عند الدخول بعد غياب)
+    if (!isReopen) {
+        const farewell = getFarewell();
+        setExpertStatus('typing');
+        showTypingIndicator();
+        await sleep(calcHumanTypingTime(farewell));
+        hideTypingIndicator();
+        addBubble('expert', farewell);
+        history.push({ role: 'assistant', content: farewell, at: Date.now() });
+        await sleep(1500 + Math.random() * 1200);
+    }
+
+    // 2) رسالة نظام
+    addSystemBubble('تم تحويلك إلى محلل آخر');
+    await sleep(1400 + Math.random() * 800);
+
+    // 3) المحلل الجديد يستلم
+    const newExpert = pickDifferentExpert(section);
+    expert = newExpert;
+
+    // تأثير تبديل على الأفاتار والاسم
+    const avatar = document.getElementById('expAvatar');
+    const nameEl = document.getElementById('expName');
+    avatar.classList.add('switching');
+    nameEl.classList.add('switching');
+    await sleep(400);
+    renderExpertHeader();
+    avatar.classList.remove('switching');
+    nameEl.classList.remove('switching');
+
+    sess.handoffCount++;
+
+    // 4) ترحيب مختصر من المحلل الجديد
+    await sleep(1200 + Math.random() * 1200);
+    const h = new Date().getHours();
+    const timeGreet = h < 12 ? 'صباح الخير' : (h < 17 ? 'مساء الخير' : 'مساء النور');
+    const greeting = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. ${timeGreet}، كيف أقدر أساعدك؟`;
+
+    setExpertStatus('typing');
+    showTypingIndicator();
+    await sleep(calcHumanTypingTime(greeting));
+    hideTypingIndicator();
+    addBubble('expert', greeting);
+    history.push({ role: 'assistant', content: greeting, at: Date.now() });
+
+    // 5) تحديث الجلسة والمحادثة
+    sess.lastActivityAt = Date.now();
+    if (CONVERSATIONS[section]) {
+        CONVERSATIONS[section].expert = newExpert;
+        CONVERSATIONS[section].history = history;
+        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+    }
+
+    handoffInProgress = false;
+    scheduleInactivityCheck();
+}
+
 function pickDifferentExpert(s) {
     const list = EXPERTS[s];
     const last = LAST_EXPERTS[s];
@@ -1169,8 +1305,14 @@ function pickDifferentExpert(s) {
     LAST_EXPERTS[s] = picked;
     return picked;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   📂 فتح قسم
+   ═══════════════════════════════════════════════════════════════════ */
 function openSection(s) {
     section = s;
+    const sess = getSession(s);
+
     const closedInfo = getClosureInfo(s);
     if (closedInfo && Date.now() < closedInfo.until) {
         document.getElementById('home').classList.remove('show');
@@ -1179,6 +1321,8 @@ function openSection(s) {
         setTimeout(() => showClosedOverlay(closedInfo.until, closedInfo.reason), 250);
         return;
     }
+
+    // فتح محادثة قديمة
     if (CONVERSATIONS[s]) {
         const c = CONVERSATIONS[s];
         if (c.resetTimer) { clearTimeout(c.resetTimer); c.resetTimer = null; }
@@ -1193,11 +1337,23 @@ function openSection(s) {
         document.getElementById('closedOverlay').classList.remove('show');
         document.getElementById('input').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-        setTimeout(() => document.getElementById('input').focus(), 600);
-    } else {
-        setupChatForSection(s, true);
+
+        // هل انقضى وقت الغياب؟
+        const elapsed = Date.now() - sess.lastActivityAt;
+        if (elapsed > INACTIVITY_MIN_MS) {
+            // المحلل تغيّر أثناء غياب المستخدم — تنفيذ فوري بدون وداع
+            setTimeout(() => handleInactivity(true), 800);
+        } else {
+            scheduleInactivityCheck();
+            setTimeout(() => document.getElementById('input').focus(), 400);
+        }
+        return;
     }
+
+    // محادثة جديدة
+    setupChatForSection(s, true);
 }
+
 function setupChatForSection(s, showWelcome) {
     expert = pickDifferentExpert(s);
     history = [];
@@ -1207,6 +1363,11 @@ function setupChatForSection(s, showWelcome) {
     document.getElementById('closedOverlay').classList.remove('show');
     document.getElementById('input').disabled = false;
     document.getElementById('sendBtn').disabled = false;
+
+    const sess = getSession(s);
+    sess.lastActivityAt = Date.now();
+    sess.handoffCount = 0;
+
     CONVERSATIONS[s] = { expert, history: [], html: '', suggestionsHidden: false, resetTimer: null };
 
     document.getElementById('home').classList.remove('show');
@@ -1227,21 +1388,27 @@ function setupChatForSection(s, showWelcome) {
             await sleep(calcHumanTypingTime(welcome));
             hideTypingIndicator();
             addBubble('expert', welcome);
-            history.push({ role: 'assistant', content: welcome });
+            history.push({ role: 'assistant', content: welcome, at: Date.now() });
             CONVERSATIONS[s].history = history;
             CONVERSATIONS[s].html = document.getElementById('messages').innerHTML;
+
+            // ابدأ مؤقت انعدام النشاط بعد إرسال الترحيب
+            markActivity();
+            scheduleInactivityCheck();
         }, 900 + Math.random() * 700);
     }
     setTimeout(() => {
         if (!document.getElementById('input').disabled) document.getElementById('input').focus();
     }, 600);
 }
+
 function renderExpertHeader() {
     const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي' };
     document.getElementById('expAvatar').innerText = expert.name.charAt(0);
     document.getElementById('expName').innerText = expert.name;
     document.getElementById('expRole').innerHTML = `<span class="status-text">متصل الآن</span><span class="flag-badge">${d.flag} ${d.country}</span>`;
 }
+
 function showSuggestions(s) {
     const c = document.getElementById('suggestions');
     const list = SUGGESTIONS[s] || [];
@@ -1252,7 +1419,9 @@ function useSug(t) {
     if (document.getElementById('input').disabled) return;
     document.getElementById('input').value = t;
     document.getElementById('input').focus();
+    markActivity();
 }
+
 function goBack() {
     if (section && CONVERSATIONS[section]) {
         const c = CONVERSATIONS[section];
@@ -1264,6 +1433,10 @@ function goBack() {
         c.resetTimer = setTimeout(() => { delete CONVERSATIONS[section]; }, delay);
     }
     clearInterval(countdownTimer);
+    clearTimeout(delayExcuseTimer);
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
+    handoffInProgress = false;
     document.getElementById('closedOverlay').classList.remove('show');
     document.getElementById('chat').classList.remove('show');
     document.getElementById('home').classList.add('show');
@@ -1273,6 +1446,9 @@ function getRandomResetDelay() {
     return Math.floor(RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS));
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   🎨 عرض الرسائل
+   ═══════════════════════════════════════════════════════════════════ */
 function timeNow() {
     const d = new Date();
     return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
@@ -1283,14 +1459,6 @@ function formatText(text) {
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     return html;
 }
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-function calcHumanTypingTime(text) {
-    const len = text.length;
-    const base = len * 42;
-    const jitter = base * 0.3 * (Math.random() - 0.5);
-    return Math.max(1200, Math.min(9000, base + jitter));
-}
 
 function setExpertStatus(status) {
     const el = document.querySelector('.expert-info .status-text');
@@ -1298,8 +1466,8 @@ function setExpertStatus(status) {
     const avatar = document.getElementById('expAvatar');
     if (!el) return;
     avatar.classList.remove('offline', 'busy', 'typing');
-    info.classList.remove('typing-status', 'busy-status');
-    if (status === 'offline') { el.textContent = 'غير متصل'; avatar.classList.add('offline'); }
+    info.classList.remove('typing-status', 'busy-status', 'offline-status');
+    if (status === 'offline') { el.textContent = 'غير متصل'; info.classList.add('offline-status'); avatar.classList.add('offline'); }
     else if (status === 'busy') { el.textContent = 'مشغول قليلاً...'; info.classList.add('busy-status'); avatar.classList.add('busy'); }
     else if (status === 'typing') { el.textContent = 'يكتب الآن...'; info.classList.add('typing-status'); avatar.classList.add('typing'); }
     else { el.textContent = 'متصل الآن'; }
@@ -1336,18 +1504,27 @@ function addBubble(who, text, isError = false) {
     return wrap;
 }
 
-async function markMessagesRead() {
+function addSystemBubble(text) {
+    const m = document.getElementById('messages');
+    const w = document.createElement('div');
+    w.className = 'system-bubble';
+    w.dataset.system = 'true';
+    w.textContent = text;
+    m.appendChild(w);
+    m.scrollTop = m.scrollHeight;
+}
+
+async function markLastUserRead() {
     const pending = document.querySelectorAll('[data-pending-read="true"]');
-    for (const wrap of pending) {
-        await sleep(250 + Math.random() * 400);
-        const ck = wrap.querySelector('.checks');
-        if (ck) {
-            ck.textContent = '✓✓';
-            ck.classList.add('read');
-            ck.classList.remove('delivered', 'sent');
-        }
-        wrap.dataset.pendingRead = 'false';
+    if (!pending.length) return;
+    const lastWrap = pending[pending.length - 1];
+    const ck = lastWrap.querySelector('.checks');
+    if (ck) {
+        ck.textContent = '✓✓';
+        ck.classList.add('read');
+        ck.classList.remove('delivered', 'sent');
     }
+    lastWrap.dataset.pendingRead = 'false';
 }
 
 function startProgress() {
@@ -1387,6 +1564,9 @@ function hideTypingIndicator() {
     setExpertStatus('online');
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   🔒 إغلاق مؤقت
+   ═══════════════════════════════════════════════════════════════════ */
 function getClosureInfo(s) {
     try {
         const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
@@ -1438,7 +1618,8 @@ function showClosedOverlay(until, reason) {
         bored: 'يبدو أن الموضوع <span class="highlight">ما شدّك</span>. نأخذ استراحة قصيرة.',
         deep_close: '<span class="highlight">محادثة طويلة</span> — نأخذ استراحة قصيرة قبل المتابعة.',
         rude: 'أُغلقت بسبب <span class="highlight">الإساءة</span>. نحن هنا لمساعدتك باحترام.',
-        wants_else: 'يبدو أنك <span class="highlight">تفضّل موضوعاً آخر</span>. اختر قسماً جديداً.'
+        wants_else: 'يبدو أنك <span class="highlight">تفضّل موضوعاً آخر</span>. اختر قسماً جديداً.',
+        inactivity: 'يبدو أنك <span class="highlight">مشغول حالياً</span>. نأخذ استراحة، ونحن هنا عندما تعود.'
     }[reason] || 'المحادثة مغلقة مؤقتاً. يمكنك العودة بعد انتهاء العدّ التنازلي.';
 
     reasonEl.innerHTML = reasonText;
@@ -1447,6 +1628,9 @@ function showClosedOverlay(until, reason) {
     document.getElementById('input').disabled = true;
     document.getElementById('input').placeholder = 'المحادثة مغلقة مؤقتاً...';
     document.getElementById('sendBtn').disabled = true;
+
+    clearTimeout(inactivityTimer);
+    inactivityTimer = null;
 
     const totalSeconds = Math.floor((until - Date.now()) / 1000);
     const initialTotal = totalSeconds;
@@ -1459,7 +1643,6 @@ function showClosedOverlay(until, reason) {
         const offset = circumference * (1 - ratio);
         ring.style.strokeDashoffset = offset;
     }
-
     function tick() {
         const remaining = Math.max(0, Math.floor((until - Date.now()) / 1000));
         const m = Math.floor(remaining / 60);
@@ -1467,7 +1650,6 @@ function showClosedOverlay(until, reason) {
         cdMin.textContent = String(m).padStart(2,'0');
         cdSec.textContent = String(s).padStart(2,'0');
         updateRing(remaining);
-
         if (remaining <= 0) {
             clearInterval(countdownTimer);
             countdownTimer = null;
@@ -1477,9 +1659,30 @@ function showClosedOverlay(until, reason) {
             document.getElementById('input').disabled = false;
             document.getElementById('input').placeholder = 'اكتب استفسارك...';
             document.getElementById('sendBtn').disabled = false;
-            setTimeout(() => {
-                addBubble('expert', 'أهلاً بعودتك. تفضل بأي سؤال.');
-            }, 500);
+            // إعادة فتح الجلسة بمحلل جديد
+            if (s2) {
+                const sess = getSession(s2);
+                sess.handoffCount = 0;
+                sess.lastActivityAt = Date.now();
+                const newExpert = pickDifferentExpert(s2);
+                expert = newExpert;
+                renderExpertHeader();
+                setTimeout(async () => {
+                    const greeting = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
+                    setExpertStatus('typing');
+                    showTypingIndicator();
+                    await sleep(calcHumanTypingTime(greeting));
+                    hideTypingIndicator();
+                    addBubble('expert', greeting);
+                    history.push({ role: 'assistant', content: greeting, at: Date.now() });
+                    if (CONVERSATIONS[s2]) {
+                        CONVERSATIONS[s2].expert = newExpert;
+                        CONVERSATIONS[s2].history = history;
+                        CONVERSATIONS[s2].html = document.getElementById('messages').innerHTML;
+                    }
+                    scheduleInactivityCheck();
+                }, 600);
+            }
         }
     }
     tick();
@@ -1487,6 +1690,27 @@ function showClosedOverlay(until, reason) {
     countdownTimer = setInterval(tick, 1000);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   ⏳ عذر التأخر
+   ═══════════════════════════════════════════════════════════════════ */
+function scheduleDelayExcuse() {
+    clearTimeout(delayExcuseTimer);
+    delayExcuseTimer = setTimeout(async () => {
+        if (!busy || isChatClosed()) return;
+        const excuse = getDelayExcuse();
+        setExpertStatus('typing');
+        showTypingIndicator();
+        await sleep(calcHumanTypingTime(excuse));
+        hideTypingIndicator();
+        addBubble('expert', excuse);
+        history.push({ role: 'assistant', content: excuse, at: Date.now() });
+        setExpertStatus('busy');
+    }, 7000 + Math.random() * 3000);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   📩 إرسال رسالة
+   ═══════════════════════════════════════════════════════════════════ */
 async function sendMsg() {
     const input = document.getElementById('input');
     const text = input.value.trim();
@@ -1498,10 +1722,14 @@ async function sendMsg() {
         return;
     }
 
+    // المستخدم نشط → أعد ضبط مؤقت انعدام النشاط
+    markActivity();
+    scheduleInactivityCheck();
+
     input.value = '';
     input.style.height = 'auto';
     addBubble('user', text);
-    history.push({ role: 'user', content: text });
+    history.push({ role: 'user', content: text, at: Date.now() });
     document.getElementById('suggestions').style.display = 'none';
 
     if (section && CONVERSATIONS[section]?.resetTimer) {
@@ -1511,8 +1739,17 @@ async function sendMsg() {
 
     busy = true;
     document.getElementById('sendBtn').disabled = true;
+
+    // ═══ المرحلة 1: قراءة ═══
+    setExpertStatus('online');
+    await sleep(calcReadDelay(text));
+    markLastUserRead();
+
+    // ═══ المرحلة 2: تفكير + بدء الطلب ═══
+    await sleep(400 + Math.random() * 600);
     setExpertStatus('busy');
     startProgress();
+    scheduleDelayExcuse();
 
     const fetchPromise = fetch('https://ammar-e0tp.onrender.com/api/analyze', {
         method: 'POST',
@@ -1524,11 +1761,9 @@ async function sendMsg() {
         })
     });
 
-    await sleep(500 + Math.random() * 600);
-    markMessagesRead();
-
     try {
         const res = await fetchPromise;
+        clearTimeout(delayExcuseTimer);
         const raw = await res.text();
         let data = {};
         try { data = JSON.parse(raw); } catch (e) {
@@ -1544,34 +1779,49 @@ async function sendMsg() {
             closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
             return;
         }
-
         if (!res.ok) {
             finishProgress(); setExpertStatus('online');
             addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
             return;
         }
-
         finishProgress();
 
         const replies = data.replies || [];
-        const perReplyDelays = data.timing?.perReply || [];
 
-        setExpertStatus('busy');
-        await sleep(800 + Math.random() * 1200);
-
-        for (let i = 0; i < replies.length; i++) {
-            const reply = replies[i];
-            const typingTime = perReplyDelays[i] || calcHumanTypingTime(reply);
+        // ═══ المرحلة 3: رد فعل قصير (40%) ═══
+        if (replies.length > 0 && Math.random() < 0.4) {
+            const reaction = getReaction(expert.dialect);
             setExpertStatus('typing');
             showTypingIndicator();
-            await sleep(typingTime);
+            await sleep(calcHumanTypingTime(reaction));
             hideTypingIndicator();
-            addBubble('expert', reply);
-            history.push({ role: 'assistant', content: reply });
+            addBubble('expert', reaction);
+            history.push({ role: 'assistant', content: reaction, at: Date.now() });
+            await sleep(500 + Math.random() * 700);
+        } else {
+            await sleep(700 + Math.random() * 900);
+        }
 
+        // ═══ المرحلة 4: تفكيك الردود ═══
+        for (let i = 0; i < replies.length; i++) {
+            const reply = replies[i];
+            const segments = splitIntoMessages(reply);
+            for (let j = 0; j < segments.length; j++) {
+                const seg = segments[j];
+                setExpertStatus('typing');
+                showTypingIndicator();
+                await sleep(calcHumanTypingTime(seg));
+                hideTypingIndicator();
+                addBubble('expert', seg);
+                history.push({ role: 'assistant', content: seg, at: Date.now() });
+                if (j < segments.length - 1) {
+                    setExpertStatus('busy');
+                    await sleep(600 + Math.random() * 900);
+                }
+            }
             if (i < replies.length - 1) {
                 setExpertStatus('busy');
-                await sleep(400 + Math.random() * 700);
+                await sleep(500 + Math.random() * 800);
             }
         }
 
@@ -1583,19 +1833,22 @@ async function sendMsg() {
         if (data.closed && data.cooldownMinutes) {
             setTimeout(() => closeChat(data.cooldownMinutes * 60, data.closeReason), 1200);
         }
-
     } catch (e) {
+        clearTimeout(delayExcuseTimer);
         finishProgress(); setExpertStatus('online');
         addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}`, true);
     } finally {
         busy = false;
-        if (!isChatClosed()) {
-            document.getElementById('sendBtn').disabled = false;
-        }
+        if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
         setExpertStatus('online');
+        // أعد ضبط مؤقت انعدام النشاط بعد الرد
+        scheduleInactivityCheck();
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   🎬 التهيئة
+   ═══════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
     const inp = document.getElementById('input');
     if (inp) {
@@ -1605,8 +1858,23 @@ document.addEventListener('DOMContentLoaded', () => {
         inp.addEventListener('input', () => {
             inp.style.height = 'auto';
             inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+            // أي كتابة = نشاط
+            markActivity();
+            scheduleInactivityCheck();
         });
     }
+});
+
+// رجوع للتبويب = نشاط (يعيد المؤقت إذا كان المستخدم في المحادثة)
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && section) {
+        markActivity();
+        scheduleInactivityCheck();
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    clearTimeout(inactivityTimer);
 });
 </script>
 
