@@ -1,14 +1,10 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v12 "Human"
- *  ملف واحد جاهز للتشغيل — لا يحتاج أي ملفات إضافية
+ *  منصة استشارات forG — Strategy-Pro v13 "Human"
+ *  ملف واحد + index.html (للـ Open Graph)
  *  
  *  التشغيل:
  *    export GEMINI_API_KEY="مفتاحك"
- *    node server.js
- *  
- *  أو مع إعدادات إضافية:
- *    export GEMINI_API_KEY="..." PORT=3000 RATE_MAX=30 CORS_ORIGINS="*"
  *    node server.js
  * ═══════════════════════════════════════════════════════════════
  */
@@ -16,6 +12,8 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -27,6 +25,7 @@ app.use(cors({ origin: CORS_ORIGINS }));
 
 const API_KEY = process.env.GEMINI_API_KEY;
 const PORT = process.env.PORT || 3000;
+const HTML_FILE = path.join(__dirname, 'index.html');
 
 const INITIAL_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
 let availableModels = [...INITIAL_MODELS];
@@ -67,7 +66,7 @@ async function refreshModels(force = false) {
 refreshModels(true);
 
 /* ═══════════════════════════════════════════════════════════════
-   Rate Limiter — في الذاكرة
+   Rate Limiter
    ═══════════════════════════════════════════════════════════════ */
 const RATE_LIMIT = new Map();
 const RATE_WINDOW_MS = 60 * 1000;
@@ -177,7 +176,7 @@ function genderInstructions(gender, name) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   الجلسات — في الذاكرة فقط (لا ملفات)
+   الجلسات
    ═══════════════════════════════════════════════════════════════ */
 const SESSIONS = new Map();
 const MAX_SESSIONS = 5000;
@@ -392,9 +391,6 @@ function analyzeIntent(q, history) {
     };
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   الأمزجة — 18 مزاج
-   ═══════════════════════════════════════════════════════════════ */
 const MOODS = {
     neutral:       { lenMod: 1.0, style: 'متوازن' },
     warm:          { lenMod: 1.05, style: 'دافئ، ودود' },
@@ -424,9 +420,6 @@ const OPENERS = {
     long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.','شوف، الموضوع فيه تفاصيل مهمة.']
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   🎭 محرك السلوك البشري
-   ═══════════════════════════════════════════════════════════════ */
 function getSaudiHour(offsetHours = 3) {
     const utc = Date.now() + (new Date().getTimezoneOffset() * 60000);
     const local = new Date(utc + offsetHours * 3600000);
@@ -543,9 +536,6 @@ function pickHumanTouch(mood, mode) {
     return null;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   بناء البرومبت الرئيسي
-   ═══════════════════════════════════════════════════════════════ */
 function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
@@ -936,15 +926,34 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Endpoints
+   ✅ Endpoints — v13
    ═══════════════════════════════════════════════════════════════ */
+
+// ✅ الجديد: يخدم index.html عند زيارة الرابط
 app.get('/', (req, res) => {
+    if (fs.existsSync(HTML_FILE)) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=300');
+        return res.sendFile(HTML_FILE);
+    }
+    // fallback — لو index.html غير موجود
+    res.status(200).json({
+        status: 'OK',
+        platform: 'منصة استشارات forG',
+        version: 'v13-human',
+        warning: 'index.html غير موجود — احفظ ملف HTML بجانب server.js',
+        activeSessions: SESSIONS.size
+    });
+});
+
+// معلومات المنصة JSON — endpoint منفصل
+app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'Strategy-Pro-v12-human',
+        version: 'v13-human',
         features: ['human_response_modes', 'mood_based_length', 'energy_simulation',
-                   'rate_limit', 'light_prompt', 'arabic_normalize'],
+                   'rate_limit', 'light_prompt', 'arabic_normalize', 'og_meta'],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size
     });
@@ -1072,11 +1081,13 @@ process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', 
 process.on('uncaughtException', (err) => console.error('Uncaught exception:', err));
 
 app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG — v12 Human — البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — v13 Human — البورت ${PORT}`);
+    console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود — أضفه بجانب server.js'}`);
     console.log(`🎭 18 مزاج × 5 أنماط رد = تنوع بشري`);
     console.log(`⚡ برومبت خفيف للرسائل البسيطة`);
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`👤 ${FEMALE_NAMES.size + MALE_NAMES.size} اسم مدعوم`);
     console.log(`🔋 طاقة ديناميكية حسب الوقت`);
-    console.log(`💾 الجلسات في الذاكرة فقط (لا ملفات)`);
+    console.log(`💾 الجلسات في الذاكرة فقط`);
+    console.log(`🔗 Open Graph جاهز`);
 });
