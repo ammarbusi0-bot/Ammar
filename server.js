@@ -54,131 +54,218 @@ async function refreshModels(force = false) {
 refreshModels(true);
 
 // ============================================================
-// 🎯 محرك المستشار الاحترافي — إصدار Pro v1
+// 🗺️ اللهجات العربية — إرشادات مفصّلة لكل لهجة
 // ============================================================
-
-const MOODS = [
-    { name: 'تحليلي',   hint: 'تتعامل مع السؤال بمنطق وأرقام، بلا مجاملات.' },
-    { name: 'مباشر',    hint: 'تجاوب على الجوهر مباشرة، لا مقدمات.' },
-    { name: 'حذر',      hint: 'تؤكد على المخاطر والسيناريوهات السلبية.' },
-    { name: 'متعمق',    hint: 'تعطي سياقاً أوسع ثم الجواب.' },
-    { name: 'عملي',     hint: 'تركّز على خطوات قابلة للتطبيق.' },
-    { name: 'متحفظ',    hint: 'تعترف بحدود المعرفة وتذكر عدم اليقين.' },
-    { name: 'حاسم',     hint: 'تعطي رأياً واضحاً مع أسبابه.' },
-    { name: 'استشاري',  hint: 'تسأل سؤالاً توضيحياً ذكياً قبل الجواب.' },
-    { name: 'مقارن',    hint: 'تقارن بين بديلين أو أكثر.' },
-    { name: 'تعليمي',   hint: 'تشرح المفهوم ببساطة ثم التطبيق.' }
-];
-
-const SECTION_PERSONALITY = {
-    gold: {
-        backstory: 'أتابع أسواق المعادن الثمينة منذ 2008، مررت بدورات صعود وهبوط متعددة.',
-        pet_peeve: 'من يبحث عن ضمانات قاطعة في أسواق متقلبة.',
-        opinion: 'أميل للحيازة طويلة الأجل مع تنويع، لا للمضاربة اللحظية.',
-        phrase: 'الذهب أصل دفاعي قبل أن يكون أصل ربح.',
-        quirks: ['يفرّق بين الأونصة والكيلو', 'يذكر نسب التخصيص المقترحة'],
-        avoid: 'لا تنصح بالدخول بكل رأس المال، نبّه دائماً.'
+const DIALECTS = {
+    saudi: {
+        name: 'خليجي سعودي', country: 'السعودية',
+        vocabulary: ['وش', 'كذا', 'زين', 'أبشر', 'الحين', 'ايش', 'شلون', 'ما هو', 'يعني', 'على طول', 'تو', 'مب'],
+        grammar: ['يستخدم "وش" للسؤال عن الشيء', 'يستخدم "أبشر" للقبول', '"الحين" بدل الآن'],
+        tone: 'لبق، محترم، مباشر أحياناً، يستخدم "يا طويل العمر" رسمياً',
+        example: 'والله شوف، الذهب الحين عالق بين مستويين. أنا أشوف الأفضل تنتظر.'
     },
-    stocks: {
-        backstory: 'عملت في تحليل الأسهم عبر دورات 2018 و2020 و2022.',
-        pet_peeve: 'من يستثمر بناءً على "سمعت" أو "قال لي".',
-        opinion: 'التقييم الجوهري أساس القرار، لا العاطفة أو الترند.',
-        phrase: 'السوق مقياس جماعي، لكن قرارك فردي.',
-        quirks: ['يذكر P/E و FCF', 'يفرّق بين القيمة والنمو'],
-        avoid: 'لا تذكر أسهم بأسماء محددة كتوصية شراء.'
+    emirati: {
+        name: 'خليجي إماراتي', country: 'الإمارات',
+        vocabulary: ['شو', 'شحال', 'زين', 'عيل', 'تو', 'الحين', 'يا ريال', 'هيه'],
+        grammar: ['يستخدم "شو" للسؤال', 'يستخدم "عيل" للتأكيد'],
+        tone: 'هادئ، مهني، واثق',
+        example: 'شوف، الموضوع يحتاج تفكير. شحال تقييمك للسوق الحالي؟'
     },
-    macro: {
-        backstory: 'أبحاثي تركّز على السياسة النقدية وأثرها على الأصول.',
-        pet_peeve: 'تبسيط الاقتصاد الكلي لدرجة الخطأ.',
-        opinion: 'الفائدة أقوى محرك للأصول قصير المدى.',
-        phrase: 'الفائدة ضغط الدم، والتضخم الحرارة.',
-        quirks: ['يستخدم "سياسة نقدية" و"مالية"', 'يربط بين الاقتصادات'],
-        avoid: 'لا تتحدث في السياسة الحزبية.'
+    kuwaiti: {
+        name: 'خليجي كويتي', country: 'الكويت',
+        vocabulary: ['شلون', 'شنو', 'اي', 'چذي', 'هسه', 'عيل', 'زين', 'ترى'],
+        grammar: ['يستخدم "چ" بدل "ك" في بعض الكلمات', '"شنو" للسؤال'],
+        tone: 'ودود، مباشر، يستخدم "حبيبي" مع اللطف',
+        example: 'شلونك؟ شوف الوضع، الذهب شنو وضعه الحين؟ ترى السوق تلخبط.'
     },
-    geopolitical: {
-        backstory: 'تابعت أثر الأزمات الجيوسياسية على الأسواق من 2011 حتى اليوم.',
-        pet_peeve: 'ربط كل حدث بأسعار النفط بشكل سطحي.',
-        opinion: 'الأسواق تبالغ في رد الفعل الأول ثم تصحح.',
-        phrase: 'قبل التصعيد، السوق يمنح فرص خروج.',
-        quirks: ['يذكر الممرات البحرية', 'يفرّق بين الحدث وأثره'],
-        avoid: 'لا تنحاز سياسياً، حلّل فقط.'
+    qatari: {
+        name: 'خليجي قطري', country: 'قطر',
+        vocabulary: ['شلون', 'شسوي', 'زين', 'الحين', 'عيل', 'وايد', 'هالكلام'],
+        grammar: ['يستخدم "وايد" للتكثير', 'يستخدم "هالكلام"'],
+        tone: 'هادئ، محترم',
+        example: 'شوف، الوضع زين بس محتاج تفكير وايد. شلون تشوف الموضوع؟'
     },
-    budget: {
-        backstory: 'درّبت مئات الأفراد على إدارة ميزانياتهم وخططهم المالية.',
-        pet_peeve: 'من يطلب حلولاً سحرية دون تغيير السلوك.',
-        opinion: 'قاعدة 50/30/20 مفيدة كإطار لا كقيد.',
-        phrase: 'الميزانية وعي، ليست حرمان.',
-        quirks: ['يسأل عن الدخل والالتزامات', 'يعطي أرقاماً عملية'],
-        avoid: 'لا تحكم على المستخدم، كن داعماً.'
+    bahraini: {
+        name: 'خليجي بحريني', country: 'البحرين',
+        vocabulary: ['شلون', 'شنو', 'زين', 'هسه', 'ايه', 'چدي'],
+        grammar: ['قريب من الكويتي'],
+        tone: 'ودود، بسيط',
+        example: 'شلونك؟ شوف الموضوع بسيط. الذهب شنو رأيك فيه؟'
     },
-    crypto: {
-        backstory: 'تابعت دورات الكريبتو من 2017، مررت بانهيارات وارتفاعات.',
-        pet_peeve: 'من يدخل بكل رأس ماله في عملة واحدة.',
-        opinion: 'التنظيم يتسارع، والأصول الكبرى أكثر قدرة على البقاء.',
-        phrase: 'السوق لا ينام، لكن محفظتك تحتاج نوماً آمناً.',
-        quirks: ['يحذّر من المشاريع الوهمية', 'يذكر دورات الهبوط'],
-        avoid: 'لا تدفع للشراء، نبّه على المخاطر دائماً.'
+    omani: {
+        name: 'خليجي عماني', country: 'عُمان',
+        vocabulary: ['شو', 'كيف', 'زين', 'مو', 'عاد', 'تو', 'حياك'],
+        grammar: ['يستخدم "مو" للنفي', '"حياك" للترحيب'],
+        tone: 'هادئ، محترم، يستخدم "حياك الله"',
+        example: 'حياك الله. شوف، الذهب الوضع مو واضح تو. كيف تشوفه أنت؟'
+    },
+    egyptian: {
+        name: 'مصري', country: 'مصر',
+        vocabulary: ['إزاي', 'يعني', 'أهو', 'كده', 'خالص', 'دلوقتي', 'بص', 'شوف', 'معلش', 'على فكرة', 'طبعاً'],
+        grammar: ['يستخدم "إزاي" بدل كيف', '"دلوقتي" بدل الآن', '"كده" بدل هكذا', '"معلش" للاعتذار الخفيف'],
+        tone: 'ودود، ساخر أحياناً بلطف، يستخدم "يا باشا" و"يا فندم"',
+        example: 'بص يا باشا، الذهب دلوقتي واقف في نص الطريق. إزاي تشوف الموضوع؟ أنا شايف نستنى شوية.'
+    },
+    syrian: {
+        name: 'شامي سوري', country: 'سوريا',
+        vocabulary: ['شو', 'لك', 'هلق', 'تمام', 'بلا', 'خلص', 'شغل', 'يعني', 'بلا مزح'],
+        grammar: ['يستخدم "لك" كأداة توضيح', '"هلق" بدل الآن', '"شو" بدل ماذا'],
+        tone: 'لبق، ذكي، يستخدم "لك" و"يعني" كثيراً',
+        example: 'لك شو عم تحكي؟ الذهب هلق واقف بين مستويين. يعني أنا ما بنصحك تدخل بكل رأس مالك.'
+    },
+    lebanese: {
+        name: 'شامي لبناني', country: 'لبنان',
+        vocabulary: ['شو', 'كتير', 'منيح', 'هلق', 'خلص', 'يعني', 'شو الأخبار', 'يا ريت'],
+        grammar: ['يستخدم "كتير" للتكثير', '"منيح" بدل جيد', '"خلص" بدل انتهى'],
+        tone: 'حيوي، ثقافي، يستخدم "كتير" و"منيح"',
+        example: 'شو الأخبار؟ الذهب اليوم كتير متقلب. منيح إنك تسأل قبل ما تتحرك.'
+    },
+    jordanian: {
+        name: 'شامي أردني', country: 'الأردن',
+        vocabulary: ['شو', 'هاد', 'هسع', 'زلمة', 'منيح', 'عشان', 'يعني', 'كثير'],
+        grammar: ['يستخدم "هاد" بدل هذا', '"هسع" بدل الآن'],
+        tone: 'رصين، واضح، يستخدم "هاي" و"هاد"',
+        example: 'هاي شو، الذهب هسع واقف. أنا بشوف الوضع منيح للاستثمار، بس مو للمضاربة.'
+    },
+    palestinian: {
+        name: 'شامي فلسطيني', country: 'فلسطين',
+        vocabulary: ['شو', 'هاد', 'زي', 'منيح', 'خلص', 'يعني', 'كثير', 'بالضبط'],
+        grammar: ['يستخدم "زي" بدل مثل', '"هاد" بدل هذا'],
+        tone: 'دافئ، مثقف',
+        example: 'شو رأيك؟ أنا بشوف الموضوع زي ما حكيت، الذهب هالفترة حساس.'
+    },
+    iraqi: {
+        name: 'عراقي', country: 'العراق',
+        vocabulary: ['شلون', 'شكو ماكو', 'هواية', 'زين', 'هسا', 'چان', 'عيني', 'فدوة', 'هيچ'],
+        grammar: ['يستخدم "شلون" بدل كيف', '"هواية" بدل كثير', '"هسا" بدل الآن', '"چان" بدل كان'],
+        tone: 'دافئ، يستخدم "عيني" و"فدوة" للطف',
+        example: 'شلونك عيني؟ شكو ماكو؟ الذهب هسا وضعه هواية حساس. آني أشوف الأفضل تنتظر.'
+    },
+    yemeni: {
+        name: 'يمني', country: 'اليمن',
+        vocabulary: ['كيف', 'شو', 'زين', 'الحين', 'عيل', 'صاحبي', 'يا رجل', 'أها'],
+        grammar: ['يستخدم "يا رجل" للتأكيد', '"عيل" للربط'],
+        tone: 'بسيط، دافئ',
+        example: 'يا رجل، الذهب الحين واقف. أنا شايف الوضع زين للاستثمار، شو رأيك؟'
+    },
+    moroccan: {
+        name: 'مغاربي مغربي', country: 'المغرب',
+        vocabulary: ['كيفاش', 'دابا', 'بزاف', 'واخا', 'زعما', 'مزيان', 'شحال', 'زوين', 'ديك'],
+        grammar: ['يستخدم "بزاف" للتكثير', '"واخا" للموافقة', '"دابا" بدل الآن', '"مزيان" بدل جيد'],
+        tone: 'دافئ، يستخدم "صاحبي" و"أخويا"',
+        example: 'كيفاش صاحبي؟ شوف، الذهب دابا مو واضح بزاف. واخا نتسناو، أحسن من نندمو.'
+    },
+    algerian: {
+        name: 'مغاربي جزائري', country: 'الجزائر',
+        vocabulary: ['كيفاش', 'دروك', 'بزاف', 'واه', 'مليح', 'كيما', 'شحال', 'صح'],
+        grammar: ['يستخدم "واه" للإيجاب', '"دروك" بدل الآن', '"بزاف" بدل كثير'],
+        tone: 'صريح، مباشر، يستخدم "خويا"',
+        example: 'واه خويا، الذهب دروك واقف. أنا نشوف بزاف نستناو، أحسن.'
+    },
+    tunisian: {
+        name: 'مغاربي تونسي', country: 'تونس',
+        vocabulary: ['كيفاش', 'برشا', 'باهي', 'تو', 'يعيشك', 'شحال', 'علاش', 'ياسر'],
+        grammar: ['يستخدم "برشا" للتكثير', '"باهي" بدل جيد', '"تو" بدل الآن'],
+        tone: 'ودود، يستخدم "يعيشك" للطف',
+        example: 'كيفاش؟ شوف، الذهب تو واقف. برشا ناس تسأل نفس السؤال. باهي تنتظر شوية.'
+    },
+    sudanese: {
+        name: 'سوداني', country: 'السودان',
+        vocabulary: ['كيفن', 'بس', 'يا زول', 'شنو', 'قايل', 'أها', 'والله', 'عديل'],
+        grammar: ['يستخدم "يا زول" للنداء', '"شنو" بدل ماذا', '"عديل" بدل جيد'],
+        tone: 'ودود، يستخدم "يا زول"',
+        example: 'كيفن يا زول؟ الذهب شنو؟ والله شوف، أنا قايل تنتظر شوية أحسن.'
     }
 };
 
-const OPENERS = [
-    'شوف،', 'بصراحة،', 'همم...', 'طيب.', 'يعني...', 'خلنا نكون واضحين:',
-    'دقيقة،', 'المهم،', 'اختصاراً،', 'بدون لف ودوران،', 'خلني أكون صريحاً،',
-    'الحقيقة؟', 'بالضبط.', 'أقول لك،', 'بشكل مباشر،'
+// ============================================================
+// 🧠 محرك الاستشارة الفخم — Pro v3
+// ============================================================
+
+const MOODS = [
+    { name: 'تحليلي', hint: 'منطق وأرقام بلا مجاملات.' },
+    { name: 'مباشر', hint: 'تجاوب على الجوهر، بلا مقدمات.' },
+    { name: 'حذر', hint: 'تؤكد على المخاطر.' },
+    { name: 'متعمق', hint: 'تعطي سياقاً ثم الجواب.' },
+    { name: 'عملي', hint: 'خطوات قابلة للتطبيق.' },
+    { name: 'متحفظ', hint: 'تعترف بحدود المعرفة.' },
+    { name: 'حاسم', hint: 'رأي واضح مع أسبابه.' },
+    { name: 'استشاري', hint: 'سؤال توضيحي قبل الجواب.' }
 ];
 
-function pickResponseMode() {
-    const r = Math.random();
-    if (r < 0.22) return 'direct_answer';
-    if (r < 0.34) return 'clarify_first';
-    if (r < 0.50) return 'opinion_strong';
-    if (r < 0.60) return 'context_then_answer';
-    if (r < 0.72) return 'comparison';
-    if (r < 0.82) return 'disagree_gentle';
-    if (r < 0.92) return 'uncertain';
-    return 'short_ack';
-}
-
-const MODE_HINTS = {
-    direct_answer: '→ جواب مباشر، 2-4 أسطر. بلا مقدمات.',
-    clarify_first: '→ اسأل سؤالاً توضيحياً واحداً فقط، ثم انتظر. لا تجب.',
-    opinion_strong: '→ أعطِ رأياً واضحاً مع سببين.',
-    context_then_answer: '→ سياق قصير جداً ثم الجواب.',
-    comparison: '→ قارن بين بديلين أو أكثر بشكل مختصر.',
-    disagree_gentle: '→ اعترض على افتراض المستخدم بلطف مع تبرير.',
-    uncertain: '→ اعترف بعدم اليقين واذكر ما ينقصك.',
-    short_ack: '→ جواب من جملة أو جملتين فقط.'
-};
-
-const EMOTIONAL_REACTIONS = {
-    worried: ['قلقك مفهوم.', 'طبيعي تسأل هذا الآن.', 'لا تتخذ قراراً تحت ضغط القلق.'],
-    excited: ['حماسك مفهوم، لكن دعنا نهدأ قليلاً.', 'الحماس عدوّ القرار السليم.'],
-    confused: ['الموضوع ليس معقداً كما يبدو، خلنا نفككه.', 'خلنا نمشي خطوة بخطوة.'],
-    frustrated: ['إحباطك مفهوم، السوق مرهق.', 'خذ خطوة للخلف قبل القرار.']
-};
-
-function detectEmotion(query) {
-    const q = query.toLowerCase();
-    if (/(قلق|خايف|خوف|مرتبك|محتار)/i.test(q)) return 'worried';
-    if (/(متحمس|حماس|فرحان|مبسوط|متشوق)/i.test(q)) return 'excited';
-    if (/(ملخبط|مو فاهم|ما فهمت|غامض|مو واضح)/i.test(q)) return 'confused';
-    if (/(زهقت|تعبت|يئست|خسرت|غاضب|زعلان|متضايق)/i.test(q)) return 'frustrated';
-    return null;
-}
-
-function detectIntent(query) {
+function analyzeUserIntent(query, history) {
     const q = query.trim();
-    if (/^(مرحبا|أهلا|السلام|هاي|هلا|يا هلا)/i.test(q) && q.length < 25)
-        return { type: 'greeting', hint: 'لا تطل التحية.' };
-    if (/^(شكرا|مشكور|تسلم|يعطيك)/i.test(q))
-        return { type: 'thanks', hint: 'رد بكلمة أو كلمتين فقط.' };
-    if (/^(مع السلامة|وداعا|باي|بسلامة)/i.test(q))
-        return { type: 'farewell', hint: 'جملة وداع قصيرة.' };
-    if (q.length < 8)
-        return { type: 'short', hint: 'رسالة قصيرة، رد بإيجاز.' };
-    if (q.length > 250)
-        return { type: 'long', hint: 'المستخدم أعطى تفاصيل، تعامل معها بجدية.' };
-    return { type: 'normal', hint: '' };
+    const qLen = q.length;
+    const qWords = q.split(/\s+/).length;
+
+    const isGreeting = /^(مرحبا|أهلا|السلام|هاي|هلا|يا هلا|صباح|مساء)/i.test(q) && qLen < 30;
+    const isThanks = /^(شكرا|مشكور|تسلم|يعطيك|جزاك|الله يخليك)/i.test(q) && qLen < 30;
+    const isFarewell = /^(مع السلامة|وداعا|باي|بسلامة|في أمان|إلى اللقاء)/i.test(q);
+    const isAck = /^(اوكي|أوكي|طيب|تمام|حسنا|ماشي|زين|ok|okay|واخا|باهي|صح)$/i.test(q);
+    const isShort = qLen < 20;
+    const isMedium = qLen >= 20 && qLen < 80;
+    const isLong = qLen >= 80 && qLen < 250;
+    const isVeryLong = qLen >= 250;
+
+    const wantsDetail = /(فصّل|فصل|أشرح|اشرح|وضح|وضّح|بالتفصيل|تفاصيل|شرح مفصل|بشكل مفصل|موسع|موسّع)/i.test(q);
+    const wantsBrief = /(باختصار|اختصار|بسرعة|سريع|مختصر|مو طويل|لا تطول|جزاك)/i.test(q);
+    const wantsCompare = /(قارن|مقارنة|الفرق بين|أفضل بين|افضل بين|أيهما)/i.test(q);
+    const wantsAdvice = /(تنصحني|توصيتك|رايك|رأيك|شو رأيك|ايش رايك|وش رايك|ماذا تنصح)/i.test(q);
+    const wantsAnalysis = /(حلل|تحليل|قيّم|قيم|درس|ادرس|مستقبل|تتوقع|توقعك)/i.test(q);
+    const wantsHowTo = /(كيف|طريقة|خطوات|أسوي|اسوي|أبدأ|ابدأ|عمل)/i.test(q);
+    const wantsWhy = /(ليش|لماذا|ايش السبب|وش السبب|سبب|علاش|كيفاش)/i.test(q);
+
+    const isUrgent = /(بسرعة|ضروري|عاجل|الآن|حالا|حالاً|مستعجل)/i.test(q);
+    const isConfused = /(محتار|ملخبط|مو فاهم|ما فهمت|مو واضح|غامض)/i.test(q);
+    const isWorried = /(قلق|خايف|مرتبك|متوتر|مو مرتاح)/i.test(q);
+    const isExcited = /(متحمس|حماس|فرحان|متشوق)/i.test(q);
+    const isFrustrated = /(زهقت|تعبت|يئست|خسرت|زعلان|متضايق|حزين)/i.test(q);
+
+    const isRepeat = detectRepeat(query, history);
+
+    let lengthHint = 'medium';
+    if (wantsBrief || isAck || isGreeting || isThanks || isFarewell || isShort) lengthHint = 'very_short';
+    else if (isMedium && wantsAdvice) lengthHint = 'short';
+    else if (isLong || wantsDetail || wantsCompare || wantsAnalysis) lengthHint = 'long';
+    else if (isVeryLong) lengthHint = 'detailed';
+
+    let styleHint = 'default';
+    if (wantsCompare) styleHint = 'compare';
+    else if (wantsHowTo) styleHint = 'howto';
+    else if (wantsAnalysis) styleHint = 'analysis';
+    else if (wantsAdvice) styleHint = 'advice';
+    else if (wantsWhy) styleHint = 'why';
+    else if (wantsDetail) styleHint = 'detail';
+
+    let needsClarify = false;
+    let clarifyHint = '';
+    if (isShort && !isGreeting && !isThanks && !isAck && !isFarewell && qWords <= 2) {
+        needsClarify = true;
+        clarifyHint = 'سؤال قصير جداً — اسأل سؤالاً توضيحياً واحداً قبل الإجابة.';
+    }
+    if (wantsAdvice && !hasEnoughContext(q, history)) {
+        needsClarify = true;
+        clarifyHint = 'المستخدم يطلب نصيحة بدون معلومات كافية. اسأل سؤالاً استراتيجياً واحداً (الهدف، المدة، حجم رأس المال، تحمل المخاطر).';
+    }
+
+    let tone = 'neutral';
+    if (isUrgent) tone = 'urgent';
+    else if (isConfused) tone = 'clarify';
+    else if (isWorried) tone = 'reassure';
+    else if (isExcited) tone = 'calm';
+    else if (isFrustrated) tone = 'support';
+
+    return {
+        intent: { isGreeting, isThanks, isFarewell, isAck, isShort, isMedium, isLong, isVeryLong },
+        wants: { detail: wantsDetail, brief: wantsBrief, compare: wantsCompare, advice: wantsAdvice, analysis: wantsAnalysis, howto: wantsHowTo, why: wantsWhy },
+        lengthHint, styleHint, needsClarify, clarifyHint, tone, isRepeat, qWords, qLen
+    };
+}
+
+function hasEnoughContext(query, history) {
+    if (!history || history.length < 3) return false;
+    const userMessages = history.filter(h => h.role === 'user').map(h => h.content).join(' ');
+    return /(محفظتي|رأس مال|ميزانية|دخل|استثمار|الهدف|المدة|دخلت|أمتلك|عندي|سنوي|شهري)/i.test(userMessages);
 }
 
 function detectRepeat(query, history) {
@@ -193,100 +280,133 @@ function detectRepeat(query, history) {
     });
 }
 
-function buildPrompt(section, query, user, expert, history) {
+const LENGTH_RULES = {
+    very_short: '**جملة واحدة أو جملتان فقط**. لا مقدمات، لا تفاصيل.',
+    short: '**2-4 أسطر**. إجابة مباشرة + سبب واحد.',
+    medium: '**4-6 أسطر**. إجابة + سببين + تنبيه قصير.',
+    long: '**6-10 أسطر**. سياق قصير ثم تحليل مركّز.',
+    detailed: '**حتى 14 سطراً**. تحليل منظّم بلا حشو.'
+};
+
+const STYLE_RULES = {
+    default: 'أجب على السؤال مباشرة بما يناسب نوعه.',
+    compare: 'قارن بين البديلين: الميزة، العيب، الأفضل لمن.',
+    howto: 'خطوات مرقّمة عملية، كل خطوة سطر.',
+    analysis: 'حلل: الوضع → العوامل → السيناريو → التنبيه.',
+    advice: 'قل رأيك بوضوح مع سببين.',
+    why: 'اشرح السبب الجذري بجملة، ثم فرعين للأثر.',
+    detail: 'افتح الموضوع بثلاث زوايا، كل زاوية 2-3 أسطر.'
+};
+
+const TONE_RULES = {
+    neutral: '',
+    urgent: '→ المستعجل يحتاج جواباً سريعاً أولاً.',
+    clarify: '→ المستخدم مرتبك. ابدأ بتطمين ("الموضوع أبسط مما يبدو").',
+    reassure: '→ المستخدم قلق. ابدأ بجملة طمأنة ثم الجواب.',
+    calm: '→ المستخدم متحمس. اهدئه بلطف.',
+    support: '→ المستخدم محبط. ابدأ بتعاطف قصير.'
+};
+
+function buildPrompt(section, query, user, expert, history, dialectKey) {
     const mood = MOODS[Math.floor(Math.random() * MOODS.length)];
-    const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
-    const intent = detectIntent(query);
-    const emotion = detectEmotion(query);
-    const isRepeat = detectRepeat(query, history);
-    const mode = pickResponseMode();
+    const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
+    const intent = analyzeUserIntent(query, history);
     const seed = Math.floor(Math.random() * 99999);
-    const opener = OPENERS[Math.floor(Math.random() * OPENERS.length)];
 
     const now = new Date();
     const hour = now.getHours();
     let dayPart = 'الليل';
     if (hour < 6) dayPart = 'الفجر';
     else if (hour < 11) dayPart = 'الصباح';
-    else if (hour < 15) dayPart = 'الظهيرة';
+    else if (hour < 15) dayPart = 'الظهر';
     else if (hour < 19) dayPart = 'العصر';
     else if (hour < 23) dayPart = 'المساء';
 
     const hasHistory = history && history.length > 1;
     const historyText = hasHistory
         ? '\n--- سجل الحوار ---\n' + history.slice(-5).map(h =>
-            `${h.role === 'user' ? (user?.firstName || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 200)}`
+            `${h.role === 'user' ? (user?.firstName || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 220)}`
           ).join('\n') + '\n---'
         : '';
 
-    const repeatHint = isRepeat
-        ? '\n⚠️ المستخدم يعيد سؤالاً مشابهاً. أشر بلطف: "شكلك ما اقتنعت، خلنا نوضح".'
+    const repeatHint = intent.isRepeat
+        ? '\n⚠️ المستخدم يعيد سؤالاً مشابهاً. أشر بلطف.'
         : '';
 
-    const emotionHint = emotion
-        ? `\n😊 شعور المستخدم: ${emotion}. تفاعل معه بجملة واحدة فقط ثم أكمل.`
+    const clarifyHint = intent.needsClarify
+        ? `\n❓ ${intent.clarifyHint}`
         : '';
 
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
 
-    return `# الدور
-أنت ${expert?.name || 'مستشار'}، ${expert?.role || 'مستشار مالي'} بخبرة ${expert?.years || 'سنوات'}.
+    return `# أنت
+${expert?.name || 'مستشار'}، ${expert?.role || 'مستشار مالي'}، خبرة ${expert?.years || 'سنوات'}.
+أنت من ${dialect.country}.
 
-# المُستشير
+# 🌍 لهجتك — مهم جداً
+تحدث بـ**${dialect.name}** بشكل طبيعي وأصيل.
+- مفردات لهجتك: ${dialect.vocabulary.join('، ')}
+- قواعدها: ${dialect.grammar.join(' | ')}
+- نبرتك المحلية: ${dialect.tone}
+- **مثال على أسلوبك**: "${dialect.example}"
+
+⚠️ قواعد اللهجة:
+1. استخدم **2-4 مفردات** من لهجتك في كل رد (ليس كل كلمة).
+2. حافظ على **الفصحى المبسطة** للعمق الفكري.
+3. **لا تبالغ** — قد تكون لهجتك ثقيلة على القارئ.
+4. **ممنوع** خلط لهجات أخرى (لا تستخدم "شلون" إذا كنت مصرياً).
+5. **ممنوع** العامية المبتذلة أو السوقية.
+6. **الفكرة المهمة تُقال بالفصحى**، والودّ يُقال باللهجة.
+
+# المستشير
 - الاسم: ${fullName || 'المستخدم'}
 - العمر: ${user?.age || '؟'}
 - البلد: ${user?.country || 'غير محدد'}
-- مستوى الخبرة: ${user?.experience || 'غير محدد'}
+- الخبرة: ${user?.experience || 'غير محدد'}
 ${user?.reason ? `- سبب الاستشارة: ${user.reason}` : ''}
 
-# شخصيتك المهنية
-- الخلفية: ${personality.backstory}
-- موقفك: ${personality.opinion}
-- ما يزعجك: ${personality.pet_peeve}
-- عبارتك: "${personality.phrase}"
-- سماتك: ${personality.quirks.join('، ')}
-${personality.avoid ? `- تجنّب: ${personality.avoid}` : ''}
-
-# حالتك الآن
-- المزاج: ${mood.name} → ${mood.hint}
+# حالتك
+- المزاج: ${mood.name} — ${mood.hint}
 - الوقت: ${dayPart}
-${intent.hint ? `- نوع الرسالة: ${intent.type} → ${intent.hint}` : ''}
-${emotionHint}
-${repeatHint}
+${repeatHint}${clarifyHint}
 
-# نمط الرد المطلوب
-${mode} ${MODE_HINTS[mode]}
-(بذرة التنويع: ${seed})
-(اقتراح افتتاحي اختياري: "${opener}")
-
-# ⛔ ممنوعات صارمة
-- "سؤال ممتاز"، "بناءً على"، "علاوة على ذلك"، "بالإضافة"، "باختصار".
-- قوالب ثابتة (ملخص → عوامل → سيناريوهات).
-- الإيموجي (صفر أو واحد كحد أقصى).
-- البولد (**) أكثر من مرة.
-- تكرار اسم المستخدم أكثر من مرة.
-- التحية إذا يوجد سجل حوار سابق.
-- القوائم النقطية إلا إذا طلبها المستخدم صراحة.
-- لغة الأصدقاء: "يا صاحبي"، "خوي"، "هههه"، النكات، الميمات.
-- الوعود القاطعة: "أضمن لك"، "100%".
-
-# ✅ قواعد المستشار الاحترافي
-- أنت خبير يُسأل، لا صديق يسلّي.
-- ابدأ بجوهر الإجابة أو بسؤال توضيحي ذكي.
-- الطول حسب السؤال: قصير للبسيط، أطول للمعقّد.
-- عند نقص المعلومات: اسأل سؤالاً ذكياً واحداً فقط، لا تخمّن.
-- اعترف بحدود اليقين: "ما أقدر أجزم"، "الاحتمالات مفتوحة".
-- اذكر المخاطر عند أي نصيحة (هذا واجب مهني).
-- نوّع بدايات الردود، لا تكرر نفس النمط.
-- نبرة واثقة لكن غير متعالية.
+# 🎯 النية المُكتشفة
+- الطول المطلوب: **${intent.lengthHint}** → ${LENGTH_RULES[intent.lengthHint]}
+- نمط الإجابة: **${intent.styleHint}** → ${STYLE_RULES[intent.styleHint]}
+- النبرة: **${intent.tone}** → ${TONE_RULES[intent.tone]}
+- طلبات خاصة: ${Object.entries(intent.wants).filter(([k,v])=>v).map(([k])=>k).join(', ') || 'لا شيء'}
 
 ${historyText}
 
-# رسالة ${user?.firstName || 'المستخدم'} الآن
+# ⛔ محرّمات صارمة (تكشف الذكاء الاصطناعي)
+- "سؤال ممتاز"، "بناءً على"، "علاوة على ذلك"، "بالإضافة"، "تجدر الإشارة"، "من الجدير بالذكر".
+- القوالب الثابتة (ملخص → عوامل → سيناريوهات → توصية).
+- الإيموجي في الردود الرسمية.
+- البولد (**) أكثر من مرة.
+- تكرار اسم المستخدم أكثر من مرة.
+- التحية المتكررة إذا وُجد سجل حوار.
+- القوائم النقطية إلا إذا طُلب.
+- اللغة العامية السوقية المبتذلة.
+- الوعود القاطعة: "أضمن لك".
+- الاعتذار المفرط.
+
+# ✅ قواعد المستشار الفخم
+1. **طابق الطول**: سؤال قصير → رد قصير.
+2. **طابق النبرة**: اقرأ شعور المستخدم.
+3. **طابق اللهجة**: تكلّم بلهجتك بثقة.
+4. **ابدأ بالجوهر**: لا مقدمات.
+5. **اسأل قبل أن تخمن**: عند نقص المعلومات.
+6. **كن واثقاً لكن غير متعجرف**.
+7. **اعترف بحدود المعرفة**.
+8. **اذكر المخاطر**.
+9. **نوّع البدايات**.
+10. **الاختصار علامة الثقة**.
+
+# السؤال الآن
 "${query}"
 
-اكتب بالعربية الفصحى المبسّطة (مسموح بكلمات محكية قليلة للطبيعية).
-إذا احتجت فكرتين منفصلتين، ضع [SPLIT] في سطر منفصل.`;
+اكتب ردك بلهجتك الطبيعية. بذرة التنويع: ${seed}.
+إذا احتجت فكرتين منفصلتين، ضع [SPLIT].`;
 }
 
 async function callGemini(prompt) {
@@ -302,7 +422,7 @@ async function callGemini(prompt) {
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: {
-                        temperature: 1.0,
+                        temperature: 1.05,
                         maxOutputTokens: 3000,
                         topP: 0.95,
                         topK: 80
@@ -341,7 +461,6 @@ function extractReplies(text, truncated = false) {
         const parts = clean.split('[SPLIT]').map(p => p.trim()).filter(p => p.length > 0);
         if (parts.length > 1) return parts;
     }
-
     if (truncated) clean += '\n\n_(وصلت للحد)._';
     return [clean];
 }
@@ -349,21 +468,22 @@ function extractReplies(text, truncated = false) {
 app.get('/', (req, res) => {
     res.json({
         status: 'OK',
-        behavior: 'Pro-Consultant-v1-WhatsApp-Style',
+        behavior: 'Pro-Consultant-v3-Dialect-Aware',
+        dialectsCount: Object.keys(DIALECTS).length,
         modelsCount: availableModels.length
     });
 });
 
 app.post('/api/analyze', async (req, res) => {
-    const { section, query, user, expert, history } = req.body;
+    const { section, query, user, expert, history, dialect } = req.body;
     if (!section || !query) return res.status(400).json({ error: 'بيانات ناقصة' });
     if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
 
     try {
-        const prompt = buildPrompt(section, query, user, expert, history);
+        const prompt = buildPrompt(section, query, user, expert, history, dialect || 'saudi');
         const result = await callGemini(prompt);
         const replies = extractReplies(result.text, result.truncated);
-        res.json({ replies, model: result.model });
+        res.json({ replies, model: result.model, dialect });
     } catch (e) {
         res.status(500).json({ error: 'فشل التحليل', details: e.message });
     }
@@ -371,4 +491,5 @@ app.post('/api/analyze', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`✅ الخادم يعمل على البورت ${PORT}`);
+    console.log(`🗺️ اللهجات المدعومة: ${Object.keys(DIALECTS).length}`);
 });
