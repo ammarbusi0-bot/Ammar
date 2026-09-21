@@ -60,17 +60,13 @@
     :root {
         --primary: #0a1628; --secondary: #142c4a;
         --accent: #d4af37; --accent-soft: #f0d977; --accent-dark: #a8862a;
-        --accent-glow: rgba(212,175,55,0.4);
-        --accent-glow-strong: rgba(212,175,55,0.7);
         --app-bg: #cfd6de;
         --chat-bg: linear-gradient(180deg, #e8e2d9 0%, #ebe5dc 100%);
-        --chat-pattern: rgba(10,22,40,0.045);
         --user-bubble: linear-gradient(135deg, #d9fdd3 0%, #c8f5c1 100%);
         --expert-bubble: #ffffff;
         --text: #0f172a; --muted: #64748b; --border: rgba(0,0,0,0.08);
         --time-color: #667781;
-        --online: #22c55e; --busy: #f59e0b; --away: #94a3b8;
-        --danger: #b91c1c; --danger-bg: #fee2e2;
+        --online: #22c55e; --busy: #f59e0b;
         --check-sent: #667781; --check-read: #53bdeb;
         --shadow-md: 0 8px 24px rgba(10,22,40,0.10), 0 2px 6px rgba(10,22,40,0.06);
         --shadow-xl: 0 32px 80px rgba(10,22,40,0.28), 0 12px 28px rgba(10,22,40,0.15);
@@ -82,12 +78,10 @@
         --primary: #080e17; --secondary: #16232f;
         --app-bg: #080e17;
         --chat-bg: linear-gradient(180deg, #0a1118 0%, #0d141c 100%);
-        --chat-pattern: rgba(212,175,55,0.05);
         --user-bubble: linear-gradient(135deg, #005c4b 0%, #00735c 100%);
         --expert-bubble: #1e2a33;
         --text: #e9edef; --muted: #8696a0; --border: rgba(255,255,255,0.06);
         --time-color: #8696a0;
-        --danger: #fca5a5; --danger-bg: #4c1d1d;
         --check-sent: #8696a0; --check-read: #53bdeb;
         --card-bg: #0f1a22; --input-bg: #222f3a;
         --shadow-md: 0 8px 24px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35);
@@ -102,6 +96,7 @@
     }
     button { font-family: inherit; }
 
+    /* Splash */
     #splash {
         position: fixed; inset: 0;
         background: radial-gradient(circle at 30% 20%, #102b4e 0%, #0a1628 45%, #030912 100%);
@@ -187,6 +182,7 @@
     #musicToggle.show { display: flex; }
     #musicToggle.muted { color: #94a3b8; border-color: rgba(148,163,184,0.4); }
 
+    /* Header */
     header {
         background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98) 55%, rgba(10,22,40,0.98));
         color: white; padding: 20px; text-align: center;
@@ -239,6 +235,7 @@
 
     .container { max-width: 1100px; margin: 34px auto; padding: 0 22px; }
 
+    /* Welcome */
     #welcome {
         background: var(--card-bg); border-radius: 28px; padding: 52px 48px 46px;
         box-shadow: var(--shadow-xl); max-width: 620px; margin: 30px auto;
@@ -285,6 +282,7 @@
     }
     .btn-primary:hover { transform: translateY(-3px); background-position: 200% center; }
 
+    /* Home */
     #home { display: none; }
     #home.show { display: block; }
     #home h2 { font-family: 'Tajawal', sans-serif; text-align: center; margin-bottom: 10px; font-size: 26px; font-weight: 800; }
@@ -325,6 +323,7 @@
     }
     @keyframes pulse-badge { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
 
+    /* Chat */
     #chat {
         display: none; max-width: 880px; margin: 20px auto;
         background: var(--chat-bg); border-radius: 24px;
@@ -452,9 +451,7 @@
     .typing span:nth-child(3) { animation-delay: 0.32s; }
     @keyframes dotTyping { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
 
-    /* ═══════════════════════════════════════════════════════
-       🆕 Warning bubble — إنذار انتهاء وقت المحلل
-       ═══════════════════════════════════════════════════════ */
+    /* Warning bubble */
     .warning-bubble {
         background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(240,217,119,0.08));
         border: 1.5px solid rgba(212,175,55,0.4);
@@ -471,13 +468,9 @@
         margin-bottom: 10px; font-size: 14px;
     }
     .warning-bubble .warning-head .icon { font-size: 18px; }
-    .warning-bubble .warning-body {
-        font-size: 13.5px; line-height: 1.85; color: var(--text);
-    }
+    .warning-bubble .warning-body { font-size: 13.5px; line-height: 1.85; color: var(--text); }
     .warning-bubble .warning-body strong { color: var(--accent-dark); }
-    .warning-actions {
-        display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;
-    }
+    .warning-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .warning-btn {
         flex: 1; min-width: 130px;
         padding: 12px 14px; border-radius: 12px;
@@ -487,14 +480,8 @@
         display: flex; align-items: center; justify-content: center;
         gap: 6px; line-height: 1.4; text-align: center;
     }
-    .warning-btn.wait {
-        background: linear-gradient(135deg, #0a1628, #1c3a5c);
-        color: white;
-    }
-    .warning-btn.switch {
-        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
-        color: #0a1628;
-    }
+    .warning-btn.wait { background: linear-gradient(135deg, #0a1628, #1c3a5c); color: white; }
+    .warning-btn.switch { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); color: #0a1628; }
     .warning-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(10,22,40,0.25); }
     .warning-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .warning-bubble.resolved .warning-actions { display: none; }
@@ -504,9 +491,7 @@
         font-size: 11.5px; color: var(--muted); font-weight: 700;
     }
 
-    /* ═══════════════════════════════════════════════════════
-       🆕 Waiting overlay — في انتظار عودة المحلل
-       ═══════════════════════════════════════════════════════ */
+    /* Waiting overlay */
     .waiting-overlay {
         position: absolute; inset: 0;
         background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.98) 0%, rgba(5,13,24,0.99) 80%);
@@ -519,10 +504,7 @@
     .waiting-overlay.show { display: flex; animation: overlayIn 0.55s var(--ease-smooth); }
     @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .waiting-ring {
-        position: relative; width: 150px; height: 150px;
-        margin-bottom: 26px; z-index: 2;
-    }
+    .waiting-ring { position: relative; width: 150px; height: 150px; margin-bottom: 26px; z-index: 2; }
     .waiting-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
     .waiting-ring-bg { fill: none; stroke: rgba(212,175,55,0.14); stroke-width: 3; }
     .waiting-ring-progress { fill: none; stroke: url(#goldGradWait); stroke-width: 3.5; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
@@ -558,10 +540,7 @@
         letter-spacing: 2px; margin-bottom: 26px;
         text-transform: uppercase; z-index: 2; position: relative;
     }
-    .waiting-actions {
-        display: flex; gap: 12px; flex-wrap: wrap;
-        justify-content: center; z-index: 2; position: relative;
-    }
+    .waiting-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; z-index: 2; position: relative; }
     .waiting-btn {
         padding: 14px 28px; border-radius: 14px;
         font-weight: 800; font-size: 13.5px;
@@ -576,6 +555,7 @@
     }
     .waiting-btn.cancel:hover { transform: translateY(-4px) scale(1.02); }
 
+    /* Closed overlay */
     .closed-overlay {
         position: absolute; inset: 0;
         background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.97) 0%, rgba(5,13,24,0.99) 80%);
@@ -630,6 +610,7 @@
     }
     .return-btn:hover { transform: translateY(-4px) scale(1.03); }
 
+    /* Suggestions + Input */
     .suggestions { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 20px; background: var(--card-bg); border-top: 1px solid var(--border); }
     .chip {
         background: transparent;
@@ -772,7 +753,6 @@
     </div>
 
     <div id="chat">
-        <!-- Waiting overlay -->
         <div class="waiting-overlay" id="waitingOverlay">
             <div class="waiting-ring">
                 <svg viewBox="0 0 130 130">
@@ -797,7 +777,6 @@
             </div>
         </div>
 
-        <!-- Closed overlay -->
         <div class="closed-overlay" id="closedOverlay">
             <div class="lock-shell">
                 <svg viewBox="0 0 130 130">
@@ -841,13 +820,9 @@
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   🎵 الموسيقى
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ الموسيقى ═══ */
 const MUSIC_VOLUME = 0.35;
-let musicStarted = false;
-let musicMuted = false;
-let splashDone = false;
+let musicStarted = false, musicMuted = false, splashDone = false;
 
 function startMusic() {
     if (musicStarted || musicMuted) return;
@@ -883,9 +858,7 @@ function onStartClick() { startMusic(); splashDone = true; }
     document.addEventListener(evt, function firstTouch() { startMusic(); }, { once: true, passive: true });
 });
 
-/* ═══════════════════════════════════════════════════════════════════
-   📊 البيانات
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ البيانات ═══ */
 const DIALECTS = {
     saudi: { flag: '🇸🇦', country: 'السعودية' }, emirati: { flag: '🇦🇪', country: 'الإمارات' },
     kuwaiti: { flag: '🇰🇼', country: 'الكويت' }, qatari: { flag: '🇶🇦', country: 'قطر' },
@@ -979,9 +952,6 @@ const SUGGESTIONS = {
     crypto: ['نسبة الكريبتو في المحفظة؟', 'ما معايير المشروع الجاد؟', 'كيف أحمي أصولي؟']
 };
 
-/* ═══════════════════════════════════════════════════════════════════
-   💬 ردود فعل قصيرة حسب اللهجة
-   ═══════════════════════════════════════════════════════════════════ */
 const REACTIONS = {
     saudi: ['تمام.', 'طيب.', 'خلني أشوف.', 'زين.'],
     emirati: ['تمام.', 'خلني أفكر.', 'إن شاء الله.'],
@@ -1011,37 +981,22 @@ const DELAY_EXCUSES = {
     away_generic: ['سامحني، كنت بعيد عن الجهاز.', 'أعتذر على التأخير — كنت مشغول لحظتها.']
 };
 
-/* ═══════════════════════════════════════════════════════════════════
-   ⏱️ إعدادات وقت دوام المحلل
-   ═══════════════════════════════════════════════════════════════════ */
-const EXPERT_BASE_MS = 10 * 60 * 1000;        // 10 دقائق للأول
-const EXPERT_INCREMENT_MS = 5 * 60 * 1000;    // +5 دقائق لكل تبديل
-const EXPERT_MAX_MS = 30 * 60 * 1000;         // سقف 30 دقيقة
-const WARNING_BEFORE_MS = 2 * 60 * 1000;      // تحذير قبل دقيقتين
+/* ═══ إعدادات وقت دوام المحلل ═══ */
+const EXPERT_BASE_MS = 10 * 60 * 1000;
+const EXPERT_INCREMENT_MS = 5 * 60 * 1000;
+const EXPERT_MAX_MS = 30 * 60 * 1000;
+const WARNING_BEFORE_MS = 2 * 60 * 1000;
 
-const RETURN_TIME_RANGES = [
-    [20, 40],   // أول محلل
-    [30, 60],   // ثاني
-    [60, 90],   // ثالث
-    [60, 120]   // رابع+
-];
+const RETURN_TIME_RANGES = [[20, 40], [30, 60], [60, 90], [60, 120]];
 
-/* ═══════════════════════════════════════════════════════════════════
-   🌐 الحالة العامة
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ الحالة العامة ═══ */
 let user = null, section = null, expert = null, history = [], busy = false;
-let progressTimer = null;
-let delayExcuseTimer = null;
-let expertWarningTimer = null;
-let expertExpireTimer = null;
-let expertTickTimer = null;
-let waitingTickTimer = null;
-let countdownTimer = null;
+let progressTimer = null, delayExcuseTimer = null;
+let expertWarningTimer = null, expertExpireTimer = null, expertTickTimer = null;
+let waitingTickTimer = null, countdownTimer = null;
 let handoffInProgress = false;
 
-const CONVERSATIONS = {};
-const LAST_EXPERTS = {};
-const SESSIONS = {}; // { section: { handoffCount, expertStartTime, expertTimeLimit, warned, waitState, originalExpert } }
+const CONVERSATIONS = {}, LAST_EXPERTS = {}, SESSIONS = {};
 const RESET_MIN_MS = 3 * 60 * 1000;
 const RESET_MAX_MS = 5 * 60 * 1000;
 const CLOSE_KEY = 'forg_closed_until';
@@ -1049,29 +1004,22 @@ const CLOSE_KEY = 'forg_closed_until';
 function getExpertTimeLimit(handoffCount) {
     return Math.min(EXPERT_BASE_MS + handoffCount * EXPERT_INCREMENT_MS, EXPERT_MAX_MS);
 }
-
 function getReturnMinutes(handoffCount) {
     const [min, max] = RETURN_TIME_RANGES[Math.min(handoffCount, RETURN_TIME_RANGES.length - 1)];
     return Math.floor(min + Math.random() * (max - min));
 }
-
 function getSession(s) {
     if (!SESSIONS[s]) {
         SESSIONS[s] = {
-            handoffCount: 0,
-            expertStartTime: Date.now(),
-            expertTimeLimit: EXPERT_BASE_MS,
-            warned: false,
-            waitState: null,
-            originalExpert: null
+            handoffCount: 0, expertStartTime: Date.now(),
+            expertTimeLimit: EXPERT_BASE_MS, warned: false,
+            waitState: null, originalExpert: null
         };
     }
     return SESSIONS[s];
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   🎨 أدوات عامة
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ أدوات عامة ═══ */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 function esc(t) { const d = document.createElement('div'); d.innerText = t; return d.innerHTML; }
 function timeNow() {
@@ -1079,24 +1027,21 @@ function timeNow() {
     return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
 }
 function formatText(text) {
-    let html = esc(text);
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    return html;
+    return esc(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 function calcHumanTypingTime(text) {
     if (!text) return 1500;
     let total = 0;
     for (let i = 0; i < text.length; i++) {
         const ch = text[i];
-        let ms = 42;
+        let ms;
         if (ch === '،' || ch === ',') ms = 180;
         else if (ch === '.' || ch === '!' || ch === '؟' || ch === '?') ms = 320;
         else if (ch === '\n') ms = 380;
         else if (ch === ' ') ms = 32;
         else if (/[0-9]/.test(ch)) ms = 55;
         else ms = 50;
-        ms *= (0.7 + Math.random() * 0.6);
-        total += ms;
+        total += ms * (0.7 + Math.random() * 0.6);
     }
     return Math.max(1200, Math.min(12000, total));
 }
@@ -1133,9 +1078,7 @@ function getDelayExcuse() {
     return group[Math.floor(Math.random() * group.length)];
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   🌗 Theme
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ Theme ═══ */
 function toggleTheme() {
     const cur = document.documentElement.getAttribute('data-theme') || 'light';
     const next = cur === 'light' ? 'dark' : 'light';
@@ -1148,9 +1091,7 @@ function initThemeBtn() {
     document.getElementById('themeBtn').textContent = c === 'light' ? '🌙' : '☀️';
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   🚀 Splash
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ Splash ═══ */
 const SPLASH_MSGS = ['جاري تهيئة بيئة العمل...', 'الاتصال بالخادم...', 'تحميل بيانات المحللين...', 'اختيار فريق من 17 دولة...', 'تجهيز فريق الاستقبال...'];
 let splashP = 0, splashMsgIdx = 0;
 
@@ -1185,8 +1126,7 @@ function initView() {
     else document.getElementById('welcome').classList.add('show');
 }
 function buildSectionGrid() {
-    const grid = document.getElementById('sectionGrid');
-    grid.innerHTML = Object.entries(SECTION_INFO).map(([key, info]) => `
+    document.getElementById('sectionGrid').innerHTML = Object.entries(SECTION_INFO).map(([key, info]) => `
         <div class="card" onclick="openSection('${key}')">
             <div class="card-badge">${info.online} متصل</div>
             <div class="card-icon">${info.icon}</div>
@@ -1195,13 +1135,10 @@ function buildSectionGrid() {
         </div>
     `).join('');
 }
-
 startSplash();
 setTimeout(() => { window.SERVER_READY = true; }, 15000);
 
-/* ═══════════════════════════════════════════════════════════════════
-   👤 المستخدم
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ المستخدم ═══ */
 function loadUser() {
     const s = localStorage.getItem('forg_user');
     if (s) {
@@ -1237,25 +1174,20 @@ function showUserBar() {
     document.getElementById('userGreeting').innerText = `مرحباً ${user.firstName}`;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   🎯 اختيار المحلل
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ اختيار المحلل ═══ */
 function pickDifferentExpert(s) {
     const list = EXPERTS[s];
     const last = LAST_EXPERTS[s];
-    let candidates = list;
-    if (last && list.length > 1) candidates = list.filter(e => e.name !== last.name);
+    const candidates = (last && list.length > 1) ? list.filter(e => e.name !== last.name) : list;
     const picked = candidates[Math.floor(Math.random() * candidates.length)];
     LAST_EXPERTS[s] = picked;
     return picked;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   📂 فتح قسم
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ فتح قسم ═══ */
 function openSection(s) {
     section = s;
-    const sess = getSession(s);
+    getSession(s);
 
     const closedInfo = getClosureInfo(s);
     if (closedInfo && Date.now() < closedInfo.until) {
@@ -1266,7 +1198,6 @@ function openSection(s) {
         return;
     }
 
-    // محادثة موجودة → استئناف
     if (CONVERSATIONS[s]) {
         const c = CONVERSATIONS[s];
         if (c.resetTimer) { clearTimeout(c.resetTimer); c.resetTimer = null; }
@@ -1279,10 +1210,25 @@ function openSection(s) {
         document.getElementById('home').classList.remove('show');
         document.getElementById('chat').classList.add('show');
         document.getElementById('closedOverlay').classList.remove('show');
+        document.getElementById('input').placeholder = 'اكتب استفسارك...';
+
+        const sessR = getSession(s);
+        if (sessR.waitState && sessR.waitState.chosen === 'wait') {
+            const returnAt = sessR.waitState.waitStartTime + sessR.waitState.returnMinutes * 60 * 1000;
+            if (Date.now() < returnAt) {
+                pauseExpertTimer();
+                showWaitingOverlay(sessR.waitState.returnMinutes);
+                return;
+            } else {
+                document.getElementById('input').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                endWaiting('returned');
+                return;
+            }
+        }
+
         document.getElementById('input').disabled = false;
         document.getElementById('sendBtn').disabled = false;
-
-        // استئناف مؤقت المحلل
         resumeExpertTimer();
         return;
     }
@@ -1298,6 +1244,7 @@ function setupChatForSection(s, showWelcome) {
     showSuggestions(s);
     document.getElementById('closedOverlay').classList.remove('show');
     document.getElementById('waitingOverlay').classList.remove('show');
+    document.getElementById('input').placeholder = 'اكتب استفسارك...';
     document.getElementById('input').disabled = false;
     document.getElementById('sendBtn').disabled = false;
 
@@ -1328,14 +1275,13 @@ function setupChatForSection(s, showWelcome) {
             hideTypingIndicator();
             addBubble('expert', welcome);
             history.push({ role: 'assistant', content: welcome, at: Date.now() });
-            CONVERSATIONS[s].history = history;
-            CONVERSATIONS[s].html = document.getElementById('messages').innerHTML;
-
-            // ✅ ابدأ مؤقت المحلل بعد الترحيب
+            if (CONVERSATIONS[s]) {
+                CONVERSATIONS[s].history = history;
+                CONVERSATIONS[s].html = document.getElementById('messages').innerHTML;
+            }
             startExpertTimer();
         }, 900 + Math.random() * 700);
     } else {
-        // استئناف مباشر
         startExpertTimer();
     }
     setTimeout(() => {
@@ -1345,842 +1291,15 @@ function setupChatForSection(s, showWelcome) {
 
 function renderExpertHeader() {
     const d = DIALECTS[expert.dialect] || { flag: '🌍', country: 'عربي' };
-    document.getElementById('expAvatar').innerText = expert.name.charAt(0);
+    const avatar = document.getElementById('expAvatar');
+    const info = document.querySelector('.expert-info p');
+    avatar.classList.remove('busy', 'typing');
+    if (info) info.classList.remove('typing-status', 'busy-status');
+    avatar.innerText = expert.name.charAt(0);
     document.getElementById('expName').innerText = expert.name;
     document.getElementById('expRole').innerHTML = `<span class="status-text">متصل الآن</span><span class="flag-badge">${d.flag} ${d.country}</span><span class="expert-timer" id="expTimer">--:--</span>`;
 }
 
 function showSuggestions(s) {
     const c = document.getElementById('suggestions');
-    const list = SUGGESTIONS[s] || [];
-    c.innerHTML = list.map(t => `<div class="chip" onclick="useSug('${t.replace(/'/g, "\\'")}')">${t}</div>`).join('');
-    c.style.display = 'flex';
-}
-function useSug(t) {
-    if (document.getElementById('input').disabled) return;
-    document.getElementById('input').value = t;
-    document.getElementById('input').focus();
-}
-
-function goBack() {
-    if (section && CONVERSATIONS[section]) {
-        const c = CONVERSATIONS[section];
-        c.html = document.getElementById('messages').innerHTML;
-        c.history = history;
-        c.suggestionsHidden = document.getElementById('suggestions').style.display === 'none';
-        if (c.resetTimer) clearTimeout(c.resetTimer);
-        const delay = RESET_MIN_MS + Math.random() * (RESET_MAX_MS - RESET_MIN_MS);
-        c.resetTimer = setTimeout(() => { delete CONVERSATIONS[section]; }, delay);
-    }
-    clearTimeout(expertWarningTimer);
-    clearTimeout(expertExpireTimer);
-    clearInterval(expertTickTimer);
-    clearInterval(waitingTickTimer);
-    clearInterval(countdownTimer);
-    clearTimeout(delayExcuseTimer);
-    handoffInProgress = false;
-    document.getElementById('closedOverlay').classList.remove('show');
-    document.getElementById('waitingOverlay').classList.remove('show');
-    document.getElementById('chat').classList.remove('show');
-    document.getElementById('home').classList.add('show');
-    section = null; expert = null; history = [];
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   ⏱️ مؤقت دوام المحلل
-   ═══════════════════════════════════════════════════════════════════ */
-function startExpertTimer() {
-    if (!section) return;
-    const sess = getSession(section);
-    sess.expertStartTime = Date.now();
-    sess.expertTimeLimit = getExpertTimeLimit(sess.handoffCount);
-    sess.warned = false;
-    resumeExpertTimer();
-}
-
-function resumeExpertTimer() {
-    if (!section) return;
-    clearTimeout(expertWarningTimer);
-    clearTimeout(expertExpireTimer);
-    clearInterval(expertTickTimer);
-    clearInterval(waitingTickTimer);
-    if (handoffInProgress) return;
-    if (document.getElementById('waitingOverlay').classList.contains('show')) return;
-
-    const sess = getSession(section);
-    const elapsed = Date.now() - sess.expertStartTime;
-    const remaining = Math.max(0, sess.expertTimeLimit - elapsed);
-    const untilWarning = Math.max(0, remaining - WARNING_BEFORE_MS);
-
-    // tick كل ثانية لتحديث العدّاد في الهيدر
-    updateExpertTimerBadge();
-    expertTickTimer = setInterval(updateExpertTimerBadge, 1000);
-
-    if (remaining <= 0) {
-        // انتهى الوقت — إما حذّر أو أغلق
-        if (!sess.warned) {
-            showExpertWarning();
-        } else {
-            // لم يختر — تبديل تلقائي
-            autoSwitchExpert();
-        }
-        return;
-    }
-
-    if (!sess.warned) {
-        expertWarningTimer = setTimeout(() => {
-            showExpertWarning();
-        }, untilWarning);
-    }
-
-    expertExpireTimer = setTimeout(() => {
-        handleExpertTimeUp();
-    }, remaining);
-}
-
-function updateExpertTimerBadge() {
-    const timerEl = document.getElementById('expTimer');
-    if (!timerEl || !section) return;
-    const sess = getSession(section);
-    const elapsed = Date.now() - sess.expertStartTime;
-    const remaining = Math.max(0, sess.expertTimeLimit - elapsed);
-    const m = Math.floor(remaining / 60000);
-    const s = Math.floor((remaining % 60000) / 1000);
-    timerEl.textContent = `⏱ ${m}:${String(s).padStart(2,'0')}`;
-    if (remaining <= WARNING_BEFORE_MS) timerEl.classList.add('warning');
-    else timerEl.classList.remove('warning');
-}
-
-function pauseExpertTimer() {
-    clearTimeout(expertWarningTimer);
-    clearTimeout(expertExpireTimer);
-    clearInterval(expertTickTimer);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   ⚠️ تحذير انتهاء الوقت — مع خيارين
-   ═══════════════════════════════════════════════════════════════════ */
-async function showExpertWarning() {
-    if (!section || handoffInProgress) return;
-    if (document.getElementById('waitingOverlay').classList.contains('show')) return;
-    const sess = getSession(section);
-    if (sess.warned) return;
-    sess.warned = true;
-
-    const returnMinutes = getReturnMinutes(sess.handoffCount);
-    sess.waitState = { returnMinutes, originalExpert: expert };
-
-    // رسالة نصية من المحلل
-    const warningMsg = `سامحني، باقي عندي دقيقتين بس وأنتهي.`;
-    setExpertStatus('typing');
-    showTypingIndicator();
-    await sleep(calcHumanTypingTime(warningMsg));
-    hideTypingIndicator();
-    addBubble('expert', warningMsg);
-
-    // بطاقة الخيارات
-    await sleep(700);
-    addWarningCard(expert.name, returnMinutes);
-}
-
-function addWarningCard(expertName, returnMinutes) {
-    const m = document.getElementById('messages');
-    const w = document.createElement('div');
-    w.className = 'warning-bubble';
-    w.id = 'warningCard';
-    w.innerHTML = `
-        <div class="warning-head">
-            <span class="icon">⏳</span>
-            <span>خياران قبل أن أنتهي</span>
-        </div>
-        <div class="warning-body">
-            <strong>أنا ${expertName}</strong>، ودوامي ينتهي بعد دقيقتين.<br>
-            تحب <strong>تنتظرني</strong> وأرجع لك بعد <strong>${returnMinutes} دقيقة</strong>؟<br>
-            أو <strong>أحوّلك لزميل</strong> الآن؟
-        </div>
-        <div class="warning-actions">
-            <button class="warning-btn wait" onclick="chooseWait(${returnMinutes})">
-                ⏳ انتظرك ترجع بعد ${returnMinutes} دقيقة
-            </button>
-            <button class="warning-btn switch" onclick="chooseSwitchNow()">
-                🔄 حوّلني لزميل
-            </button>
-        </div>
-    `;
-    m.appendChild(w);
-    m.scrollTop = m.scrollHeight;
-}
-
-function resolveWarningCard(choice) {
-    const card = document.getElementById('warningCard');
-    if (!card) return;
-    card.classList.add('resolved');
-    const actions = card.querySelector('.warning-actions');
-    if (actions) actions.remove();
-    const footer = document.createElement('div');
-    footer.style.cssText = 'margin-top:10px;text-align:center;font-size:11.5px;color:var(--muted);font-weight:700;';
-    footer.textContent = choice === 'wait' ? '✓ اخترت الانتظار' : '✓ اخترت التبديل';
-    card.appendChild(footer);
-}
-
-async function handleExpertTimeUp() {
-    if (!section || handoffInProgress) return;
-    const sess = getSession(section);
-    // إذا لم يختر → تبديل تلقائي
-    if (!sess.waitState || !sess.waitState.chosen) {
-        autoSwitchExpert();
-    }
-}
-
-async function autoSwitchExpert() {
-    if (!section || handoffInProgress) return;
-    handoffInProgress = true;
-    resolveWarningCard('switch');
-    await sleep(400);
-
-    const farewell = 'أعتذر، لازم أروح. بحوّلك لزميلي.';
-    setExpertStatus('typing');
-    showTypingIndicator();
-    await sleep(calcHumanTypingTime(farewell));
-    hideTypingIndicator();
-    addBubble('expert', farewell);
-    history.push({ role: 'assistant', content: farewell, at: Date.now() });
-    await sleep(1200);
-
-    await doHandoff();
-}
-
-async function chooseWait(returnMinutes) {
-    if (!section || handoffInProgress) return;
-    const sess = getSession(section);
-    sess.waitState = { ...sess.waitState, chosen: 'wait', returnMinutes, waitStartTime: Date.now() };
-    resolveWarningCard('wait');
-    pauseExpertTimer();
-
-    // وداع قصير
-    const bye = `طيب، أنتظرك. أرجع لك بعد ${returnMinutes} دقيقة.`;
-    setExpertStatus('typing');
-    showTypingIndicator();
-    await sleep(calcHumanTypingTime(bye));
-    hideTypingIndicator();
-    addBubble('expert', bye);
-    history.push({ role: 'assistant', content: bye, at: Date.now() });
-
-    if (CONVERSATIONS[section]) {
-        CONVERSATIONS[section].history = history;
-        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
-    }
-
-    await sleep(800);
-    showWaitingOverlay(returnMinutes);
-}
-
-async function chooseSwitchNow() {
-    if (!section || handoffInProgress) return;
-    const sess = getSession(section);
-    sess.waitState = { ...sess.waitState, chosen: 'switch' };
-    resolveWarningCard('switch');
-    handoffInProgress = true;
-    pauseExpertTimer();
-    await sleep(400);
-
-    const farewell = 'طيب، بحوّلك لزميلي الحين.';
-    setExpertStatus('typing');
-    showTypingIndicator();
-    await sleep(calcHumanTypingTime(farewell));
-    hideTypingIndicator();
-    addBubble('expert', farewell);
-    history.push({ role: 'assistant', content: farewell, at: Date.now() });
-    await sleep(1200);
-
-    await doHandoff();
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   🔄 التبديل الفعلي
-   ═══════════════════════════════════════════════════════════════════ */
-async function doHandoff() {
-    if (!section) { handoffInProgress = false; return; }
-    const sess = getSession(section);
-    const oldExpert = expert;
-
-    // رسالة نظام
-    addSystemBubble('تم تحويلك إلى محلل آخر');
-    await sleep(1400);
-
-    // المحلل الجديد
-    const newExpert = pickDifferentExpert(section);
-    expert = newExpert;
-
-    // تأثير بصري
-    const avatar = document.getElementById('expAvatar');
-    const nameEl = document.getElementById('expName');
-    avatar.classList.add('switching');
-    nameEl.classList.add('switching');
-    await sleep(400);
-    renderExpertHeader();
-    avatar.classList.remove('switching');
-    nameEl.classList.remove('switching');
-
-    // زيادة العدّاد وضبط الوقت
-    sess.handoffCount++;
-    sess.warned = false;
-    sess.waitState = null;
-    sess.expertStartTime = Date.now();
-    sess.expertTimeLimit = getExpertTimeLimit(sess.handoffCount);
-
-    // ترحيب من الـ server
-    await sleep(1000);
-    let greeting = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
-    let greetingTypingMs = 2200;
-
-    try {
-        const lastUserMsg = [...history].reverse().find(h => h.role === 'user')?.content || '';
-        const gr = await fetch('https://ammar-e0tp.onrender.com/api/handoff', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                section, newExpert, oldExpert, lastUserMsg, user,
-                dialect: newExpert.dialect,
-                handoffCount: sess.handoffCount - 1
-            })
-        });
-        if (gr.ok) {
-            const gd = await gr.json();
-            if (gd.replies && gd.replies[0]) {
-                greeting = gd.replies[0];
-                greetingTypingMs = gd.timing?.perReply?.[0] || 2200;
-            }
-        }
-    } catch (e) { /* fallback */ }
-
-    setExpertStatus('typing');
-    showTypingIndicator();
-    await sleep(greetingTypingMs);
-    hideTypingIndicator();
-    addBubble('expert', greeting);
-    history.push({ role: 'assistant', content: greeting, at: Date.now() });
-
-    if (CONVERSATIONS[section]) {
-        CONVERSATIONS[section].expert = newExpert;
-        CONVERSATIONS[section].history = history;
-        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
-    }
-
-    handoffInProgress = false;
-    resumeExpertTimer();
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   ⏳ الانتظار
-   ═══════════════════════════════════════════════════════════════════ */
-function showWaitingOverlay(returnMinutes) {
-    const overlay = document.getElementById('waitingOverlay');
-    const clockEl = document.getElementById('waitingClock');
-    const titleEl = document.getElementById('waitingTitle');
-    const subEl = document.getElementById('waitingSub');
-    const ring = document.getElementById('waitingRing');
-    const radius = 58;
-    const circumference = 2 * Math.PI * radius;
-    ring.style.strokeDasharray = `${circumference} ${circumference}`;
-
-    const sess = getSession(section);
-    const returnAt = sess.waitState.waitStartTime + returnMinutes * 60 * 1000;
-    const totalMs = returnMinutes * 60 * 1000;
-
-    titleEl.textContent = `في انتظار ${sess.waitState.originalExpert.name}`;
-    subEl.textContent = `${sess.waitState.originalExpert.name} ستعود بعد ${returnMinutes} دقيقة. يمكنك الانتظار أو التبديل لزميل.`;
-    overlay.classList.add('show');
-    document.getElementById('input').disabled = true;
-    document.getElementById('sendBtn').disabled = true;
-
-    function tick() {
-        const remaining = Math.max(0, returnAt - Date.now());
-        const m = Math.floor(remaining / 60000);
-        const s = Math.floor((remaining % 60000) / 1000);
-        clockEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        const ratio = Math.max(0, remaining / totalMs);
-        ring.style.strokeDashoffset = circumference * (1 - ratio);
-
-        if (remaining <= 0) {
-            clearInterval(waitingTickTimer);
-            endWaiting('returned');
-        }
-    }
-    tick();
-    waitingTickTimer = setInterval(tick, 1000);
-}
-
-async function cancelWaiting() {
-    if (!section) return;
-    clearInterval(waitingTickTimer);
-    const sess = getSession(section);
-    sess.waitState = null;
-    document.getElementById('waitingOverlay').classList.remove('show');
-    document.getElementById('input').disabled = false;
-    document.getElementById('sendBtn').disabled = false;
-
-    handoffInProgress = true;
-    addSystemBubble('ألغيت الانتظار — جاري التبديل لزميل');
-    await sleep(1200);
-    await doHandoff();
-}
-
-async function endWaiting(reason) {
-    clearInterval(waitingTickTimer);
-    document.getElementById('waitingOverlay').classList.remove('show');
-    document.getElementById('input').disabled = false;
-    document.getElementById('sendBtn').disabled = false;
-
-    if (!section) return;
-    const sess = getSession(section);
-    if (reason === 'returned' && sess.waitState?.originalExpert) {
-        // عاد نفس المحلل
-        expert = sess.waitState.originalExpert;
-        sess.waitState = null;
-        sess.warned = false;
-        sess.expertStartTime = Date.now();
-        sess.expertTimeLimit = getExpertTimeLimit(sess.handoffCount);
-        renderExpertHeader();
-
-        addSystemBubble(`${expert.name} عاد الآن`);
-        await sleep(800);
-
-        const greeting = `أهلاً، رجعت. نكمل من وين توقفنا؟`;
-        setExpertStatus('typing');
-        showTypingIndicator();
-        await sleep(calcHumanTypingTime(greeting));
-        hideTypingIndicator();
-        addBubble('expert', greeting);
-        history.push({ role: 'assistant', content: greeting, at: Date.now() });
-
-        if (CONVERSATIONS[section]) {
-            CONVERSATIONS[section].expert = expert;
-            CONVERSATIONS[section].history = history;
-            CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
-        }
-
-        resumeExpertTimer();
-    }
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   🎨 عرض الرسائل
-   ═══════════════════════════════════════════════════════════════════ */
-function setExpertStatus(status) {
-    const el = document.querySelector('.expert-info .status-text');
-    const info = document.querySelector('.expert-info p');
-    const avatar = document.getElementById('expAvatar');
-    if (!el) return;
-    avatar.classList.remove('busy', 'typing');
-    info.classList.remove('typing-status', 'busy-status');
-    if (status === 'busy') { el.textContent = 'مشغول قليلاً...'; info.classList.add('busy-status'); avatar.classList.add('busy'); }
-    else if (status === 'typing') { el.textContent = 'يكتب الآن...'; info.classList.add('typing-status'); avatar.classList.add('typing'); }
-    else { el.textContent = 'متصل الآن'; }
-}
-
-function addBubble(who, text, isError = false) {
-    const wrap = document.createElement('div');
-    wrap.className = `bubble-wrap ${who}`;
-    const name = who === 'user' ? user.firstName : (expert ? expert.name : 'النظام');
-    wrap.innerHTML = `
-        <div class="bubble ${isError ? 'error-bubble' : ''}">
-            <div class="sender">${name}</div>
-            <div class="bubble-content">${isError ? esc(text) : formatText(text)}</div>
-            <div class="time-row">
-                ${who === 'user' ? '<span class="checks sent">✓</span>' : ''}
-                <span class="time">${timeNow()}</span>
-            </div>
-        </div>
-    `;
-    const m = document.getElementById('messages');
-    m.appendChild(wrap);
-    m.scrollTop = m.scrollHeight;
-    if (who === 'user') {
-        const ck = wrap.querySelector('.checks');
-        setTimeout(() => {
-            if (ck && !ck.classList.contains('read')) {
-                ck.textContent = '✓✓';
-                ck.classList.add('delivered');
-                ck.classList.remove('sent');
-            }
-        }, 900 + Math.random() * 800);
-        wrap.dataset.pendingRead = 'true';
-    }
-    return wrap;
-}
-
-function addSystemBubble(text) {
-    const m = document.getElementById('messages');
-    const w = document.createElement('div');
-    w.className = 'system-bubble';
-    w.dataset.system = 'true';
-    w.style.cssText = 'text-align:center;margin:16px auto;max-width:82%;background:rgba(212,175,55,0.10);color:var(--muted);padding:8px 16px;border-radius:18px;font-size:12px;font-weight:600;border:1px solid rgba(212,175,55,0.20);';
-    w.textContent = text;
-    m.appendChild(w);
-    m.scrollTop = m.scrollHeight;
-}
-
-async function markLastUserRead() {
-    const pending = document.querySelectorAll('[data-pending-read="true"]');
-    if (!pending.length) return;
-    const lastWrap = pending[pending.length - 1];
-    const ck = lastWrap.querySelector('.checks');
-    if (ck) {
-        ck.textContent = '✓✓';
-        ck.classList.add('read');
-        ck.classList.remove('delivered', 'sent');
-    }
-    lastWrap.dataset.pendingRead = 'false';
-}
-
-function startProgress() {
-    const bar = document.getElementById('progressBar');
-    const fill = document.getElementById('progressFill');
-    bar.classList.add('show');
-    let p = 0;
-    progressTimer = setInterval(() => {
-        p = Math.min(p + Math.random() * 4, 88);
-        fill.style.width = p + '%';
-    }, 400);
-}
-function finishProgress() {
-    clearInterval(progressTimer);
-    const fill = document.getElementById('progressFill');
-    fill.style.width = '100%';
-    setTimeout(() => {
-        document.getElementById('progressBar').classList.remove('show');
-        fill.style.width = '0%';
-    }, 500);
-}
-
-function showTypingIndicator() {
-    if (document.getElementById('typing-indicator')) return;
-    const m = document.getElementById('messages');
-    const w = document.createElement('div');
-    w.className = 'bubble-wrap expert';
-    w.id = 'typing-indicator';
-    w.innerHTML = `<div class="bubble"><div class="sender">${expert.name}</div><div class="typing"><span></span><span></span><span></span></div></div>`;
-    m.appendChild(w);
-    m.scrollTop = m.scrollHeight;
-    setExpertStatus('typing');
-}
-function hideTypingIndicator() {
-    const t = document.getElementById('typing-indicator');
-    if (t) t.remove();
-    setExpertStatus('online');
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   🔒 إغلاق مؤقت
-   ═══════════════════════════════════════════════════════════════════ */
-function getClosureInfo(s) {
-    try {
-        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
-        const entry = stored[s];
-        if (!entry) return null;
-        if (Date.now() >= entry.until) {
-            delete stored[s];
-            localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
-            return null;
-        }
-        return entry;
-    } catch (e) { return null; }
-}
-function setClosureInfo(s, until, reason) {
-    try {
-        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
-        stored[s] = { until, reason };
-        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
-    } catch (e) {}
-}
-function clearClosureInfo(s) {
-    try {
-        const stored = JSON.parse(localStorage.getItem(CLOSE_KEY) || '{}');
-        delete stored[s];
-        localStorage.setItem(CLOSE_KEY, JSON.stringify(stored));
-    } catch (e) {}
-}
-function isChatClosed() {
-    if (!section) return false;
-    const info = getClosureInfo(section);
-    return info && Date.now() < info.until;
-}
-function closeChat(seconds, reason) {
-    const until = Date.now() + seconds * 1000;
-    setClosureInfo(section, until, reason);
-    showClosedOverlay(until, reason);
-}
-
-function showClosedOverlay(until, reason) {
-    pauseExpertTimer();
-    const overlay = document.getElementById('closedOverlay');
-    const reasonEl = document.getElementById('closedReason');
-    const ring = document.getElementById('lockRing');
-    const cdMin = document.getElementById('cdMin');
-    const cdSec = document.getElementById('cdSec');
-
-    const reasonText = {
-        user_done: 'انتهت الاستشارة بناءً على <span class="highlight">رغبتك</span>. شكراً لتواصلك.',
-        trolling: 'أُغلقت بسبب <span class="highlight">محتوى غير جدي</span>. نأمل عودتك بجدية.',
-        bored: 'يبدو أن الموضوع <span class="highlight">ما شدّك</span>. نأخذ استراحة قصيرة.',
-        deep_close: '<span class="highlight">محادثة طويلة</span> — نأخذ استراحة قصيرة قبل المتابعة.',
-        rude: 'أُغلقت بسبب <span class="highlight">الإساءة</span>. نحن هنا لمساعدتك باحترام.',
-        wants_else: 'يبدو أنك <span class="highlight">تفضّل موضوعاً آخر</span>. اختر قسماً جديداً.',
-        inactivity: 'يبدو أنك <span class="highlight">مشغول حالياً</span>. نأخذ استراحة، ونحن هنا عندما تعود.'
-    }[reason] || 'المحادثة مغلقة مؤقتاً. يمكنك العودة بعد انتهاء العدّ التنازلي.';
-
-    reasonEl.innerHTML = reasonText;
-    overlay.classList.add('show');
-
-    document.getElementById('input').disabled = true;
-    document.getElementById('input').placeholder = 'المحادثة مغلقة مؤقتاً...';
-    document.getElementById('sendBtn').disabled = true;
-
-    const totalSeconds = Math.floor((until - Date.now()) / 1000);
-    const initialTotal = totalSeconds;
-    const radius = 58;
-    const circumference = 2 * Math.PI * radius;
-    ring.style.strokeDasharray = `${circumference} ${circumference}`;
-
-    function tick() {
-        const remaining = Math.max(0, Math.floor((until - Date.now()) / 1000));
-        const m = Math.floor(remaining / 60);
-        const s = remaining % 60;
-        cdMin.textContent = String(m).padStart(2,'0');
-        cdSec.textContent = String(s).padStart(2,'0');
-        const ratio = Math.max(0, remaining / initialTotal);
-        ring.style.strokeDashoffset = circumference * (1 - ratio);
-
-        if (remaining <= 0) {
-            clearInterval(countdownTimer);
-            countdownTimer = null;
-            overlay.classList.remove('show');
-            const s2 = section;
-            if (s2) clearClosureInfo(s2);
-            document.getElementById('input').disabled = false;
-            document.getElementById('input').placeholder = 'اكتب استفسارك...';
-            document.getElementById('sendBtn').disabled = false;
-            if (s2) {
-                // نبدأ جلسة جديدة بمحلل جديد
-                const sess = getSession(s2);
-                sess.handoffCount = 0;
-                sess.warned = false;
-                sess.waitState = null;
-                const newExpert = pickDifferentExpert(s2);
-                expert = newExpert;
-                renderExpertHeader();
-                setTimeout(async () => {
-                    const greeting = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
-                    setExpertStatus('typing');
-                    showTypingIndicator();
-                    await sleep(calcHumanTypingTime(greeting));
-                    hideTypingIndicator();
-                    addBubble('expert', greeting);
-                    history.push({ role: 'assistant', content: greeting, at: Date.now() });
-                    if (CONVERSATIONS[s2]) {
-                        CONVERSATIONS[s2].expert = newExpert;
-                        CONVERSATIONS[s2].history = history;
-                        CONVERSATIONS[s2].html = document.getElementById('messages').innerHTML;
-                    }
-                    startExpertTimer();
-                }, 600);
-            }
-        }
-    }
-    tick();
-    clearInterval(countdownTimer);
-    countdownTimer = setInterval(tick, 1000);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   ⏳ عذر التأخر
-   ═══════════════════════════════════════════════════════════════════ */
-function scheduleDelayExcuse() {
-    clearTimeout(delayExcuseTimer);
-    delayExcuseTimer = setTimeout(async () => {
-        if (!busy || isChatClosed()) return;
-        const excuse = getDelayExcuse();
-        setExpertStatus('typing');
-        showTypingIndicator();
-        await sleep(calcHumanTypingTime(excuse));
-        hideTypingIndicator();
-        addBubble('expert', excuse);
-        history.push({ role: 'assistant', content: excuse, at: Date.now() });
-        setExpertStatus('busy');
-    }, 7000 + Math.random() * 3000);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   📩 إرسال رسالة
-   ═══════════════════════════════════════════════════════════════════ */
-async function sendMsg() {
-    const input = document.getElementById('input');
-    const text = input.value.trim();
-    if (!text || busy) return;
-
-    if (isChatClosed()) {
-        const info = getClosureInfo(section);
-        if (info) showClosedOverlay(info.until, info.reason);
-        return;
-    }
-
-    // منع الكتابة أثناء الانتظار أو التبديل
-    if (handoffInProgress) return;
-    if (document.getElementById('waitingOverlay').classList.contains('show')) return;
-
-    input.value = '';
-    input.style.height = 'auto';
-    addBubble('user', text);
-    history.push({ role: 'user', content: text, at: Date.now() });
-    document.getElementById('suggestions').style.display = 'none';
-
-    if (section && CONVERSATIONS[section]?.resetTimer) {
-        clearTimeout(CONVERSATIONS[section].resetTimer);
-        CONVERSATIONS[section].resetTimer = null;
-    }
-
-    busy = true;
-    document.getElementById('sendBtn').disabled = true;
-
-    setExpertStatus('online');
-    await sleep(calcReadDelay(text));
-    markLastUserRead();
-
-    await sleep(400 + Math.random() * 600);
-    setExpertStatus('busy');
-    startProgress();
-    scheduleDelayExcuse();
-
-    // هل هذه أول رسالة بعد handoff؟
-    const sess = getSession(section);
-    const isAfterHandoff = sess.handoffCount > 0 && history.filter(h => h.role === 'user').length === 1;
-
-    const fetchPromise = fetch('https://ammar-e0tp.onrender.com/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            section, query: text, user, expert,
-            history: history.slice(-6),
-            dialect: expert.dialect,
-            context: {
-                type: isAfterHandoff ? 'handoff' : 'normal',
-                gapMs: 0
-            }
-        })
-    });
-
-    try {
-        const res = await fetchPromise;
-        clearTimeout(delayExcuseTimer);
-        const raw = await res.text();
-        let data = {};
-        try { data = JSON.parse(raw); } catch (e) {
-            finishProgress(); setExpertStatus('online');
-            addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
-            return;
-        }
-
-        if (res.status === 429 && data.cooldown) {
-            finishProgress(); setExpertStatus('online');
-            busy = false;
-            document.getElementById('sendBtn').disabled = false;
-            closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
-            return;
-        }
-        if (!res.ok) {
-            finishProgress(); setExpertStatus('online');
-            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
-            return;
-        }
-        finishProgress();
-
-        const replies = data.replies || [];
-
-        if (replies.length > 0 && Math.random() < 0.4) {
-            const reaction = getReaction(expert.dialect);
-            setExpertStatus('typing');
-            showTypingIndicator();
-            await sleep(calcHumanTypingTime(reaction));
-            hideTypingIndicator();
-            addBubble('expert', reaction);
-            history.push({ role: 'assistant', content: reaction, at: Date.now() });
-            await sleep(500 + Math.random() * 700);
-        } else {
-            await sleep(700 + Math.random() * 900);
-        }
-
-        for (let i = 0; i < replies.length; i++) {
-            const reply = replies[i];
-            const segments = splitIntoMessages(reply);
-            for (let j = 0; j < segments.length; j++) {
-                const seg = segments[j];
-                setExpertStatus('typing');
-                showTypingIndicator();
-                await sleep(calcHumanTypingTime(seg));
-                hideTypingIndicator();
-                addBubble('expert', seg);
-                history.push({ role: 'assistant', content: seg, at: Date.now() });
-                if (j < segments.length - 1) {
-                    setExpertStatus('busy');
-                    await sleep(600 + Math.random() * 900);
-                }
-            }
-            if (i < replies.length - 1) {
-                setExpertStatus('busy');
-                await sleep(500 + Math.random() * 800);
-            }
-        }
-
-        if (section && CONVERSATIONS[section]) {
-            CONVERSATIONS[section].history = history;
-            CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
-        }
-
-        if (data.closed && data.cooldownMinutes) {
-            setTimeout(() => closeChat(data.cooldownMinutes * 60, data.closeReason), 1200);
-        }
-    } catch (e) {
-        clearTimeout(delayExcuseTimer);
-        finishProgress(); setExpertStatus('online');
-        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.\n${e.message}`, true);
-    } finally {
-        busy = false;
-        if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
-        setExpertStatus('online');
-    }
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   🎬 التهيئة
-   ═══════════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-    const inp = document.getElementById('input');
-    if (inp) {
-        inp.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-        });
-        inp.addEventListener('input', () => {
-            inp.style.height = 'auto';
-            inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
-        });
-    }
-});
-
-// إيقاف/استئناف المؤقت حسب رؤية التبويب (لأن setTimeout يتوقف في الخلفية)
-document.addEventListener('visibilitychange', () => {
-    if (!section) return;
-    if (document.hidden) {
-        pauseExpertTimer();
-    } else {
-        resumeExpertTimer();
-    }
-});
-
-window.addEventListener('beforeunload', () => {
-    pauseExpertTimer();
-});
-</script>
-
-</body>
-</html>
+    c.innerHTML = (SUGGESTIONS[s] || []).map(t => `<div class="chip" onclick="useSug('${t.replace(/'/g, "\\'")}')">${t}</div>`
