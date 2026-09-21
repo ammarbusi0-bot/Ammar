@@ -49,7 +49,7 @@ async function refreshModels(force = false) {
 refreshModels(true);
 
 // ============================================================
-// 🚻 كشف الجنس من الاسم
+// 🚻 كشف الجنس
 // ============================================================
 const FEMALE_NAMES = new Set([
     'فاطمة','زينب','مريم','خديجة','عائشة','حفصة','رقية','سكينة','نفيسة',
@@ -65,7 +65,6 @@ const FEMALE_NAMES = new Set([
     'رؤى','رفيف','رنيم','سلوى','سمية','سناء','شيماء','صابرين','عالية','عزيزة','عليا',
     'غيداء','فدوى','قمر','كفاح','ماجدة','ملك','ميساء','نجلاء','نور','هالة','هبة'
 ]);
-
 const MALE_NAMES = new Set([
     'محمد','أحمد','خالد','عبدالله','عبدالرحمن','عبدالعزيز','عبدالملك','فيصل','عمر','طارق','بدر',
     'سلطان','ماجد','مشعل','مازن','يوسف','زياد','رامي','سامي','حسن','حسين','علي','مصطفى','كريم',
@@ -97,11 +96,11 @@ function detectUserGender(firstName) {
 
 function genderInstructions(gender, name) {
     if (gender === 'female') return `# ⚠️ جنس المستخدم
-الاسم "${name}" → **أنثى**. خاطبها بصيغة المؤنث دائماً: "أنتِ"، "تفضلي"، "عندكِ"، "تستطيعين"، "رأيكِ".`;
+الاسم "${name}" → **أنثى**. خاطبها بصيغة المؤنث دائماً: "أنتِ"، "تفضلي"، "عندكِ"، "تستطيعين".`;
     if (gender === 'male') return `# ⚠️ جنس المستخدم
-الاسم "${name}" → **ذكر**. خاطبه بصيغة المذكر: "أنت"، "تفضل"، "عندك"، "تستطيع"، "رأيك".`;
+الاسم "${name}" → **ذكر**. خاطبه بصيغة المذكر: "أنت"، "تفضل"، "عندك".`;
     return `# جنس المستخدم
-غير محدد. استخدم صيغة المذكر كافتراضي، أو صياغة محايدة.`;
+غير محدد. صيغة المذكر كافتراضي.`;
 }
 
 // ============================================================
@@ -222,7 +221,19 @@ const SECTION_PERSONALITY = {
 };
 
 // ============================================================
-// 💙 التعاطف العاطفي
+// 🎯 أسعار مرجعية واقعية — لضبط التوقعات
+// ============================================================
+const REFERENCE_PRICES = {
+    gold: 'الذهب (أونصة): نطاق 2024-2025 بين 2000-2900$ — ضع توقعاتك ضمن هذا السياق التاريخي.',
+    stocks: 'مؤشر S&P 500: نطاق 2023-2025 بين 4100-6100 نقطة.',
+    crypto: 'البيتكوين: نطاق 2024-2025 بين 40K-110K$ — التقلب 3-5% يومياً طبيعي.',
+    macro: 'الفائدة الأمريكية: 4.25%-5.5% (2024-2025) — أي تغيير يؤثر على كل الأصول.',
+    geopolitical: 'برنت: نطاق 70-95$ وسط التوترات الحالية.',
+    budget: 'معدلات التضخم العالمية: 2-5% سنوياً.'
+};
+
+// ============================================================
+// 💙 التعاطف
 // ============================================================
 const EMOTIONAL_REACTIONS = {
     worried:    ['قلقك مفهوم.', 'طبيعي تسأل هذا الآن.', 'لا تتخذ قراراً تحت ضغط القلق.'],
@@ -245,31 +256,22 @@ function detectEmotion(query) {
 }
 
 // ============================================================
-// 🎯 تحليل النية — النسخة الإنسانية الجديدة
+// 🎯 تحليل النية + كشف طلب التوقعات
 // ============================================================
 function analyzeIntent(q, history) {
     const trimmed = q.trim();
     const qLen = trimmed.length;
     const recentMsgs = (history || []).filter(h => h.role === 'user').map(h => h.content).slice(-6);
 
-    // 🆕 أسئلة عن المحلل نفسه — ليست off-topic إطلاقاً
     const isAboutSelf = /(تخصصك|اختصاصك|مجالك|خبرتك|خلفيتك|من انت|من أنت|من تكون|اسمك|شو اسمك|وش اسمك|ايش اسمك|من وين|من أي بلد|من اي بلد|تعريف عنك|حدثني عن نفسك|عرفني بنفسك|عرفنا بنفسك|وش تخصصك|شو تخصصك|ايش تخصصك|مين انت|مين أنت|عرّفني)/i.test(trimmed);
-
-    // 🆕 دردشة شخصية بسيطة
     const isSmallTalk = /^(كيف حالك|كيف حالكم|كيفك|كيف الحال|شلونك|شحالك|شو أخبارك|شخبارك|عامل ايه|عامل إيه|كيف الأمور|شو عم تعمل|وش تسوي|ايش تسوي|كيف أمورك|أخبارك ايه)[\s؟?]*$/i.test(trimmed);
-
-    // 🆕 اختبار الهوية (بوت/إنسان)
     const isBotTest = /(هل انت انسان|هل انت إنسان|هل أنت إنسان|انت انسان ولا|انت إنسان ولا|انت بوت|هل انت بوت|هل انت روبوت|انت روبوت|انت ذكاء اصطناعي|هل انت ذكاء|انت AI|هل انت AI|انت انسان حقيقي|هل انت حقيقي)/i.test(trimmed);
 
-    // 🎯 تحية/وداع/شكر
     const isGreeting = /^(مرحبا|مرحباً|أهلا|أهلاً|السلام عليكم|وعليكم السلام|هلا|يا هلا|صباح الخير|صباح النور|مساء الخير|مساء النور|hi|hello|hey|هاي)[\s!.,؟?]*$/i.test(trimmed) || (qLen < 20 && /(السلام عليكم|صباح الخير|مساء الخير)/i.test(trimmed));
     const isFarewell = /^(مع السلامة|وداعا|وداعاً|باي|في أمان الله|بسلامة|تصبح على خير|الى اللقاء|إلى اللقاء)/i.test(trimmed) && qLen < 25;
     const isThanks = /^(شكرا|شكراً|مشكور|مشكورة|تسلم|تسلمين|يعطيك العافية|يعطيكم العافية|جزاك الله|بارك الله)/i.test(trimmed) && qLen < 40;
 
-    // 🚫 إساءة
     const isRude = /(غبي|أحمق|احمق|حمار|كلب|زبالة|تفو|قذر|خنزير|حقير|تافه|سافل|وقح)/i.test(trimmed);
-
-    // 🤪 عبث
     const isGibberish = /^[\s\W_]+$/.test(trimmed) || /(.)\1{4,}/.test(trimmed);
     const shortMsgCount = recentMsgs.filter(m => m.trim().length < 8).length;
     const isVeryShort = qLen > 0 && qLen < 8;
@@ -277,29 +279,35 @@ function analyzeIntent(q, history) {
     if (isVeryShort && shortMsgCount >= 5) trollScore += 2;
     if (isGibberish) trollScore += 2;
 
-    // 🎯 خارج الموضوع — أكثر تسامحاً
     const isOffTopic = !isAboutSelf && !isSmallTalk && !isBotTest &&
-        /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|طقس|جو|سيارة|زواج|طلاق|سياسة حزبية|انتخابات)/i.test(trimmed) &&
+        /(كرة القدم|مباراة|كورة|لعبة|بلايستيشن|فيلم|مسلسل|أغنية|موسيقى|طقس|جو|سيارة|زواج|طلاق|انتخابات)/i.test(trimmed) &&
         !/(استثمار|مال|سوق|ذهب|سهم|عملة|تضخم|فائدة|ميزانية|محفظة|اقتصاد|بنك|تمويل|دخل|رأس مال)/i.test(trimmed);
 
-    // 📏 طول
     const wantsBrief = /(باختصار|اختصار|بسرعة|مختصر|لا تطول|لا تطل)/i.test(trimmed);
     const wantsDetail = /(فصّل|فصل|أشرح|اشرح|بالتفصيل|تفاصيل|موسع|مفصل)/i.test(trimmed);
     const wantsAdvice = /(تنصحني|توصيتك|رايك|رأيك|شو رأيك|ماذا تنصح|بم تنصح)/i.test(trimmed);
-    const wantsAnalysis = /(حلل|تحليل|قيّم|درس|تتوقع|توقعك|ما توقعاتك)/i.test(trimmed);
+    const wantsAnalysis = /(حلل|تحليل|قيّم|درس)/i.test(trimmed);
+
+    // 🆕 كشف طلب التوقعات — يحتاج تخصص وأرقام
+    const isForecastRequest = /(تتوقع|توقعك|توقعاتك|توقعات|ما توقعاتك|راح يوصل|بيوصل|سعر الذهب بكرة|سعر البيتكوين|وين رايح|إلى وين|الى وين|هدف سعري|target|forecast|توقع سعر|كم راح|كم بيوصل|تتوقع يوصل|نطاق سعري|سيناريو|مستقبل السوق|خلال الشهر القادم|خلال الأسبوع|نهاية السنة|نهاية العام|2025|2026)/i.test(trimmed);
+
+    // 🆕 طلب استشارة عملية
+    const isConsultationRequest = /(أستشيرك|استشيرك|أبغى رأيك|ابغى رايك|أبغى نصيحتك|ابغى نصيحتك|أبغى توجيه|ابغى توجيه|كيف أدخل|كيف ادخل|كيف أستثمر|كيف استثمر|وش أسوي|وش اسوي|شو أسوي|شو اسوي|ايش اسوي|ايش أسوي|محتاج نصيحة|محتاج مشورة|أبي خطة|ابي خطة|خطة استثمارية|دخول السوق|أتداول ولا|اتداول ولا)/i.test(trimmed);
 
     let lengthHint = 'medium';
     if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest) lengthHint = 'very_short';
     else if (wantsBrief || isVeryShort) lengthHint = 'very_short';
+    else if (isForecastRequest || isConsultationRequest) lengthHint = 'long';
     else if (qLen < 40) lengthHint = 'short';
     else if (qLen >= 150 || wantsDetail || wantsAnalysis) lengthHint = 'long';
 
     let styleHint = 'default';
-    if (wantsAnalysis) styleHint = 'analysis';
+    if (isForecastRequest) styleHint = 'forecast';
+    else if (isConsultationRequest) styleHint = 'consultation';
+    else if (wantsAnalysis) styleHint = 'analysis';
     else if (wantsAdvice) styleHint = 'advice';
     else if (wantsDetail) styleHint = 'detail';
 
-    // 🎭 الحالة
     let state = 'calm';
     if (isRude) state = 'rude';
     else if (trollScore >= 3) state = 'trolling';
@@ -320,23 +328,22 @@ function analyzeIntent(q, history) {
     return {
         isGreeting, isFarewell, isThanks, isRude, isOffTopic,
         isAboutSelf, isSmallTalk, isBotTest,
+        isForecastRequest, isConsultationRequest,
         trollScore, lengthHint, styleHint, state, qLen,
         isDone: isThanks || isFarewell
     };
 }
 
 // ============================================================
-// 🎭 منع تكرار الشخصية
+// 🎭 Persona
 // ============================================================
 const MOODS = ['neutral','warm','professional','casual','analytical','concise','thoughtful','patient','curious','blunt'];
-
 const OPENERS = {
     very_short: ['شوف.','بصراحة؟','همم.','طيب.','أها.','تمام.'],
     short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،'],
-    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','خلني أكون صريح،'],
-    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','الأمر يحتاج تفصيل.']
+    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.'],
+    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.']
 };
-
 function buildPersona(history, session, intent) {
     const availableMoods = MOODS.filter(m => !session.usedOpeners.includes('m_' + m));
     let mood;
@@ -351,21 +358,20 @@ function buildPersona(history, session, intent) {
 
     const openerList = OPENERS[intent.lengthHint] || OPENERS.medium;
     const available = openerList.filter(o => !session.usedOpeners.includes('o_' + o));
-    const opener = available.length
-        ? available[Math.floor(Math.random() * available.length)]
-        : null;
+    const opener = available.length ? available[Math.floor(Math.random() * available.length)] : null;
     if (opener) session.usedOpeners.push('o_' + opener);
 
     return { mood, opener };
 }
 
 // ============================================================
-// 🎯 بناء البرومبت — النسخة الإنسانية
+// 🎯 بناء البرومبت — مع تركيز قوي على التوقعات المتخصصة
 // ============================================================
 function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
     const sectionVocab = SECTION_VOCAB[section] || [];
+    const referencePrices = REFERENCE_PRICES[section] || '';
     const intent = analyzeIntent(query, history);
     const emotion = detectEmotion(query);
     const seed = Math.floor(Math.random() * 99999);
@@ -382,7 +388,6 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
           ).join('\n') + '\n---'
         : '';
 
-    // كشف التكرار
     const isRepeat = hasHistory && (() => {
         const userMsgs = history.filter(h => h.role === 'user').map(h => h.content);
         const qWords = query.split(/\s+/).filter(w => w.length > 3);
@@ -395,84 +400,125 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     })();
 
     const lengthRule = {
-        very_short: '**جملة أو جملتان فقط.** لا تتجاوز 20 كلمة.',
+        very_short: '**جملة أو جملتان فقط.**',
         short:      '**2-3 أسطر قصيرة.**',
         medium:     '**3-5 أسطر متوسطة.**',
-        long:       '**6-10 أسطر، مع تفصيل.**'
+        long:       intent.styleHint === 'forecast' || intent.styleHint === 'consultation'
+                    ? '**8-14 سطر — تحليل مفصل مع أرقام.**'
+                    : '**6-10 أسطر، مع تفصيل.**'
     }[intent.lengthHint] || '**4-6 أسطر.**';
 
     const emotionHint = emotion
-        ? `\n# 💙 حالة المستخدم العاطفية: ${emotion}
+        ? `\n# 💙 حالة المستخدم: ${emotion}
 **إلزامي:** ابدأ بجملة تعاطف واحدة قصيرة.
 مثال: "${EMOTIONAL_REACTIONS[emotion]?.[0] || 'أفهم شعورك.'}"
 ثم انتقل إلى الجواب. سطر واحد فقط للتعاطف.`
         : '';
 
     // ========================================================
-    // 🎯 السياق الخاص — مطوّر بشدة للإنسانية
+    // 🎯 وضع التوقعات الاحترافية
+    // ========================================================
+    let forecastMode = '';
+    if (intent.isForecastRequest) {
+        forecastMode = `\n# 🔮 وضع التوقع الاحترافي (ACTIVE)
+المستخدم يطلب **توقعاً محدداً**. هذا تخصصك الحقيقي. اتبع هذا القالب بدقة:
+
+## قواعد التوقع الاحترافي:
+1. **اذكر رقماً أو نطاقاً واضحاً** — لا تقل "قد يرتفع"، قل "أشوف 2750-2850$ خلال 4-6 أسابيع".
+2. **حدد الإطار الزمني** — أسبوع؟ شهر؟ ربع؟ نهاية العام؟
+3. **أعطِ سيناريوهات** — الأساسي (احتمال ~60%)، الصاعد (25%)، الهابط (15%).
+4. **اذكر محفزات** — ما الذي يجب أن يحدث ليتحقق سيناريو معين؟ (قرارات فيدرالي، بيانات تضخم، توترات).
+5. **نقاط دخول/خروج** — إذا كان السؤال عن شراء: نطاق دخول، حد خسارة مقترح، هدف أول.
+6. **نسبة الثقة** — "ثقتي في هذا التوقع متوسطة" أو "عالية" — كن صريحاً.
+7. **لا تستخدم عبارات فضفاضة** — كل جملة فيها رقم أو حدث أو شرط.
+
+## هيكل الرد (إلزامي):
+- **الجواب المباشر** (سطر واحد): نطاق السعر + الإطار الزمني.
+- **السيناريو الأساسي**: الرقم + الاحتمال + المحفز.
+- **السيناريو الصاعد**: الرقم + الاحتمال + الشرط.
+- **السيناريو الهابط**: الرقم + الاحتمال + الشرط.
+- **ما ينقض التوقع**: مؤشر واحد أو حدث يُبطله.
+- **توصية عملية**: نطاق دخول + حد خسارة (سطر واحد).
+
+## سياق مرجعي (${section}):
+${referencePrices}
+
+## ممنوع تماماً في وضع التوقع:
+- "قد"، "ربما"، "أعتقد أن" — استبدلها بـ "أشوف"، "أتوقع"، "ثقتي".
+- كلام بلا أرقام. كل جملة يجب أن تحمل معطى.
+- التعميم ("السوق متقلب") بلا تطبيق محدد.
+- "لا يمكن التوقع" — أنت محلل محترف، توقّع ولو بنطاق.
+`;
+    }
+
+    let consultationMode = '';
+    if (intent.isConsultationRequest) {
+        consultationMode = `\n# 💼 وضع الاستشارة العملية (ACTIVE)
+المستخدم يطلب **استشارة عملية**. تعامل معه كمستشار شخصي:
+
+## قواعد الاستشارة:
+1. **اسأل سؤالاً تشخيصياً واحداً** إذا نقصت معلومة حرجة (رأس المال، الأفق الزمني، تحمل المخاطر). **لا تسأل أكثر من سؤال واحد.**
+2. **أعطِ خطة ملموسة**: نسب مئوية، مبالغ تقديرية، خطوات متسلسلة.
+3. **خصّص حسب خبرته**: ${user?.experience || 'مبتدئ'} — لا تعطِ مبتدئاً استراتيجيات معقدة.
+4. **اذكر حدّين**: الحد الأدنى للدخول، والحد الأعلى لعدم المبالغة.
+5. **أضف تحذيراً مهنياً**: "الأسواق تحمل مخاطر، وما أقوله ليس ضماناً."
+
+## هيكل الرد (إلزامي):
+- **سؤال تشخيصي** (إن نقصت معلومة) — وإلا ابدأ بالخطة.
+- **الخطة**: 2-4 خطوات ملموسة بنسب.
+- **النسب**: "40% ذهب، 30% أسهم دفاعية، 20% سيولة، 10% أصول بديلة".
+- **ما يجب تجنبه**: 1-2 نقطة.
+- **أفق زمني**: متى تُراجع الخطة؟
+`;
+    }
+
+    // ========================================================
+    // 🎯 السياق الخاص
     // ========================================================
     let specialContext = '';
 
     if (intent.isAboutSelf) {
-        specialContext = `\n# 🎯 الموقف: المستخدم يسأل عنك شخصياً
-هذا سؤال طبيعي جداً — لا تعتبره خروجاً عن الموضوع إطلاقاً.
-- أجب كإنسان حقيقي: عرّف بنفسك بإيجاز.
-- اذكر: اسمك، تخصصك، سنوات خبرتك، لمحة قصيرة عن خلفيتك.
-- **ممنوع تماماً:** "خرجنا عن الموضوع"، "هذا ليس تخصصي"، "أنا هنا للاستشارات المالية فقط".
+        specialContext = `\n# 🎯 الموقف: سؤال عنك
+- أجب كإنسان حقيقي: اسمك، تخصصك، سنوات خبرتك، لمحة قصيرة.
+- **ممنوع:** "خرجنا عن الموضوع"، "هذا ليس تخصصي".
 - 2-4 أسطر.
-- اختم بسؤال طبيعي: "شو استفسارك؟" أو "في شو أقدر أساعدك؟"
-- **مثال جيد:** "أنا ${expert?.name || 'سارة'}، تخصصي ${expert?.role || 'تحليل المعادن الثمينة'}. أتابع أسواق الذهب من ${new Date().getFullYear() - parseInt(expert?.years || '8')} تقريباً، وشفت دورات كثيرة. تحب نتكلم عن شي محدد؟"`;
+- اختم بسؤال طبيعي: "شو استفسارك؟"`;
     } else if (intent.isSmallTalk) {
         specialContext = `\n# 🎯 الموقف: دردشة شخصية
-المستخدم يسأل "كيف حالك" أو مشابه.
-- رد بجملة قصيرة طبيعية جداً، كإنسان.
-- لا تسأل فوراً عن استفساره.
-- **مثال:** "الحمد لله بخير، يوم حافل. وأنت كيف الأمور عندك؟"
-- سطر واحد فقط.`;
+- رد بجملة قصيرة طبيعية فقط.
+- لا تسأل عن استفساره فوراً.
+- مثال: "الحمد لله بخير، يوم حافل. وأنت كيف الأمور عندك؟"`;
     } else if (intent.isBotTest) {
         specialContext = `\n# 🎯 الموقف: سؤال عن ماهيتك
-المستخدم يسأل إذا كنت بوت/إنسان.
-- لا تؤكد ولا تنفِ بشكل جاف أو دفاعي.
-- رد بطبيعية واحترافية، ثم تابع الحوار.
-- **مثال:** "أنا مستشارك هنا، مهمتي أساعدك بقراراتك المالية. خلنا نركز على استفسارك."
-- سطر أو سطرين فقط.`;
+- لا تؤكد ولا تنفِ بشكل دفاعي.
+- "أنا مستشارك هنا، مهمتي أساعدك بقراراتك المالية. خلنا نركز على استفسارك."
+- سطر أو سطرين.`;
     } else if (intent.isGreeting) {
         specialContext = `\n# 🎯 الموقف: تحية
-رد بتحية مماثلة مناسبة للهجة، **في سطر واحد فقط**.
-- لا تبدأ تحليلاً.
-- لا تسأل عن أي شيء فوراً.
-- **مثال:** "وعليكم السلام، تفضل." أو "هلا، كيف أقدر أساعدك؟"
-- **إذا يوجد سجل حوار سابق، لا تعد التحية** — بدلاً من ذلك: "أهلين، تفضل."`;
+- رد بتحية مماثلة في سطر واحد فقط.
+- لا تبدأ تحليلاً ولا تسأل عن شيء فوراً.
+${hasHistory ? '- **لا تعد التحية** — يوجد سجل حوار سابق. قل "أهلين، تفضل."' : ''}`;
     } else if (intent.isThanks) {
         specialContext = `\n# 🎯 الموقف: شكر
-- رد بكلمة أو جملتين مهنيتين فقط.
-- **لا تسأل عن شيء جديد.**
-- **مثال:** "العفو، بالتوفيق." أو "في خدمتك دائماً."`;
+- كلمة أو جملتين مهنيتين فقط. لا تسأل عن شيء جديد.`;
     } else if (intent.isFarewell) {
         specialContext = `\n# 🎯 الموقف: وداع
-- جملة وداع قصيرة فقط.
-- **مثال:** "في أمان الله، نتشرف بخدمتك لاحقاً."`;
+- جملة وداع قصيرة فقط.`;
     } else if (intent.isRude) {
         specialContext = `\n# ⚠️ الموقف: إساءة
-تجاوب بهدوء واحترافية:
-- جملة واحدة: "أفهم إنك متضايق، لكن خلنا نحافظ على احترام الحوار."
-- ثم توقف. لا تجادل. لا تعتذر كثيراً.`;
+- جملة واحدة هادئة: "أفهم إنك متضايق، لكن خلنا نحافظ على احترام الحوار."
+- لا تجادل.`;
     } else if (intent.isOffTopic) {
         specialContext = `\n# 🎯 الموقف: موضوع بعيد
-المستخدم طرح موضوعاً غير مالي.
-- تفاعل بجملة قصيرة **طبيعية** أولاً (كإنسان)، ثم انتقل بلطف.
-- **ممنوع:** "خرجنا عن الموضوع"، "هذا ليس تخصصي"، "أنا هنا للاستشارات المالية فقط".
-- **مثال جيد:** "الموضوع حلو، لكن تخصصي المالي أكثر. في شي أقدر أساعدك فيه بالسوق؟"
-- جملتان كحد أقصى.`;
+- تفاعل بجملة قصيرة طبيعية، ثم انتقل بلطف.
+- **ممنوع:** "خرجنا عن الموضوع"، "هذا ليس تخصصي".
+- مثال: "الموضوع حلو، لكن تخصصي المالي أكثر. في شي أقدر أساعدك فيه بالسوق؟"`;
     } else if (intent.state === 'trolling') {
         specialContext = `\n# 🎯 الموقف: عبث
-- جملة قصيرة طبيعية: "يبدو إنك مش في مزاج جدي اليوم."
-- لا تتفاعل بجدية. لا تُطل.`;
+- جملة قصيرة: "يبدو إنك مش في مزاج جدي اليوم."`;
     } else if (isRepeat) {
         specialContext = `\n# 🎯 الموقف: تكرار
-المستخدم يعيد سؤالاً سابقاً.
-- أشر بلطف: "شكلك ما اقتنعت، خلنا نوضح."
-- ثم أعد التوضيح من زاوية مختلفة.`;
+- "شكلك ما اقتنعت، خلنا نوضح." ثم أعد من زاوية مختلفة.`;
     }
 
     const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
@@ -483,23 +529,23 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 
 # 🌍 لهجتك
 **${dialect.name}** — النبرة: ${dialect.tone}
-مفردات اللهجة: ${dialect.vocab.join('، ')}
+مفردات: ${dialect.vocab.join('، ')}
 مفردات تخصصية (${section}): ${sectionVocab.join('، ')}
 مثال: "${dialect.example}"
-**استخدم 2-4 مفردات فقط، لا تبالغ. لا تكتب بالعامية الكاملة — عربية مبسطة + لمسة لهجة.**
+**استخدم 2-4 مفردات فقط — عربية مبسطة + لمسة لهجة.**
 
 # 🧠 شخصيتك المهنية
 - **خلفيتك:** ${personality.backstory}
 - **موقفك:** ${personality.opinion}
 - **ما يزعجك:** ${personality.pet_peeve}
-- **عبارتك المميزة:** "${personality.phrase}"
+- **عبارتك:** "${personality.phrase}"
 - **سماتك:** ${personality.quirks.join('، ')}
 ${personality.avoid ? `- **تجنّب:** ${personality.avoid}` : ''}
 
-# 🎭 حالتك الآن
+# 🎭 حالتك
 - المزاج: **${persona.mood}**
-- الوقت: ${dayPart}${isLateNight ? ' (🌙 ساعة متأخرة — كن أقصر)' : ''}
-- النمط: ${intent.styleHint}
+- الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}
+- النمط: **${intent.styleHint}**
 
 ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 
@@ -510,6 +556,8 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 - الخبرة: ${user?.experience || 'غير محدد'}
 ${user?.reason ? `- سبب الزيارة: ${user.reason}` : ''}
 ${emotionHint}
+${forecastMode}
+${consultationMode}
 ${specialContext}
 
 ${historyText}
@@ -517,42 +565,33 @@ ${historyText}
 # 📩 رسالة ${user?.firstName || 'المستخدم'}
 "${query}"
 
-# 📏 قاعدة الطول
+# 📏 الطول المطلوب
 ${lengthRule}
 
-# 🚨 محظورات قاتلة (أي واحدة منها تُفسد الشخصية فوراً)
-**ممنوع تقول:**
-- "خرجنا عن الموضوع" / "يبدو أننا خرجنا" / "لنعد إلى الموضوع"
-- "هذا ليس تخصصي" / "خارج اختصاصي" / "أنا هنا للاستشارات المالية فقط"
-- "سؤال ممتاز" / "سؤال رائع" / "سؤال وجيه"
-- "بناءً على" / "علاوة على ذلك" / "بالإضافة" / "من الجدير بالذكر" / "تجدر الإشارة"
-- "في الختام" / "خلاصة القول" / "أتمنى أن يكون هذا مفيداً" / "لا تتردد في السؤال"
+# 🚨 محظورات قاتلة
+- "خرجنا عن الموضوع" / "هذا ليس تخصصي" / "أنا هنا للاستشارات المالية فقط"
+- "سؤال ممتاز" / "بناءً على" / "علاوة على ذلك" / "بالإضافة"
+- "من الجدير بالذكر" / "تجدر الإشارة" / "في الختام"
+- "أتمنى أن يكون هذا مفيداً" / "لا تتردد في السؤال" / "هل تريد المزيد؟"
 - "كمساعد ذكي" / "يسعدني مساعدتك" / "بكل سرور" / "تحت أمرك"
-- "هل تريد أن أساعدك في شيء آخر؟" (بعد كل رد — يبدو آلياً)
-- "كذكاء اصطناعي" / "كموديل" / "كمساعد"
-
-**قلل من:**
-- الإيموجي (صفر أو واحد كحد أقصى).
-- البولد (**) — مرتين كحد أقصى.
-- القوائم النقطية إلا إذا طلبها المستخدم صراحة.
+- الإيموجي (واحد كحد أقصى)
+- البولد (**) — مرتين كحد أقصى
+- القوائم النقطية إلا إذا طلبها المستخدم
 
 # ✅ قواعد الإنسانية
-1. **تصرف كإنسان**: لا تقل أبداً أشياء لا يقولها إنسان طبيعي.
-2. **نوّع طول الجمل**: جملة قصيرة (3-5 كلمات) + جملة متوسطة + جملة أطول.
-3. **لا تبدأ جملتين بنفس الكلمة** في نفس الرد.
-4. **إذا سُئلت عن نفسك، أجب بثقة وطبيعية** — لا تقل "خرجنا عن الموضوع".
-5. **إذا لم تعرف، قل "مو متأكد"** بدل التخمين.
-6. **اذكر المخاطر عند أي نصيحة** (واجب مهني، ليس روبوتية).
-7. **جملة واحدة كافية أحياناً** — لا تفرض نفسك على المستخدم.
-8. **لا تلخص ما قلته** في نهاية الرد.
-9. **لا تسأل "هل تحتاج المزيد؟"** — دع المستخدم يسأل.
+1. تصرف كإنسان — لا تقل ما لا يقوله إنسان طبيعي.
+2. نوّع أطوال الجمل.
+3. إذا سُئلت عن نفسك، أجب بثقة — **لا تقل "خرجنا عن الموضوع"**.
+4. إذا لم تعرف، قل "مو متأكد" بدل التخمين.
+5. **التوقعات**: أعطِ أرقاماً ونطاقات وأطراً زمنية — **كن متخصصاً**.
+6. **الاستشارات**: خطوات ملموسة + نسب + تحذير مهني.
 
-${persona.opener ? `# 💬 اقتراح افتتاحي (اختياري — استخدمه فقط إن ناسب)\n"${persona.opener}"` : ''}
+${persona.opener ? `# 💬 افتتاحية مقترحة\n"${persona.opener}"` : ''}
 
-# 🎲 بذرة التنويع: ${seed}
+# 🎲 بذرة: ${seed}
 
-**اكتب الرد مباشرة** — بلا "الرد:" أو "الجواب:".
-إذا احتجت رسالتين منفصلتين (فكرة ثم تكميل)، ضع [SPLIT] في سطر منفصل.`;
+**اكتب الرد مباشرة.**
+إذا احتجت رسالتين منفصلتين، ضع [SPLIT] في سطر.`;
 }
 
 // ============================================================
@@ -569,7 +608,7 @@ async function callGemini(prompt) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 1.15, maxOutputTokens: 3000, topP: 0.95, topK: 70 },
+                    generationConfig: { temperature: 1.15, maxOutputTokens: 4000, topP: 0.95, topK: 70 },
                     safetySettings: [
                         { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
                         { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
@@ -613,29 +652,65 @@ function extractReplies(text, truncated = false) {
 }
 
 // ============================================================
-// ⏱️ التوقيت الذكي
+// ⏱️ التوقيت الذكي — مع وضع "التحليل العميق" 60-100 ثانية
 // ============================================================
 function getSmartTiming(intent, persona, session) {
     const r = Math.random();
     const len = intent.qLen;
 
+    // 🎯 التحية/الشكر/الدردشة/الوداع: فوري (400-900ms)
     if (intent.isGreeting || intent.isThanks || intent.isFarewell || intent.isSmallTalk || len < 15) {
-        return { speed: 'fast', delayMs: 400 + Math.floor(Math.random() * 700) };
+        return { speed: 'instant', delayMs: 400 + Math.floor(Math.random() * 500), reason: 'instant_reply' };
     }
+
+    // 🎯 أسئلة عن الذات / اختبار البوت: رد سريع طبيعي (2-3 ثواني)
     if (intent.isAboutSelf || intent.isBotTest) {
-        return { speed: 'normal', delayMs: 1500 + Math.floor(Math.random() * 1500) };
+        return { speed: 'quick', delayMs: 1800 + Math.floor(Math.random() * 1500), reason: 'personal' };
     }
+
+    // 🔮 طلب توقعات أو استشارة: احتمال عالٍ للتأخير العميق
+    if (intent.isForecastRequest || intent.isConsultationRequest) {
+        // 25% → تحليل عميق (60-100 ثانية)
+        if (r < 0.25) {
+            const delay = 60000 + Math.floor(Math.random() * 40000);
+            return { speed: 'deep', delayMs: delay, reason: 'deep_analysis' };
+        }
+        // 45% → تأخير طويل (25-45 ثانية)
+        if (r < 0.70) {
+            const delay = 25000 + Math.floor(Math.random() * 20000);
+            return { speed: 'long_think', delayMs: delay, reason: 'long_think' };
+        }
+        // 30% → رد متوسط (12-22 ثانية)
+        return { speed: 'medium', delayMs: 12000 + Math.floor(Math.random() * 10000), reason: 'medium_think' };
+    }
+
+    // 🎯 رسائل قصيرة عادية
     if (len < 60) {
-        if (r < 0.5) return { speed: 'fast',   delayMs: 1200 + Math.floor(Math.random() * 1500) };
-        return         { speed: 'normal', delayMs: 2500 + Math.floor(Math.random() * 2500) };
+        if (r < 0.5) return { speed: 'fast',   delayMs: 1200 + Math.floor(Math.random() * 1500), reason: 'fast' };
+        if (r < 0.9) return { speed: 'normal', delayMs: 2500 + Math.floor(Math.random() * 2500), reason: 'normal' };
+        // 10% → تفكير طويل حتى للرسائل القصيرة
+        return { speed: 'medium', delayMs: 8000 + Math.floor(Math.random() * 6000), reason: 'long_pause' };
     }
+
+    // 🎯 رسائل متوسطة
     if (len < 150) {
-        if (r < 0.3) return { speed: 'normal', delayMs: 3000 + Math.floor(Math.random() * 2000) };
-        if (r < 0.8) return { speed: 'medium', delayMs: 5000 + Math.floor(Math.random() * 3000) };
-        return         { speed: 'slow',   delayMs: 9000 + Math.floor(Math.random() * 4000) };
+        // 15% → تأخير عميق
+        if (r < 0.15) {
+            const delay = 60000 + Math.floor(Math.random() * 40000);
+            return { speed: 'deep', delayMs: delay, reason: 'deep_analysis' };
+        }
+        if (r < 0.40) return { speed: 'normal', delayMs: 3000 + Math.floor(Math.random() * 3000), reason: 'normal' };
+        if (r < 0.75) return { speed: 'medium', delayMs: 6000 + Math.floor(Math.random() * 4000), reason: 'medium' };
+        return { speed: 'slow',   delayMs: 12000 + Math.floor(Math.random() * 8000), reason: 'slow' };
     }
-    if (r < 0.4) return { speed: 'medium', delayMs: 7000 + Math.floor(Math.random() * 3000) };
-    return         { speed: 'slow',   delayMs: 12000 + Math.floor(Math.random() * 8000) };
+
+    // 🎯 رسائل طويلة: احتمال أكبر للتأخير العميق
+    if (r < 0.20) {
+        const delay = 60000 + Math.floor(Math.random() * 40000);
+        return { speed: 'deep', delayMs: delay, reason: 'deep_analysis' };
+    }
+    if (r < 0.50) return { speed: 'slow',   delayMs: 15000 + Math.floor(Math.random() * 10000), reason: 'slow' };
+    return { speed: 'long_think', delayMs: 25000 + Math.floor(Math.random() * 15000), reason: 'long_think' };
 }
 
 // ============================================================
@@ -655,8 +730,8 @@ function shouldClose(intent, history) {
 app.get('/', (req, res) => {
     res.json({
         status: 'OK',
-        behavior: 'Human-Consultant-v3-NoRoboticPhrases',
-        features: ['14 dialects', 'gender detection', 'sessions', 'cooldown', 'smart timing', 'emotional empathy', 'section personality', 'about-self handling', 'small talk', 'bot-test handling'],
+        behavior: 'Pro-Forecast-Consultant-v4',
+        features: ['14 dialects', 'gender detection', 'sessions', 'cooldown', 'smart timing', 'emotional empathy', 'section personality', 'about-self handling', 'small talk', 'bot-test handling', 'forecast mode', 'consultation mode', 'deep analysis (60-100s)'],
         activeSessions: SESSIONS.size
     });
 });
@@ -671,7 +746,6 @@ app.post('/api/analyze', async (req, res) => {
     session.lastActivity = Date.now();
     session.messageCount++;
 
-    // 🚫 Cooldown
     if (session.cooldownUntil && Date.now() < session.cooldownUntil) {
         const remaining = Math.ceil((session.cooldownUntil - Date.now()) / 60000);
         return res.status(429).json({
@@ -714,9 +788,13 @@ app.post('/api/analyze', async (req, res) => {
                     : intent.isFarewell ? 'farewell'
                     : intent.isRude ? 'rude'
                     : intent.isOffTopic ? 'offtopic'
+                    : intent.isForecastRequest ? 'forecast'
+                    : intent.isConsultationRequest ? 'consultation'
                     : 'normal',
                 lengthHint: intent.lengthHint,
-                styleHint: intent.styleHint
+                styleHint: intent.styleHint,
+                isForecast: intent.isForecastRequest,
+                isConsultation: intent.isConsultationRequest
             },
             timing
         };
@@ -737,7 +815,7 @@ app.post('/api/analyze', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`✅ الخادم على البورت ${PORT}`);
-    console.log(`🎭 نسخة إنسانية v3 — لا عبارات روبوتية`);
+    console.log(`🔮 نسخة v4 — توقعات احترافية + تحليل عميق 60-100 ثانية`);
     console.log(`🌍 لهجات: 14 | 🚻 جنس: نشط | 🗄️ جلسات: نشطة`);
-    console.log(`💙 تعاطف | 🧠 شخصية القسم | 👤 أسئلة عن الذات`);
+    console.log(`💼 وضع التوقعات + وضع الاستشارة: مفعّلان`);
 });
