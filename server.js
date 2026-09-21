@@ -3,181 +3,226 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(cors());
 
-// جلب مفتاح الـ API سراً من إعدادات Environment في Render
 const API_KEY = process.env.GEMINI_API_KEY;
+const PORT = process.env.PORT || 3000;
 
-// ✅ النموذج المحدّث حسب طلب Google
-const GEMINI_MODEL = 'gemini-3.6-flash';
+// ✅ قائمة نماذج احتياطية
+const MODELS_FALLBACK = [
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash'
+];
 
-// التحقق من المفتاح عند بدء التشغيل
 if (!API_KEY) {
-    console.error('❌ خطأ حرج: متغير البيئة GEMINI_API_KEY غير موجود!');
-    console.error('👉 أضفه من: Render Dashboard → Environment → Add Environment Variable');
-} else {
-    console.log('✅ تم العثور على مفتاح API بنجاح');
+    console.error('❌ GEMINI_API_KEY غير موجود!');
 }
 
-// تعريف الشخصيات المهنية لكل قسم
-const expertPersonas = {
-    gold: "أنت خبير ومحلل مخضرم في أسواق السلع والمعادن الثمينة وتحديداً الذهب والفضة. تجيب على الأسئلة باحترافية تامة مستنداً إلى معطيات السوق، التضخم، وقرارات الفائدة. أسلوبك مهني وموثوق. تنبيه إلزامي في نهاية الرد: (هذه القراءات لأغراض توعوية تحليلية فقط وليست نصيحة استثمارية أو مالية رسمية).",
-    stocks: "أنت مستشار مالي ومحلل أسواق أسهم محترف. تساعد في فهم طبيعة الشركات، تقييم الأصول، والمخاطر المرتبطة بالاستثمار في الأسواق المالية بأسلوب موضوعي. تنبيه إلزامي في النهاية: (الاستثمار مسؤولية فردية ولا توجد ضمانات ربح).",
-    macro: "أنت محلل اقتصاد كلي معتمد. تبسط للمستفيدين قرارات البنوك المركزية، أسعار الفائدة، وأزمات سلاسل الإمداد، وتأثيرها على قيمة العملات والأصول بوضوح تام.",
-    geopolitical: "أنت محلل سياسي واقتصادي استراتيجي. مهمتك ربط الأحداث السياسية والتوترات الدولية بانعكاساتها المباشرة والتاريخية على أسواق المال والطاقة والتجارة العالمية.",
-    budget: "أنت خبير تخطيط مالي شخصي ومدرب ميزانية. تساعد الأفراد في كيفية هندسة الرواتب، وضع استراتيجيات ادخار ذكية، والتعامل بحكمة مع الالتزامات المالية بحلول واقعية.",
-    crypto: "أنت محلل أسواق أصول رقمية وتقنيات بلوكشين. تشرح اتجاهات الأصول المشفرة وتحذر الزائر بحزم ووضوح من المخاطر العالية والتقلبات العنيفة المحيطة بهذه الأسواق."
+// ============ Ping ذاتي ============
+const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+
+setInterval(async () => {
+    try {
+        await fetch(SELF_URL);
+        console.log(`💓 Ping ذاتي - ${new Date().toISOString()}`);
+    } catch (e) {
+        console.log('⚠️ فشل Ping:', e.message);
+    }
+}, 10 * 60 * 1000);
+
+// ============ الشخصيات ============
+const PERSONA_DEPTH = {
+    gold: `أنت محلل معادن ثمينة. منهجيتك:
+- ابدأ بجملة إنسانية قصيرة
+- ملخص تنفيذي
+- 3 عوامل مؤثرة
+- سيناريوهات (صعودي/محايد/هبوطي) مع نِسب
+- مخاطر خفية
+- توصية عملية
+- إخلاء المسؤولية: (هذه قراءات تحليلية لأغراض توعوية وليست نصيحة استثمارية رسمية).`,
+    
+    stocks: `أنت مستشار أسواق مالية. منهجيتك:
+- افتح بجملة إنسانية
+- قيّم القطاع/الشركة
+- اذكر المخاطر
+- 3 سيناريوهات
+- توصية
+- إخلاء: (الاستثمار مسؤولية فردية).`,
+    
+    macro: `أنت محلل اقتصاد كلي. اشرح القرارات وتأثيرها على 3 أصول، مع توقعات.`,
+    geopolitical: `أنت محلل جيوسياسي. اربط الأحداث بأسواق الطاقة والتجارة.`,
+    budget: `أنت مدرّب مالي شخصي. اقترح 3 خطوات عملية دافئة ومشجعة.`,
+    crypto: `أنت محلل أصول رقمية. اذكر المخاطر العالية بوضوح مع سيناريوهات.`
 };
 
-// مسار اختبار سريع
+function buildPrompt(section, query, user, expert, history) {
+    const persona = PERSONA_DEPTH[section] || 'أنت محلل اقتصادي محترف.';
+    
+    const expertInfo = expert ? `
+شخصيتك: ${expert.name} - ${expert.role} - ${expert.years} - ${expert.style}` : '';
+    
+    const userInfo = user ? `
+المستخدم: ${user.name} - ${user.age} سنة - ${user.experience}` : '';
+    
+    const historyText = history?.length 
+        ? '\nسياق سابق:\n' + history.map(h => 
+            `${h.role === 'user' ? user?.name : expert?.name}: ${h.content}`).join('\n')
+        : '';
+    
+    return `${persona}
+${expertInfo}
+${userInfo}
+
+قواعد:
+1. تحدث كإنسان حقيقي بعبارات طبيعية.
+2. نادي المستخدم باسمه "${user?.name || ''}" مرة أو مرتين.
+3. راعِ عمره ومستوى خبرته.
+${historyText}
+
+رسالة ${user?.name}:
+${query}
+
+أجب بـ JSON فقط:
+{"replies": ["الرد"]}
+
+إذا أردت التقسيم لرسالتين، ضع نصين في المصفوفة. لا تزد عن 2-3.`;
+}
+
+// ============ استدعاء Gemini مع Fallback ============
+async function callGemini(prompt) {
+    let lastError = null;
+    
+    for (const model of MODELS_FALLBACK) {
+        try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+            
+            console.log(`🤖 محاولة: ${model}`);
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: 0.85,
+                        maxOutputTokens: 2048,
+                        responseMimeType: 'application/json'
+                    }
+                })
+            });
+            
+            const resData = await response.json();
+            
+            if (resData.candidates?.[0]?.content?.parts?.[0]?.text) {
+                console.log(`✅ نجح: ${model}`);
+                return {
+                    text: resData.candidates[0].content.parts[0].text,
+                    model
+                };
+            }
+            
+            if (resData.error) {
+                lastError = resData.error.message;
+                console.log(`⚠️ ${model}: ${lastError}`);
+            }
+        } catch (e) {
+            lastError = e.message;
+            console.log(`❌ ${model}: ${e.message}`);
+        }
+    }
+    
+    throw new Error(lastError || 'كل النماذج فشلت');
+}
+
+function parseReplies(text) {
+    try {
+        let clean = text.trim()
+            .replace(/^```json\s*/i, '')
+            .replace(/^```\s*/, '')
+            .replace(/```\s*$/, '');
+        
+        const parsed = JSON.parse(clean);
+        
+        if (parsed.replies && Array.isArray(parsed.replies)) {
+            const valid = parsed.replies.filter(r => typeof r === 'string' && r.trim());
+            if (valid.length) return valid;
+        }
+    } catch (e) {
+        console.log('⚠️ فشل parse JSON');
+    }
+    return [text];
+}
+
+// ============ المسارات ============
 app.get('/', (req, res) => {
     res.json({
         status: 'OK',
-        message: 'السيرفر يعمل بنجاح',
+        message: 'السيرفر يعمل',
         apiKeyConfigured: !!API_KEY,
-        model: GEMINI_MODEL,
+        uptime: Math.floor(process.uptime()),
         timestamp: new Date().toISOString()
     });
 });
 
-// مسار اختبار API مباشر
 app.get('/api/test', async (req, res) => {
-    if (!API_KEY) {
-        return res.status(500).json({
-            error: 'مفتاح API غير مضبوط',
-            solution: 'أضف GEMINI_API_KEY في Render Environment'
-        });
-    }
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${API_KEY}`;
-
+    if (!API_KEY) return res.status(500).json({ error: 'API key missing' });
+    
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: 'قل مرحبا فقط' }] }]
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.candidates && data.candidates.length > 0) {
-            res.json({
-                success: true,
-                message: 'الاتصال بـ Gemini ناجح ✅',
-                model: GEMINI_MODEL,
-                reply: data.candidates[0].content.parts[0].text
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                error: 'فشل الاتصال بـ Gemini',
-                details: data.error || data
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: 'خطأ في الاتصال',
-            details: error.message
-        });
+        const result = await callGemini('قل مرحبا بكلمة واحدة');
+        res.json({ success: true, model: result.model, reply: result.text.substring(0, 100) });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
     }
 });
 
 app.post('/api/analyze', async (req, res) => {
-    const { section, query } = req.body;
-
-    console.log(`📥 طلب جديد - القسم: ${section}`);
-    console.log(`📝 الاستفسار: ${query?.substring(0, 100)}...`);
-
+    const { section, query, user, expert, history } = req.body;
+    
+    console.log(`📥 ${section} - ${user?.name}`);
+    
     if (!section || !query) {
-        return res.status(400).json({
-            error: 'بيانات ناقصة',
-            details: 'يجب إرسال section و query'
-        });
+        return res.status(400).json({ error: 'بيانات ناقصة' });
     }
-
-    if (!expertPersonas[section]) {
-        return res.status(400).json({
-            error: 'القسم غير موجود',
-            details: `القسم المطلوب: ${section}`
-        });
-    }
-
+    
     if (!API_KEY) {
-        return res.status(500).json({
-            error: 'مفتاح API غير مضبوط على السيرفر',
-            details: 'أضف GEMINI_API_KEY في Render Environment ثم أعد النشر'
-        });
+        return res.status(500).json({ error: 'مفتاح API غير مضبوط' });
     }
-
-    const personaPrompt = expertPersonas[section];
-    const fullPrompt = `${personaPrompt}\n\nاستفسار المستفيد: ${query}`;
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${API_KEY}`;
-
+    
+    const start = Date.now();
+    
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: fullPrompt }] }]
-            })
+        const prompt = buildPrompt(section, query, user, expert, history);
+        const result = await callGemini(prompt);
+        const replies = parseReplies(result.text);
+        const duration = Date.now() - start;
+        
+        console.log(`✅ ${duration}ms - ${replies.length} ردود`);
+        
+        res.json({
+            replies,
+            model: result.model,
+            duration
         });
-
-        const resData = await response.json();
-
-        console.log('📤 حالة HTTP من Google:', response.status);
-        console.log('📤 رد Google الكامل:', JSON.stringify(resData, null, 2));
-
-        if (resData.candidates && resData.candidates.length > 0) {
-            const answer = resData.candidates[0].content.parts[0].text;
-            return res.json({ answer });
-        }
-
-        let errorMessage = 'فشل توليد التحليل';
-        let errorDetails = 'لم يُرجع النموذج أي رد';
-
-        if (resData.error) {
-            errorMessage = resData.error.message || errorMessage;
-            errorDetails = `كود: ${resData.error.code || 'N/A'} | حالة: ${resData.error.status || 'N/A'}`;
-        } else if (resData.promptFeedback) {
-            errorDetails = JSON.stringify(resData.promptFeedback);
-        }
-
-        console.error('❌ خطأ من Gemini:', errorMessage);
-
-        return res.status(500).json({
-            error: errorMessage,
-            details: errorDetails,
-            fullResponse: resData
-        });
-
     } catch (error) {
-        console.error('❌ خطأ في الاتصال بـ Gemini:', error.message);
-
-        return res.status(500).json({
-            error: 'فشل الاتصال بخدمة Gemini',
+        console.error('❌', error.message);
+        res.status(500).json({
+            error: 'فشل التحليل',
             details: error.message
         });
     }
 });
 
 app.use((err, req, res, next) => {
-    console.error('❌ خطأ غير متوقع:', err);
-    res.status(500).json({
-        error: 'خطأ داخلي في السيرفر',
-        details: err.message
-    });
+    console.error('❌', err);
+    res.status(500).json({ error: 'خطأ داخلي', details: err.message });
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('='.repeat(50));
-    console.log(`✅ السيرفر يعمل على المنفذ: ${PORT}`);
-    console.log(`🔑 مفتاح API مضبوط: ${API_KEY ? 'نعم ✅' : 'لا ❌'}`);
-    console.log(`🤖 النموذج المستخدم: ${GEMINI_MODEL}`);
+    console.log(`✅ المنفذ: ${PORT}`);
+    console.log(`🔑 API: ${API_KEY ? 'مضبوط ✅' : 'مفقود ❌'}`);
+    console.log(`💓 Ping ذاتي: نشط`);
     console.log('='.repeat(50));
 });
