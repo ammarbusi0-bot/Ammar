@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
 <title>منصة استشارات forG — محللون عرب بلهجات محلية</title>
 <meta name="description" content="منصة forG: استشارات مالية وعامة من محللين عرب في 17 دولة، بلهجات محلية.">
 <meta property="og:type" content="website">
@@ -15,13 +14,10 @@
 <meta name="theme-color" content="#0a1628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="forG">
-
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a1628'/%3E%3Ctext x='50' y='70' font-family='Arial' font-size='56' font-weight='900' fill='%23d4af37' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-
 <script>
 (function prewarm() {
     const wake = () => fetch('/api/status', { cache: 'no-store' })
@@ -40,7 +36,6 @@
     } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
 })();
 </script>
-
 <style>
 :root {
     --primary: #0a1628; --secondary: #142c4a;
@@ -125,7 +120,6 @@ input, select, textarea { font-family: inherit; }
 }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .splash-msg { color: var(--accent-soft); font-size: 13px; min-height: 24px; text-align: center; }
-
 #startBtn {
     display: none; margin-top: 24px; padding: 15px 48px;
     border: none; border-radius: 14px;
@@ -141,7 +135,6 @@ input, select, textarea { font-family: inherit; }
     0%,100% { box-shadow: 0 14px 38px rgba(212,175,55,0.5); }
     50% { box-shadow: 0 18px 46px rgba(212,175,55,0.75); }
 }
-
 #musicToggle {
     position: fixed; top: 78px; left: 16px;
     width: 42px; height: 42px; border-radius: 50%;
@@ -153,7 +146,6 @@ input, select, textarea { font-family: inherit; }
 }
 #musicToggle.show { display: flex; }
 #musicToggle.muted { color: #94a3b8; border-color: rgba(148,163,184,0.4); }
-
 header {
     background: linear-gradient(135deg, rgba(5,13,24,0.98), rgba(15,37,64,0.98) 55%, rgba(10,22,40,0.98));
     color: white; padding: 20px; text-align: center;
@@ -185,7 +177,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     transition: all 0.4s var(--ease-bounce);
 }
 .theme-toggle:hover { background: rgba(212,175,55,0.25); border-color: var(--accent); }
-
 .user-bar {
     background: linear-gradient(135deg, rgba(10,22,40,0.96), rgba(20,44,74,0.96));
     color: white; padding: 12px 22px;
@@ -202,9 +193,7 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     font-weight: 800; font-size: 16px;
     box-shadow: 0 0 0 3px rgba(212,175,55,0.25), 0 6px 18px rgba(212,175,55,0.35);
 }
-
 .container { max-width: 1100px; margin: 34px auto; padding: 0 22px; }
-
 #welcome {
     background: var(--card-bg); border-radius: 28px; padding: 52px 48px 46px;
     box-shadow: var(--shadow-xl); max-width: 620px; margin: 30px auto;
@@ -245,7 +234,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     box-shadow: 0 10px 28px rgba(10,22,40,0.35);
 }
 .btn-primary:hover { transform: translateY(-3px); }
-
 #home { display: none; }
 #home.show { display: block; }
 #home h2 { font-family: 'Tajawal', sans-serif; text-align: center; margin-bottom: 10px; font-size: 26px; font-weight: 800; }
@@ -285,7 +273,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     background: #22c55e; animation: pulse-badge 2s infinite;
 }
 @keyframes pulse-badge { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
-
 #chat {
     display: none; max-width: 880px; margin: 20px auto;
     background: var(--chat-bg); border-radius: 24px;
@@ -358,7 +345,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     flex-shrink: 0;
 }
 .btn-back:hover { background: rgba(212,175,55,0.22); border-color: var(--accent); }
-
 .progress-bar { height: 3px; background: rgba(0,0,0,0.06); overflow: hidden; display: none; position: relative; z-index: 4; }
 .progress-bar.show { display: block; }
 .progress-fill {
@@ -368,7 +354,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     transition: width 0.5s var(--ease-smooth);
     animation: shimmer 1.6s linear infinite;
 }
-
 #messages {
     padding: 28px 20px 22px; min-height: 440px; max-height: 60vh;
     overflow-y: auto; background: var(--chat-bg); scroll-behavior: smooth;
@@ -412,7 +397,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
 .typing span:nth-child(2) { animation-delay: 0.16s; }
 .typing span:nth-child(3) { animation-delay: 0.32s; }
 @keyframes dotTyping { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
-
 .warning-bubble {
     background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(240,217,119,0.08));
     border: 1.5px solid rgba(212,175,55,0.4);
@@ -445,7 +429,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
 .warning-btn.switch { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); color: #0a1628; }
 .warning-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(10,22,40,0.25); }
 .warning-bubble.resolved .warning-actions { display: none; }
-
 .waiting-overlay, .closed-overlay {
     position: absolute; inset: 0;
     background: radial-gradient(circle at 50% 30%, rgba(15,37,64,0.98) 0%, rgba(5,13,24,0.99) 80%);
@@ -504,7 +487,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     box-shadow: 0 12px 32px rgba(212,175,55,0.45);
 }
 .waiting-btn.cancel:hover { transform: translateY(-4px) scale(1.02); }
-
 .countdown-display {
     display: flex; align-items: baseline; gap: 6px; justify-content: center;
     font-family: 'SF Mono', 'Consolas', monospace;
@@ -526,7 +508,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     transition: all 0.4s var(--ease-smooth);
 }
 .return-btn:hover { transform: translateY(-4px) scale(1.03); }
-
 .suggestions { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 20px; background: var(--card-bg); border-top: 1px solid var(--border); }
 .chip {
     background: transparent;
@@ -564,7 +545,6 @@ header p { font-size: 12px; color: #94a3b8; margin-top: 6px; }
 }
 .send-btn:hover:not(:disabled) { transform: scale(1.12); }
 .send-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
-
 @media (max-width: 640px) {
     .container { padding: 0 14px; margin: 16px auto; }
     #welcome { padding: 38px 26px 32px; border-radius: 22px; }
@@ -887,7 +867,7 @@ const RETURN_TIME_RANGES = [[20, 40], [30, 60], [60, 90], [60, 120]];
    الحالة العامة
    ═══════════════════════════════════════════════════════════ */
 let user = null, section = null, expert = null, history = [], busy = false;
-let progressTimer = null, delayExcuseTimer = null;
+let progressTimer = null, progressFinishTimer = null, delayExcuseTimer = null;
 let expertWarningTimer = null, expertExpireTimer = null, expertTickTimer = null;
 let waitingTickTimer = null, countdownTimer = null;
 let handoffInProgress = false;
@@ -937,7 +917,16 @@ function splitIntoMessages(text) {
     if (!text) return [];
     if (text.includes('\n\n')) return text.split(/\n\n+/).map(s => s.trim()).filter(s => s.length > 0);
     if (text.length < 180) return [text];
-    const sentences = text.split(/(?<=[.!?؟])\s+/).filter(s => s.trim());
+    let sentences;
+    try {
+        sentences = text.split(/(?<=[.!?؟])\s+/).filter(s => s.trim());
+    } catch (e) {
+        sentences = text.split(/([.!?؟])\s+/).reduce((acc, cur, i, arr) => {
+            if (i % 2 === 0 && arr[i + 1]) acc.push(cur + arr[i + 1]);
+            else if (i === arr.length - 1 && cur) acc.push(cur);
+            return acc;
+        }, []).map(s => s.trim()).filter(Boolean);
+    }
     if (sentences.length <= 1) return [text];
     const targetChunks = text.length > 500 ? 3 : 2;
     const perChunk = Math.ceil(sentences.length / targetChunks);
@@ -1003,15 +992,8 @@ const SPLASH_MSGS = [
 ];
 let splashP = 0, splashMsgIdx = 0;
 
-function finishSplash() {
-    if (splashDone) return;
-    splashDone = true;
-}
-
-function onStartClick() {
-    startMusic();
-    finishSplash();
-}
+function finishSplash() { if (splashDone) return; splashDone = true; }
+function onStartClick() { startMusic(); finishSplash(); }
 
 function startSplash() {
     const fill = document.getElementById('splashFill');
@@ -1039,12 +1021,7 @@ function startSplash() {
         }
     }, 200);
 
-    /* إظهار زر البدء بعد 4 ثوانٍ — مضمون */
-    setTimeout(() => {
-        if (!splashDone) splashEl.classList.add('waiting');
-    }, 4000);
-
-    /* إجبار الإغلاق بعد 15 ثانية */
+    setTimeout(() => { if (!splashDone) splashEl.classList.add('waiting'); }, 4000);
     setTimeout(() => {
         if (!splashDone) {
             splashDone = true;
@@ -1137,7 +1114,9 @@ function openSection(s) {
         document.getElementById('home').classList.remove('show');
         document.getElementById('chat').classList.add('show');
         setupChatForSection(s, false);
-        setTimeout(() => showClosedOverlay(closedInfo.until, closedInfo.reason), 250);
+        setTimeout(() => {
+            if (section === s) showClosedOverlay(closedInfo.until, closedInfo.reason);
+        }, 250);
         return;
     }
 
@@ -1231,7 +1210,7 @@ function setupChatForSection(s, showWelcome) {
     }
 
     setTimeout(() => {
-        if (!document.getElementById('input').disabled) document.getElementById('input').focus();
+        if (section === s && !document.getElementById('input').disabled) document.getElementById('input').focus();
     }, 600);
 }
 
@@ -1276,6 +1255,7 @@ function goBack() {
     clearInterval(waitingTickTimer);
     clearInterval(countdownTimer);
     clearTimeout(delayExcuseTimer);
+    resetProgress();
     handoffInProgress = false;
     document.getElementById('closedOverlay').classList.remove('show');
     document.getElementById('waitingOverlay').classList.remove('show');
@@ -1317,6 +1297,8 @@ function resumeExpertTimer() {
         if (!sess.warned) {
             showExpertWarning();
             expertExpireTimer = setTimeout(() => handleExpertTimeUp(), WARNING_BEFORE_MS);
+        } else if (document.getElementById('warningCard')) {
+            expertExpireTimer = setTimeout(() => handleExpertTimeUp(), WARNING_BEFORE_MS);
         } else {
             autoSwitchExpert();
         }
@@ -1352,9 +1334,10 @@ function pauseExpertTimer() {
    ═══════════════════════════════════════════════════════════ */
 async function showExpertWarning() {
     if (!section || handoffInProgress) return;
+    const secAtTime = section;
     if (document.getElementById('waitingOverlay').classList.contains('show')) return;
     if (document.getElementById('closedOverlay').classList.contains('show')) return;
-    const sess = getSession(section);
+    const sess = getSession(secAtTime);
     if (sess.warned) return;
     sess.warned = true;
 
@@ -1366,13 +1349,17 @@ async function showExpertWarning() {
     showTypingIndicator();
     await sleep(calcHumanTypingTime(warningMsg));
     hideTypingIndicator();
+    if (section !== secAtTime) return;
     addBubble('expert', warningMsg);
 
     await sleep(700);
+    if (section !== secAtTime) return;
+    if (!expert) return;
     addWarningCard(expert.name, returnMinutes);
 }
 
 function addWarningCard(expertName, returnMinutes) {
+    document.querySelectorAll('.warning-bubble').forEach(el => el.remove());
     const m = document.getElementById('messages');
     const w = document.createElement('div');
     w.className = 'warning-bubble';
@@ -1420,23 +1407,28 @@ async function handleExpertTimeUp() {
 
 async function autoSwitchExpert() {
     if (!section || handoffInProgress) return;
+    const secAtTime = section;
     handoffInProgress = true;
     resolveWarningCard('switch');
     await sleep(400);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
 
     const farewell = 'أعتذر، لازم أروح. بحوّلك لزميلي.';
     setExpertStatus('typing');
     showTypingIndicator();
     await sleep(calcHumanTypingTime(farewell));
     hideTypingIndicator();
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     addBubble('expert', farewell);
     history.push({ role: 'assistant', content: farewell, at: Date.now() });
     await sleep(1200);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     await doHandoff();
 }
 
 async function chooseWait(returnMinutes) {
     if (!section || handoffInProgress) return;
+    const secAtTime = section;
     const sess = getSession(section);
     sess.waitState = { ...sess.waitState, chosen: 'wait', returnMinutes, waitStartTime: Date.now() };
     resolveWarningCard('wait');
@@ -1447,35 +1439,41 @@ async function chooseWait(returnMinutes) {
     showTypingIndicator();
     await sleep(calcHumanTypingTime(bye));
     hideTypingIndicator();
+    if (section !== secAtTime) return;
     addBubble('expert', bye);
     history.push({ role: 'assistant', content: bye, at: Date.now() });
 
-    if (CONVERSATIONS[section]) {
-        CONVERSATIONS[section].history = history;
-        CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+    if (CONVERSATIONS[secAtTime]) {
+        CONVERSATIONS[secAtTime].history = history;
+        CONVERSATIONS[secAtTime].html = document.getElementById('messages').innerHTML;
     }
 
     await sleep(800);
+    if (section !== secAtTime) return;
     showWaitingOverlay(returnMinutes);
 }
 
 async function chooseSwitchNow() {
     if (!section || handoffInProgress) return;
+    const secAtTime = section;
     const sess = getSession(section);
     sess.waitState = { ...sess.waitState, chosen: 'switch' };
     resolveWarningCard('switch');
     handoffInProgress = true;
     pauseExpertTimer();
     await sleep(400);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
 
     const farewell = 'طيب، بحوّلك لزميلي الحين.';
     setExpertStatus('typing');
     showTypingIndicator();
     await sleep(calcHumanTypingTime(farewell));
     hideTypingIndicator();
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     addBubble('expert', farewell);
     history.push({ role: 'assistant', content: farewell, at: Date.now() });
     await sleep(1200);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     await doHandoff();
 }
 
@@ -1501,6 +1499,7 @@ async function doHandoff() {
     avatar.classList.add('switching');
     nameEl.classList.add('switching');
     await sleep(400);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     renderExpertHeader();
     avatar.classList.remove('switching');
     nameEl.classList.remove('switching');
@@ -1543,6 +1542,7 @@ async function doHandoff() {
     showTypingIndicator();
     await sleep(greetingTypingMs);
     hideTypingIndicator();
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     addBubble('expert', greeting);
     history.push({ role: 'assistant', content: greeting, at: Date.now() });
 
@@ -1570,7 +1570,7 @@ function showWaitingOverlay(returnMinutes) {
     ring.style.strokeDasharray = `${circumference} ${circumference}`;
 
     const sess = getSession(section);
-    if (!sess.waitState) return;
+    if (!sess.waitState || !sess.waitState.originalExpert) return;
     const returnAt = sess.waitState.waitStartTime + returnMinutes * 60 * 1000;
     const totalMs = returnMinutes * 60 * 1000;
     const safeTotal = Math.max(totalMs, 1000);
@@ -1594,11 +1594,13 @@ function showWaitingOverlay(returnMinutes) {
         }
     };
     tick();
+    clearInterval(waitingTickTimer);
     waitingTickTimer = setInterval(tick, 1000);
 }
 
 async function cancelWaiting() {
     if (!section) return;
+    const secAtTime = section;
     clearInterval(waitingTickTimer);
     const sess = getSession(section);
     sess.waitState = null;
@@ -1609,6 +1611,7 @@ async function cancelWaiting() {
     handoffInProgress = true;
     addSystemBubble('ألغيت الانتظار — جاري التبديل لزميل');
     await sleep(1200);
+    if (section !== secAtTime) { handoffInProgress = false; return; }
     await doHandoff();
 }
 
@@ -1638,6 +1641,7 @@ async function endWaiting(reason) {
         showTypingIndicator();
         await sleep(calcHumanTypingTime(greeting));
         hideTypingIndicator();
+        if (section !== secAtTime) return;
         addBubble('expert', greeting);
         history.push({ role: 'assistant', content: greeting, at: Date.now() });
 
@@ -1721,10 +1725,13 @@ function markLastUserRead() {
 }
 
 function startProgress() {
+    clearTimeout(progressFinishTimer);
     const bar = document.getElementById('progressBar');
     const fill = document.getElementById('progressFill');
+    fill.style.width = '0%';
     bar.classList.add('show');
     let p = 0;
+    clearInterval(progressTimer);
     progressTimer = setInterval(() => {
         p = Math.min(p + Math.random() * 4, 88);
         fill.style.width = p + '%';
@@ -1734,10 +1741,19 @@ function finishProgress() {
     clearInterval(progressTimer);
     const fill = document.getElementById('progressFill');
     fill.style.width = '100%';
-    setTimeout(() => {
+    clearTimeout(progressFinishTimer);
+    progressFinishTimer = setTimeout(() => {
         document.getElementById('progressBar').classList.remove('show');
         fill.style.width = '0%';
     }, 500);
+}
+function resetProgress() {
+    clearInterval(progressTimer);
+    clearTimeout(progressFinishTimer);
+    const pb = document.getElementById('progressBar');
+    const pf = document.getElementById('progressFill');
+    if (pb) pb.classList.remove('show');
+    if (pf) pf.style.width = '0%';
 }
 
 function showTypingIndicator() {
@@ -1862,6 +1878,7 @@ function showClosedOverlay(until, reason) {
                     showTypingIndicator();
                     await sleep(calcHumanTypingTime(greeting));
                     hideTypingIndicator();
+                    if (section !== s2) return;
                     addBubble('expert', greeting);
                     history.push({ role: 'assistant', content: greeting, at: Date.now() });
                     if (CONVERSATIONS[s2]) {
@@ -1886,11 +1903,13 @@ function scheduleDelayExcuse() {
     clearTimeout(delayExcuseTimer);
     delayExcuseTimer = setTimeout(async () => {
         if (!busy || isChatClosed()) return;
+        const secAtTime = section;
         const excuse = getDelayExcuse();
         setExpertStatus('typing');
         showTypingIndicator();
         await sleep(calcHumanTypingTime(excuse));
         hideTypingIndicator();
+        if (section !== secAtTime) return;
         addBubble('expert', excuse);
         history.push({ role: 'assistant', content: excuse, at: Date.now() });
         setExpertStatus('busy');
@@ -1939,28 +1958,26 @@ async function sendMsg() {
     startProgress();
     scheduleDelayExcuse();
 
-    const sess = getSession(section);
+    const sess = getSession(secAtTime);
     const isAfterHandoff = sess.handoffCount > 0 && history.filter(h => h.role === 'user').length === 1;
 
-    const fetchPromise = fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            section, query: text, user, expert,
-            history: history.slice(-6),
-            dialect: expert.dialect,
-            context: { type: isAfterHandoff ? 'handoff' : 'normal', gapMs: 0 }
-        })
-    });
-
     try {
-        const res = await fetchPromise;
+        const res = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                section: secAtTime, query: text, user, expert,
+                history: history.slice(-6),
+                dialect: expert.dialect,
+                context: { type: isAfterHandoff ? 'handoff' : 'normal', gapMs: 0 }
+            })
+        });
         clearTimeout(delayExcuseTimer);
         const raw = await res.text();
         let data = {};
         try { data = JSON.parse(raw); } catch (e) {
             finishProgress(); setExpertStatus('online');
-            addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
+            if (section === secAtTime) addBubble('expert', `⚠️ خطأ في الاستجابة (${res.status})`, true);
             busy = false;
             if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
             return;
@@ -1970,12 +1987,12 @@ async function sendMsg() {
             finishProgress(); setExpertStatus('online');
             busy = false;
             document.getElementById('sendBtn').disabled = false;
-            closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
+            if (section === secAtTime) closeChat(data.remainingMinutes * 60, data.reason || 'user_done');
             return;
         }
         if (!res.ok) {
             finishProgress(); setExpertStatus('online');
-            addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
+            if (section === secAtTime) addBubble('expert', `⚠️ ${data.error || 'حدث خطأ'}`, true);
             busy = false;
             if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
             return;
@@ -2021,18 +2038,20 @@ async function sendMsg() {
             }
         }
 
-        if (section && CONVERSATIONS[section]) {
-            CONVERSATIONS[section].history = history;
-            CONVERSATIONS[section].html = document.getElementById('messages').innerHTML;
+        if (section === secAtTime && CONVERSATIONS[secAtTime]) {
+            CONVERSATIONS[secAtTime].history = history;
+            CONVERSATIONS[secAtTime].html = document.getElementById('messages').innerHTML;
         }
 
         if (data.closed && data.cooldownMinutes) {
-            setTimeout(() => closeChat(data.cooldownMinutes * 60, data.closeReason), 1200);
+            setTimeout(() => {
+                if (section === secAtTime) closeChat(data.cooldownMinutes * 60, data.closeReason);
+            }, 1200);
         }
     } catch (e) {
         clearTimeout(delayExcuseTimer);
         finishProgress(); setExpertStatus('online');
-        addBubble('expert', `⚠️ تعذر الاتصال بالخادم.`, true);
+        if (section === secAtTime) addBubble('expert', `⚠️ تعذر الاتصال بالخادم.`, true);
     } finally {
         busy = false;
         if (!isChatClosed()) document.getElementById('sendBtn').disabled = false;
@@ -2054,7 +2073,6 @@ document.addEventListener('DOMContentLoaded', () => {
             inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
         });
     }
-    /* بدء الـ splash */
     startSplash();
 });
 
@@ -2064,15 +2082,11 @@ document.addEventListener('visibilitychange', () => {
     else resumeExpertTimer();
 });
 
-window.addEventListener('beforeunload', () => {
-    pauseExpertTimer();
-});
+window.addEventListener('beforeunload', () => { pauseExpertTimer(); });
 
-/* بدء الموسيقى عند أول تفاعل */
 ['touchstart', 'click', 'keydown', 'pointerdown'].forEach(evt => {
     document.addEventListener(evt, function firstTouch() { startMusic(); }, { once: true, passive: true });
 });
 </script>
-
 </body>
 </html>
