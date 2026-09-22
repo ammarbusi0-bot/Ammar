@@ -1,13 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.5.1 "Human+405-Fix+URL"
+ *  منصة استشارات forG — Strategy-Pro v15.5.2 "OPTIONS-First"
  *  ملف واحد + index.html
- *
- *  التشغيل:
- *    npm i express cors
- *    export GEMINI_API_KEY="مفتاحك"
- *    export PUBLIC_URL="https://ammar-e0tp.onrender.com"
- *    node server.js
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -26,7 +20,7 @@ app.disable('x-powered-by');
 app.disable('etag');
 
 /* ──────────────────────────────────────────────
-   ✅ 1) Request Logger
+   1) Request Logger
    ────────────────────────────────────────────── */
 app.use((req, res, next) => {
     const start = Date.now();
@@ -38,7 +32,46 @@ app.use((req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   JSON Parser + Parse-Error Handler
+   2) CORS — ✅ الترتيب مُصلَح (OPTIONS أولاً)
+   ────────────────────────────────────────────── */
+const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
+const CORS_ORIGINS = RAW_ORIGINS
+    ? RAW_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+    : '*';
+
+const corsOptions = {
+    origin: CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS,
+    methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    exposedHeaders: ['X-Total-Count'],
+    maxAge: 86400,
+    credentials: CORS_ORIGINS !== '*',
+    optionsSuccessStatus: 204,
+    preflightContinue: false
+};
+
+/* ✅ معالج OPTIONS أولاً — قبل أي middleware آخر */
+app.options('*', cors(corsOptions));
+
+/* ✅ ثم CORS لباقي الطلبات */
+app.use(cors(corsOptions));
+
+/* ──────────────────────────────────────────────
+   3) رؤوس أمان
+   ────────────────────────────────────────────── */
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+    next();
+});
+
+/* ──────────────────────────────────────────────
+   4) JSON Parser + Parse-Error
    ────────────────────────────────────────────── */
 app.use(express.json({ limit: '1mb' }));
 
@@ -53,45 +86,11 @@ app.use((err, req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   ✅ 2) CORS محسّن
-   ────────────────────────────────────────────── */
-const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
-const CORS_ORIGINS = RAW_ORIGINS
-    ? RAW_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
-    : '*';
-
-const corsOptions = {
-    origin: CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS,
-    methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['X-Total-Count'],
-    maxAge: 86400,
-    credentials: CORS_ORIGINS !== '*',
-    optionsSuccessStatus: 204
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-/* ✅ 3) رؤوس أمان + HSTS */
-app.use((req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-    if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
-        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-    }
-    next();
-});
-
-/* ──────────────────────────────────────────────
-   ✅ الإعدادات العامة + PUBLIC_URL
+   الإعدادات العامة
    ────────────────────────────────────────────── */
 const API_KEY = process.env.GEMINI_API_KEY;
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HTML_FILE = path.join(__dirname, 'index.html');
-/* ✅ جديد: رابط الموقع العام */
 const PUBLIC_URL = (process.env.PUBLIC_URL || 'https://ammar-e0tp.onrender.com').replace(/\/+$/, '');
 
 const INITIAL_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
@@ -1241,6 +1240,24 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   ✅ Diagnostic Endpoint — للتشخيص فقط
+   ═══════════════════════════════════════════════════════════════ */
+app.all('/api/debug', (req, res) => {
+    res.json({
+        method: req.method,
+        path: req.path,
+        url: req.url,
+        headers: req.headers,
+        body: req.body,
+        ip: req.ip,
+        protocol: req.protocol,
+        secure: req.secure,
+        xForwardedProto: req.headers['x-forwarded-proto'],
+        timestamp: new Date().toISOString()
+    });
+});
+
+/* ═══════════════════════════════════════════════════════════════
    Endpoints
    ═══════════════════════════════════════════════════════════════ */
 
@@ -1248,7 +1265,7 @@ app.get('/', (req, res) => {
     try {
         if (fs.existsSync(HTML_FILE)) {
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
-            res.setHeader('Cache-Control', 'public, max-age=300');
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
             return res.sendFile(HTML_FILE);
         }
     } catch (e) {
@@ -1257,7 +1274,7 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5.1',
+        version: 'v15.5.2',
         publicUrl: PUBLIC_URL,
         warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
@@ -1272,13 +1289,13 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5.1-human-405fix-url',
-        /* ✅ جديد: الرابط العام */
+        version: 'v15.5.2-options-first',
         publicUrl: PUBLIC_URL,
         endpoints: {
             root: `${PUBLIC_URL}/`,
             status: `${PUBLIC_URL}/api/status`,
             ping: `${PUBLIC_URL}/ping`,
+            debug: `${PUBLIC_URL}/api/debug`,
             analyze: `${PUBLIC_URL}/api/analyze`,
             handoff: `${PUBLIC_URL}/api/handoff`,
             feedback: `${PUBLIC_URL}/api/feedback`
@@ -1295,7 +1312,8 @@ app.get('/api/status', (req, res) => {
             'explicit_options_cors', 'head_support', 'multi_question_detection',
             'typo_detection', 'yes_no_followup', 'topic_threading',
             'cumulative_tiredness', 'thinking_out_loud', 'empathy_first',
-            'noticing_details', 'extended_emotions', 'public_url_config'
+            'noticing_details', 'extended_emotions', 'public_url_config',
+            'options_first_order', 'debug_endpoint'
         ],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
@@ -1552,6 +1570,7 @@ const REGISTERED_ROUTES = [
     { path: '/',             methods: ['GET', 'HEAD', 'OPTIONS'] },
     { path: '/api/status',   methods: ['GET', 'HEAD', 'OPTIONS'] },
     { path: '/ping',         methods: ['GET', 'HEAD', 'OPTIONS'] },
+    { path: '/api/debug',    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'] },
     { path: '/api/feedback', methods: ['POST', 'OPTIONS'] },
     { path: '/api/handoff',  methods: ['POST', 'OPTIONS'] },
     { path: '/api/analyze',  methods: ['POST', 'OPTIONS'] }
@@ -1584,7 +1603,7 @@ app.use((req, res) => {
         path: req.path,
         method: req.method,
         publicUrl: PUBLIC_URL,
-        hint: 'تأكد من المسار: /api/analyze, /api/handoff, /api/feedback, /api/status, /ping, /'
+        hint: 'تأكد من المسار: /api/analyze, /api/handoff, /api/feedback, /api/status, /ping, /api/debug, /'
     });
 });
 
@@ -1623,7 +1642,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM', 0));
 process.on('SIGINT',  () => gracefulShutdown('SIGINT',  0));
 
 server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ منصة استشارات forG — v15.5.1 — البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — v15.5.2 — البورت ${PORT}`);
     console.log(`🌐 URL: ${PUBLIC_URL}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
     console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2, '0')}`);
@@ -1632,5 +1651,6 @@ server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`✅ trust proxy مفعّل`);
     console.log(`✅ CORS: ${CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS.join(', ')}`);
-    console.log(`✅ OPTIONS handler مفعّل — 405 مُصلَح`);
+    console.log(`✅ OPTIONS-first order — preflight مُصلَح`);
+    console.log(`✅ Debug endpoint: /api/debug`);
 });
