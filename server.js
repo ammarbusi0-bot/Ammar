@@ -1,11 +1,12 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.5 "Human+405-Fix"
+ *  منصة استشارات forG — Strategy-Pro v15.5.1 "Human+405-Fix+URL"
  *  ملف واحد + index.html
  *
  *  التشغيل:
  *    npm i express cors
  *    export GEMINI_API_KEY="مفتاحك"
+ *    export PUBLIC_URL="https://ammar-e0tp.onrender.com"
  *    node server.js
  * ═══════════════════════════════════════════════════════════════
  */
@@ -25,7 +26,7 @@ app.disable('x-powered-by');
 app.disable('etag');
 
 /* ──────────────────────────────────────────────
-   ✅ 1) Request Logger — مفيد جداً لتشخيص 405
+   ✅ 1) Request Logger
    ────────────────────────────────────────────── */
 app.use((req, res, next) => {
     const start = Date.now();
@@ -52,7 +53,7 @@ app.use((err, req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   ✅ 2) CORS محسّن — يحل 405 في preflight
+   ✅ 2) CORS محسّن
    ────────────────────────────────────────────── */
 const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
 const CORS_ORIGINS = RAW_ORIGINS
@@ -70,10 +71,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-/* ✅ مهم جداً: معالج OPTIONS صريح لكل المسارات */
 app.options('*', cors(corsOptions));
 
-/* ✅ 3) رؤوس أمان + HSTS لمنع redirect يفسد POST */
+/* ✅ 3) رؤوس أمان + HSTS */
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -86,11 +86,13 @@ app.use((req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   الإعدادات العامة
+   ✅ الإعدادات العامة + PUBLIC_URL
    ────────────────────────────────────────────── */
 const API_KEY = process.env.GEMINI_API_KEY;
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HTML_FILE = path.join(__dirname, 'index.html');
+/* ✅ جديد: رابط الموقع العام */
+const PUBLIC_URL = (process.env.PUBLIC_URL || 'https://ammar-e0tp.onrender.com').replace(/\/+$/, '');
 
 const INITIAL_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 let availableModels = [...INITIAL_MODELS];
@@ -313,11 +315,9 @@ function createSession() {
         nameUsageCount: 0, messagesSinceLastName: 0, lastMood: null,
         energy: 1.0, lastResponseMode: null, topicsDiscussed: [],
         clarifyCount: 0,
-        /* ✅ جديد: خيط الحوار */
         lastTopic: null,
         lastUserIntent: null,
         askedClarifyAt: 0,
-        /* ✅ جديد: تعب تدريجي */
         tiredness: 0
     };
 }
@@ -434,7 +434,6 @@ const PLATFORM_KNOWLEDGE = `
 ## فريق العمل: 40+ محلل من 17 دولة عربية.
 `;
 
-/* ✅ مشاعر موسّعة */
 const EMOTIONAL_REACTIONS = {
     worried:    'قلقك مفهوم، لا تتخذ قراراً تحت ضغط.',
     excited:    'حماسك مفهوم، بس خلنا نهدأ شوي.',
@@ -463,22 +462,17 @@ function detectEmotion(query) {
     return null;
 }
 
-/* ✅ جديد: كشف الأسئلة المتعددة */
 function detectMultiQuestions(text) {
     if (typeof text !== 'string') return [];
-    /* عدّ علامات الاستفهام والكلمات الاستفهامية */
     const questionMarks = (text.match(/[؟?]/g) || []).length;
     const questionWords = (text.match(/\b(وش|شو|ايش|كيف|ليه|ليش|متى|وين|مين|كم|هل|which|what|how|why|when|where|who)\b/gi) || []).length;
-    /* لو فيه أكثر من علامتي استفهام أو كلمتين استفهاميتين → أسئلة متعددة */
     if (questionMarks >= 2 || questionWords >= 3) {
-        /* حاول تقسيم الأسئلة */
         const parts = text.split(/[؟?]/).map(s => s.trim()).filter(s => s.length > 3);
         if (parts.length >= 2) return parts.slice(0, 3);
     }
     return [];
 }
 
-/* ✅ جديد: كشف الأخطاء الإملائية الشائعة في الاستفسار */
 function detectTypos(text) {
     if (typeof text !== 'string') return [];
     const commonTypos = [
@@ -550,7 +544,6 @@ function analyzeIntent(q, history) {
     const isUnclear = !hasHistory && qLen < 12 && /^(ايش|وش|شو|كيف|ليه|ليش|متى|وين|مين|هه|هاه)[\s؟?]*$/i.test(trimmed);
     const isMetaQuestion = /^(انت مين|انت ايش|شو انت|وش انت|ايش انت|من انت|من أنت|انت منو|مين انت|مين أنت)[\s؟?]*$/i.test(trimmed) && !isAboutSelf;
 
-    /* ✅ جديد */
     const isYesNo = /^(نعم|لا|أكيد|ايوه|ايوا|ايه|مو اكيد|ما ادري|يمكن|ممكن|بالتأكيد|طبعا|لا طبعا|yes|no|ok)[\s!.,؟?]*$/i.test(trimmed);
     const questions = detectMultiQuestions(trimmed);
     const isMultiQuestion = questions.length >= 2;
@@ -611,7 +604,6 @@ const MOODS = {
     serious:       { lenMod: 1.0, style: 'جدي' },
     contemplative: { lenMod: 1.3, style: 'يتأمل' },
     direct:        { lenMod: 0.7, style: 'مباشر' },
-    /* ✅ جديد */
     tired:         { lenMod: 0.75, style: 'متعب، مختصر' },
     engaged:       { lenMod: 1.2, style: 'متفاعل' },
     focused:       { lenMod: 0.9, style: 'مركّز' }
@@ -651,7 +643,6 @@ function computeEnergy(session = null) {
     else if (hour >= 21 && hour < 24) base = 1.0;
     else base = 0.65;
 
-    /* ✅ جديد: تعب تراكمي حسب عدد الرسائل */
     if (session) {
         const tiredness = Math.min(0.25, (session.messageCount || 0) * 0.015);
         base -= tiredness;
@@ -683,15 +674,12 @@ const RESPONSE_MODES = {
 };
 
 function buildPersona(history, session, intent) {
-    /* ✅ تعديل المزاج بناءً على الوقت والتعب */
     const hour = getSaudiHour();
     const isLateNight = hour >= 23 || hour < 6;
     const availableMoods = MOOD_KEYS.filter(m => {
         if (m === session.lastMood) return false;
         if (session.usedOpeners.includes('m_' + m)) return false;
-        /* لو متأخر جداً، خفف من الحماس */
         if (isLateNight && (m === 'excited' || m === 'playful')) return false;
-        /* لو المستخدم متعب */
         if (session.messageCount > 15 && m === 'engaged') return false;
         return true;
     });
@@ -732,7 +720,6 @@ const HUMAN_TOUCHES = {
     tangent: ['على فكرة،','بالمناسبة،','تدري شي؟'],
     opinion: ['شخصياً،','رأيي المتواضع،','من تجربتي،','بصراحة أنا أشوف'],
     rhetorical: ['تدري وش المشكلة؟','عرفت ليش؟','تشوف المشكلة وين؟'],
-    /* ✅ جديد */
     thinking: ['خلني أفكر بصوت عالي.','إذا تسمح لي أفكر معك.','خلنا نفككها مع بعض.'],
     empathetic: ['أحس إن الموضوع مهم لك.','واضح إن هالشي يشغلك.','مفهوم إنك تبي تعرف.'],
     curious: ['عندي سؤال قبل لا أجاوب.','بس قبل، خلني أسألك شغلة.','ممكن سؤال صغير؟'],
@@ -744,7 +731,6 @@ function pickHumanTouch(mood, mode, intent = {}) {
     const roll = Math.random();
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 
-    /* ✅ أولويات خاصة */
     if (intent.isMultiQuestion && mode !== 'terse') {
         if (roll < 0.4) return { type: 'thinking', text: pick(HUMAN_TOUCHES.thinking) };
     }
@@ -873,13 +859,11 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         platformMode = `\n# 🏢 معرفة المنصة\nاعتمد على PLATFORM_KNOWLEDGE.`;
     }
 
-    /* ✅ جديد: معالجة الأسئلة المتعددة */
     let multiQuestionSection = '';
     if (intent.isMultiQuestion) {
         multiQuestionSection = `\n# 🎯 المستخدم سأل عدة أسئلة\nالأسئلة المكتشفة:\n${intent.questions.map((q, i) => `${i+1}. ${safeStr(q, 150)}`).join('\n')}\n**عالج كل سؤال بفقرة قصيرة منفصلة**.`;
     }
 
-    /* ✅ جديد: ملاحظة أخطاء إملائية */
     let typosSection = '';
     if (intent.hasTypos) {
         typosSection = `\n# ✍️ لاحظت خطأ إملائي\nالمستخدم كتب مثلاً: "${intent.typos[0].wrong.source}" والصحيح "${intent.typos[0].right}".\n**لا تصحح له بلطف** — فقط افهم قصده وأجب.`;
@@ -896,7 +880,6 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     else if (intent.isFollowUp) specialContext = `\n# 🎯 متابعة\nاربط بما سبق.`;
     else if (intent.isYesNo) specialContext = `\n# 🎯 رد قصير (نعم/لا)\n**اربط بسؤالك السابق** — لا تتصرف كأنها رسالة جديدة.`;
 
-    /* ✅ جديد: خيط الحوار */
     let threadSection = '';
     if (session && session.lastTopic && hasHistory) {
         threadSection = `\n# 🧵 خيط الحوار\nآخر موضوع: **${session.lastTopic}**\nاربط ردك به إن كان مناسباً.`;
@@ -1258,7 +1241,7 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ Endpoints — HEAD + GET + POST
+   Endpoints
    ═══════════════════════════════════════════════════════════════ */
 
 app.get('/', (req, res) => {
@@ -1274,13 +1257,13 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5',
+        version: 'v15.5.1',
+        publicUrl: PUBLIC_URL,
         warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
     });
 });
 
-/* ✅ HEAD لـ / يُدار تلقائياً بواسطة Express، لكن نضيف للمسارات الديناميكية */
 app.head('/', (req, res) => res.status(200).end());
 app.head('/api/status', (req, res) => res.status(200).end());
 app.head('/ping', (req, res) => res.status(200).end());
@@ -1289,7 +1272,17 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5-human-405fix',
+        version: 'v15.5.1-human-405fix-url',
+        /* ✅ جديد: الرابط العام */
+        publicUrl: PUBLIC_URL,
+        endpoints: {
+            root: `${PUBLIC_URL}/`,
+            status: `${PUBLIC_URL}/api/status`,
+            ping: `${PUBLIC_URL}/ping`,
+            analyze: `${PUBLIC_URL}/api/analyze`,
+            handoff: `${PUBLIC_URL}/api/handoff`,
+            feedback: `${PUBLIC_URL}/api/feedback`
+        },
         features: [
             'human_response_modes', 'mood_based_length', 'energy_simulation',
             'rate_limit', 'light_prompt', 'arabic_normalize',
@@ -1299,11 +1292,10 @@ app.get('/api/status', (req, res) => {
             'gender_heuristic_fix', 'cooldown_order_fix', 'input_validation',
             'json_error_handler', 'name_rule_unified', 'global_close_token',
             'model_race_fixed', 'safe_json_parse', 'graceful_shutdown',
-            /* ✅ جديد */
             'explicit_options_cors', 'head_support', 'multi_question_detection',
             'typo_detection', 'yes_no_followup', 'topic_threading',
             'cumulative_tiredness', 'thinking_out_loud', 'empathy_first',
-            'noticing_details', 'extended_emotions'
+            'noticing_details', 'extended_emotions', 'public_url_config'
         ],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
@@ -1315,7 +1307,7 @@ app.get('/api/status', (req, res) => {
     });
 });
 
-app.get('/ping', (req, res) => res.json({ pong: true, ts: Date.now() }));
+app.get('/ping', (req, res) => res.json({ pong: true, ts: Date.now(), url: PUBLIC_URL }));
 
 app.post('/api/feedback', rateLimit, (req, res) => {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
@@ -1445,8 +1437,6 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
     session.lastActivity = Date.now();
     session.messageCount++;
     session.messagesSinceLastName++;
-
-    /* ✅ جديد: تحديث التعب */
     session.tiredness = Math.min(1.0, (session.messageCount || 0) * 0.02);
 
     const userGender = detectUserGender(user && user.firstName);
@@ -1461,7 +1451,6 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
 
     if (intent.shouldClarify) session.clarifyCount = (session.clarifyCount || 0) + 1;
 
-    /* ✅ جديد: تحديث خيط الحوار */
     if (intent.styleHint && intent.styleHint !== 'default' && !session.topicsDiscussed.includes(intent.styleHint)) {
         session.topicsDiscussed.push(intent.styleHint);
         if (session.topicsDiscussed.length > 10) session.topicsDiscussed.shift();
@@ -1557,10 +1546,8 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ 4) 405 Handler قبل 404
+   405 Handler قبل 404
    ═══════════════════════════════════════════════════════════════ */
-
-/* مجموعة المسارات المسجّلة — لتمييز 405 عن 404 */
 const REGISTERED_ROUTES = [
     { path: '/',             methods: ['GET', 'HEAD', 'OPTIONS'] },
     { path: '/api/status',   methods: ['GET', 'HEAD', 'OPTIONS'] },
@@ -1571,7 +1558,6 @@ const REGISTERED_ROUTES = [
 ];
 
 app.use((req, res, next) => {
-    /* تجاهل OPTIONS — يُدار من cors */
     if (req.method === 'OPTIONS') return next();
 
     const matched = REGISTERED_ROUTES.find(r =>
@@ -1591,17 +1577,18 @@ app.use((req, res, next) => {
     next();
 });
 
-/* ✅ 404 للأخير */
+/* 404 */
 app.use((req, res) => {
     res.status(404).json({
         error: 'not_found',
         path: req.path,
         method: req.method,
+        publicUrl: PUBLIC_URL,
         hint: 'تأكد من المسار: /api/analyze, /api/handoff, /api/feedback, /api/status, /ping, /'
     });
 });
 
-/* Error middleware في النهاية */
+/* Error middleware */
 app.use((err, req, res, next) => {
     console.error('🚨 Unhandled error:', err && err.message);
     if (res.headersSent) return next(err);
@@ -1636,7 +1623,8 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM', 0));
 process.on('SIGINT',  () => gracefulShutdown('SIGINT',  0));
 
 server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ منصة استشارات forG — v15.5 — البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — v15.5.1 — البورت ${PORT}`);
+    console.log(`🌐 URL: ${PUBLIC_URL}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
     console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2, '0')}`);
     console.log(`🔑 GEMINI_API_KEY: ${API_KEY ? '✅ موجود' : '❌ مفقود'}`);
