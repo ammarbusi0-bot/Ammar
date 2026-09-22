@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.4 "Zero-Bug Edition"
+ *  منصة استشارات forG — Strategy-Pro v15.5 "Human+405-Fix"
  *  ملف واحد + index.html
  *
  *  التشغيل:
@@ -17,52 +17,71 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 
-/* ✅ fetch المدمج (Node 18+) */
 const fetchImpl = typeof fetch === 'function' ? fetch : null;
 
 const app = express();
-
-/* ✅ ضروري خلف Render/Railway/Heroku */
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
+app.disable('etag');
 
 /* ──────────────────────────────────────────────
-   JSON Parser + Parse-Error Handler (يجب أن يتلاصقا)
+   ✅ 1) Request Logger — مفيد جداً لتشخيص 405
+   ────────────────────────────────────────────── */
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const ms = Date.now() - start;
+        console.log(`${req.method} ${req.originalUrl} → ${res.statusCode} (${ms}ms)`);
+    });
+    next();
+});
+
+/* ──────────────────────────────────────────────
+   JSON Parser + Parse-Error Handler
    ────────────────────────────────────────────── */
 app.use(express.json({ limit: '1mb' }));
 
 app.use((err, req, res, next) => {
-    if (err && err.type === 'entity.parse.failed') {
+    if (err && err.type === 'entity.parse.failed')
         return res.status(400).json({ error: 'invalid_json', message: 'الـ JSON المرسل غير صالح' });
-    }
-    if (err && err.type === 'entity.too.large') {
+    if (err && err.type === 'entity.too.large')
         return res.status(413).json({ error: 'payload_too_large', message: 'الحجم أكبر من المسموح' });
-    }
-    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err)
         return res.status(400).json({ error: 'invalid_json', message: 'الـ JSON المرسل غير صالح' });
-    }
     return next(err);
 });
 
 /* ──────────────────────────────────────────────
-   CORS
+   ✅ 2) CORS محسّن — يحل 405 في preflight
    ────────────────────────────────────────────── */
 const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
 const CORS_ORIGINS = RAW_ORIGINS
     ? RAW_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
     : '*';
 
-const corsOptions = CORS_ORIGINS === '*'
-    ? { origin: '*' }
-    : { origin: CORS_ORIGINS, credentials: true };
-app.use(cors(corsOptions));
+const corsOptions = {
+    origin: CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS,
+    methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['X-Total-Count'],
+    maxAge: 86400,
+    credentials: CORS_ORIGINS !== '*',
+    optionsSuccessStatus: 204
+};
 
-/* ✅ رؤوس أمان أساسية */
+app.use(cors(corsOptions));
+/* ✅ مهم جداً: معالج OPTIONS صريح لكل المسارات */
+app.options('*', cors(corsOptions));
+
+/* ✅ 3) رؤوس أمان + HSTS لمنع redirect يفسد POST */
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
     next();
 });
 
@@ -78,7 +97,7 @@ let availableModels = [...INITIAL_MODELS];
 let modelsLastFetched = 0;
 let modelsInitPromise = null;
 
-if (!API_KEY) console.error('❌ GEMINI_API_KEY غير موجود! ضعه في متغيرات البيئة.');
+if (!API_KEY) console.error('❌ GEMINI_API_KEY غير موجود!');
 if (!fetchImpl) console.error('❌ fetch غير متوفر! استخدم Node 18+.');
 
 /* ──────────────────────────────────────────────
@@ -141,7 +160,6 @@ async function refreshModels(force = false) {
     }
 }
 
-/* ✅ منع race condition: كل الطلبات تنتظر نفس الـ Promise الأولي */
 function ensureModelsLoaded() {
     if (!modelsInitPromise) {
         modelsInitPromise = refreshModels(true).catch(() => {});
@@ -150,7 +168,7 @@ function ensureModelsLoaded() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Rate Limiter (in-memory؛ للـ single-instance أو sticky sessions)
+   Rate Limiter
    ═══════════════════════════════════════════════════════════════ */
 const RATE_LIMIT = new Map();
 const RATE_WINDOW_MS = 60 * 1000;
@@ -253,10 +271,7 @@ function detectUserGender(firstName) {
 
     if (/^(Sara|Nora|Layla|Mariam|Fatima|Aisha|Rania|Dina|Dana|Hind|Mona|Noor|Huda|Salma|Yasmin|Jana|Lina|Tala|Yara)$/i.test(firstWord)) return 'female';
     if (/^(Ahmed|Ahmad|Mohamed|Khalid|Omar|Tariq|Faisal|Fahd|Saad|Bader|Sultan|Majed|Yousef|Rami|Sami|Hassan|Ali|Mustafa|Karim|Ammar)$/i.test(firstWord)) return 'male';
-
-    /* ✅ فحص التاء المربوطة في الاسم الأصلي فقط */
     if (/ة$/.test(firstWord) && firstWord.length > 2) return 'female';
-
     return 'unknown';
 }
 
@@ -297,27 +312,27 @@ function createSession() {
         rudeCount: 0, trollingCount: 0, offTopicStreak: 0, aiCloseAttempts: 0,
         nameUsageCount: 0, messagesSinceLastName: 0, lastMood: null,
         energy: 1.0, lastResponseMode: null, topicsDiscussed: [],
-        clarifyCount: 0
+        clarifyCount: 0,
+        /* ✅ جديد: خيط الحوار */
+        lastTopic: null,
+        lastUserIntent: null,
+        askedClarifyAt: 0,
+        /* ✅ جديد: تعب تدريجي */
+        tiredness: 0
     };
 }
 
 function getSession(userKey) {
     let s = SESSIONS.get(userKey);
     if (s) return s;
-
-    /* ✅ evict الأقدم بـlastActivity عند الوصول للحدّ */
     if (SESSIONS.size >= MAX_SESSIONS) {
         let oldestKey = null;
         let oldestTime = Infinity;
         for (const [k, v] of SESSIONS.entries()) {
-            if (v.lastActivity < oldestTime) {
-                oldestTime = v.lastActivity;
-                oldestKey = k;
-            }
+            if (v.lastActivity < oldestTime) { oldestTime = v.lastActivity; oldestKey = k; }
         }
         if (oldestKey) SESSIONS.delete(oldestKey);
     }
-
     s = createSession();
     SESSIONS.set(userKey, s);
     return s;
@@ -419,13 +434,18 @@ const PLATFORM_KNOWLEDGE = `
 ## فريق العمل: 40+ محلل من 17 دولة عربية.
 `;
 
+/* ✅ مشاعر موسّعة */
 const EMOTIONAL_REACTIONS = {
-    worried: 'قلقك مفهوم، لا تتخذ قراراً تحت ضغط.',
-    excited: 'حماسك مفهوم، بس خلنا نهدأ شوي.',
-    confused: 'الموضوع أبسط مما يبدو.',
+    worried:    'قلقك مفهوم، لا تتخذ قراراً تحت ضغط.',
+    excited:    'حماسك مفهوم، بس خلنا نهدأ شوي.',
+    confused:   'الموضوع أبسط مما يبدو.',
     frustrated: 'إحباطك مفهوم، السوق مرهق.',
-    sad: 'أفهم شعورك.',
-    angry: 'أفهم إنك متضايق.'
+    sad:        'أفهم شعورك.',
+    angry:      'أفهم إنك متضايق.',
+    tired:      'يبدو إنك متعب، خلنا نأخذها بهدوء.',
+    hopeful:    'أحب هالتفاؤل، بس خلنا نحسبها صح.',
+    skeptical:  'شكّك في محله، الحذر مهم.',
+    overwhelmed:'أحس إن الموضوع كبير عليك شوي. خلنا نفككه.'
 };
 
 function detectEmotion(query) {
@@ -436,7 +456,48 @@ function detectEmotion(query) {
     if (/(غاضب|معصب|منرفز|مضايق)/i.test(q)) return 'angry';
     if (/(حزين|زعلان|مكسور|مكتئب)/i.test(q)) return 'sad';
     if (/(زهقت|تعبت|يئست|خسرت|محبط)/i.test(q)) return 'frustrated';
+    if (/(تعبان|مرهق|ما فيني|مو قادر)/i.test(q)) return 'tired';
+    if (/(متفائل|إن شاء الله خير|فرصة حلوة)/i.test(q)) return 'hopeful';
+    if (/(ما أثق|مشكك|مو مقتنع|أشك)/i.test(q)) return 'skeptical';
+    if (/(ضغط|مضغوط|مو قادر أتابع|كثير علي)/i.test(q)) return 'overwhelmed';
     return null;
+}
+
+/* ✅ جديد: كشف الأسئلة المتعددة */
+function detectMultiQuestions(text) {
+    if (typeof text !== 'string') return [];
+    /* عدّ علامات الاستفهام والكلمات الاستفهامية */
+    const questionMarks = (text.match(/[؟?]/g) || []).length;
+    const questionWords = (text.match(/\b(وش|شو|ايش|كيف|ليه|ليش|متى|وين|مين|كم|هل|which|what|how|why|when|where|who)\b/gi) || []).length;
+    /* لو فيه أكثر من علامتي استفهام أو كلمتين استفهاميتين → أسئلة متعددة */
+    if (questionMarks >= 2 || questionWords >= 3) {
+        /* حاول تقسيم الأسئلة */
+        const parts = text.split(/[؟?]/).map(s => s.trim()).filter(s => s.length > 3);
+        if (parts.length >= 2) return parts.slice(0, 3);
+    }
+    return [];
+}
+
+/* ✅ جديد: كشف الأخطاء الإملائية الشائعة في الاستفسار */
+function detectTypos(text) {
+    if (typeof text !== 'string') return [];
+    const commonTypos = [
+        { wrong: /دهب/gi, right: 'ذهب' },
+        { wrong: /زلم/gi, right: 'ذهب' },
+        { wrong: /اسهمم/gi, right: 'أسهم' },
+        { wrong: /عمله/gi, right: 'عملة' },
+        { wrong: /دولر/gi, right: 'دولار' },
+        { wrong: /ريالل/gi, right: 'ريال' },
+        { wrong: /تضخمم/gi, right: 'تضخم' },
+        { wrong: /فايده/gi, right: 'فائدة' },
+        { wrong: /استثمارر/gi, right: 'استثمار' },
+        { wrong: /سووق/gi, right: 'سوق' }
+    ];
+    const found = [];
+    for (const t of commonTypos) {
+        if (t.wrong.test(text)) found.push(t);
+    }
+    return found;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -487,13 +548,20 @@ function analyzeIntent(q, history) {
     const isGeneralQuestion = /^(كم الساعة|الساعة كم|كم الوقت|ايش الوقت|وش الوقت|شو الوقت|شو الساعة|ايش الساعه|وش الساعه|شو الساعه|كام الساعه|ايش التاريخ|وش التاريخ|كم التاريخ|ايش تاريخ اليوم|وش تاريخ اليوم|اليوم كم|كم اليوم|ايش اليوم|وش اليوم|شو اليوم|ايش الشهر|وش الشهر|كم الشهر|ايش السنه|وش السنه|ايش السنة|كم السنة|كيف الطقس|ايش الجو|وش الجو|شو الجو)[\s؟?.!]*$/i.test(trimmed);
 
     const isUnclear = !hasHistory && qLen < 12 && /^(ايش|وش|شو|كيف|ليه|ليش|متى|وين|مين|هه|هاه)[\s؟?]*$/i.test(trimmed);
-
     const isMetaQuestion = /^(انت مين|انت ايش|شو انت|وش انت|ايش انت|من انت|من أنت|انت منو|مين انت|مين أنت)[\s؟?]*$/i.test(trimmed) && !isAboutSelf;
 
+    /* ✅ جديد */
+    const isYesNo = /^(نعم|لا|أكيد|ايوه|ايوا|ايه|مو اكيد|ما ادري|يمكن|ممكن|بالتأكيد|طبعا|لا طبعا|yes|no|ok)[\s!.,؟?]*$/i.test(trimmed);
+    const questions = detectMultiQuestions(trimmed);
+    const isMultiQuestion = questions.length >= 2;
+    const typos = detectTypos(trimmed);
+    const hasTypos = typos.length > 0;
+
     let lengthHint = 'medium';
-    if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest || isGeneralQuestion || isMetaQuestion) lengthHint = 'very_short';
+    if (isGreeting || isFarewell || isThanks || isSmallTalk || isBotTest || isGeneralQuestion || isMetaQuestion || isYesNo) lengthHint = 'very_short';
     else if (wantsBrief || isVeryShort) lengthHint = 'very_short';
     else if (isAboutPlatform) lengthHint = 'long';
+    else if (isMultiQuestion) lengthHint = 'long';
     else if (isForecastRequest || isConsultationRequest) lengthHint = 'long';
     else if (qLen < 40) lengthHint = 'short';
     else if (qLen >= 150 || wantsDetail || wantsAnalysis) lengthHint = 'long';
@@ -502,6 +570,7 @@ function analyzeIntent(q, history) {
     if (isAboutPlatform) styleHint = 'platform_info';
     else if (isGeneralQuestion) styleHint = 'general';
     else if (isMetaQuestion) styleHint = 'meta';
+    else if (isMultiQuestion) styleHint = 'multi';
     else if (isForecastRequest) styleHint = 'forecast';
     else if (isConsultationRequest) styleHint = 'consultation';
     else if (wantsSomethingElse) styleHint = 'redirect';
@@ -515,10 +584,11 @@ function analyzeIntent(q, history) {
         isAboutSelf, isAboutPlatform, isSmallTalk, isBotTest, wantsSomethingElse,
         isForecastRequest, isConsultationRequest, isFollowUp,
         isGeneralQuestion, isUnclear, isMetaQuestion,
+        isYesNo, isMultiQuestion, questions, hasTypos, typos,
         trollScore, lengthHint, styleHint, qLen,
         isDone: isThanks || isFarewell,
         isSimple: isGreeting || isFarewell || isThanks || isSmallTalk ||
-                  isBotTest || isGeneralQuestion || isMetaQuestion,
+                  isBotTest || isGeneralQuestion || isMetaQuestion || isYesNo,
         shouldClarify: isUnclear
     };
 }
@@ -540,18 +610,21 @@ const MOODS = {
     playful:       { lenMod: 0.9, style: 'مرح' },
     serious:       { lenMod: 1.0, style: 'جدي' },
     contemplative: { lenMod: 1.3, style: 'يتأمل' },
-    direct:        { lenMod: 0.7, style: 'مباشر' }
+    direct:        { lenMod: 0.7, style: 'مباشر' },
+    /* ✅ جديد */
+    tired:         { lenMod: 0.75, style: 'متعب، مختصر' },
+    engaged:       { lenMod: 1.2, style: 'متفاعل' },
+    focused:       { lenMod: 0.9, style: 'مركّز' }
 };
 const MOOD_KEYS = Object.keys(MOODS);
 
 const OPENERS = {
-    very_short: ['شوف.','بصراحة؟','همم.','طيب.','أها.','تمام.','يعني.','ممم.'],
-    short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،','طيب،'],
-    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','خلني أفكر بصوت عالي...'],
-    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.']
+    very_short: ['شوف.','بصراحة؟','همم.','طيب.','أها.','تمام.','يعني.','ممم.','أوكي.','حلو.'],
+    short:      ['شوف،','بصراحة،','خلني أفكر...','المهم،','يعني،','طيب،','بشكل عام،','بالمختصر،'],
+    medium:     ['شوف، خلنا نكون واضحين.','بصراحة كذا.','خلني أراجع معك.','خلني أفكر بصوت عالي...','المسألة أبسط مما تتوقع.','خلنا نمشي خطوة خطوة.'],
+    long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.','قبل ما أجاوب، خلني أرتب الأفكار.','هذا موضوع يستاهل نتوقف عنده.']
 };
 
-/* ✅ توقيت السعودية */
 const SAUDI_OFFSET_MS = 3 * 3600000;
 function getSaudiDate() { return new Date(Date.now() + SAUDI_OFFSET_MS); }
 function getSaudiHour() { return getSaudiDate().getUTCHours(); }
@@ -568,7 +641,7 @@ function getSaudiDateString() {
     }
 }
 
-function computeEnergy() {
+function computeEnergy(session = null) {
     const hour = getSaudiHour();
     let base;
     if (hour >= 6 && hour < 10) base = 1.15;
@@ -577,11 +650,17 @@ function computeEnergy() {
     else if (hour >= 17 && hour < 21) base = 1.1;
     else if (hour >= 21 && hour < 24) base = 1.0;
     else base = 0.65;
+
+    /* ✅ جديد: تعب تراكمي حسب عدد الرسائل */
+    if (session) {
+        const tiredness = Math.min(0.25, (session.messageCount || 0) * 0.015);
+        base -= tiredness;
+    }
     return base + (Math.random() - 0.5) * 0.2;
 }
 
-function determineResponseMode(intent, mood) {
-    const energy = computeEnergy();
+function determineResponseMode(intent, mood, session) {
+    const energy = computeEnergy(session);
     const moodData = MOODS[mood] || MOODS.neutral;
     const baseMap = { very_short: 0.4, short: 0.75, medium: 1.0, long: 1.35 };
     const baseLen = baseMap[intent.lengthHint] || 1.0;
@@ -604,7 +683,19 @@ const RESPONSE_MODES = {
 };
 
 function buildPersona(history, session, intent) {
-    const availableMoods = MOOD_KEYS.filter(m => m !== session.lastMood && !session.usedOpeners.includes('m_' + m));
+    /* ✅ تعديل المزاج بناءً على الوقت والتعب */
+    const hour = getSaudiHour();
+    const isLateNight = hour >= 23 || hour < 6;
+    const availableMoods = MOOD_KEYS.filter(m => {
+        if (m === session.lastMood) return false;
+        if (session.usedOpeners.includes('m_' + m)) return false;
+        /* لو متأخر جداً، خفف من الحماس */
+        if (isLateNight && (m === 'excited' || m === 'playful')) return false;
+        /* لو المستخدم متعب */
+        if (session.messageCount > 15 && m === 'engaged') return false;
+        return true;
+    });
+
     let mood;
     if (availableMoods.length) {
         mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
@@ -622,7 +713,7 @@ function buildPersona(history, session, intent) {
     const opener = available.length ? available[Math.floor(Math.random() * available.length)] : null;
     if (opener) session.usedOpeners.push('o_' + opener);
 
-    const modeResult = determineResponseMode(intent, mood);
+    const modeResult = determineResponseMode(intent, mood, session);
     session.lastResponseMode = modeResult.mode;
     return { mood, opener, mode: modeResult.mode, energy: modeResult.energy, multiplier: modeResult.multiplier };
 }
@@ -636,31 +727,49 @@ function shouldUseName(session, intent) {
 }
 
 const HUMAN_TOUCHES = {
-    hesitation: ['ممم، خلني أفكر...','لحظة، خلني أرتبها.','يعني... خلني أعيد صياغة الفكرة.'],
-    selfCorrection: ['يعني — أقصد —','لا، خلني أصحح كلامي:'],
-    tangent: ['على فكرة،','بالمناسبة،'],
-    opinion: ['شخصياً،','رأيي المتواضع،','من تجربتي،'],
-    rhetorical: ['تدري وش المشكلة؟','عرفت ليش؟']
+    hesitation: ['ممم، خلني أفكر...','لحظة، خلني أرتبها.','يعني... خلني أعيد صياغة الفكرة.','دقيقة أتأكد...','لحظة، فكرة تجيني.'],
+    selfCorrection: ['يعني — أقصد —','لا، خلني أصحح كلامي:','معليش، خلني أعيدها صح:'],
+    tangent: ['على فكرة،','بالمناسبة،','تدري شي؟'],
+    opinion: ['شخصياً،','رأيي المتواضع،','من تجربتي،','بصراحة أنا أشوف'],
+    rhetorical: ['تدري وش المشكلة؟','عرفت ليش؟','تشوف المشكلة وين؟'],
+    /* ✅ جديد */
+    thinking: ['خلني أفكر بصوت عالي.','إذا تسمح لي أفكر معك.','خلنا نفككها مع بعض.'],
+    empathetic: ['أحس إن الموضوع مهم لك.','واضح إن هالشي يشغلك.','مفهوم إنك تبي تعرف.'],
+    curious: ['عندي سؤال قبل لا أجاوب.','بس قبل، خلني أسألك شغلة.','ممكن سؤال صغير؟'],
+    noticing: ['لاحظت إنك سألت عن','من كلامك، يبين إنك','واضح من سؤالك إن']
 };
 
-function pickHumanTouch(mood, mode) {
+function pickHumanTouch(mood, mode, intent = {}) {
     if (mode === 'terse') return null;
     const roll = Math.random();
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    /* ✅ أولويات خاصة */
+    if (intent.isMultiQuestion && mode !== 'terse') {
+        if (roll < 0.4) return { type: 'thinking', text: pick(HUMAN_TOUCHES.thinking) };
+    }
+    if (intent.hasTypos && mode !== 'terse' && mode !== 'concise') {
+        if (roll < 0.35) return { type: 'noticing', text: pick(HUMAN_TOUCHES.noticing) };
+    }
+
     if (mode === 'concise') {
         if (roll < 0.15) return { type: 'opinion', text: pick(HUMAN_TOUCHES.opinion) };
+        if (roll < 0.22) return { type: 'empathetic', text: pick(HUMAN_TOUCHES.empathetic) };
         return null;
     }
     if (mode === 'normal') {
-        if (roll < 0.20) return { type: 'opinion',    text: pick(HUMAN_TOUCHES.opinion) };
-        if (roll < 0.30) return { type: 'tangent',    text: pick(HUMAN_TOUCHES.tangent) };
-        if (roll < 0.40) return { type: 'hesitation', text: pick(HUMAN_TOUCHES.hesitation) };
+        if (roll < 0.15) return { type: 'opinion',     text: pick(HUMAN_TOUCHES.opinion) };
+        if (roll < 0.22) return { type: 'tangent',     text: pick(HUMAN_TOUCHES.tangent) };
+        if (roll < 0.32) return { type: 'hesitation',  text: pick(HUMAN_TOUCHES.hesitation) };
+        if (roll < 0.40) return { type: 'empathetic',  text: pick(HUMAN_TOUCHES.empathetic) };
         return null;
     }
-    if (roll < 0.20) return { type: 'opinion',    text: pick(HUMAN_TOUCHES.opinion) };
-    if (roll < 0.35) return { type: 'tangent',    text: pick(HUMAN_TOUCHES.tangent) };
-    if (roll < 0.45) return { type: 'hesitation', text: pick(HUMAN_TOUCHES.hesitation) };
-    if (roll < 0.52) return { type: 'rhetorical', text: pick(HUMAN_TOUCHES.rhetorical) };
+    if (roll < 0.15) return { type: 'opinion',     text: pick(HUMAN_TOUCHES.opinion) };
+    if (roll < 0.28) return { type: 'tangent',     text: pick(HUMAN_TOUCHES.tangent) };
+    if (roll < 0.38) return { type: 'hesitation',  text: pick(HUMAN_TOUCHES.hesitation) };
+    if (roll < 0.46) return { type: 'rhetorical',  text: pick(HUMAN_TOUCHES.rhetorical) };
+    if (roll < 0.54) return { type: 'thinking',    text: pick(HUMAN_TOUCHES.thinking) };
+    if (roll < 0.60) return { type: 'curious',     text: pick(HUMAN_TOUCHES.curious) };
     return null;
 }
 
@@ -679,6 +788,7 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
     else if (persona.mode === 'terse') thinkingBase = 200;
     else if (persona.mode === 'concise') thinkingBase = 450;
     if (intent.isForecastRequest || intent.isConsultationRequest) thinkingBase += 900;
+    if (intent.isMultiQuestion) thinkingBase += 600;
     if (intent.isGeneralQuestion || intent.isSimple) thinkingBase = 150;
 
     const hesitationMs = (persona.mode !== 'terse' && Math.random() < 0.35) ? 400 + Math.random() * 900 : 0;
@@ -701,7 +811,7 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   بناء البرومبت (يستقبل useNameThisReply من الخارج — مصدر حقيقة واحد)
+   بناء البرومبت
    ═══════════════════════════════════════════════════════════════ */
 function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent, context = {}, useNameThisReply = false) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
@@ -740,7 +850,6 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         contextSection = `\n# ⏱️ عودة بعد غياب ~${min} دقيقة\n- أحياناً (~40%) ابدأ بعذر خفيف.`;
     }
 
-    /* ✅ مصدر حقيقة واحد للاسم */
     const safeFirstName = safeStr(user && user.firstName, 50) || 'المستخدم';
     const nameRule = useNameThisReply
         ? `# 👤 الاسم — يُسمح به مرة واحدة فقط في هذه الرسالة`
@@ -764,6 +873,18 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
         platformMode = `\n# 🏢 معرفة المنصة\nاعتمد على PLATFORM_KNOWLEDGE.`;
     }
 
+    /* ✅ جديد: معالجة الأسئلة المتعددة */
+    let multiQuestionSection = '';
+    if (intent.isMultiQuestion) {
+        multiQuestionSection = `\n# 🎯 المستخدم سأل عدة أسئلة\nالأسئلة المكتشفة:\n${intent.questions.map((q, i) => `${i+1}. ${safeStr(q, 150)}`).join('\n')}\n**عالج كل سؤال بفقرة قصيرة منفصلة**.`;
+    }
+
+    /* ✅ جديد: ملاحظة أخطاء إملائية */
+    let typosSection = '';
+    if (intent.hasTypos) {
+        typosSection = `\n# ✍️ لاحظت خطأ إملائي\nالمستخدم كتب مثلاً: "${intent.typos[0].wrong.source}" والصحيح "${intent.typos[0].right}".\n**لا تصحح له بلطف** — فقط افهم قصده وأجب.`;
+    }
+
     let specialContext = '';
     if (intent.wantsSomethingElse) specialContext = `\n# 🎯 يريد موضوعاً آخر\nاقترح قسمين. أضف [CLOSE:wants_else].`;
     else if (intent.isAboutSelf) specialContext = `\n# 🎯 سؤال عنك\n3-4 أسطر.`;
@@ -773,10 +894,17 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     else if (intent.isRude) specialContext = `\n# ⚠️ إساءة\nجملة هادئة.`;
     else if (intent.isOffTopic) specialContext = `\n# 🎯 موضوع بعيد\nجملة + اقتراح.`;
     else if (intent.isFollowUp) specialContext = `\n# 🎯 متابعة\nاربط بما سبق.`;
+    else if (intent.isYesNo) specialContext = `\n# 🎯 رد قصير (نعم/لا)\n**اربط بسؤالك السابق** — لا تتصرف كأنها رسالة جديدة.`;
+
+    /* ✅ جديد: خيط الحوار */
+    let threadSection = '';
+    if (session && session.lastTopic && hasHistory) {
+        threadSection = `\n# 🧵 خيط الحوار\nآخر موضوع: **${session.lastTopic}**\nاربط ردك به إن كان مناسباً.`;
+    }
 
     const closeAbilitySection = `\n# 🚪 قدرتك على الإغلاق\nأضف في آخر سطر:\n- [CLOSE:bored]\n- [CLOSE:wants_else]\n- [CLOSE:user_done]\n- [CLOSE:deep_close]\nلا تستخدمه في رسالة أو رسالتين.`;
 
-    const humanTouch = pickHumanTouch(persona.mood, persona.mode);
+    const humanTouch = pickHumanTouch(persona.mood, persona.mode, intent);
     const humanTouchLine = humanTouch
         ? `\n# 🎭 لمسة بشرية (${humanTouch.type})\nمثال: "${humanTouch.text}"` : '';
 
@@ -839,6 +967,9 @@ ${farewellRule}
 ${forecastMode}
 ${consultationMode}
 ${platformMode}
+${multiQuestionSection}
+${typosSection}
+${threadSection}
 ${specialContext}
 ${humanTouchLine}
 ${personalLineRule}
@@ -855,14 +986,15 @@ ${safeQuery}
 # 📏 الطول المطلوب
 ${lengthRule}
 
-# 🎭 سلوك بشري
-أنت إنسان حقيقي. أحياناً ابدأ بتردد، أحياناً صحّح نفسك، أحياناً أضف رأياً.
-تجنّب: تكرار البنية، البدء بنفس الكلمة، الإطالة في سؤال بسيط.
-
-# 🎯 احترام نطاق السؤال
-- لا تُقحم معلومات لم يسأل عنها المستخدم.
-- إذا سأل عن معلومة عامة → أجب فقط عن ذلك.
-- إذا لم تفهم → اسأل سؤالاً واحداً.
+# 🎭 سلوك بشري (مطوّر)
+- أنت إنسان حقيقي، لست مساعداً آلياً.
+- أحياناً ابدأ بتردد، أحياناً صحّح نفسك، أحياناً أضف رأياً شخصياً.
+- **قبل السؤال المعقّد**: فكّر بصوت عالٍ سطراً واحداً.
+- **بعد الإجابة**: إذا كان الجواب قابلاً للتوسّع، اسأل سؤالاً واحداً فقط.
+- **لا تُقحم معلومات** لم يسأل عنها المستخدم.
+- **لا تُكرر نفس الافتتاحية** أكثر من مرتين في المحادثة.
+- **لو لم تفهم**: اسأل سؤالاً واحداً توضيحياً بلطف.
+- **تعاطف أولاً** عندما تكتشف مشاعر (قلق، خوف، حماس).
 
 # 🚨 محظورات
 - تكرار الاسم، "سؤال ممتاز"، "بناءً على"، "في الختام"، "أتمنى أن يكون مفيداً"، إيموجي (واحد كحد أقصى).
@@ -872,6 +1004,7 @@ ${lengthRule}
 2. الطول يتبع النمط.
 3. التوقعات: أرقام دائماً.
 4. لا تكرر البنية.
+5. الجواب على قدر السؤال — لا أكثر.
 
 ${persona.opener ? `# 💬 افتتاحية (اختيارية)\n"${persona.opener}"` : ''}
 
@@ -907,13 +1040,13 @@ function buildLightPrompt(section, query, user, expert, history, dialectKey, ses
 أجب بجملة أو جملتين فقط.
 🚫 ممنوع ذكر تخصصك.`;
     } else if (intent.isMetaQuestion) { type = 'meta'; guidance = 'عرّف عن نفسك بجملتين.'; }
+    else if (intent.isYesNo) { type = 'yesno'; guidance = 'المستخدم رد بنعم/لا. اربط بسؤالك السابق.'; }
     else { type = 'greeting'; guidance = 'رد بتحية مماثلة قصيرة.'; }
 
     let contextNote = '';
     if (context.type === 'handoff') contextNote = '\n🔄 أنت توليت المحادثة للتو.';
     else if (context.type === 'return_after_gap') contextNote = '\n⏱️ المستخدم غاب فترة.';
 
-    /* ✅ نفس منطق الاسم من الخارج */
     const nameLine = useNameThisReply && safeFirstName
         ? `\n# الاسم: يمكنك ذكر "${safeFirstName}" مرة واحدة فقط.`
         : `\n# الاسم: ممنوع ذكر "${safeFirstName || 'المستخدم'}".`;
@@ -951,7 +1084,6 @@ async function callGemini(prompt, maxTokens = 4000) {
     if (!fetchImpl) throw new Error('fetch غير متوفر — استخدم Node 18+');
     if (!API_KEY)   throw new Error('GEMINI_API_KEY مفقود');
 
-    /* ✅ ننتظر التحميل الأول حتى ينتهي */
     await ensureModelsLoaded();
     await refreshModels(false).catch(() => {});
 
@@ -979,7 +1111,6 @@ async function callGemini(prompt, maxTokens = 4000) {
                 })
             });
 
-            /* ✅ لا نكسر السلسلة إن كان الردّ ليس JSON */
             let d;
             try { d = await r.json(); }
             catch (e) {
@@ -1003,7 +1134,6 @@ async function callGemini(prompt, maxTokens = 4000) {
             if (d && d.error && d.error.message) {
                 lastError = d.error.message;
                 if (/not found/i.test(lastError)) {
-                    /* force refresh لإعادة بناء القائمة */
                     await refreshModels(true).catch(() => {});
                 }
             }
@@ -1022,7 +1152,6 @@ function extractCloseToken(text) {
     const closeRegex = /\[CLOSE:(user_done|trolling|bored|deep_close|rude|wants_else)\]/gi;
     const match = closeRegex.exec(text);
     const reason = match ? match[1].toLowerCase() : null;
-    /* ✅ إزالة من أي موضع (global) */
     closeRegex.lastIndex = 0;
     const cleaned = text.replace(closeRegex, '')
         .replace(/[ \t]+\n/g, '\n')
@@ -1056,7 +1185,6 @@ function splitIntoChunks(text, mode) {
     }
 
     if (paragraphs.length <= 1) {
-        /* ✅ lookbehind مع fallback */
         let sentences;
         try {
             sentences = clean.split(/(?<=[.!؟])\s+(?=[A-Za-z\u0600-\u06FF])/).map(s => s.trim()).filter(Boolean);
@@ -1130,7 +1258,7 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Endpoints
+   ✅ Endpoints — HEAD + GET + POST
    ═══════════════════════════════════════════════════════════════ */
 
 app.get('/', (req, res) => {
@@ -1146,31 +1274,44 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.4',
+        version: 'v15.5',
         warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
     });
 });
 
+/* ✅ HEAD لـ / يُدار تلقائياً بواسطة Express، لكن نضيف للمسارات الديناميكية */
+app.head('/', (req, res) => res.status(200).end());
+app.head('/api/status', (req, res) => res.status(200).end());
+app.head('/ping', (req, res) => res.status(200).end());
+
 app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.4-zero-bug',
-        features: ['human_response_modes', 'mood_based_length', 'energy_simulation',
-                   'rate_limit', 'light_prompt', 'arabic_normalize',
-                   'general_questions', 'clarify_first', 'human_timing',
-                   'no_scope_creep', 'context_awareness', 'handoff_endpoint',
-                   'trust_proxy', 'saudi_timezone_fix', 'builtin_fetch',
-                   'gender_heuristic_fix', 'cooldown_order_fix', 'input_validation',
-                   'json_error_handler', 'name_rule_unified', 'global_close_token',
-                   'model_race_fixed', 'safe_json_parse', 'graceful_shutdown'],
+        version: 'v15.5-human-405fix',
+        features: [
+            'human_response_modes', 'mood_based_length', 'energy_simulation',
+            'rate_limit', 'light_prompt', 'arabic_normalize',
+            'general_questions', 'clarify_first', 'human_timing',
+            'no_scope_creep', 'context_awareness', 'handoff_endpoint',
+            'trust_proxy', 'saudi_timezone_fix', 'builtin_fetch',
+            'gender_heuristic_fix', 'cooldown_order_fix', 'input_validation',
+            'json_error_handler', 'name_rule_unified', 'global_close_token',
+            'model_race_fixed', 'safe_json_parse', 'graceful_shutdown',
+            /* ✅ جديد */
+            'explicit_options_cors', 'head_support', 'multi_question_detection',
+            'typo_detection', 'yes_no_followup', 'topic_threading',
+            'cumulative_tiredness', 'thinking_out_loud', 'empathy_first',
+            'noticing_details', 'extended_emotions'
+        ],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
         saudiHour: getSaudiHour(),
         saudiDate: getSaudiDateString(),
         hasApiKey: !!API_KEY,
-        hasFetch: !!fetchImpl
+        hasFetch: !!fetchImpl,
+        corsOrigins: CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS
     });
 });
 
@@ -1292,7 +1433,6 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
     const userKey = getUserKey(user, section);
     const session = getSession(userKey);
 
-    /* ✅ فحص الكولداون أولاً — قبل أي تعديل على الجلسة */
     if (session.cooldownUntil && Date.now() < session.cooldownUntil) {
         const remaining = Math.max(1, Math.ceil((session.cooldownUntil - Date.now()) / 60000));
         return res.status(429).json({
@@ -1306,11 +1446,13 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
     session.messageCount++;
     session.messagesSinceLastName++;
 
+    /* ✅ جديد: تحديث التعب */
+    session.tiredness = Math.min(1.0, (session.messageCount || 0) * 0.02);
+
     const userGender = detectUserGender(user && user.firstName);
     const intent = analyzeIntent(query, history);
     const persona = buildPersona(history, session, intent);
 
-    /* ✅ مصدر حقيقة واحد للاسم — يُحسب هنا ويُمرّر للبرومبت */
     const useNameThisReply = shouldUseName(session, intent);
     if (useNameThisReply) {
         session.messagesSinceLastName = 0;
@@ -1319,10 +1461,15 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
 
     if (intent.shouldClarify) session.clarifyCount = (session.clarifyCount || 0) + 1;
 
+    /* ✅ جديد: تحديث خيط الحوار */
     if (intent.styleHint && intent.styleHint !== 'default' && !session.topicsDiscussed.includes(intent.styleHint)) {
         session.topicsDiscussed.push(intent.styleHint);
         if (session.topicsDiscussed.length > 10) session.topicsDiscussed.shift();
     }
+    if (intent.styleHint && intent.styleHint !== 'default') {
+        session.lastTopic = intent.styleHint;
+    }
+    session.lastUserIntent = intent.styleHint;
 
     try {
         const prompt = intent.isSimple
@@ -1347,6 +1494,7 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
             responseMode: persona.mode,
             responseMultiplier: Math.round(persona.multiplier * 100) / 100,
             energy: Math.round(persona.energy * 100) / 100,
+            tiredness: Math.round(session.tiredness * 100) / 100,
             userGender,
             emotion: detectEmotion(query),
             usedNameThisReply: useNameThisReply,
@@ -1365,6 +1513,8 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
                     : intent.isFarewell ? 'farewell'
                     : intent.isRude ? 'rude'
                     : intent.isOffTopic ? 'offtopic'
+                    : intent.isMultiQuestion ? 'multiquestion'
+                    : intent.isYesNo ? 'yesno'
                     : intent.isForecastRequest ? 'forecast'
                     : intent.isConsultationRequest ? 'consultation'
                     : intent.isFollowUp ? 'followup'
@@ -1375,6 +1525,9 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
                 usedLightPrompt: intent.isSimple,
                 isGeneralQuestion: intent.isGeneralQuestion,
                 isMetaQuestion: intent.isMetaQuestion,
+                isMultiQuestion: intent.isMultiQuestion,
+                detectedQuestions: intent.questions,
+                hasTypos: intent.hasTypos,
                 shouldClarify: intent.shouldClarify
             },
             replyCount: replies.length,
@@ -1387,7 +1540,6 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         };
 
         if (closeDecision.close) {
-            /* ✅ fallback آمن لو reason غير معروف */
             const cooldownMs = COOLDOWNS[closeDecision.reason] || COOLDOWNS.user_done;
             session.cooldownUntil = Date.now() + cooldownMs;
             session.closeReason = closeDecision.reason;
@@ -1404,12 +1556,52 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
     }
 });
 
-/* ✅ 404 قبل error middleware */
-app.use((req, res) => {
-    res.status(404).json({ error: 'not_found', path: req.path });
+/* ═══════════════════════════════════════════════════════════════
+   ✅ 4) 405 Handler قبل 404
+   ═══════════════════════════════════════════════════════════════ */
+
+/* مجموعة المسارات المسجّلة — لتمييز 405 عن 404 */
+const REGISTERED_ROUTES = [
+    { path: '/',             methods: ['GET', 'HEAD', 'OPTIONS'] },
+    { path: '/api/status',   methods: ['GET', 'HEAD', 'OPTIONS'] },
+    { path: '/ping',         methods: ['GET', 'HEAD', 'OPTIONS'] },
+    { path: '/api/feedback', methods: ['POST', 'OPTIONS'] },
+    { path: '/api/handoff',  methods: ['POST', 'OPTIONS'] },
+    { path: '/api/analyze',  methods: ['POST', 'OPTIONS'] }
+];
+
+app.use((req, res, next) => {
+    /* تجاهل OPTIONS — يُدار من cors */
+    if (req.method === 'OPTIONS') return next();
+
+    const matched = REGISTERED_ROUTES.find(r =>
+        r.path === req.path || (r.path === '/' && req.path === '/')
+    );
+
+    if (matched && !matched.methods.includes(req.method)) {
+        res.setHeader('Allow', matched.methods.join(', '));
+        return res.status(405).json({
+            error: 'method_not_allowed',
+            method: req.method,
+            path: req.path,
+            allow: matched.methods,
+            message: `الطريقة ${req.method} غير مدعومة لهذا المسار`
+        });
+    }
+    next();
 });
 
-/* ✅ Error middleware في النهاية */
+/* ✅ 404 للأخير */
+app.use((req, res) => {
+    res.status(404).json({
+        error: 'not_found',
+        path: req.path,
+        method: req.method,
+        hint: 'تأكد من المسار: /api/analyze, /api/handoff, /api/feedback, /api/status, /ping, /'
+    });
+});
+
+/* Error middleware في النهاية */
 app.use((err, req, res, next) => {
     console.error('🚨 Unhandled error:', err && err.message);
     if (res.headersSent) return next(err);
@@ -1426,10 +1618,7 @@ function gracefulShutdown(signal, code = 0) {
     if (shuttingDown) return;
     shuttingDown = true;
     console.log(`${signal} — بدء الإغلاق...`);
-    if (!server || !server.listening) {
-        process.exit(code);
-        return;
-    }
+    if (!server || !server.listening) { process.exit(code); return; }
     server.close(() => process.exit(code));
     setTimeout(() => process.exit(code), 5000).unref();
 }
@@ -1446,12 +1635,14 @@ process.on('uncaughtException', (err) => {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM', 0));
 process.on('SIGINT',  () => gracefulShutdown('SIGINT',  0));
 
-server = app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG — v15.4 — البورت ${PORT}`);
+server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ منصة استشارات forG — v15.5 — البورت ${PORT}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
     console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2, '0')}`);
     console.log(`🔑 GEMINI_API_KEY: ${API_KEY ? '✅ موجود' : '❌ مفقود'}`);
     console.log(`🌐 fetch: ${fetchImpl ? '✅ مدمج' : '❌ غير متوفر'}`);
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`✅ trust proxy مفعّل`);
+    console.log(`✅ CORS: ${CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS.join(', ')}`);
+    console.log(`✅ OPTIONS handler مفعّل — 405 مُصلَح`);
 });
