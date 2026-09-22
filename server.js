@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.5.2 "OPTIONS-First"
+ *  منصة استشارات forG — Strategy-Pro v15.5.3 "Cloudflare-Proof"
  *  ملف واحد + index.html
  * ═══════════════════════════════════════════════════════════════
  */
@@ -19,6 +19,23 @@ app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.disable('etag');
 
+/* ═══════════════════════════════════════════════════════════════
+   ✅ 0) CORS BULLETPROOF — أول middleware في التطبيق
+   ═══════════════════════════════════════════════════════════════ */
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD, PUT, DELETE, PATCH');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With, X-HTTP-Method-Override');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Length, X-Request-Id');
+    res.setHeader('Access-Control-Max-Age', '86400');
+
+    if (req.method === 'OPTIONS') {
+        console.log(`✅ OPTIONS ${req.originalUrl} → 204 (CORS-Bulletproof)`);
+        return res.status(204).end();
+    }
+    next();
+});
+
 /* ──────────────────────────────────────────────
    1) Request Logger
    ────────────────────────────────────────────── */
@@ -32,7 +49,7 @@ app.use((req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   2) CORS — ✅ الترتيب مُصلَح (OPTIONS أولاً)
+   2) CORS من مكتبة cors — طبقة إضافية
    ────────────────────────────────────────────── */
 const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
 const CORS_ORIGINS = RAW_ORIGINS
@@ -50,10 +67,7 @@ const corsOptions = {
     preflightContinue: false
 };
 
-/* ✅ معالج OPTIONS أولاً — قبل أي middleware آخر */
 app.options('*', cors(corsOptions));
-
-/* ✅ ثم CORS لباقي الطلبات */
 app.use(cors(corsOptions));
 
 /* ──────────────────────────────────────────────
@@ -71,9 +85,10 @@ app.use((req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   4) JSON Parser + Parse-Error
+   4) JSON Parser + Text Parser (احتياط)
    ────────────────────────────────────────────── */
 app.use(express.json({ limit: '1mb' }));
+app.use(express.text({ limit: '1mb', type: 'text/plain' }));
 
 app.use((err, req, res, next) => {
     if (err && err.type === 'entity.parse.failed')
@@ -115,6 +130,15 @@ function safeStr(v, max = 200) {
 function sanitizeUserQuery(query) {
     const s = safeStr(query, 4000);
     return s.replace(/```/g, '` ` `').replace(/<<<|>>>/g, '');
+}
+
+function parseBodyIfText(req) {
+    if (req.body && typeof req.body === 'string') {
+        try { req.body = JSON.parse(req.body); }
+        catch (e) { req.body = {}; }
+    }
+    if (!req.body || typeof req.body !== 'object') req.body = {};
+    return req.body;
 }
 
 /* ──────────────────────────────────────────────
@@ -1240,7 +1264,7 @@ function shouldClose(intent, history, session, aiCloseReason) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ Diagnostic Endpoint — للتشخيص فقط
+   ✅ Diagnostic Endpoint
    ═══════════════════════════════════════════════════════════════ */
 app.all('/api/debug', (req, res) => {
     res.json({
@@ -1274,7 +1298,7 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5.2',
+        version: 'v15.5.3',
         publicUrl: PUBLIC_URL,
         warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
@@ -1289,7 +1313,7 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5.2-options-first',
+        version: 'v15.5.3-cloudflare-proof',
         publicUrl: PUBLIC_URL,
         endpoints: {
             root: `${PUBLIC_URL}/`,
@@ -1313,7 +1337,7 @@ app.get('/api/status', (req, res) => {
             'typo_detection', 'yes_no_followup', 'topic_threading',
             'cumulative_tiredness', 'thinking_out_loud', 'empathy_first',
             'noticing_details', 'extended_emotions', 'public_url_config',
-            'options_first_order', 'debug_endpoint'
+            'bulletproof_cors_first', 'text_parser_fallback', 'debug_endpoint'
         ],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
@@ -1328,7 +1352,7 @@ app.get('/api/status', (req, res) => {
 app.get('/ping', (req, res) => res.json({ pong: true, ts: Date.now(), url: PUBLIC_URL }));
 
 app.post('/api/feedback', rateLimit, (req, res) => {
-    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const body = parseBodyIfText(req);
     const userKey = safeStr(body.userKey, 200) || 'anon';
     const messageIndex = Number.isFinite(body.messageIndex) ? body.messageIndex : -1;
     const helpful = !!body.helpful;
@@ -1341,7 +1365,7 @@ app.post('/api/feedback', rateLimit, (req, res) => {
    Handoff
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/handoff', rateLimit, async (req, res) => {
-    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const body = parseBodyIfText(req);
     const { section, newExpert, oldExpert, lastUserMsg, user, dialect } = body;
     const handoffCount = Number.isFinite(body.handoffCount) ? body.handoffCount : 0;
 
@@ -1430,7 +1454,7 @@ ${genderInstructions(userGender, safeFirstName || 'المستخدم')}
    Analyze
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/analyze', rateLimit, async (req, res) => {
-    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const body = parseBodyIfText(req);
     const { section, query, user, expert, dialect } = body;
     const history = Array.isArray(body.history) ? body.history : [];
     const context = body.context && typeof body.context === 'object' ? body.context : {};
@@ -1596,7 +1620,6 @@ app.use((req, res, next) => {
     next();
 });
 
-/* 404 */
 app.use((req, res) => {
     res.status(404).json({
         error: 'not_found',
@@ -1607,7 +1630,6 @@ app.use((req, res) => {
     });
 });
 
-/* Error middleware */
 app.use((err, req, res, next) => {
     console.error('🚨 Unhandled error:', err && err.message);
     if (res.headersSent) return next(err);
@@ -1642,7 +1664,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM', 0));
 process.on('SIGINT',  () => gracefulShutdown('SIGINT',  0));
 
 server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ منصة استشارات forG — v15.5.2 — البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — v15.5.3 — البورت ${PORT}`);
     console.log(`🌐 URL: ${PUBLIC_URL}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
     console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2, '0')}`);
@@ -1651,6 +1673,6 @@ server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`✅ trust proxy مفعّل`);
     console.log(`✅ CORS: ${CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS.join(', ')}`);
-    console.log(`✅ OPTIONS-first order — preflight مُصلَح`);
+    console.log(`✅ Bulletproof CORS — أول middleware`);
     console.log(`✅ Debug endpoint: /api/debug`);
 });
