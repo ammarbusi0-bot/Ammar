@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.5.3 "Cloudflare-Proof"
+ *  منصة استشارات forG — Strategy-Pro v15.5.4 "Deep-Trace"
  *  ملف واحد + index.html
  * ═══════════════════════════════════════════════════════════════
  */
@@ -20,7 +20,38 @@ app.disable('x-powered-by');
 app.disable('etag');
 
 /* ═══════════════════════════════════════════════════════════════
-   ✅ 0) CORS BULLETPROOF — أول middleware في التطبيق
+   🔬 DEEP TRACE — يسجل كل طلب بتفصيل كامل
+   ═══════════════════════════════════════════════════════════════ */
+app.use((req, res, next) => {
+    const start = Date.now();
+    const reqId = Math.random().toString(36).slice(2, 8);
+    req._reqId = reqId;
+
+    console.log(`\n🔵 [${reqId}] ═══════════════════════════════════`);
+    console.log(`🔵 [${reqId}] ${req.method} ${req.originalUrl}`);
+    console.log(`🔵 [${reqId}] IP: ${req.ip} | Proto: ${req.protocol} | Secure: ${req.secure}`);
+    console.log(`🔵 [${reqId}] X-Forwarded-Proto: ${req.headers['x-forwarded-proto'] || 'none'}`);
+    console.log(`🔵 [${reqId}] CF-Ray: ${req.headers['cf-ray'] || 'none'}`);
+    console.log(`🔵 [${reqId}] CF-Connecting-IP: ${req.headers['cf-connecting-ip'] || 'none'}`);
+    console.log(`🔵 [${reqId}] Content-Type: ${req.headers['content-type'] || 'none'}`);
+    console.log(`🔵 [${reqId}] Content-Length: ${req.headers['content-length'] || 'none'}`);
+    console.log(`🔵 [${reqId}] Origin: ${req.headers['origin'] || 'none'}`);
+    console.log(`🔵 [${reqId}] Referer: ${req.headers['referer'] || 'none'}`);
+    console.log(`🔵 [${reqId}] User-Agent: ${(req.headers['user-agent'] || '').slice(0, 100)}`);
+
+    res.on('finish', () => {
+        const ms = Date.now() - start;
+        console.log(`🟢 [${reqId}] ← ${res.statusCode} (${ms}ms)`);
+        console.log(`🟢 [${reqId}] CORS-Origin: ${res.getHeader('Access-Control-Allow-Origin') || 'none'}`);
+        console.log(`🟢 [${reqId}] Content-Type: ${res.getHeader('Content-Type') || 'none'}`);
+        console.log(`🟢 [${reqId}] ═══════════════════════════════════\n`);
+    });
+
+    next();
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   ✅ 0) CORS BULLETPROOF — أول middleware
    ═══════════════════════════════════════════════════════════════ */
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,26 +61,26 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Max-Age', '86400');
 
     if (req.method === 'OPTIONS') {
-        console.log(`✅ OPTIONS ${req.originalUrl} → 204 (CORS-Bulletproof)`);
+        console.log(`✅ [${req._reqId}] OPTIONS ${req.originalUrl} → 204 (CORS-Bulletproof)`);
         return res.status(204).end();
     }
     next();
 });
 
 /* ──────────────────────────────────────────────
-   1) Request Logger
+   1) Request Logger (مختصر)
    ────────────────────────────────────────────── */
 app.use((req, res, next) => {
     const start = Date.now();
     res.on('finish', () => {
         const ms = Date.now() - start;
-        console.log(`${req.method} ${req.originalUrl} → ${res.statusCode} (${ms}ms)`);
+        console.log(`📝 ${req.method} ${req.originalUrl} → ${res.statusCode} (${ms}ms)`);
     });
     next();
 });
 
 /* ──────────────────────────────────────────────
-   2) CORS من مكتبة cors — طبقة إضافية
+   2) CORS من مكتبة cors
    ────────────────────────────────────────────── */
 const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
 const CORS_ORIGINS = RAW_ORIGINS
@@ -85,7 +116,7 @@ app.use((req, res, next) => {
 });
 
 /* ──────────────────────────────────────────────
-   4) JSON Parser + Text Parser (احتياط)
+   4) JSON Parser + Text Parser
    ────────────────────────────────────────────── */
 app.use(express.json({ limit: '1mb' }));
 app.use(express.text({ limit: '1mb', type: 'text/plain' }));
@@ -1298,7 +1329,7 @@ app.get('/', (req, res) => {
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5.3',
+        version: 'v15.5.4',
         publicUrl: PUBLIC_URL,
         warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
@@ -1313,7 +1344,7 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.5.3-cloudflare-proof',
+        version: 'v15.5.4-deep-trace',
         publicUrl: PUBLIC_URL,
         endpoints: {
             root: `${PUBLIC_URL}/`,
@@ -1337,7 +1368,8 @@ app.get('/api/status', (req, res) => {
             'typo_detection', 'yes_no_followup', 'topic_threading',
             'cumulative_tiredness', 'thinking_out_loud', 'empathy_first',
             'noticing_details', 'extended_emotions', 'public_url_config',
-            'bulletproof_cors_first', 'text_parser_fallback', 'debug_endpoint'
+            'bulletproof_cors_first', 'text_parser_fallback', 'debug_endpoint',
+            'deep_trace_logger'
         ],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
@@ -1664,7 +1696,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM', 0));
 process.on('SIGINT',  () => gracefulShutdown('SIGINT',  0));
 
 server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ منصة استشارات forG — v15.5.3 — البورت ${PORT}`);
+    console.log(`✅ منصة استشارات forG — v15.5.4 — البورت ${PORT}`);
     console.log(`🌐 URL: ${PUBLIC_URL}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
     console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2, '0')}`);
@@ -1674,5 +1706,6 @@ server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ trust proxy مفعّل`);
     console.log(`✅ CORS: ${CORS_ORIGINS === '*' ? '*' : CORS_ORIGINS.join(', ')}`);
     console.log(`✅ Bulletproof CORS — أول middleware`);
+    console.log(`✅ Deep Trace Logger — يسجل كل تفاصيل الطلبات`);
     console.log(`✅ Debug endpoint: /api/debug`);
 });
