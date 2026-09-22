@@ -1,36 +1,61 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- *  منصة استشارات forG — Strategy-Pro v15.2 "Human+ Handoff"
+ *  منصة استشارات forG — Strategy-Pro v15.4 "Zero-Bug Edition"
  *  ملف واحد + index.html
  *
  *  التشغيل:
  *    npm i express cors
  *    export GEMINI_API_KEY="مفتاحك"
  *    node server.js
- *
- *  ملاحظة: يستخدم fetch المدمج في Node 18+ (Render/Railway افتراضياً)
  * ═══════════════════════════════════════════════════════════════
  */
+
+'use strict';
 
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 
-/* ✅ استخدام fetch المدمج (Node 18+) مع fallback آمن */
+/* ✅ fetch المدمج (Node 18+) */
 const fetchImpl = typeof fetch === 'function' ? fetch : null;
 
 const app = express();
 
 /* ✅ ضروري خلف Render/Railway/Heroku */
 app.set('trust proxy', 1);
+app.disable('x-powered-by');
 
+/* ──────────────────────────────────────────────
+   JSON Parser + Parse-Error Handler (يجب أن يتلاصقا)
+   ────────────────────────────────────────────── */
 app.use(express.json({ limit: '1mb' }));
 
-const CORS_ORIGINS = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map(s => s.trim())
+app.use((err, req, res, next) => {
+    if (err && err.type === 'entity.parse.failed') {
+        return res.status(400).json({ error: 'invalid_json', message: 'الـ JSON المرسل غير صالح' });
+    }
+    if (err && err.type === 'entity.too.large') {
+        return res.status(413).json({ error: 'payload_too_large', message: 'الحجم أكبر من المسموح' });
+    }
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ error: 'invalid_json', message: 'الـ JSON المرسل غير صالح' });
+    }
+    return next(err);
+});
+
+/* ──────────────────────────────────────────────
+   CORS
+   ────────────────────────────────────────────── */
+const RAW_ORIGINS = (process.env.CORS_ORIGINS || '').trim();
+const CORS_ORIGINS = RAW_ORIGINS
+    ? RAW_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
     : '*';
-app.use(cors({ origin: CORS_ORIGINS }));
+
+const corsOptions = CORS_ORIGINS === '*'
+    ? { origin: '*' }
+    : { origin: CORS_ORIGINS, credentials: true };
+app.use(cors(corsOptions));
 
 /* ✅ رؤوس أمان أساسية */
 app.use((req, res, next) => {
@@ -41,59 +66,98 @@ app.use((req, res, next) => {
     next();
 });
 
+/* ──────────────────────────────────────────────
+   الإعدادات العامة
+   ────────────────────────────────────────────── */
 const API_KEY = process.env.GEMINI_API_KEY;
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const HTML_FILE = path.join(__dirname, 'index.html');
 
-const INITIAL_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+const INITIAL_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 let availableModels = [...INITIAL_MODELS];
 let modelsLastFetched = 0;
+let modelsInitPromise = null;
 
 if (!API_KEY) console.error('❌ GEMINI_API_KEY غير موجود! ضعه في متغيرات البيئة.');
-if (!fetchImpl) console.error('❌ fetch غير متوفر! استخدم Node 18+ أو ثبّت node-fetch@2.');
+if (!fetchImpl) console.error('❌ fetch غير متوفر! استخدم Node 18+.');
 
+/* ──────────────────────────────────────────────
+   أدوات أمان النصوص
+   ────────────────────────────────────────────── */
+function safeStr(v, max = 200) {
+    if (typeof v !== 'string') {
+        if (v === null || v === undefined) return '';
+        try { v = String(v); } catch (e) { return ''; }
+    }
+    return v.slice(0, max).replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '').trim();
+}
+
+function sanitizeUserQuery(query) {
+    const s = safeStr(query, 4000);
+    return s.replace(/```/g, '` ` `').replace(/<<<|>>>/g, '');
+}
+
+/* ──────────────────────────────────────────────
+   تحميل نماذج Gemini
+   ────────────────────────────────────────────── */
 async function fetchAvailableModels() {
     if (!API_KEY || !fetchImpl) return [];
     try {
         const r = await fetchImpl(`https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}`);
-        const d = await r.json();
-        if (!d.models) return [];
+        let d;
+        try { d = await r.json(); } catch (e) { return []; }
+        if (!d || !Array.isArray(d.models)) return [];
         const models = d.models
-            .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
-            .map(m => m.name.replace('models/', ''))
-            .filter(n => !n.includes('embedding') && !n.includes('aqa') && !n.includes('imagen') && !n.includes('veo') && !n.includes('gemma'));
+            .filter(m => m && Array.isArray(m.supportedGenerationMethods)
+                      && m.supportedGenerationMethods.includes('generateContent'))
+            .map(m => String(m.name || '').replace('models/', ''))
+            .filter(n => n && !n.includes('embedding') && !n.includes('aqa')
+                      && !n.includes('imagen') && !n.includes('veo') && !n.includes('gemma'));
         models.sort((a, b) => {
-            const s = m => { let x = 0;
+            const s = m => {
+                let x = 0;
                 if (m.includes('2.5-flash')) x -= 100;
                 if (m.includes('2.0-flash')) x -= 90;
-                if (m.includes('2.5-pro')) x -= 80;
+                if (m.includes('2.5-pro'))   x -= 80;
                 if (m.includes('flash-latest')) x -= 70;
-                if (m.includes('flash')) x -= 30;
-                if (m.includes('pro')) x -= 20;
-                if (m.includes('preview')) x += 50;
-                if (m.includes('exp')) x += 50;
-                return x; };
+                if (m.includes('flash'))     x -= 30;
+                if (m.includes('pro'))       x -= 20;
+                if (m.includes('preview'))   x += 50;
+                if (m.includes('exp'))       x += 50;
+                return x;
+            };
             return s(a) - s(b);
         });
         return models;
     } catch (e) { return []; }
 }
+
 async function refreshModels(force = false) {
     if (!force && Date.now() - modelsLastFetched < 3600000) return;
     const m = await fetchAvailableModels();
-    if (m.length) { availableModels = m; modelsLastFetched = Date.now(); }
+    if (m.length) {
+        availableModels = m;
+        modelsLastFetched = Date.now();
+    }
 }
-refreshModels(true);
+
+/* ✅ منع race condition: كل الطلبات تنتظر نفس الـ Promise الأولي */
+function ensureModelsLoaded() {
+    if (!modelsInitPromise) {
+        modelsInitPromise = refreshModels(true).catch(() => {});
+    }
+    return modelsInitPromise;
+}
 
 /* ═══════════════════════════════════════════════════════════════
-   Rate Limiter
+   Rate Limiter (in-memory؛ للـ single-instance أو sticky sessions)
    ═══════════════════════════════════════════════════════════════ */
 const RATE_LIMIT = new Map();
 const RATE_WINDOW_MS = 60 * 1000;
 const RATE_MAX = parseInt(process.env.RATE_MAX || '30', 10);
 
 function rateLimit(req, res, next) {
-    const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+    const ip = req.ip || (req.socket && req.socket.remoteAddress) || 'unknown';
     const now = Date.now();
     const entry = RATE_LIMIT.get(ip);
     if (!entry || now > entry.resetAt) {
@@ -102,7 +166,7 @@ function rateLimit(req, res, next) {
     }
     entry.count++;
     if (entry.count > RATE_MAX) {
-        const remainingSec = Math.ceil((entry.resetAt - now) / 1000);
+        const remainingSec = Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
         return res.status(429).json({
             error: 'rate_limited',
             message: `عدد الطلبات كثير. حاول بعد ${remainingSec} ثانية.`
@@ -110,12 +174,14 @@ function rateLimit(req, res, next) {
     }
     next();
 }
-setInterval(() => {
+
+const rateCleanup = setInterval(() => {
     const now = Date.now();
     for (const [ip, entry] of RATE_LIMIT.entries()) {
         if (now > entry.resetAt) RATE_LIMIT.delete(ip);
     }
 }, 5 * 60 * 1000);
+rateCleanup.unref();
 
 /* ═══════════════════════════════════════════════════════════════
    قاعدة الأسماء
@@ -159,7 +225,8 @@ const MALE_NAMES = new Set([
     'رائد','غيث','حارث','همام','مهند','بهاء','ضياء','صفوان','عدي','زيد',
     'معتز','أشرف','أكرم','أنور','باسم','بشير','توفيق','جهاد','حازم','خليل','رشيد',
     'سامر','سمير','صلاح','ظافر','عاطف','عبدالحكيم','عقيل','فؤاد','كمال','لؤي','مأمون',
-    'متولي','مجدي','مراد','مصعب','منذر','منير','نجيب','نذير','نعمان','هشام','يعمر'
+    'متولي','مجدي','مراد','مصعب','منذر','منير','نجيب','نذير','نعمان','هشام','يعمر',
+    'طلحة','معاوية','أسامه','حمزه'
 ]);
 
 function normalizeArabic(s) {
@@ -177,21 +244,26 @@ const MALE_NORM   = new Set([...MALE_NAMES].map(normalizeArabic));
 function detectUserGender(firstName) {
     if (!firstName || typeof firstName !== 'string') return 'unknown';
     const firstWord = firstName.trim().split(/\s+/)[0];
+    if (!firstWord) return 'unknown';
     const normalized = normalizeArabic(firstWord);
     if (!normalized) return 'unknown';
 
     if (FEMALE_NAMES.has(firstWord) || FEMALE_NORM.has(normalized)) return 'female';
     if (MALE_NAMES.has(firstWord)   || MALE_NORM.has(normalized))   return 'male';
 
-    if (/^(Sara|Nora|Layla|Mariam|Fatima|Aisha|Rania|Dina|Dana|Hind|Mona|Noor|Huda|Salma|Yasmin|Jana|Lina|Tala|Yara)$/i.test(normalized)) return 'female';
-    if (/^(Ahmed|Ahmad|Mohamed|Khalid|Omar|Tariq|Faisal|Fahd|Saad|Bader|Sultan|Majed|Yousef|Rami|Sami|Hassan|Ali|Mustafa|Karim|Ammar)$/i.test(normalized)) return 'male';
-    if (/[ه]$/.test(normalized) && normalized.length > 2) return 'female';
+    if (/^(Sara|Nora|Layla|Mariam|Fatima|Aisha|Rania|Dina|Dana|Hind|Mona|Noor|Huda|Salma|Yasmin|Jana|Lina|Tala|Yara)$/i.test(firstWord)) return 'female';
+    if (/^(Ahmed|Ahmad|Mohamed|Khalid|Omar|Tariq|Faisal|Fahd|Saad|Bader|Sultan|Majed|Yousef|Rami|Sami|Hassan|Ali|Mustafa|Karim|Ammar)$/i.test(firstWord)) return 'male';
+
+    /* ✅ فحص التاء المربوطة في الاسم الأصلي فقط */
+    if (/ة$/.test(firstWord) && firstWord.length > 2) return 'female';
+
     return 'unknown';
 }
 
 function genderInstructions(gender, name) {
-    if (gender === 'female') return `# ⚠️ جنس المستخدم\nالاسم "${name}" → **أنثى**. خاطبها بصيغة المؤنث.`;
-    if (gender === 'male') return `# ⚠️ جنس المستخدم\nالاسم "${name}" → **ذكر**. خاطبه بصيغة المذكر.`;
+    const safeName = safeStr(name, 50) || 'المستخدم';
+    if (gender === 'female') return `# ⚠️ جنس المستخدم\nالاسم "${safeName}" → **أنثى**. خاطبها بصيغة المؤنث.`;
+    if (gender === 'male')   return `# ⚠️ جنس المستخدم\nالاسم "${safeName}" → **ذكر**. خاطبه بصيغة المذكر.`;
     return `# جنس المستخدم\nغير محدد. المذكر كافتراضي.`;
 }
 
@@ -212,32 +284,52 @@ const COOLDOWNS = {
 };
 
 function getUserKey(user, section) {
-    return `${section}::${user?.firstName || 'anon'}::${user?.age || '0'}`;
+    const fn = safeStr(user && user.firstName, 60) || 'anon';
+    const age = safeStr(String((user && user.age) || '0'), 6) || '0';
+    const sec = safeStr(section, 40) || 'unknown';
+    return `${sec}::${fn}::${age}`;
+}
+
+function createSession() {
+    return {
+        mood: null, messageCount: 0, lastActivity: Date.now(),
+        usedOpeners: [], cooldownUntil: 0, closeReason: null,
+        rudeCount: 0, trollingCount: 0, offTopicStreak: 0, aiCloseAttempts: 0,
+        nameUsageCount: 0, messagesSinceLastName: 0, lastMood: null,
+        energy: 1.0, lastResponseMode: null, topicsDiscussed: [],
+        clarifyCount: 0
+    };
 }
 
 function getSession(userKey) {
-    if (!SESSIONS.has(userKey)) {
-        if (SESSIONS.size >= MAX_SESSIONS) {
-            SESSIONS.delete(SESSIONS.keys().next().value);
+    let s = SESSIONS.get(userKey);
+    if (s) return s;
+
+    /* ✅ evict الأقدم بـlastActivity عند الوصول للحدّ */
+    if (SESSIONS.size >= MAX_SESSIONS) {
+        let oldestKey = null;
+        let oldestTime = Infinity;
+        for (const [k, v] of SESSIONS.entries()) {
+            if (v.lastActivity < oldestTime) {
+                oldestTime = v.lastActivity;
+                oldestKey = k;
+            }
         }
-        SESSIONS.set(userKey, {
-            mood: null, messageCount: 0, lastActivity: Date.now(),
-            usedOpeners: [], cooldownUntil: 0, closeReason: null,
-            rudeCount: 0, trollingCount: 0, offTopicStreak: 0, aiCloseAttempts: 0,
-            nameUsageCount: 0, messagesSinceLastName: 0, lastMood: null,
-            energy: 1.0, lastResponseMode: null, topicsDiscussed: [],
-            clarifyCount: 0
-        });
+        if (oldestKey) SESSIONS.delete(oldestKey);
     }
-    return SESSIONS.get(userKey);
+
+    s = createSession();
+    SESSIONS.set(userKey, s);
+    return s;
 }
 
-setInterval(() => {
+const sessionCleanup = setInterval(() => {
     const now = Date.now();
     for (const [key, session] of SESSIONS.entries()) {
         if (now - session.lastActivity > 3 * 60 * 60 * 1000) SESSIONS.delete(key);
     }
 }, 30 * 60 * 1000);
+sessionCleanup.unref();
 
 /* ═══════════════════════════════════════════════════════════════
    اللهجات
@@ -337,7 +429,7 @@ const EMOTIONAL_REACTIONS = {
 };
 
 function detectEmotion(query) {
-    const q = query.toLowerCase();
+    const q = (typeof query === 'string' ? query : '').toLowerCase();
     if (/(قلق|خايف|خوف|متوتر|مرتبك)/i.test(q)) return 'worried';
     if (/(متحمس|حماس|فرحان|مبسوط)/i.test(q)) return 'excited';
     if (/(ملخبط|مو فاهم|ما فهمت|غامض)/i.test(q)) return 'confused';
@@ -351,10 +443,14 @@ function detectEmotion(query) {
    تحليل النية
    ═══════════════════════════════════════════════════════════════ */
 function analyzeIntent(q, history) {
-    const trimmed = q.trim();
+    const trimmed = (typeof q === 'string' ? q : '').trim();
     const qLen = trimmed.length;
-    const recentMsgs = (history || []).filter(h => h.role === 'user').map(h => h.content).slice(-6);
-    const hasHistory = (history || []).length > 1;
+    const safeHistory = Array.isArray(history) ? history : [];
+    const recentMsgs = safeHistory
+        .filter(h => h && h.role === 'user' && typeof h.content === 'string')
+        .map(h => h.content)
+        .slice(-6);
+    const hasHistory = safeHistory.length > 1;
 
     const isAboutPlatform = /(المنصة|منصتكم|الموقع|موقعكم|الاقسام|الأقسام|اقسام|أقسام|المحللين|المحللون|فريقكم|المهنه|تخصصاتكم|كم قسم|وش عندكم|شو عندكم|ايش عندكم|ايش تقدمون|وش تقدمون|شو تقدمون|منو انتو|مين انتو|من انتم|وش تسوون|شو تسوون|ايش تسوون)/i.test(trimmed);
     const isAboutSelf = /(تخصصك|اختصاصك|مجالك|خبرتك|خلفيتك|من انت|من أنت|من تكون|اسمك|شو اسمك|وش اسمك|ايش اسمك|من وين|من أي بلد|تعريف عنك|حدثني عن نفسك|عرفني بنفسك|وش تخصصك|شو تخصصك|مين انت|مين أنت|عرّفني)/i.test(trimmed);
@@ -455,17 +551,21 @@ const OPENERS = {
     long:       ['خلنا نفككها خطوة خطوة.','طيب، خلني أشرح بوضوح.','دعني أوضح الصورة كاملة.']
 };
 
-/* ✅ توقيت السعودية — يعمل صحيحاً على أي خادم */
+/* ✅ توقيت السعودية */
 const SAUDI_OFFSET_MS = 3 * 3600000;
 function getSaudiDate() { return new Date(Date.now() + SAUDI_OFFSET_MS); }
 function getSaudiHour() { return getSaudiDate().getUTCHours(); }
 function getSaudiMinute() { return getSaudiDate().getUTCMinutes(); }
 function getSaudiDateString() {
+    const d = getSaudiDate();
     try {
-        return getSaudiDate().toLocaleDateString('ar-SA-u-nu-latn', {
+        return d.toLocaleDateString('ar-SA-u-nu-latn', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
         });
-    } catch (e) { return getSaudiDate().toISOString().slice(0, 10); }
+    } catch (e1) {
+        try { return d.toLocaleDateString('ar-SA', { timeZone: 'UTC' }); }
+        catch (e2) { return d.toISOString().slice(0, 10); }
+    }
 }
 
 function computeEnergy() {
@@ -506,8 +606,9 @@ const RESPONSE_MODES = {
 function buildPersona(history, session, intent) {
     const availableMoods = MOOD_KEYS.filter(m => m !== session.lastMood && !session.usedOpeners.includes('m_' + m));
     let mood;
-    if (availableMoods.length) mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
-    else {
+    if (availableMoods.length) {
+        mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
+    } else {
         session.usedOpeners = session.usedOpeners.filter(x => !x.startsWith('m_'));
         const fallback = MOOD_KEYS.filter(m => m !== session.lastMood);
         mood = (fallback.length ? fallback : MOOD_KEYS)[Math.floor(Math.random() * (fallback.length || MOOD_KEYS.length))];
@@ -534,11 +635,6 @@ function shouldUseName(session, intent) {
     return false;
 }
 
-function sanitizeUserQuery(query) {
-    if (typeof query !== 'string') return '';
-    return query.replace(/```/g, '` ` `').replace(/<<<|>>>/g, '').slice(0, 4000);
-}
-
 const HUMAN_TOUCHES = {
     hesitation: ['ممم، خلني أفكر...','لحظة، خلني أرتبها.','يعني... خلني أعيد صياغة الفكرة.'],
     selfCorrection: ['يعني — أقصد —','لا، خلني أصحح كلامي:'],
@@ -550,20 +646,21 @@ const HUMAN_TOUCHES = {
 function pickHumanTouch(mood, mode) {
     if (mode === 'terse') return null;
     const roll = Math.random();
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
     if (mode === 'concise') {
-        if (roll < 0.15) return { type: 'opinion', text: HUMAN_TOUCHES.opinion[Math.floor(Math.random() * HUMAN_TOUCHES.opinion.length)] };
+        if (roll < 0.15) return { type: 'opinion', text: pick(HUMAN_TOUCHES.opinion) };
         return null;
     }
     if (mode === 'normal') {
-        if (roll < 0.20) return { type: 'opinion', text: HUMAN_TOUCHES.opinion[Math.floor(Math.random() * HUMAN_TOUCHES.opinion.length)] };
-        if (roll < 0.30) return { type: 'tangent', text: HUMAN_TOUCHES.tangent[Math.floor(Math.random() * HUMAN_TOUCHES.tangent.length)] };
-        if (roll < 0.40) return { type: 'hesitation', text: HUMAN_TOUCHES.hesitation[Math.floor(Math.random() * HUMAN_TOUCHES.hesitation.length)] };
+        if (roll < 0.20) return { type: 'opinion',    text: pick(HUMAN_TOUCHES.opinion) };
+        if (roll < 0.30) return { type: 'tangent',    text: pick(HUMAN_TOUCHES.tangent) };
+        if (roll < 0.40) return { type: 'hesitation', text: pick(HUMAN_TOUCHES.hesitation) };
         return null;
     }
-    if (roll < 0.20) return { type: 'opinion', text: HUMAN_TOUCHES.opinion[Math.floor(Math.random() * HUMAN_TOUCHES.opinion.length)] };
-    if (roll < 0.35) return { type: 'tangent', text: HUMAN_TOUCHES.tangent[Math.floor(Math.random() * HUMAN_TOUCHES.tangent.length)] };
-    if (roll < 0.45) return { type: 'hesitation', text: HUMAN_TOUCHES.hesitation[Math.floor(Math.random() * HUMAN_TOUCHES.hesitation.length)] };
-    if (roll < 0.52) return { type: 'rhetorical', text: HUMAN_TOUCHES.rhetorical[Math.floor(Math.random() * HUMAN_TOUCHES.rhetorical.length)] };
+    if (roll < 0.20) return { type: 'opinion',    text: pick(HUMAN_TOUCHES.opinion) };
+    if (roll < 0.35) return { type: 'tangent',    text: pick(HUMAN_TOUCHES.tangent) };
+    if (roll < 0.45) return { type: 'hesitation', text: pick(HUMAN_TOUCHES.hesitation) };
+    if (roll < 0.52) return { type: 'rhetorical', text: pick(HUMAN_TOUCHES.rhetorical) };
     return null;
 }
 
@@ -571,7 +668,7 @@ function pickHumanTouch(mood, mode) {
    محاكاة التوقيت البشري
    ═══════════════════════════════════════════════════════════════ */
 function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
-    const qLen = (userQuery || '').length;
+    const qLen = (typeof userQuery === 'string' ? userQuery : '').length;
     let readingMs = Math.min(3500, 250 + qLen * 16) * (0.75 + Math.random() * 0.5);
     if (context.type === 'handoff') readingMs = 250 + Math.random() * 300;
     if (context.type === 'return_after_gap') readingMs = Math.min(readingMs, 1800);
@@ -604,9 +701,9 @@ function computeReplyTiming(replies, persona, userQuery, intent, context = {}) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   بناء البرومبت
+   بناء البرومبت (يستقبل useNameThisReply من الخارج — مصدر حقيقة واحد)
    ═══════════════════════════════════════════════════════════════ */
-function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent, context = {}) {
+function buildPrompt(section, query, user, expert, history, dialectKey, persona, userGender, session, intent, context = {}, useNameThisReply = false) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const personality = SECTION_PERSONALITY[section] || SECTION_PERSONALITY.gold;
     const sectionVocab = SECTION_VOCAB[section] || [];
@@ -618,14 +715,17 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     const isLateNight = hour >= 23 || hour < 6;
     const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
 
-    const hasHistory = history && history.length > 1;
+    const safeHistory = Array.isArray(history) ? history : [];
+    const hasHistory = safeHistory.length > 1;
     const historyText = hasHistory
-        ? '\n--- سجل الحوار ---\n' + history.slice(-6).map(h =>
-            `${h.role === 'user' ? (user?.firstName || 'المستخدم') : 'أنت'}: ${h.content.substring(0, 200)}`
-          ).join('\n') + '\n---'
+        ? '\n--- سجل الحوار ---\n' + safeHistory.slice(-6).map(h => {
+            const role = (h && h.role) === 'user' ? (safeStr(user && user.firstName, 40) || 'المستخدم') : 'أنت';
+            const content = safeStr(h && h.content, 200);
+            return `${role}: ${content}`;
+        }).join('\n') + '\n---'
         : '';
 
-    const modeInfo = RESPONSE_MODES[persona.mode];
+    const modeInfo = RESPONSE_MODES[persona.mode] || RESPONSE_MODES.normal;
     const lengthRule = `**${modeInfo.lines}** — النمط: *${modeInfo.desc}*`;
 
     const emotionHint = emotion
@@ -636,16 +736,17 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     if (context.type === 'handoff') {
         contextSection = `\n# 🔄 سياق خاص — محادثة مستلمة\nأنت توليت للتو هذه المحادثة من زميل.\n- 🚫 لا تقل "كما قلت لك سابقاً".\n- ✅ عالج الرسالة مباشرة.`;
     } else if (context.type === 'return_after_gap') {
-        const min = Math.floor((context.gapMs || 0) / 60000);
+        const min = Math.max(0, Math.floor((context.gapMs || 0) / 60000));
         contextSection = `\n# ⏱️ عودة بعد غياب ~${min} دقيقة\n- أحياناً (~40%) ابدأ بعذر خفيف.`;
     }
 
-    const useName = shouldUseName(session, intent);
-    const nameRule = useName
-        ? `# 👤 الاسم — يُسمح به مرة واحدة فقط`
-        : `# ⛔ الاسم — ممنوع!\nلا تذكر "${user?.firstName}" إطلاقاً.`;
+    /* ✅ مصدر حقيقة واحد للاسم */
+    const safeFirstName = safeStr(user && user.firstName, 50) || 'المستخدم';
+    const nameRule = useNameThisReply
+        ? `# 👤 الاسم — يُسمح به مرة واحدة فقط في هذه الرسالة`
+        : `# ⛔ الاسم — ممنوع!\nلا تذكر "${safeFirstName}" إطلاقاً.`;
 
-    const farewellRule = intent.isFarewell || intent.isThanks
+    const farewellRule = (intent.isFarewell || intent.isThanks)
         ? `\n# 🚪 وداع\nجملة واحدة قصيرة فقط.` : '';
 
     let forecastMode = '';
@@ -655,7 +756,7 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 
     let consultationMode = '';
     if (intent.isConsultationRequest) {
-        consultationMode = `\n# 💼 وضع الاستشارة\n- خطة بنسب + تحذير.\nخبرة المستخدم: ${user?.experience || 'مبتدئ'}.`;
+        consultationMode = `\n# 💼 وضع الاستشارة\n- خطة بنسب + تحذير.\nخبرة المستخدم: ${safeStr(user && user.experience, 60) || 'مبتدئ'}.`;
     }
 
     let platformMode = '';
@@ -679,7 +780,8 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     const humanTouchLine = humanTouch
         ? `\n# 🎭 لمسة بشرية (${humanTouch.type})\nمثال: "${humanTouch.text}"` : '';
 
-    const personalLine = (personality.personalLines && personality.personalLines.length && Math.random() < 0.18
+    const personalLine = (personality.personalLines && personality.personalLines.length
+        && Math.random() < 0.18
         && (persona.mode === 'expanded' || persona.mode === 'detailed')
         && !intent.isGeneralQuestion && !intent.isMetaQuestion && !intent.isSimple)
         ? personality.personalLines[Math.floor(Math.random() * personality.personalLines.length)]
@@ -687,13 +789,17 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
     const personalLineRule = personalLine
         ? `\n# 💬 جملة شخصية (اختياري)\n"${personalLine}"` : '';
 
-    const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
+    const expertName = safeStr(expert && expert.name, 80) || 'مستشار';
+    const expertRole = safeStr(expert && expert.role, 80) || 'مستشار مالي';
+    const expertYears = safeStr(expert && expert.years, 20) || 'سنوات';
+
+    const fullName = `${safeStr(user && user.firstName, 60)} ${safeStr(user && user.lastName, 60)}`.trim();
     const safeQuery = sanitizeUserQuery(query);
 
     return `${PLATFORM_KNOWLEDGE}
 
 # 🎭 هويتك
-أنت **${expert?.name || 'مستشار'}**، ${expert?.role || 'مستشار مالي'}، خبرة ${expert?.years || 'سنوات'}.
+أنت **${expertName}**، ${expertRole}، خبرة ${expertYears}.
 من ${dialect.country}. على منصة استشارات forG.
 
 # 🌍 لهجتك
@@ -711,22 +817,22 @@ function buildPrompt(section, query, user, expert, history, dialectKey, persona,
 ${personality.avoid ? `- تجنّب: ${personality.avoid}` : ''}
 
 # 🎭 حالتك الآن
-- المزاج: ${persona.mood} (${MOODS[persona.mood]?.style})
+- المزاج: ${persona.mood} (${(MOODS[persona.mood] || MOODS.neutral).style})
 - الطاقة: ${Math.round(persona.energy * 100)}%
 - الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}
 - النمط: ${persona.mode}
 
-${genderInstructions(userGender, user?.firstName || 'المستخدم')}
+${genderInstructions(userGender, safeFirstName)}
 
 ${nameRule}
 
 # 👤 المستشير
 - الاسم: ${fullName || 'المستخدم'}
-- العمر: ${user?.age || '؟'}
-- البلد: ${user?.country || 'غير محدد'}
-- الخبرة: ${user?.experience || 'غير محدد'}
-- عدد الرسائل: ${session?.messageCount || 0}
-${user?.reason ? `- سبب الزيارة: ${user.reason}` : ''}
+- العمر: ${safeStr(String((user && user.age) || ''), 6) || '؟'}
+- البلد: ${safeStr(user && user.country, 40) || 'غير محدد'}
+- الخبرة: ${safeStr(user && user.experience, 60) || 'غير محدد'}
+- عدد الرسائل: ${session && session.messageCount || 0}
+${user && user.reason ? `- سبب الزيارة: ${safeStr(user.reason, 200)}` : ''}
 ${emotionHint}
 ${contextSection}
 ${farewellRule}
@@ -774,10 +880,11 @@ ${persona.opener ? `# 💬 افتتاحية (اختيارية)\n"${persona.opene
 اكتب الرد مباشرة.`;
 }
 
-function buildLightPrompt(section, query, user, expert, history, dialectKey, session, intent, userGender, context = {}) {
+function buildLightPrompt(section, query, user, expert, history, dialectKey, session, intent, userGender, context = {}, useNameThisReply = false) {
     const dialect = DIALECTS[dialectKey] || DIALECTS.saudi;
     const safeQuery = sanitizeUserQuery(query);
-    const fullName = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
+    const safeFirstName = safeStr(user && user.firstName, 50);
+    const fullName = `${safeFirstName} ${safeStr(user && user.lastName, 60)}`.trim();
 
     const saudiHour = getSaudiHour();
     const saudiMinute = getSaudiMinute();
@@ -806,9 +913,16 @@ function buildLightPrompt(section, query, user, expert, history, dialectKey, ses
     if (context.type === 'handoff') contextNote = '\n🔄 أنت توليت المحادثة للتو.';
     else if (context.type === 'return_after_gap') contextNote = '\n⏱️ المستخدم غاب فترة.';
 
-    return `أنت **${expert?.name || 'مستشار'}** من ${dialect.country} على منصة استشارات forG.
+    /* ✅ نفس منطق الاسم من الخارج */
+    const nameLine = useNameThisReply && safeFirstName
+        ? `\n# الاسم: يمكنك ذكر "${safeFirstName}" مرة واحدة فقط.`
+        : `\n# الاسم: ممنوع ذكر "${safeFirstName || 'المستخدم'}".`;
+
+    const expertName = safeStr(expert && expert.name, 80) || 'مستشار';
+
+    return `أنت **${expertName}** من ${dialect.country} على منصة استشارات forG.
 تتحدث **${dialect.name}** — ${dialect.tone}.
-${genderInstructions(userGender, user?.firstName || 'المستخدم')}
+${genderInstructions(userGender, safeFirstName || 'المستخدم')}
 
 المستخدم: ${fullName || 'مستخدم'}
 رسالته:
@@ -816,6 +930,7 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
 ${safeQuery}
 >>>
 ${contextNote}
+${nameLine}
 
 # نوع الرسالة: ${type}
 ${guidance}
@@ -829,13 +944,21 @@ ${guidance}
 اكتب الرد مباشرة:`;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   استدعاء Gemini
+   ═══════════════════════════════════════════════════════════════ */
 async function callGemini(prompt, maxTokens = 4000) {
     if (!fetchImpl) throw new Error('fetch غير متوفر — استخدم Node 18+');
-    await refreshModels();
+    if (!API_KEY)   throw new Error('GEMINI_API_KEY مفقود');
+
+    /* ✅ ننتظر التحميل الأول حتى ينتهي */
+    await ensureModelsLoaded();
+    await refreshModels(false).catch(() => {});
+
     let lastError = null;
     for (const model of availableModels) {
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(API_KEY)}`;
             const r = await fetchImpl(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -855,40 +978,69 @@ async function callGemini(prompt, maxTokens = 4000) {
                     ]
                 })
             });
-            const d = await r.json();
-            if (d.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return { text: d.candidates[0].content.parts[0].text, model,
-                    truncated: d.candidates[0].finishReason === 'MAX_TOKENS' };
+
+            /* ✅ لا نكسر السلسلة إن كان الردّ ليس JSON */
+            let d;
+            try { d = await r.json(); }
+            catch (e) {
+                lastError = `invalid_json_response_from_${model}`;
+                continue;
             }
-            if (d.error) {
+
+            const text = d && d.candidates && d.candidates[0]
+                && d.candidates[0].content && d.candidates[0].content.parts
+                && d.candidates[0].content.parts[0]
+                && d.candidates[0].content.parts[0].text;
+
+            if (text) {
+                return {
+                    text,
+                    model,
+                    truncated: d.candidates[0].finishReason === 'MAX_TOKENS'
+                };
+            }
+
+            if (d && d.error && d.error.message) {
                 lastError = d.error.message;
-                if (lastError.includes('not found')) await refreshModels(true);
+                if (/not found/i.test(lastError)) {
+                    /* force refresh لإعادة بناء القائمة */
+                    await refreshModels(true).catch(() => {});
+                }
             }
-        } catch (e) { lastError = e.message; }
+        } catch (e) {
+            lastError = (e && e.message) || 'unknown_fetch_error';
+        }
     }
     throw new Error(lastError || 'كل النماذج فشلت');
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   استخراج CLOSE + تقطيع النص
+   ═══════════════════════════════════════════════════════════════ */
 function extractCloseToken(text) {
-    const closeRegex = /\[CLOSE:(user_done|trolling|bored|deep_close|rude|wants_else)\]\s*$/i;
-    const match = text.match(closeRegex);
-    if (match) {
-        const reason = match[1].toLowerCase();
-        const cleaned = text.replace(closeRegex, '').trim();
-        return { reason, cleaned };
-    }
-    return { reason: null, cleaned: text };
+    if (typeof text !== 'string') return { reason: null, cleaned: '' };
+    const closeRegex = /\[CLOSE:(user_done|trolling|bored|deep_close|rude|wants_else)\]/gi;
+    const match = closeRegex.exec(text);
+    const reason = match ? match[1].toLowerCase() : null;
+    /* ✅ إزالة من أي موضع (global) */
+    closeRegex.lastIndex = 0;
+    const cleaned = text.replace(closeRegex, '')
+        .replace(/[ \t]+\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    return { reason, cleaned };
 }
 
 function splitIntoChunks(text, mode) {
     if (!text || typeof text !== 'string') return ['عذراً، ما قدرت أولد رد.'];
-    let clean = text.trim()
+    const clean = text.trim()
         .replace(/^```(?:json|markdown)?\s*/i, '')
         .replace(/```\s*$/, '')
         .replace(/\\n/g, '\n')
         .replace(/^"|"$/g, '')
         .trim();
 
+    if (!clean) return ['عذراً، ما قدرت أولد رد.'];
     if (mode === 'terse') return [clean];
 
     if (clean.includes('[SPLIT]')) {
@@ -904,7 +1056,17 @@ function splitIntoChunks(text, mode) {
     }
 
     if (paragraphs.length <= 1) {
-        const sentences = clean.split(/(?<=[.!؟])\s+(?=[A-Za-z\u0600-\u06FF])/).map(s => s.trim()).filter(Boolean);
+        /* ✅ lookbehind مع fallback */
+        let sentences;
+        try {
+            sentences = clean.split(/(?<=[.!؟])\s+(?=[A-Za-z\u0600-\u06FF])/).map(s => s.trim()).filter(Boolean);
+        } catch (e) {
+            sentences = clean.split(/([.!؟])\s+/).reduce((acc, cur, i, arr) => {
+                if (i % 2 === 0 && arr[i + 1]) acc.push(cur + arr[i + 1]);
+                else if (i === arr.length - 1 && cur) acc.push(cur);
+                return acc;
+            }, []).map(s => s.trim()).filter(Boolean);
+        }
         if (sentences.length >= 2) {
             if (mode === 'concise') return [clean];
             const targetChunks = clean.length > 350 ? 3 : 2;
@@ -932,7 +1094,8 @@ function splitIntoChunks(text, mode) {
 }
 
 function shouldClose(intent, history, session, aiCloseReason) {
-    const userCount = (history || []).filter(h => h.role === 'user').length;
+    const safeHistory = Array.isArray(history) ? history : [];
+    const userCount = safeHistory.filter(h => h && h.role === 'user').length;
 
     if (aiCloseReason) {
         const isTooShortToClose = userCount < 3 && aiCloseReason !== 'wants_else';
@@ -945,14 +1108,14 @@ function shouldClose(intent, history, session, aiCloseReason) {
     }
 
     if (intent.isDone && userCount >= 3) return { close: true, reason: 'user_done', source: 'rule' };
-    if (intent.isRude && userCount >= 5) return { close: true, reason: 'rude', source: 'rule' };
-    if (userCount >= 40) return { close: true, reason: 'deep_close', source: 'rule' };
+    if (intent.isRude && userCount >= 5) return { close: true, reason: 'rude',      source: 'rule' };
+    if (userCount >= 40)                 return { close: true, reason: 'deep_close', source: 'rule' };
 
-    const recentUserMsgs = (history || []).filter(h => h.role === 'user').slice(-5);
+    const recentUserMsgs = safeHistory.filter(h => h && h.role === 'user').slice(-5);
     if (recentUserMsgs.length >= 4) {
-        const veryShortReplies = recentUserMsgs.filter(m => m.content.trim().length < 6).length;
+        const veryShortReplies = recentUserMsgs.filter(m => (m.content || '').trim().length < 6).length;
         const ackOnly = recentUserMsgs.filter(m =>
-            /^(طيب|تمام|اوكي|أوكي|اوك|حسناً|حسنا|زين|ماشي|ok|شكرا|يعني)[\s!.]*$/i.test(m.content.trim())
+            /^(طيب|تمام|اوكي|أوكي|اوك|حسناً|حسنا|زين|ماشي|ok|شكرا|يعني)[\s!.]*$/i.test((m.content || '').trim())
         ).length;
         if (veryShortReplies >= 3 || ackOnly >= 3) {
             return { close: true, reason: 'bored', source: 'rule_context' };
@@ -971,15 +1134,19 @@ function shouldClose(intent, history, session, aiCloseReason) {
    ═══════════════════════════════════════════════════════════════ */
 
 app.get('/', (req, res) => {
-    if (fs.existsSync(HTML_FILE)) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.setHeader('Cache-Control', 'public, max-age=300');
-        return res.sendFile(HTML_FILE);
+    try {
+        if (fs.existsSync(HTML_FILE)) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=300');
+            return res.sendFile(HTML_FILE);
+        }
+    } catch (e) {
+        console.error('sendFile error:', e.message);
     }
     res.status(200).json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.2',
+        version: 'v15.4',
         warning: 'index.html غير موجود',
         activeSessions: SESSIONS.size
     });
@@ -989,12 +1156,15 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'OK',
         platform: 'منصة استشارات forG',
-        version: 'v15.2-human-plus-handoff',
+        version: 'v15.4-zero-bug',
         features: ['human_response_modes', 'mood_based_length', 'energy_simulation',
                    'rate_limit', 'light_prompt', 'arabic_normalize',
                    'general_questions', 'clarify_first', 'human_timing',
                    'no_scope_creep', 'context_awareness', 'handoff_endpoint',
-                   'trust_proxy', 'saudi_timezone_fix', 'builtin_fetch'],
+                   'trust_proxy', 'saudi_timezone_fix', 'builtin_fetch',
+                   'gender_heuristic_fix', 'cooldown_order_fix', 'input_validation',
+                   'json_error_handler', 'name_rule_unified', 'global_close_token',
+                   'model_race_fixed', 'safe_json_parse', 'graceful_shutdown'],
         activeSessions: SESSIONS.size,
         rateLimitIPs: RATE_LIMIT.size,
         saudiHour: getSaudiHour(),
@@ -1007,8 +1177,12 @@ app.get('/api/status', (req, res) => {
 app.get('/ping', (req, res) => res.json({ pong: true, ts: Date.now() }));
 
 app.post('/api/feedback', rateLimit, (req, res) => {
-    const { userKey, messageIndex, helpful, reason } = req.body || {};
-    console.log(`📊 Feedback: ${userKey || 'anon'} | msg#${messageIndex} | helpful=${helpful}`);
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const userKey = safeStr(body.userKey, 200) || 'anon';
+    const messageIndex = Number.isFinite(body.messageIndex) ? body.messageIndex : -1;
+    const helpful = !!body.helpful;
+    const reason = safeStr(body.reason, 300);
+    console.log(`📊 Feedback: ${userKey} | msg#${messageIndex} | helpful=${helpful}${reason ? ' | ' + reason : ''}`);
     res.json({ ok: true });
 });
 
@@ -1016,29 +1190,43 @@ app.post('/api/feedback', rateLimit, (req, res) => {
    Handoff
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/handoff', rateLimit, async (req, res) => {
-    const { section, newExpert, oldExpert, lastUserMsg, user, dialect, handoffCount } = req.body || {};
-    if (!section || !newExpert) return res.status(400).json({ error: 'بيانات ناقصة' });
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const { section, newExpert, oldExpert, lastUserMsg, user, dialect } = body;
+    const handoffCount = Number.isFinite(body.handoffCount) ? body.handoffCount : 0;
+
+    if (typeof section !== 'string' || !section.trim()) return res.status(400).json({ error: 'بيانات ناقصة' });
+    if (!newExpert || typeof newExpert !== 'object')    return res.status(400).json({ error: 'بيانات ناقصة' });
     if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
 
-    const userGender = detectUserGender(user?.firstName);
+    const safeFirstName = safeStr(user && user.firstName, 60);
+    const userGender = detectUserGender(safeFirstName);
     const safeLastMsg = sanitizeUserQuery(lastUserMsg || '');
-    const dialectData = DIALECTS[dialect] || DIALECTS[newExpert?.dialect] || DIALECTS.saudi;
+
+    const expertDialectKey = safeStr(newExpert && newExpert.dialect, 40);
+    const dialectData = DIALECTS[dialect] || DIALECTS[expertDialectKey] || DIALECTS.saudi;
+
     const hour = getSaudiHour();
     const isLateNight = hour >= 23 || hour < 6;
     const dayPart = hour < 6 ? 'الفجر' : hour < 11 ? 'الصباح' : hour < 15 ? 'الظهيرة' : hour < 19 ? 'العصر' : hour < 23 ? 'المساء' : 'الليل';
 
-    const prompt = `أنت **${newExpert.name}**، ${newExpert.role}، خبرة ${newExpert.years}.
+    const newExpertName = safeStr(newExpert && newExpert.name, 80) || 'مستشار';
+    const newExpertRole = safeStr(newExpert && newExpert.role, 80) || 'مستشار مالي';
+    const newExpertYears = safeStr(newExpert && newExpert.years, 20) || 'سنوات';
+    const oldExpertName = safeStr(oldExpert && oldExpert.name, 80);
+    const userCountry = safeStr(user && user.country, 40) || 'غير محدد';
+
+    const prompt = `أنت **${newExpertName}**، ${newExpertRole}، خبرة ${newExpertYears}.
 تتحدث **${dialectData.name}** — ${dialectData.tone}. من ${dialectData.country}.
 على منصة استشارات forG.
 
 # السياق
-- أنت توليت للتو هذه المحادثة من زميلك ${oldExpert?.name ? `**${oldExpert.name}**` : ''}.
-- المستخدم: ${user?.firstName || 'مستخدم'} (${user?.country || 'غير محدد'}).
+- أنت توليت للتو هذه المحادثة من زميلك ${oldExpertName ? `**${oldExpertName}**` : ''}.
+- المستخدم: ${safeFirstName || 'مستخدم'} (${userCountry}).
 ${handoffCount > 0 ? `- التحويل رقم ${handoffCount + 1}.` : ''}
 ${safeLastMsg ? `- آخر رسالة: "${safeLastMsg.slice(0, 180)}"` : '- بداية جديدة.'}
 - الوقت: ${dayPart}${isLateNight ? ' 🌙' : ''}.
 
-${genderInstructions(userGender, user?.firstName || 'المستخدم')}
+${genderInstructions(userGender, safeFirstName || 'المستخدم')}
 
 # المطلوب
 **جملة إلى جملتين فقط**. ترحيب طبيعي.
@@ -1057,7 +1245,7 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
             .replace(/^"|"$/g, '')
             .trim();
 
-        if (!cleaned) throw new Error('empty greeting');
+        if (!cleaned) throw new Error('empty_greeting');
 
         const chars = cleaned.length;
         const typingMs = chars * (70 + Math.random() * 30);
@@ -1066,7 +1254,7 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
         res.json({
             replies: [cleaned],
             newExpert,
-            handoffCount: handoffCount || 0,
+            handoffCount,
             timing: {
                 delayMs: Math.round(totalMs),
                 perReply: [Math.round(typingMs)],
@@ -1076,10 +1264,11 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
         });
     } catch (e) {
         console.error('❌ handoff error:', e.message);
-        const fallback = `أهلاً، أنا ${newExpert.name}، ${newExpert.role}. كيف أقدر أساعدك؟`;
+        const fallback = `أهلاً، أنا ${newExpertName}، ${newExpertRole}. كيف أقدر أساعدك؟`;
         res.json({
             replies: [fallback],
             newExpert,
+            handoffCount,
             fallback: true,
             timing: { delayMs: 2000, perReply: [1500], readingMs: 300, thinkingMs: 200 }
         });
@@ -1090,21 +1279,22 @@ ${genderInstructions(userGender, user?.firstName || 'المستخدم')}
    Analyze
    ═══════════════════════════════════════════════════════════════ */
 app.post('/api/analyze', rateLimit, async (req, res) => {
-    const { section, query, user, expert, history, dialect } = req.body;
-    const context = req.body.context || {};
-    const contextType = context.type || 'normal';
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const { section, query, user, expert, dialect } = body;
+    const history = Array.isArray(body.history) ? body.history : [];
+    const context = body.context && typeof body.context === 'object' ? body.context : {};
+    const contextType = safeStr(context.type, 40) || 'normal';
 
-    if (!section || !query) return res.status(400).json({ error: 'بيانات ناقصة' });
+    if (typeof section !== 'string' || !section.trim())  return res.status(400).json({ error: 'بيانات ناقصة' });
+    if (typeof query !== 'string'   || !query.trim())    return res.status(400).json({ error: 'بيانات ناقصة' });
     if (!API_KEY) return res.status(500).json({ error: 'مفتاح API مفقود' });
 
     const userKey = getUserKey(user, section);
     const session = getSession(userKey);
-    session.lastActivity = Date.now();
-    session.messageCount++;
-    session.messagesSinceLastName++;
 
+    /* ✅ فحص الكولداون أولاً — قبل أي تعديل على الجلسة */
     if (session.cooldownUntil && Date.now() < session.cooldownUntil) {
-        const remaining = Math.ceil((session.cooldownUntil - Date.now()) / 60000);
+        const remaining = Math.max(1, Math.ceil((session.cooldownUntil - Date.now()) / 60000));
         return res.status(429).json({
             error: 'cooldown_active', cooldown: true,
             remainingMinutes: remaining, reason: session.closeReason,
@@ -1112,10 +1302,15 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         });
     }
 
-    const userGender = detectUserGender(user?.firstName);
+    session.lastActivity = Date.now();
+    session.messageCount++;
+    session.messagesSinceLastName++;
+
+    const userGender = detectUserGender(user && user.firstName);
     const intent = analyzeIntent(query, history);
     const persona = buildPersona(history, session, intent);
 
+    /* ✅ مصدر حقيقة واحد للاسم — يُحسب هنا ويُمرّر للبرومبت */
     const useNameThisReply = shouldUseName(session, intent);
     if (useNameThisReply) {
         session.messagesSinceLastName = 0;
@@ -1131,10 +1326,13 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
 
     try {
         const prompt = intent.isSimple
-            ? buildLightPrompt(section, query, user, expert, history, dialect || 'saudi', session, intent, userGender, context)
-            : buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender, session, intent, context);
+            ? buildLightPrompt(section, query, user, expert, history, dialect || 'saudi', session, intent, userGender, context, useNameThisReply)
+            : buildPrompt(section, query, user, expert, history, dialect || 'saudi', persona, userGender, session, intent, context, useNameThisReply);
 
-        const maxTokens = intent.isSimple ? 300 : (persona.mode === 'detailed' ? 4000 : persona.mode === 'expanded' ? 2500 : 1500);
+        const maxTokens = intent.isSimple
+            ? 300
+            : (persona.mode === 'detailed' ? 4000 : persona.mode === 'expanded' ? 2500 : 1500);
+
         const result = await callGemini(prompt, maxTokens);
 
         const { reason: aiCloseReason, cleaned } = extractCloseToken(result.text);
@@ -1153,7 +1351,7 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
             emotion: detectEmotion(query),
             usedNameThisReply: useNameThisReply,
             askingBack: !!intent.shouldClarify,
-            context: { type: contextType, gapMs: context.gapMs || 0 },
+            context: { type: contextType, gapMs: Math.max(0, Number(context.gapMs) || 0) },
             intent: {
                 type: intent.wantsSomethingElse ? 'wants_else'
                     : intent.isGeneralQuestion ? 'general'
@@ -1189,45 +1387,71 @@ app.post('/api/analyze', rateLimit, async (req, res) => {
         };
 
         if (closeDecision.close) {
-            session.cooldownUntil = Date.now() + COOLDOWNS[closeDecision.reason];
+            /* ✅ fallback آمن لو reason غير معروف */
+            const cooldownMs = COOLDOWNS[closeDecision.reason] || COOLDOWNS.user_done;
+            session.cooldownUntil = Date.now() + cooldownMs;
             session.closeReason = closeDecision.reason;
             response.closed = true;
             response.closeReason = closeDecision.reason;
             response.closeSource = closeDecision.source;
-            response.cooldownMinutes = Math.floor(COOLDOWNS[closeDecision.reason] / 60000);
+            response.cooldownMinutes = Math.floor(cooldownMs / 60000);
         }
 
         res.json(response);
     } catch (e) {
         console.error('❌ analyze error:', e.message);
-        res.status(500).json({ error: 'فشل التحليل', details: e.message });
+        res.status(500).json({ error: 'فشل التحليل' });
     }
 });
 
-/* ✅ Error middleware */
-app.use((err, req, res, next) => {
-    console.error('🚨 Unhandled error:', err);
-    if (res.headersSent) return next(err);
-    res.status(500).json({ error: 'خطأ داخلي في الخادم' });
-});
-
-/* ✅ 404 */
+/* ✅ 404 قبل error middleware */
 app.use((req, res) => {
     res.status(404).json({ error: 'not_found', path: req.path });
 });
 
-process.on('unhandledRejection', (err) => console.error('Unhandled rejection:', err));
-process.on('uncaughtException', (err) => console.error('Uncaught exception:', err));
+/* ✅ Error middleware في النهاية */
+app.use((err, req, res, next) => {
+    console.error('🚨 Unhandled error:', err && err.message);
+    if (res.headersSent) return next(err);
+    res.status(500).json({ error: 'خطأ داخلي في الخادم' });
+});
 
-const server = app.listen(PORT, () => {
-    console.log(`✅ منصة استشارات forG — v15.2 — البورت ${PORT}`);
+/* ═══════════════════════════════════════════════════════════════
+   Global handlers + Start
+   ═══════════════════════════════════════════════════════════════ */
+let server = null;
+let shuttingDown = false;
+
+function gracefulShutdown(signal, code = 0) {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.log(`${signal} — بدء الإغلاق...`);
+    if (!server || !server.listening) {
+        process.exit(code);
+        return;
+    }
+    server.close(() => process.exit(code));
+    setTimeout(() => process.exit(code), 5000).unref();
+}
+
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled rejection:', err && err.message ? err.message : err);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('💥 Uncaught exception:', err);
+    gracefulShutdown('uncaughtException', 1);
+});
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM', 0));
+process.on('SIGINT',  () => gracefulShutdown('SIGINT',  0));
+
+server = app.listen(PORT, () => {
+    console.log(`✅ منصة استشارات forG — v15.4 — البورت ${PORT}`);
     console.log(`📄 index.html: ${fs.existsSync(HTML_FILE) ? '✅ موجود' : '❌ غير موجود'}`);
-    console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2,'0')}`);
+    console.log(`🕐 الوقت (السعودية): ${getSaudiHour()}:${String(getSaudiMinute()).padStart(2, '0')}`);
     console.log(`🔑 GEMINI_API_KEY: ${API_KEY ? '✅ موجود' : '❌ مفقود'}`);
     console.log(`🌐 fetch: ${fetchImpl ? '✅ مدمج' : '❌ غير متوفر'}`);
     console.log(`🛡️  Rate limit: ${RATE_MAX}/${RATE_WINDOW_MS / 1000}s لكل IP`);
     console.log(`✅ trust proxy مفعّل`);
 });
-
-process.on('SIGTERM', () => { console.log('SIGTERM'); server.close(() => process.exit(0)); });
-process.on('SIGINT', () => { console.log('SIGINT'); server.close(() => process.exit(0)); });
