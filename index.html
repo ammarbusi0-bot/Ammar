@@ -12,14 +12,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#030605;color:#fff;f
 #game{position:fixed;inset:0}
 canvas{display:block;width:100%;height:100%}
 .hidden{display:none!important}
-
 .cinebar{position:fixed;left:0;right:0;height:0;background:#000;z-index:50;pointer-events:none;transition:height .9s cubic-bezier(.4,0,.2,1)}
 #cineTop{top:0}#cineBot{bottom:0}
 .cine-on #cineTop,.cine-on #cineBot{height:9vh}
 #vignette{position:fixed;inset:0;pointer-events:none;z-index:4;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.55) 100%)}
 #grain{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:.055;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
-
 .hud{position:fixed;top:0;left:0;right:0;z-index:6;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
   display:flex;align-items:center;justify-content:space-between;pointer-events:none;
   background:linear-gradient(180deg,rgba(2,5,4,.9),rgba(2,5,4,0))}
@@ -32,12 +30,11 @@ canvas{display:block;width:100%;height:100%}
 .pcard span{font-size:10px;color:#a8b3ae}
 .pcard b{font-size:12px;color:#f0d79a;font-weight:700}
 .vs{font-size:10px;color:#63706b;letter-spacing:2px}
-.topright{display:flex;gap:8px;pointer-events:auto}
+.topright{display:flex;gap:8px;pointer-events:auto;align-items:center}
 .ibtn{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
   background:linear-gradient(160deg,rgba(20,30,26,.75),rgba(6,12,10,.85));color:#fff;font-size:17px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(10px);transition:.2s}
 .ibtn:active{transform:scale(.92)}
-.wallet{font-size:11px;padding:7px 12px;border-radius:11px;background:linear-gradient(160deg,rgba(40,60,30,.75),rgba(10,20,10,.85));border:1px solid rgba(217,173,91,.35);color:#f0d79a;font-weight:700}
-
+.wallet{font-size:11.5px;padding:8px 12px;border-radius:11px;background:linear-gradient(160deg,rgba(40,60,30,.75),rgba(10,20,10,.85));border:1px solid rgba(217,173,91,.35);color:#f0d79a;font-weight:700}
 .center-info{position:fixed;top:calc(84px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
 .pill{padding:6px 16px;border-radius:22px;background:linear-gradient(160deg,rgba(14,22,18,.82),rgba(4,9,7,.88));
   border:1px solid rgba(217,173,91,.28);font-size:11.5px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
@@ -47,8 +44,7 @@ canvas{display:block;width:100%;height:100%}
 .ptrack{flex:1;height:7px;border-radius:8px;background:linear-gradient(90deg,#0a1611,#15241d);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
 #powerBar{height:100%;width:0;background:linear-gradient(90deg,#3fa86b,#d8b45c 55%,#e2553a);box-shadow:0 0 12px rgba(216,180,92,.6);transition:width .04s linear}
 #powerText{min-width:34px;text-align:right;color:#e9cf8b;font-size:11px;font-weight:700}
-
-.controls{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;display:flex;align-items:flex-end;gap:14px}
+.controls{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;display:flex;align-items:flex-end;gap:12px}
 .cbtn{width:56px;height:54px;border-radius:16px;border:1px solid rgba(255,255,255,.15);
   background:linear-gradient(160deg,rgba(22,32,27,.78),rgba(8,14,11,.85));color:#fff;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);font-family:inherit;transition:.15s;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 .cbtn small{font-size:8px;color:#95a19c;font-family:inherit;margin-top:1px}
@@ -62,21 +58,17 @@ canvas{display:block;width:100%;height:100%}
 #shootBtn:disabled{opacity:.35;filter:grayscale(1);cursor:default}
 #toggleBtn{border-color:rgba(63,176,107,.6);background:linear-gradient(160deg,rgba(30,60,40,.85),rgba(10,25,15,.9))}
 #camBtn{border-color:rgba(63,140,200,.6);background:linear-gradient(160deg,rgba(20,40,60,.85),rgba(8,15,25,.9))}
-
 #hint{position:fixed;bottom:calc(120px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;
   font-size:10.5px;color:#98a49e;background:linear-gradient(160deg,rgba(14,22,18,.8),rgba(4,9,7,.85));padding:7px 16px;border-radius:22px;border:1px solid rgba(255,255,255,.09);pointer-events:none;transition:.4s;white-space:nowrap;backdrop-filter:blur(8px)}
-
 #toast{position:fixed;top:24%;left:50%;transform:translate(-50%,-8px);z-index:20;padding:11px 24px;border-radius:24px;
   background:linear-gradient(160deg,rgba(14,22,18,.95),rgba(4,9,7,.96));border:1px solid rgba(217,173,91,.35);font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.35s;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.6)}
 #toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
-
 #joystick{position:fixed;left:24px;bottom:calc(24px + env(safe-area-inset-bottom));width:130px;height:130px;border-radius:50%;z-index:8;pointer-events:auto;opacity:0;transition:.3s;
   background:radial-gradient(circle,rgba(217,173,91,.06) 0%,rgba(0,0,0,.25) 70%);border:1.5px solid rgba(217,173,91,.25);box-shadow:inset 0 0 30px rgba(0,0,0,.5)}
 #joystick.active{opacity:1}
 #jknob{position:absolute;top:50%;left:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%,#e8c87e,#8a6320 70%,#3a2810);border:1px solid rgba(255,255,255,.35);box-shadow:0 6px 20px rgba(0,0,0,.6)}
 @media(hover:hover) and (pointer:fine){#joystick{opacity:.35}}
-
 .overlay{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:20px;background:radial-gradient(ellipse at center,rgba(3,8,6,.75),rgba(1,3,2,.92));backdrop-filter:blur(14px)}
 .panel{width:min(440px,92vw);padding:34px 28px;border-radius:26px;text-align:center;position:relative;border:1px solid rgba(217,173,91,.22);background:linear-gradient(165deg,rgba(20,30,26,.97),rgba(6,11,9,.99));box-shadow:0 40px 120px rgba(0,0,0,.9);animation:pop .45s cubic-bezier(.34,1.56,.64,1);max-height:92vh;overflow-y:auto}
 @keyframes pop{from{transform:scale(.9) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
@@ -92,23 +84,20 @@ h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
 .sbtn:active{background:#1c2a23}
 .rulelist{text-align:right;color:#b6c1bb;font-size:13px;line-height:2;margin-bottom:20px}
 .rulelist b{color:#e9cf8b}
-
 .bets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
 .bet{aspect-ratio:1;border-radius:16px;border:1.5px solid rgba(255,255,255,.15);background:linear-gradient(160deg,rgba(30,42,36,.7),rgba(10,18,14,.85));color:#fff;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:.2s;padding:6px}
 .bet .bamt{font-size:19px;font-weight:900;color:#f0d79a}
 .bet .bico{font-size:22px}
 .bet.sel{border-color:#e8c87e;background:linear-gradient(160deg,rgba(217,173,91,.28),rgba(80,55,15,.4));box-shadow:0 0 22px rgba(217,173,91,.4)}
-
+.bet:disabled{opacity:.35;cursor:not-allowed}
 #loading{position:fixed;inset:0;z-index:100;display:grid;place-items:center;align-content:center;gap:20px;background:radial-gradient(ellipse at center,#0a1510,#020504 80%);font-size:13px;color:#c9d3ce}
 .spin{width:52px;height:52px;border:3px solid rgba(217,173,91,.15);border-top-color:#d9ad5b;border-radius:50%;animation:sp .9s cubic-bezier(.5,0,.5,1) infinite;box-shadow:0 0 24px rgba(217,173,91,.25)}
 @keyframes sp{to{transform:rotate(360deg)}}
 .loadtxt{font-size:12px;letter-spacing:3px;color:#8a9791;text-transform:uppercase}
-
 #cineText{position:fixed;bottom:12vh;left:0;right:0;text-align:center;z-index:51;pointer-events:none;font-size:15px;letter-spacing:6px;color:#e8c87e;font-weight:600;opacity:0;transition:opacity 1.2s;text-shadow:0 2px 16px rgba(0,0,0,.9)}
 #cineText.show{opacity:.9}
 #skipBtn{position:fixed;top:calc(12vh + 14px);right:20px;z-index:52;padding:8px 16px;border-radius:20px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);color:#ddd;font-size:11px;cursor:pointer;backdrop-filter:blur(8px);font-family:inherit;opacity:0;transition:.4s;pointer-events:none}
 #skipBtn.show{opacity:1;pointer-events:auto}
-
 @media(max-width:600px){
   .pcard{min-width:92px;padding:5px 9px}
   .pcard span{font-size:9px}.pcard b{font-size:11px}
@@ -154,21 +143,20 @@ h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
     </div>
   </div>
 
-  <div id="hint">اسحب للتصويب · اضغط مطوّلاً للضرب</div>
+  <div id="hint">عصا المشي · اسحب للنظر · اقترب ثم 🎯</div>
 
   <div class="controls">
-    <button class="cbtn" id="camBtn" title="تبديل المنظور">📷<small>منظور</small></button>
+    <button class="cbtn" id="camBtn">📷<small>منظور</small></button>
     <button class="cbtn" id="leftBtn">↺<small>يسار</small></button>
     <button id="shootBtn" disabled><span>اضرب</span><small>اضغط مطوّلاً</small></button>
     <button class="cbtn" id="rightBtn">↻<small>يمين</small></button>
-    <button class="cbtn" id="toggleBtn" title="مشي/تصويب">🚶<small>مشي</small></button>
+    <button class="cbtn" id="toggleBtn">🎯<small>تصويب</small></button>
   </div>
 
   <div id="joystick"><div id="jknob"></div></div>
   <div id="toast"></div>
 </div>
 
-<!-- Intro -->
 <div class="overlay" id="introOverlay">
   <div class="panel">
     <div class="logo8">8</div>
@@ -179,7 +167,6 @@ h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
   </div>
 </div>
 
-<!-- Bet -->
 <div class="overlay hidden" id="betOverlay">
   <div class="panel">
     <h2>اختر رهانك</h2>
@@ -194,7 +181,6 @@ h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
   </div>
 </div>
 
-<!-- Rules -->
 <div class="overlay hidden" id="rulesOverlay">
   <div class="panel">
     <h2>القواعد</h2>
@@ -203,15 +189,15 @@ h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
       • أدخل كل كراتك ثم الكرة <b>8</b> للفوز.<br>
       • إدخال 8 مبكراً = خسارة فورية.<br>
       • إدخال البيضاء = خطأ، ينتقل الدور.<br>
-      • <b>المشي:</b> عصا اليسار / WASD للحركة، اسحب الشاشة للنظر.<br>
+      • <b>المشي:</b> عصا اليسار / WASD · اسحب الشاشة للنظر.<br>
       • <b>المنظور:</b> زر 📷 أو حرف V.<br>
-      • <b>الرهان:</b> تفوز = ضعف المبلغ، تخسر = تخسر الرهان.
+      • <b>التصويب:</b> اقترب من الطاولة ثم اضغط 🎯.<br>
+      • <b>الرهان:</b> فوز = +المبلغ، خسارة = −المبلغ.
     </div>
     <button class="pbtn" id="rulesClose">فهمت</button>
   </div>
 </div>
 
-<!-- Win -->
 <div class="overlay hidden" id="winOverlay">
   <div class="panel">
     <div style="font-size:64px;line-height:1;filter:drop-shadow(0 8px 20px rgba(217,173,91,.5))">🏆</div>
@@ -234,7 +220,9 @@ h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-/* ============ CONSTANTS ============ */
+/* =========================================================
+   CONSTANTS
+   ========================================================= */
 const BALL_R   = 0.0286;
 const TABLE_W  = 1.27;
 const TABLE_L  = 2.54;
@@ -255,6 +243,8 @@ const FIXED_DT     = 1 / 200;
 const PLAYER_SPEED = 1.85;
 const PLAYER_R     = 0.22;
 
+const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
+
 const POCKETS = [
   { x: -HW, z: -HL }, { x: HW, z: -HL },
   { x: -HW, z:  HL }, { x: HW, z:  HL },
@@ -267,10 +257,13 @@ const BALL_COLORS = {
   13:'#e07b1a',14:'#12864a',15:'#8a1a12'
 };
 
-/* ============ RENDERER / SCENE / CAMERA ============ */
+/* =========================================================
+   RENDERER / SCENE / CAMERA
+   ========================================================= */
 const container = document.getElementById('game');
 const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+const isMobile = matchMedia('(max-width:700px)').matches;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -282,7 +275,6 @@ container.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x050807);
 scene.fog = new THREE.FogExp2(0x08110d, 0.045);
-
 const camera = new THREE.PerspectiveCamera(64, innerWidth/innerHeight, 0.02, 60);
 
 try {
@@ -290,14 +282,16 @@ try {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.05).texture;
 } catch(e) {}
 
-/* ============ LIGHTS ============ */
+/* =========================================================
+   LIGHTS
+   ========================================================= */
 scene.add(new THREE.HemisphereLight(0x4a6a78, 0x0a0f0c, 0.28));
 scene.add(new THREE.AmbientLight(0xffe6c0, 0.14));
 
 const key = new THREE.DirectionalLight(0xfff0d6, 2.1);
 key.position.set(1.6, 4.2, 1.2);
 key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048);
+key.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
 key.shadow.camera.left = -2.5; key.shadow.camera.right = 2.5;
 key.shadow.camera.top = 2.5;   key.shadow.camera.bottom = -2.5;
 key.shadow.camera.near = 0.5;  key.shadow.camera.far = 10;
@@ -328,7 +322,9 @@ const neonLight = new THREE.PointLight(0x3fb0ff, 1.8, 4, 2.0);
 neonLight.position.set(2.4, 1.7, -2.2);
 scene.add(neonLight);
 
-/* ============ ROOM ============ */
+/* =========================================================
+   ROOM
+   ========================================================= */
 function woodFloorTexture(){
   const S = 512;
   const c = document.createElement('canvas'); c.width = S; c.height = S;
@@ -397,11 +393,8 @@ function pictureTexture(hue){
   return new THREE.CanvasTexture(c);
 }
 
-const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
-
 (function buildRoom(){
   const wallMat = new THREE.MeshStandardMaterial({ map: wallTexture(), roughness:0.92, metalness:0.05 });
-
   const wallL = new THREE.Mesh(new THREE.PlaneGeometry(ROOM_D, ROOM_H), wallMat);
   wallL.rotation.y = Math.PI/2;
   wallL.position.set(-ROOM_W/2, ROOM_H/2, 0);
@@ -441,7 +434,6 @@ const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
   rug.receiveShadow = true;
   scene.add(rug);
 
-  // لوحات
   [[-ROOM_W/2+0.05, 1.7, -2.2, Math.PI/2, 40],
    [-ROOM_W/2+0.05, 1.7,  2.2, Math.PI/2, 200],
    [ ROOM_W/2-0.05, 1.8,  1.6, -Math.PI/2, 300],
@@ -461,7 +453,6 @@ const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
     scene.add(art);
   });
 
-  // البار
   const barMat = new THREE.MeshStandardMaterial({ color:0x2a1810, roughness:0.45, metalness:0.25 });
   const barCounter = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.05, 2.4), barMat);
   barCounter.position.set(-2.6, 0.52, 0);
@@ -492,7 +483,6 @@ const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
     }
   }
 
-  // كراسي
   function makeChair(x, z, ry){
     const g = new THREE.Group();
     const chairMat = new THREE.MeshStandardMaterial({ color:0x2c1810, roughness:0.5, metalness:0.15 });
@@ -509,7 +499,6 @@ const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
   makeChair(-1.3, -1.6, Math.PI * 0.15);
   makeChair(-1.3,  1.6, Math.PI * -0.15);
 
-  // اللمبة المعلقة — ⚠️ إصلاح: كان اسم المتغير bar مكرر
   const lampBodyMat = new THREE.MeshStandardMaterial({ color:0x0d0d0d, roughness:0.35, metalness:0.7 });
   const lampShadeMat = new THREE.MeshStandardMaterial({
     color:0x1a3a2a, roughness:0.55, metalness:0.35, side:THREE.DoubleSide,
@@ -540,7 +529,7 @@ const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
   const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006, ROOM_H-1.9, 6), ropeMat);
   cord.position.set(0, (ROOM_H+1.9)/2, 0); scene.add(cord);
 
-  // غبار معلق
+  // غبار
   const dustGeo = new THREE.BufferGeometry();
   const N = 240;
   const positions = new Float32Array(N*3);
@@ -558,7 +547,9 @@ const ROOM_W = 7.2, ROOM_H = 3.4, ROOM_D = 8.4;
   scene.add(window.__dust);
 })();
 
-/* ============ CHARACTER BUILDER (reusable) ============ */
+/* =========================================================
+   CHARACTER BUILDER
+   ========================================================= */
 function buildCharacter(shirtColor = 0x1f2f3a, skinColor = 0xc99a72){
   const g = new THREE.Group();
   const skin = new THREE.MeshStandardMaterial({ color:skinColor, roughness:0.75 });
@@ -613,17 +604,18 @@ function buildCharacter(shirtColor = 0x1f2f3a, skinColor = 0xc99a72){
   return { group:g, armL, armR, legL, legR, head, torso, hips };
 }
 
-/* الخصم */
 const opponent = buildCharacter(0x1f2f3a, 0xc99a72);
 opponent.group.position.set(0, 0, HL + 0.55);
 opponent.group.rotation.y = Math.PI;
 
-/* اللاعب (يظهر في منظور الشخص الثالث) */
 const playerChar = buildCharacter(0x402010, 0xd8b090);
 playerChar.group.position.set(0, 0, -HL - 1.2);
 playerChar.group.rotation.y = 0;
+playerChar.group.visible = false;
 
-/* ============ TABLE ============ */
+/* =========================================================
+   TABLE
+   ========================================================= */
 function makeClothTexture(){
   const W = 1024, H = 512;
   const c = document.createElement('canvas');
@@ -728,7 +720,9 @@ scene.add(tableGroup);
   }
 })();
 
-/* ============ BALLS ============ */
+/* =========================================================
+   BALLS
+   ========================================================= */
 function makeBallTexture(num, color, isStripe){
   const S = 512, H = S/2;
   const c = document.createElement('canvas');
@@ -816,7 +810,9 @@ function rackBalls(){
   createBall(0, 0, -HL/2);
 }
 
-/* ============ CUE ============ */
+/* =========================================================
+   CUE
+   ========================================================= */
 const cueGroup = new THREE.Group();
 scene.add(cueGroup);
 (function buildCue(){
@@ -833,7 +829,9 @@ scene.add(cueGroup);
   cueGroup.add(new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color:0xf2ead6, roughness:0.35 })));
 })();
 
-/* ============ AIM GUIDE ============ */
+/* =========================================================
+   AIM GUIDE
+   ========================================================= */
 const guideMat = new THREE.LineBasicMaterial({ color:0xffffff, transparent:true, opacity:0.34 });
 const guideGeo = new THREE.BufferGeometry();
 guideGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
@@ -846,15 +844,17 @@ const ghost = new THREE.Mesh(new THREE.RingGeometry(BALL_R*0.82, BALL_R, 32), gh
 ghost.rotation.x = -Math.PI/2; ghost.position.y = 0.0015; ghost.visible = false;
 scene.add(ghost);
 
-/* ============ GAME STATE ============ */
-let state = 'intro'; // intro | cinematic | walk | aim | moving | over
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+let state = 'intro';
 let currentPlayer = 1;
 let groups = { 1:null, 2:null };
 let scores = { 1:0, 2:0 };
 let turnPocketed = [];
 let aimYaw = Math.PI;
 let aimPitch = 0.62;
-let camYaw = 0;   // yaw للكاميرا في وضع المشي
+let camYaw = Math.PI;
 let camPitch = 0;
 const CAM_DIST = 1.12;
 let power = 0;
@@ -864,22 +864,20 @@ let acc = 0;
 let lastTime = performance.now();
 let breatheT = 0, swayT = 0;
 
-/* Player walking */
 let playerPos = { x:0, z:-HL-1.2 };
-let playerYaw = 0;
 let playerMoving = false;
-let camMode = 0; // 0=FPS, 1=TPS, 2=TV
+let camMode = 0;
 const camModeNames = ['منظور أول','شخص ثالث','كاميرا TV'];
 
-/* Betting */
 let wallet = 500;
 let betAmount = 100;
 
-/* Cinematic */
 let cineT = 0;
 const CINE_DURATION = 6.5;
 
-/* ============ DOM ============ */
+/* =========================================================
+   DOM
+   ========================================================= */
 const $ = id => document.getElementById(id);
 const loadingEl = $('loading'), appEl = $('app');
 const powerBar = $('powerBar'), powerText = $('powerText');
@@ -890,13 +888,15 @@ const p1Name = $('p1Name'), p2Name = $('p2Name');
 const shootBtn = $('shootBtn'), leftBtn = $('leftBtn'), rightBtn = $('rightBtn');
 const toggleBtn = $('toggleBtn'), camBtn = $('camBtn');
 const toastEl = $('toast'), hintEl = $('hint');
-const introOverlay = $('introOverlay'), rulesOverlay = $('rulesOverlay'), winOverlay = $('winOverlay'), betOverlay = $('betOverlay');
+const introOverlay = $('introOverlay'), rulesOverlay = $('rulesOverlay'),
+      winOverlay = $('winOverlay'), betOverlay = $('betOverlay');
 const cineText = $('cineText'), skipBtn = $('skipBtn');
 const joystick = $('joystick'), jknob = $('jknob');
 const walletEl = $('wallet');
-const camHint = $('hint');
 
-/* ============ UI ============ */
+/* =========================================================
+   UI HELPERS
+   ========================================================= */
 let toastTimer = null;
 function showToast(msg, ms = 1700){
   toastEl.textContent = msg;
@@ -918,17 +918,22 @@ function updatePowerUI(){
   powerText.textContent = Math.round(power) + '%';
 }
 function updateWalletUI(){ walletEl.textContent = '💰 ' + wallet; }
+function updateHintVisibility(){
+  const locked = document.pointerLockElement === renderer.domElement;
+  const showHint = !locked && (state === 'aim' || state === 'walk');
+  hintEl.style.opacity = showHint ? '1' : '0';
+}
 
-/* ============ INPUT ============ */
+/* =========================================================
+   INPUT
+   ========================================================= */
 renderer.domElement.addEventListener('pointerdown', e => {
-  if (state === 'aim' && e.pointerType === 'mouse' && !document.pointerLockElement){
-    renderer.domElement.requestPointerLock();
+  if ((state === 'aim' || state === 'walk') && e.pointerType === 'mouse' && !document.pointerLockElement){
+    renderer.domElement.requestPointerLock?.();
   }
 });
-document.addEventListener('pointerlockchange', () => {
-  const locked = document.pointerLockElement === renderer.domElement;
-  hintEl.style.opacity = (locked || state !== 'aim') ? '0' : '1';
-});
+document.addEventListener('pointerlockchange', () => updateHintVisibility());
+
 document.addEventListener('mousemove', e => {
   if (document.pointerLockElement !== renderer.domElement) return;
   if (state === 'aim'){
@@ -942,7 +947,7 @@ document.addEventListener('mousemove', e => {
   }
 });
 
-/* Touch look — swipe on upper screen area */
+/* Touch look */
 let lookTouchId = null, lookLast = null;
 renderer.domElement.addEventListener('touchstart', e => {
   if (state !== 'aim' && state !== 'walk') return;
@@ -986,8 +991,8 @@ window.addEventListener('keydown', e => {
     e.preventDefault();
     if (!charging) startCharge(e);
   }
-  if (e.code === 'KeyV'){ cycleCamMode(); }
-  if (e.code === 'KeyE'){ toggleWalkAim(); }
+  if (e.code === 'KeyV') cycleCamMode();
+  if (e.code === 'KeyE') toggleWalkAim();
   if (e.code === 'KeyA' && state === 'aim') aimYaw += 0.012;
   if (e.code === 'KeyD' && state === 'aim') aimYaw -= 0.012;
 });
@@ -996,32 +1001,41 @@ window.addEventListener('keyup', e => {
   if (e.code === 'Space'){ e.preventDefault(); endCharge(e); }
 });
 
-/* Aim nudge buttons */
 leftBtn.addEventListener('click', () => { if (state === 'aim') aimYaw += 0.012; });
 rightBtn.addEventListener('click', () => { if (state === 'aim') aimYaw -= 0.012; });
 
-/* Toggle walk/aim */
+/* Toggle Walk/Aim */
 function toggleWalkAim(){
+  if (currentPlayer !== 1) return;
   if (state === 'walk'){
-    // التصويب مسموح فقط قرب الطاولة
-    const nearTable = Math.abs(playerPos.x) < HW + 0.9 && Math.abs(playerPos.z) < HL + 1.0;
+    const nearTable = Math.abs(playerPos.x) < HW + 1.0 && Math.abs(playerPos.z) < HL + 1.2;
     if (!nearTable){ showToast('اقترب من الطاولة للتصويب'); return; }
+    if (cueBall && !cueBall.potted){
+      // aimYaw بحيث تكون الكاميرا خلف الكرة باتجاه موضع اللاعب الحالي
+      aimYaw = Math.atan2(playerPos.x - cueBall.x, playerPos.z - cueBall.z);
+      aimPitch = 0.62;
+    }
     state = 'aim';
     toggleBtn.querySelector('small').textContent = 'مشي';
     toggleBtn.firstChild.textContent = '🚶';
     shootBtn.disabled = false;
     hintEl.textContent = 'اسحب للتصويب · اضغط مطوّلاً للضرب';
     cueGroup.visible = true;
+    updateHintVisibility();
   } else if (state === 'aim'){
+    // احتفظ باتجاه النظر
+    camYaw = aimYaw;
+    camPitch = 0;
     state = 'walk';
     toggleBtn.querySelector('small').textContent = 'تصويب';
     toggleBtn.firstChild.textContent = '🎯';
     shootBtn.disabled = true;
-    hintEl.textContent = 'عصا المشي / WASD للحركة · اسحب للنظر';
+    hintEl.textContent = 'عصا المشي · اسحب للنظر · اقترب ثم 🎯';
     cueGroup.visible = false;
     guideLine.visible = false;
     ghost.visible = false;
     if (document.pointerLockElement) document.exitPointerLock();
+    updateHintVisibility();
   }
 }
 toggleBtn.addEventListener('click', toggleWalkAim);
@@ -1030,7 +1044,7 @@ toggleBtn.addEventListener('click', toggleWalkAim);
 function cycleCamMode(){
   camMode = (camMode + 1) % 3;
   showToast('المنظور: ' + camModeNames[camMode]);
-  playerChar.group.visible = (camMode === 1);
+  playerChar.group.visible = (camMode !== 0) && (state === 'walk');
 }
 camBtn.addEventListener('click', cycleCamMode);
 
@@ -1052,7 +1066,9 @@ shootBtn.addEventListener('pointerdown', startCharge);
 window.addEventListener('pointerup', endCharge);
 window.addEventListener('pointercancel', endCharge);
 
-/* ============ JOYSTICK ============ */
+/* =========================================================
+   JOYSTICK
+   ========================================================= */
 let joyActive = false, joyId = null, joyStart = { x:0, y:0 }, joyVal = { x:0, y:0 };
 function joyStartHandler(e){
   if (state !== 'walk') return;
@@ -1089,7 +1105,9 @@ joystick.addEventListener('touchmove', joyMoveHandler, { passive:false });
 joystick.addEventListener('touchend', joyEndHandler);
 joystick.addEventListener('touchcancel', joyEndHandler);
 
-/* ============ SHOOT ============ */
+/* =========================================================
+   SHOOT
+   ========================================================= */
 function fire(){
   if (state !== 'aim' || !cueBall || cueBall.potted) return;
   if (power < 4){ power = 0; updatePowerUI(); return; }
@@ -1103,13 +1121,15 @@ function fire(){
   power = 0;
   updatePowerUI();
   shootBtn.disabled = true;
-  hintEl.style.opacity = '0';
   cueGroup.visible = false;
   guideLine.visible = false;
   ghost.visible = false;
+  updateHintVisibility();
 }
 
-/* ============ PHYSICS ============ */
+/* =========================================================
+   PHYSICS
+   ========================================================= */
 function physicsStep(h){
   for (const b of balls){
     if (b.potted) continue;
@@ -1127,656 +1147,4 @@ function physicsStep(h){
     for (const p of POCKETS){
       const dx = b.x - p.x, dz = b.z - p.z;
       if (dx*dx + dz*dz < POCKET_R * POCKET_R){
-        b.potted = true; b.vx = 0; b.vz = 0;
-        b.mesh.visible = false;
-        turnPocketed.push(b);
-        break;
-      }
-    }
-  }
-  const minX = -HW + BALL_R, maxX = HW - BALL_R;
-  const minZ = -HL + BALL_R, maxZ = HL - BALL_R;
-  for (const b of balls){
-    if (b.potted) continue;
-    if (b.x < minX){ b.x = minX; b.vx =  Math.abs(b.vx) * CUSHION_E; }
-    if (b.x > maxX){ b.x = maxX; b.vx = -Math.abs(b.vx) * CUSHION_E; }
-    if (b.z < minZ){ b.z = minZ; b.vz =  Math.abs(b.vz) * CUSHION_E; }
-    if (b.z > maxZ){ b.z = maxZ; b.vz = -Math.abs(b.vz) * CUSHION_E; }
-  }
-  const D2 = (BALL_R * 2) * (BALL_R * 2);
-  for (let i = 0; i < balls.length; i++){
-    const a = balls[i];
-    if (a.potted) continue;
-    for (let j = i + 1; j < balls.length; j++){
-      const b = balls[j];
-      if (b.potted) continue;
-      let dx = b.x - a.x, dz = b.z - a.z;
-      let d2 = dx*dx + dz*dz;
-      if (d2 >= D2 || d2 < 1e-12) continue;
-      const d = Math.sqrt(d2);
-      const nx = dx / d, nz = dz / d;
-      const overlap = (BALL_R * 2) - d;
-      a.x -= nx * overlap * 0.5; a.z -= nz * overlap * 0.5;
-      b.x += nx * overlap * 0.5; b.z += nz * overlap * 0.5;
-      const dvx = a.vx - b.vx, dvz = a.vz - b.vz;
-      const vn  = dvx * nx + dvz * nz;
-      if (vn <= 0) continue;
-      const jImp = -(1 + BALL_E) * vn * 0.5;
-      a.vx += jImp * nx; a.vz += jImp * nz;
-      b.vx -= jImp * nx; b.vz -= jImp * nz;
-    }
-  }
-}
-function allStopped(){
-  for (const b of balls){
-    if (b.potted) continue;
-    if (b.vx !== 0 || b.vz !== 0) return false;
-  }
-  return true;
-}
-
-/* ============ TURN RESOLUTION ============ */
-function groupOf(num){
-  if (num === 0) return 'cue';
-  if (num === 8) return 'eight';
-  return num < 8 ? 'solid' : 'stripe';
-}
-function remainingFor(group){
-  return balls.filter(b => !b.potted && !b.isCue && b.num !== 8 && groupOf(b.num) === group).length;
-}
-function placeCueBall(){
-  const spotZ = -HL / 2;
-  let z = spotZ;
-  for (let i = 0; i < 40; i++){
-    let blocked = false;
-    for (const b of balls){
-      if (b.isCue || b.potted) continue;
-      const dx = 0 - b.x, dz = z - b.z;
-      if (dx*dx + dz*dz < (BALL_R*2.05)*(BALL_R*2.05)){ blocked = true; break; }
-    }
-    if (!blocked) break;
-    z -= BALL_R * 2.2;
-    if (z < -HL + BALL_R) z = spotZ + BALL_R * 2.2;
-  }
-  cueBall.x = 0; cueBall.z = z;
-  cueBall.vx = 0; cueBall.vz = 0;
-  cueBall.potted = false;
-  cueBall.mesh.visible = true;
-  cueBall.mesh.position.set(cueBall.x, BALL_R, cueBall.z);
-}
-
-function resolveTurn(){
-  const pocketed = turnPocketed.slice();
-  turnPocketed = [];
-  const other = currentPlayer === 1 ? 2 : 1;
-  let foul = false;
-  let legalPocket = false;
-
-  if (cueBall.potted){
-    foul = true;
-    placeCueBall();
-    showToast('خطأ! الكرة البيضاء دخلت');
-  }
-  if (!groups[1] && !groups[2]){
-    const first = pocketed.find(b => !b.isCue && b.num !== 8);
-    if (first){
-      const g = groupOf(first.num);
-      groups[currentPlayer] = g;
-      groups[other] = (g === 'solid') ? 'stripe' : 'solid';
-      showToast(`اللاعب ${currentPlayer === 1 ? 'أنت' : 'الخصم'} → ${g === 'solid' ? 'صلبة' : 'مخططة'}`);
-    }
-  }
-  for (const b of pocketed){
-    if (b.isCue) continue;
-    if (b.num === 8){
-      const g = groups[currentPlayer];
-      if (g && remainingFor(g) === 0) endGame(currentPlayer);
-      else endGame(other);
-      return;
-    }
-    const g = groupOf(b.num);
-    if (!groups[currentPlayer]){ scores[currentPlayer]++; legalPocket = true; }
-    else if (g === groups[currentPlayer]){ scores[currentPlayer]++; legalPocket = true; }
-  }
-  const eight = balls.find(b => b.num === 8);
-  if (eight && eight.potted){
-    const g = groups[currentPlayer];
-    if (g && remainingFor(g) === 0) endGame(currentPlayer);
-    else endGame(other);
-    return;
-  }
-  if (foul || !legalPocket) currentPlayer = other;
-  updateTurnUI();
-
-  // عودة لوضع المشي إن كان دور الخصم
-  if (currentPlayer === 2){
-    state = 'walk';
-    toggleBtn.querySelector('small').textContent = 'تصويب';
-    toggleBtn.firstChild.textContent = '🎯';
-    shootBtn.disabled = true;
-    cueGroup.visible = false;
-    hintEl.textContent = 'دور الخصم…';
-    // الخصم يلعب تلقائياً
-    setTimeout(opponentPlay, 1200);
-  } else {
-    state = 'aim';
-    toggleBtn.querySelector('small').textContent = 'مشي';
-    toggleBtn.firstChild.textContent = '🚶';
-    shootBtn.disabled = false;
-    cueGroup.visible = true;
-    hintEl.textContent = 'اسحب للتصويب · اضغط مطوّلاً للضرب';
-  }
-}
-
-/* ============ الخصم يلعب ============ */
-function opponentPlay(){
-  if (state === 'over') return;
-  // ابحث عن كرة قابلة للعب للخصم
-  const g = groups[2];
-  let target = null;
-  if (g){
-    const candidates = balls.filter(b => !b.potted && !b.isCue && b.num !== 8 && groupOf(b.num) === g);
-    if (candidates.length === 0){
-      target = balls.find(b => b.num === 8 && !b.potted);
-    } else {
-      target = candidates[0];
-    }
-  } else {
-    const candidates = balls.filter(b => !b.potted && !b.isCue);
-    if (candidates.length) target = candidates[Math.floor(Math.random() * candidates.length)];
-  }
-  if (!target || !cueBall || cueBall.potted) return;
-
-  // حساب الاتجاه
-  const dx = target.x - cueBall.x;
-  const dz = target.z - cueBall.z;
-  const ang = Math.atan2(-dx, -dz);
-  const dist = Math.hypot(dx, dz);
-
-  // دقة عشوائية
-  const accuracy = 0.06 + Math.random() * 0.08;
-  const chosenAng = ang + (Math.random() - 0.5) * accuracy;
-  const v = Math.min(MAX_SPEED, MAX_SPEED * 0.55 + dist * 0.35);
-
-  cueBall.vx = -Math.sin(chosenAng) * v;
-  cueBall.vz = -Math.cos(chosenAng) * v;
-  turnPocketed = [];
-  state = 'moving';
-  showToast('الخصم يلعب…', 900);
-}
-
-function endGame(winner){
-  state = 'over';
-  if (winner === 1){
-    wallet += betAmount;
-    showToast(`فزت! +${betAmount} 💰`, 2400);
-    $('winTitle').textContent = 'فزت!';
-    $('winMsg').textContent = `مبروك! ربحت ${betAmount} من الرصيد 🎱`;
-  } else {
-    wallet = Math.max(0, wallet - betAmount);
-    showToast(`خسرت -${betAmount} 💸`, 2400);
-    $('winTitle').textContent = 'خسرت';
-    $('winMsg').textContent = `خسرت ${betAmount} من الرصيد · حاول مجدداً`;
-  }
-  updateWalletUI();
-  winOverlay.classList.remove('hidden');
-  if (document.pointerLockElement) document.exitPointerLock();
-}
-
-/* ============ AIM GUIDE UPDATE ============ */
-function updateAimGuide(){
-  if (!cueBall || cueBall.potted || state !== 'aim'){
-    guideLine.visible = false;
-    ghost.visible = false;
-    return;
-  }
-  guideLine.visible = true;
-  const dx = -Math.sin(aimYaw);
-  const dz = -Math.cos(aimYaw);
-  let bestT = Infinity;
-  const boundX = HW - BALL_R;
-  const boundZ = HL - BALL_R;
-  if (dx >  1e-6) bestT = Math.min(bestT, ( boundX - cueBall.x) / dx);
-  if (dx < -1e-6) bestT = Math.min(bestT, (-boundX - cueBall.x) / dx);
-  if (dz >  1e-6) bestT = Math.min(bestT, ( boundZ - cueBall.z) / dz);
-  if (dz < -1e-6) bestT = Math.min(bestT, (-boundZ - cueBall.z) / dz);
-  if (!isFinite(bestT) || bestT < 0) bestT = 0.01;
-  let hit = null;
-  const R2 = (BALL_R * 2) * (BALL_R * 2);
-  for (const b of balls){
-    if (b === cueBall || b.potted) continue;
-    const ox = cueBall.x - b.x;
-    const oz = cueBall.z - b.z;
-    const proj = ox * dx + oz * dz;
-    const c = ox*ox + oz*oz - R2;
-    const disc = proj*proj - c;
-    if (disc < 0) continue;
-    const t = -proj - Math.sqrt(disc);
-    if (t > 1e-4 && t < bestT){ bestT = t; hit = b; }
-  }
-  const ex = cueBall.x + dx * bestT;
-  const ez = cueBall.z + dz * bestT;
-  const pos = guideGeo.attributes.position.array;
-  pos[0] = cueBall.x; pos[1] = BALL_R * 0.35; pos[2] = cueBall.z;
-  pos[3] = ex;        pos[4] = BALL_R * 0.35; pos[5] = ez;
-  guideGeo.attributes.position.needsUpdate = true;
-  if (hit){
-    ghost.visible = true;
-    ghost.position.set(ex, 0.0016, ez);
-    ghostMat.opacity = 0.20;
-    guideMat.opacity = 0.38;
-  } else {
-    ghost.visible = false;
-    guideMat.opacity = 0.28;
-  }
-}
-
-/* ============ CAMERA ============ */
-const camTarget = new THREE.Vector3();
-const lookTarget = new THREE.Vector3();
-const tmpLookAt = new THREE.Vector3();
-const tmpPlayerV = new THREE.Vector3();
-
-function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
-
-function updateCamera(dt){
-  /* Cinematic */
-  if (state === 'cinematic'){
-    cineT += dt;
-    const p = Math.min(1, cineT / CINE_DURATION);
-    const e = easeInOutCubic(Math.min(1, p*1.15));
-
-    const startPos = { x:0, y:1.68, z:-ROOM_D/2 + 0.4 };
-    const endPos   = { x:0, y:1.35, z:-HL - 0.9 };
-
-    const camX = startPos.x + (endPos.x - startPos.x) * e;
-    const camY = startPos.y + (endPos.y - startPos.y) * e + Math.sin(p*Math.PI*2.5)*0.012;
-    const camZ = startPos.z + (endPos.z - startPos.z) * e;
-
-    const stepBob = Math.sin(cineT * 6.5) * 0.008 * (1 - e);
-    camera.position.set(camX, camY + stepBob, camZ);
-
-    const lookFrom = { x:0, y:1.15, z:0 };
-    const lookTo   = { x:0, y:0.6, z:HL*0.3 };
-    const lx = lookFrom.x + (lookTo.x - lookFrom.x) * e;
-    const ly = lookFrom.y + (lookTo.y - lookFrom.y) * e;
-    const lz = lookFrom.z + (lookTo.z - lookFrom.z) * e;
-    camera.lookAt(lx, ly, lz);
-    return;
-  }
-
-  /* Aim: قريب من الكرة */
-  if (state === 'aim' || state === 'moving' || state === 'over'){
-    if (!cueBall) return;
-    const cb = cueBall.potted ? { x:0, z:-HL/2 } : cueBall;
-    breatheT += dt; swayT += dt;
-    const breathe = Math.sin(breatheT * 1.6) * 0.006;
-    const swayY = Math.sin(swayT * 0.7) * 0.004;
-    const swayX = Math.cos(swayT * 0.5) * 0.003;
-    const cp = Math.cos(aimPitch), sp = Math.sin(aimPitch);
-    const camX = cb.x + Math.sin(aimYaw) * cp * CAM_DIST + swayX;
-    const camY = BALL_R + sp * CAM_DIST + 0.035 + breathe + swayY;
-    const camZ = cb.z + Math.cos(aimYaw) * cp * CAM_DIST;
-    camera.position.lerp(camTarget.set(camX, camY, camZ), 0.55);
-    const lookX = cb.x - Math.sin(aimYaw) * 1.9;
-    const lookZ = cb.z - Math.cos(aimYaw) * 1.9;
-    tmpLookAt.set(lookX, 0.005 + breathe*0.5, lookZ);
-    camera.lookAt(lookTarget.copy(tmpLookAt));
-    playerChar.group.visible = false;
-    return;
-  }
-
-  /* Walk mode */
-  if (state === 'walk'){
-    // موضع رأس اللاعب
-    const headY = 1.62;
-    if (camMode === 0){ // FPS
-      camera.position.set(playerPos.x, headY, playerPos.z);
-      const dirX = Math.sin(camYaw);
-      const dirZ = -Math.cos(camYaw);
-      camera.lookAt(playerPos.x + dirX, headY + camPitch*0.6, playerPos.z + dirZ);
-      playerChar.group.visible = false;
-    } else if (camMode === 1){ // TPS
-      const dist = 2.2;
-      const offX = -Math.sin(camYaw) * dist * Math.cos(camPitch);
-      const offZ =  Math.cos(camYaw) * dist * Math.cos(camPitch);
-      const offY =  1.4 + camPitch * 1.2;
-      camera.position.set(playerPos.x + offX, offY, playerPos.z + offZ);
-      camera.lookAt(playerPos.x, 1.35, playerPos.z);
-      playerChar.group.visible = true;
-      playerChar.group.position.set(playerPos.x, 0, playerPos.z);
-      playerChar.group.rotation.y = camYaw;
-    } else { // TV
-      camera.position.set(0, 3.4, -0.8);
-      camera.lookAt(0, 0, 0.3);
-      playerChar.group.visible = true;
-      playerChar.group.position.set(playerPos.x, 0, playerPos.z);
-      playerChar.group.rotation.y = camYaw;
-    }
-  }
-}
-
-/* ============ CUE ============ */
-const Z_AXIS = new THREE.Vector3(0, 0, 1);
-const backDir = new THREE.Vector3();
-function updateCue(){
-  if (state === 'cinematic') return;
-  if (!cueBall || cueBall.potted || state !== 'aim'){ cueGroup.visible = false; return; }
-  cueGroup.visible = true;
-  const dx = -Math.sin(aimYaw);
-  const dz = -Math.cos(aimYaw);
-  const pullback = BALL_R + 0.012 + (power / 100) * 0.28;
-  cueGroup.position.set(
-    cueBall.x - dx * pullback,
-    BALL_R,
-    cueBall.z - dz * pullback
-  );
-  backDir.set(-dx, 0, -dz).normalize();
-  cueGroup.quaternion.setFromUnitVectors(Z_AXIS, backDir);
-}
-
-/* ============ SYNC ============ */
-const tmpV = new THREE.Vector3();
-function syncBalls(dt){
-  for (const b of balls){
-    if (b.potted){ b.mesh.visible = false; continue; }
-    b.mesh.visible = true;
-    b.mesh.position.set(b.x, BALL_R, b.z);
-    const sp = Math.hypot(b.vx, b.vz);
-    if (sp > 0.002){
-      const ax = b.vz / sp, az = -b.vx / sp;
-      const angle = (sp * dt) / BALL_R;
-      tmpV.set(ax, 0, az);
-      b.mesh.rotateOnWorldAxis(tmpV, angle);
-    }
-  }
-}
-
-/* ============ OPPONENT & PLAYER ANIM ============ */
-let oppTime = 0;
-function updateOpponent(dt){
-  oppTime += dt;
-  const o = opponent;
-  const breathe = Math.sin(oppTime * 1.3) * 0.012;
-  o.torso.position.y = 1.05 + breathe;
-  o.head.position.y = 1.5 + breathe * 0.9;
-  const sway = Math.sin(oppTime * 0.65) * 0.02;
-  o.group.rotation.z = sway * 0.6;
-  o.group.position.x = Math.sin(oppTime * 0.4) * 0.015;
-  if (cueBall && !cueBall.potted){
-    const dx = cueBall.x - o.group.position.x;
-    const dz = cueBall.z - o.group.position.z;
-    const targetYaw = Math.atan2(dx, dz);
-    o.head.rotation.y = Math.max(-0.5, Math.min(0.5, (targetYaw - Math.PI) * 0.5));
-    o.head.rotation.x = -0.08 + Math.sin(oppTime * 0.7) * 0.02;
-  }
-  const armSwing = Math.sin(oppTime * 1.1) * 0.04;
-  o.armL.rotation.x = armSwing;
-  o.armR.rotation.x = -armSwing * 0.7;
-  o.armL.rotation.z = 0.16 + Math.sin(oppTime * 0.9) * 0.02;
-  o.armR.rotation.z = -0.16 - Math.sin(oppTime * 0.9) * 0.02;
-  o.legL.rotation.x = Math.sin(oppTime * 0.8) * 0.015;
-  o.legR.rotation.x = -Math.sin(oppTime * 0.8) * 0.015;
-}
-
-function updatePlayerAnim(dt){
-  if (!playerChar) return;
-  const p = playerChar;
-  if (playerMoving){
-    const t = performance.now() / 1000;
-    const stride = Math.sin(t * 7) * 0.5;
-    p.legL.rotation.x = stride;
-    p.legR.rotation.x = -stride;
-    p.armL.rotation.x = -stride * 0.5;
-    p.armR.rotation.x = stride * 0.5;
-    // رفع/خفض خفيف للجسم
-    p.torso.position.y = 1.05 + Math.abs(Math.sin(t * 7)) * 0.015;
-  } else {
-    p.legL.rotation.x *= 0.85;
-    p.legR.rotation.x *= 0.85;
-    p.armL.rotation.x *= 0.85;
-    p.armR.rotation.x *= 0.85;
-  }
-  const breathe = Math.sin(performance.now() / 900) * 0.01;
-  p.head.position.y = 1.5 + breathe * 0.8;
-}
-
-/* ============ PLAYER MOVEMENT ============ */
-function updatePlayerMovement(dt){
-  if (state !== 'walk'){ playerMoving = false; return; }
-  let mx = 0, mz = 0;
-
-  // keyboard
-  if (keys['KeyW'] || keys['ArrowUp'])    mz -= 1;
-  if (keys['KeyS'] || keys['ArrowDown'])  mz += 1;
-  if (keys['KeyA'] || keys['ArrowLeft'])  mx -= 1;
-  if (keys['KeyD'] || keys['ArrowRight']) mx += 1;
-
-  // joystick
-  if (joyActive){ mx += joyVal.x; mz += joyVal.y; }
-
-  const mag = Math.hypot(mx, mz);
-  if (mag > 0.05){
-    playerMoving = true;
-    const nx = mx / Math.max(1, mag);
-    const nz = mz / Math.max(1, mag);
-    // الحركة نسبة لاتجاه الكاميرا
-    const cy = camYaw;
-    const dirX = Math.cos(cy) * nx + Math.sin(cy) * nz;
-    const dirZ = -Math.sin(cy) * nx + Math.cos(cy) * nz;
-    const spd = PLAYER_SPEED * Math.min(1, mag);
-    playerPos.x += dirX * spd * dt;
-    playerPos.z += dirZ * spd * dt;
-
-    // حدود الغرفة
-    const bx = ROOM_W/2 - 0.35, bz = ROOM_D/2 - 0.35;
-    playerPos.x = Math.max(-bx, Math.min(bx, playerPos.x));
-    playerPos.z = Math.max(-bz, Math.min(bz, playerPos.z));
-
-    // منع المرور عبر الطاولة (بسيط)
-    const halfW = HW + RAIL_W + PLAYER_R;
-    const halfL = HL + RAIL_W + PLAYER_R;
-    if (Math.abs(playerPos.x) < halfW && Math.abs(playerPos.z) < halfL){
-      // ادفع للخارج على أقرب جهة
-      const dxEdge = halfW - Math.abs(playerPos.x);
-      const dzEdge = halfL - Math.abs(playerPos.z);
-      if (dxEdge < dzEdge){
-        playerPos.x = Math.sign(playerPos.x || 1) * halfW;
-      } else {
-        playerPos.z = Math.sign(playerPos.z || 1) * halfL;
-      }
-    }
-  } else {
-    playerMoving = false;
-  }
-}
-
-/* ============ MAIN LOOP ============ */
-function animate(now){
-  requestAnimationFrame(animate);
-  let dt = (now - lastTime) / 1000;
-  lastTime = now;
-  if (dt > 0.05) dt = 0.05;
-
-  if (charging && state === 'aim'){
-    const elapsed = (now - chargeStart) / 1000;
-    power = Math.min(100, elapsed * 110);
-    updatePowerUI();
-  }
-
-  if (state === 'cinematic' && cineT > 0.8) skipBtn.classList.add('show');
-  else skipBtn.classList.remove('show');
-
-  if (state === 'moving'){
-    acc += dt;
-    let iter = 0;
-    while (acc >= FIXED_DT && iter < 60){
-      physicsStep(FIXED_DT);
-      acc -= FIXED_DT;
-      iter++;
-    }
-    if (iter >= 60) acc = 0;
-    if (allStopped()){ acc = 0; resolveTurn(); }
-  } else {
-    acc = 0;
-  }
-
-  updatePlayerMovement(dt);
-  syncBalls(dt);
-  updateCamera(dt);
-  updateCue();
-  updateAimGuide();
-  updateOpponent(dt);
-  updatePlayerAnim(dt);
-
-  // غبار
-  if (window.__dust){
-    const pos = window.__dust.geometry.attributes.position;
-    const arr = pos.array;
-    for (let i=1; i<arr.length; i+=3){
-      arr[i] += dt * 0.012;
-      if (arr[i] > 2.6) arr[i] = 0.2;
-    }
-    pos.needsUpdate = true;
-  }
-
-  renderer.render(scene, camera);
-}
-
-/* ============ RESIZE ============ */
-addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
-});
-
-/* ============ FLOW ============ */
-function beginCinematic(){
-  cueGroup.visible = false;
-  guideLine.visible = false;
-  ghost.visible = false;
-  cineT = 0;
-  state = 'cinematic';
-  camera.position.set(0, 1.68, -ROOM_D/2 + 0.4);
-  camera.lookAt(0, 1.15, 0);
-  document.body.classList.add('cine-on');
-  appEl.classList.remove('hidden');
-  introOverlay.classList.add('hidden');
-  betOverlay.classList.add('hidden');
-  winOverlay.classList.add('hidden');
-  cineText.classList.add('show');
-  setTimeout(() => cineText.classList.remove('show'), 3200);
-  setTimeout(() => { if (state === 'cinematic') finishCinematic(); }, CINE_DURATION * 1000);
-}
-
-function finishCinematic(){
-  document.body.classList.remove('cine-on');
-  skipBtn.classList.remove('show');
-  rackBalls();
-  groups = { 1:null, 2:null };
-  scores = { 1:0, 2:0 };
-  currentPlayer = 1;
-  turnPocketed = [];
-  power = 0; charging = false;
-  aimYaw = Math.PI; aimPitch = 0.62;
-  camYaw = 0; camPitch = 0;
-  playerPos.x = 0; playerPos.z = -HL - 1.2;
-  cueGroup.scale.setScalar(1);
-  updatePowerUI();
-  updateTurnUI();
-  updateWalletUI();
-
-  // ابدأ في وضع المشي
-  state = 'walk';
-  toggleBtn.querySelector('small').textContent = 'تصويب';
-  toggleBtn.firstChild.textContent = '🎯';
-  shootBtn.disabled = true;
-  cueGroup.visible = false;
-  hintEl.textContent = 'عصا المشي / WASD · اسحب للنظر · اقترب ثم اضغط 🎯';
-  hintEl.style.opacity = '1';
-
-  setTimeout(() => {
-    if (matchMedia('(hover:hover)').matches && !document.pointerLockElement){
-      renderer.domElement.requestPointerLock?.();
-    }
-  }, 300);
-}
-
-skipBtn.addEventListener('click', () => {
-  if (state === 'cinematic') finishCinematic();
-});
-
-/* Betting */
-document.querySelectorAll('.bet').forEach(el => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('.bet').forEach(x => x.classList.remove('sel'));
-    el.classList.add('sel');
-    betAmount = parseInt(el.dataset.bet, 10);
-    const info = document.getElementById('betInfo');
-    info.textContent = `رصيدك: ${wallet} · الرهان: ${betAmount}`;
-  });
-});
-
-document.getElementById('betConfirm').addEventListener('click', () => {
-  if (wallet < betAmount){
-    showToast('رصيدك غير كافٍ');
-    return;
-  }
-  beginCinematic();
-});
-
-/* Rules */
-$('rulesBtn').addEventListener('click', () => rulesOverlay.classList.remove('hidden'));
-$('rulesClose').addEventListener('click', () => rulesOverlay.classList.add('hidden'));
-
-/* Menu */
-$('menuBtn').addEventListener('click', () => {
-  if (document.pointerLockElement) document.exitPointerLock();
-  charging = false; power = 0; updatePowerUI();
-  introOverlay.classList.remove('hidden');
-  introOverlay.querySelector('h1').textContent = 'PAUSED';
-  introOverlay.querySelector('.pbtn').textContent = 'استئناف';
-  introOverlay.querySelector('.pbtn').onclick = () => {
-    introOverlay.classList.add('hidden');
-    introOverlay.querySelector('h1').textContent = 'POOL 8';
-    introOverlay.querySelector('.pbtn').textContent = 'ادخل النادي';
-    introOverlay.querySelector('.pbtn').onclick = () => {
-      introOverlay.classList.add('hidden');
-      betOverlay.classList.remove('hidden');
-      document.getElementById('betInfo').textContent = `رصيدك: ${wallet} · الرهان: ${betAmount}`;
-    };
-    if (state === 'aim' || state === 'walk') renderer.domElement.requestPointerLock?.();
-  };
-});
-
-/* Start */
-$('startBtn').addEventListener('click', () => {
-  introOverlay.classList.add('hidden');
-  betOverlay.classList.remove('hidden');
-  document.getElementById('betInfo').textContent = `رصيدك: ${wallet} · الرهان: ${betAmount}`;
-});
-
-$('replayBtn').addEventListener('click', () => {
-  winOverlay.classList.add('hidden');
-  betOverlay.classList.remove('hidden');
-  document.getElementById('betInfo').textContent = `رصيدك: ${wallet} · الرهان: ${betAmount}`;
-  rackBalls();
-});
-
-/* ============ BOOT ============ */
-rackBalls();
-updateTurnUI();
-updatePowerUI();
-updateWalletUI();
-renderer.compile(scene, camera);
-
-setTimeout(() => {
-  loadingEl.classList.add('hidden');
-  state = 'intro';
-}, 500);
-
-requestAnimationFrame(animate);
-</script>
-</body>
-</html>
+        b.potted = true; b.vx
