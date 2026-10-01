@@ -2,121 +2,195 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>بلياردو 8 — منظور الشخص الأول</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050807">
+<title>POOL 8 — تجربة سينمائية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#050807;color:#fff;font-family:Cairo,sans-serif;user-select:none;touch-action:none}
+html,body{width:100%;height:100%;overflow:hidden;background:#030605;color:#fff;font-family:Cairo,sans-serif;user-select:none;touch-action:none;overscroll-behavior:none}
 #game{position:fixed;inset:0}
-canvas{display:block}
+canvas{display:block;width:100%;height:100%}
 .hidden{display:none!important}
 
-/* ---------- HUD ---------- */
-.hud{position:fixed;top:0;left:0;right:0;z-index:6;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;
-  background:linear-gradient(180deg,rgba(2,5,4,.85),rgba(2,5,4,0))}
-.scores{display:flex;align-items:center;gap:8px;direction:ltr;pointer-events:auto}
-.pcard{min-width:104px;padding:6px 10px;border:1px solid rgba(255,255,255,.12);border-radius:11px;background:rgba(8,14,12,.6);
-  display:grid;grid-template-columns:auto 1fr;gap:0 7px;line-height:14px;transition:.25s;backdrop-filter:blur(6px)}
-.pcard.active{border-color:rgba(217,173,91,.75);box-shadow:0 0 20px rgba(217,173,91,.18)}
-.pcard .dot{grid-row:1/3;width:8px;height:8px;border-radius:50%;background:#4d5a55;margin-top:4px}
-.pcard.active .dot{background:#e8c87e;box-shadow:0 0 10px #e8c87e}
-.pcard span{font-size:10px;color:#a8b3ae}
-.pcard b{font-size:11px;color:#f0d79a}
-.vs{font-size:10px;color:#63706b}
+/* Cinematic bars */
+.cinebar{position:fixed;left:0;right:0;height:0;background:#000;z-index:50;pointer-events:none;transition:height .9s cubic-bezier(.4,0,.2,1)}
+#cineTop{top:0}#cineBot{bottom:0}
+.cine-on #cineTop,.cine-on #cineBot{height:9vh}
+
+/* Vignette + grain */
+#vignette{position:fixed;inset:0;pointer-events:none;z-index:4;
+  background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.55) 100%)}
+#grain{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:.055;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+
+/* HUD */
+.hud{position:fixed;top:0;left:0;right:0;z-index:6;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));
+  display:flex;align-items:center;justify-content:space-between;pointer-events:none;
+  background:linear-gradient(180deg,rgba(2,5,4,.9),rgba(2,5,4,0))}
+.scores{display:flex;align-items:center;gap:10px;direction:ltr;pointer-events:auto}
+.pcard{min-width:112px;padding:7px 12px;border:1px solid rgba(255,255,255,.14);border-radius:13px;
+  background:linear-gradient(160deg,rgba(20,30,26,.72),rgba(6,12,10,.82));
+  display:grid;grid-template-columns:auto 1fr;gap:0 8px;line-height:15px;transition:.3s;backdrop-filter:blur(10px)}
+.pcard.active{border-color:rgba(217,173,91,.85);box-shadow:0 0 26px rgba(217,173,91,.25),inset 0 0 12px rgba(217,173,91,.08)}
+.pcard .dot{grid-row:1/3;width:9px;height:9px;border-radius:50%;background:#4d5a55;margin-top:4px;transition:.3s}
+.pcard.active .dot{background:#e8c87e;box-shadow:0 0 12px #e8c87e,0 0 4px #fff}
+.pcard span{font-size:10px;color:#a8b3ae;letter-spacing:.3px}
+.pcard b{font-size:12px;color:#f0d79a;font-weight:700}
+.vs{font-size:10px;color:#63706b;letter-spacing:2px}
 
 .topright{display:flex;gap:8px;pointer-events:auto}
-.ibtn{width:38px;height:38px;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:rgba(8,14,12,.65);
-  color:#fff;font-size:17px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(6px)}
-.ibtn:active{transform:scale(.94)}
+.ibtn{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+  background:linear-gradient(160deg,rgba(20,30,26,.75),rgba(6,12,10,.85));
+  color:#fff;font-size:17px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(10px);transition:.2s}
+.ibtn:active{transform:scale(.92);background:rgba(40,60,50,.9)}
 
-/* ---------- Center info ---------- */
-.center-info{position:fixed;top:74px;left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-.pill{padding:5px 14px;border-radius:20px;background:rgba(4,11,8,.72);border:1px solid rgba(255,255,255,.12);font-size:11px;backdrop-filter:blur(8px)}
-.pill i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e8c87e;margin-right:6px;box-shadow:0 0 8px #e8c87e}
-.powerwrap{width:200px;display:flex;align-items:center;gap:8px;font-size:9px;color:#95a19c;direction:ltr}
-.ptrack{flex:1;height:6px;border-radius:8px;background:#1e2a26;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
-#powerBar{height:100%;width:0;background:linear-gradient(90deg,#3fa86b,#d8b45c 55%,#e2553a);transition:width .05s linear}
-#powerText{min-width:30px;text-align:right;color:#e9cf8b;font-size:10px}
+/* Center info */
+.center-info{position:fixed;top:calc(84px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+.pill{padding:6px 16px;border-radius:22px;
+  background:linear-gradient(160deg,rgba(14,22,18,.82),rgba(4,9,7,.88));
+  border:1px solid rgba(217,173,91,.28);font-size:11.5px;backdrop-filter:blur(10px);
+  box-shadow:0 6px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06)}
+.pill i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e8c87e;margin-right:6px;
+  box-shadow:0 0 10px #e8c87e;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.8)}}
+.powerwrap{width:220px;display:flex;align-items:center;gap:8px;font-size:9px;color:#95a19c;direction:ltr}
+.ptrack{flex:1;height:7px;border-radius:8px;background:linear-gradient(90deg,#0a1611,#15241d);overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+#powerBar{height:100%;width:0;background:linear-gradient(90deg,#3fa86b,#d8b45c 55%,#e2553a);
+  box-shadow:0 0 12px rgba(216,180,92,.6);transition:width .04s linear}
+#powerText{min-width:34px;text-align:right;color:#e9cf8b;font-size:11px;font-weight:700}
 
-/* ---------- Controls ---------- */
-.controls{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:7;
-  display:flex;align-items:flex-end;gap:12px}
-.cbtn{width:58px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(8,14,12,.7);
-  color:#fff;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
-  backdrop-filter:blur(6px);font-family:inherit}
-.cbtn small{font-size:8px;color:#95a19c;font-family:inherit}
-.cbtn:active{background:rgba(30,45,38,.9);transform:scale(.95)}
-#shootBtn{width:118px;height:64px;border-radius:18px;border:1px solid #e2c47c;
-  background:linear-gradient(150deg,#c29648,#6a4a16);color:#fff;font-family:inherit;cursor:pointer;
-  box-shadow:0 8px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.3)}
-#shootBtn span{display:block;font-weight:900;font-size:16px;line-height:1.1}
-#shootBtn small{font-size:8px;opacity:.85}
-#shootBtn:active{filter:brightness(1.15)}
-#shootBtn:disabled{opacity:.4;filter:grayscale(1);cursor:default}
+/* Controls */
+.controls{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  z-index:7;display:flex;align-items:flex-end;gap:14px}
+.cbtn{width:58px;height:54px;border-radius:16px;border:1px solid rgba(255,255,255,.15);
+  background:linear-gradient(160deg,rgba(22,32,27,.78),rgba(8,14,11,.85));
+  color:#fff;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(10px);font-family:inherit;transition:.15s;
+  box-shadow:0 6px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08)}
+.cbtn small{font-size:8px;color:#95a19c;font-family:inherit;margin-top:1px}
+.cbtn:active{background:rgba(40,60,50,.95);transform:scale(.94)}
+#shootBtn{width:128px;height:68px;border-radius:20px;border:1px solid #e2c47c;
+  background:linear-gradient(150deg,#d4a85a 0%,#8a6320 45%,#4a330c 100%);
+  color:#fff;font-family:inherit;cursor:pointer;position:relative;
+  box-shadow:0 10px 30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.4),0 0 24px rgba(217,173,91,.25)}
+#shootBtn span{display:block;font-weight:900;font-size:17px;line-height:1.1;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+#shootBtn small{font-size:8.5px;opacity:.9}
+#shootBtn:active{filter:brightness(1.2);transform:scale(.97)}
+#shootBtn:disabled{opacity:.35;filter:grayscale(1);cursor:default;transform:none}
 
-/* ---------- Hint ---------- */
-#hint{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);z-index:5;font-size:10px;color:#8d9993;
-  background:rgba(4,10,8,.7);padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.08);pointer-events:none;
-  transition:.3s;white-space:nowrap}
+/* Hint */
+#hint{position:fixed;bottom:calc(120px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:5;
+  font-size:10.5px;color:#98a49e;background:linear-gradient(160deg,rgba(14,22,18,.8),rgba(4,9,7,.85));
+  padding:7px 16px;border-radius:22px;border:1px solid rgba(255,255,255,.09);pointer-events:none;
+  transition:.4s;white-space:nowrap;backdrop-filter:blur(8px)}
 
-/* ---------- Toast ---------- */
-#toast{position:fixed;top:22%;left:50%;transform:translate(-50%,-6px);z-index:20;padding:9px 20px;border-radius:22px;
-  background:rgba(5,11,8,.92);border:1px solid rgba(255,255,255,.15);font-size:12px;opacity:0;pointer-events:none;
-  transition:.28s;white-space:nowrap;backdrop-filter:blur(8px)}
-#toast.show{opacity:1;transform:translate(-50%,0)}
+/* Toast */
+#toast{position:fixed;top:24%;left:50%;transform:translate(-50%,-8px);z-index:20;padding:11px 24px;border-radius:24px;
+  background:linear-gradient(160deg,rgba(14,22,18,.95),rgba(4,9,7,.96));
+  border:1px solid rgba(217,173,91,.35);font-size:13px;font-weight:600;opacity:0;pointer-events:none;
+  transition:.35s cubic-bezier(.4,0,.2,1);white-space:nowrap;backdrop-filter:blur(12px);
+  box-shadow:0 12px 40px rgba(0,0,0,.6)}
+#toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 
-/* ---------- Overlays ---------- */
-.overlay{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:20px;
-  background:rgba(1,4,3,.7);backdrop-filter:blur(12px)}
-.panel{width:min(420px,92vw);padding:30px 26px;border-radius:24px;text-align:center;
-  border:1px solid rgba(255,255,255,.13);
-  background:linear-gradient(160deg,rgba(17,27,23,.97),rgba(5,10,8,.98));
-  box-shadow:0 30px 90px #000;animation:pop .3s ease}
-@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
-.logo8{width:76px;height:76px;margin:0 auto;border-radius:50%;display:grid;place-items:center;
-  font-size:42px;font-weight:900;background:radial-gradient(circle at 35% 28%,#fff,#999 12%,#151515 22%,#030303 68%);
-  border:3px solid #b6b6b6;box-shadow:0 8px 30px #000}
-h1{font-size:26px;letter-spacing:4px;margin:16px 0 6px;font-weight:900}
-h2{font-size:21px;margin-bottom:10px;font-weight:800}
-.panel p{color:#a9b4af;font-size:12.5px;line-height:1.85;margin-bottom:20px}
-.pbtn,.sbtn{width:100%;height:50px;border-radius:14px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer}
-.pbtn{border:1px solid #e2c47c;background:linear-gradient(150deg,#c29648,#6a4a16);color:#fff;
-  box-shadow:0 8px 22px rgba(0,0,0,.35);margin-bottom:10px}
-.pbtn:active{filter:brightness(1.12)}
-.sbtn{border:1px solid rgba(255,255,255,.14);background:#101915;color:#d7ded9}
-.sbtn:active{background:#17241e}
-.rulelist{text-align:right;color:#b6c1bb;font-size:12.5px;line-height:2;margin-bottom:20px}
+/* Joystick (mobile) */
+#joystick{position:fixed;left:24px;bottom:calc(24px + env(safe-area-inset-bottom));width:130px;height:130px;
+  border-radius:50%;z-index:8;pointer-events:none;opacity:0;transition:.3s;
+  background:radial-gradient(circle,rgba(217,173,91,.06) 0%,rgba(0,0,0,.25) 70%);
+  border:1.5px solid rgba(217,173,91,.25);box-shadow:inset 0 0 30px rgba(0,0,0,.5)}
+#joystick.active{opacity:1}
+#jknob{position:absolute;top:50%;left:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#e8c87e,#8a6320 70%,#3a2810);
+  border:1px solid rgba(255,255,255,.35);box-shadow:0 6px 20px rgba(0,0,0,.6);transition:.05s}
+@media(hover:hover) and (pointer:fine){#joystick{display:none}}
+
+/* Overlays */
+.overlay{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:20px;
+  background:radial-gradient(ellipse at center,rgba(3,8,6,.75),rgba(1,3,2,.92));backdrop-filter:blur(14px);
+  transition:opacity .35s}
+.panel{width:min(440px,92vw);padding:34px 28px;border-radius:26px;text-align:center;position:relative;
+  border:1px solid rgba(217,173,91,.22);
+  background:linear-gradient(165deg,rgba(20,30,26,.97),rgba(6,11,9,.99));
+  box-shadow:0 40px 120px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06);animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.9) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.panel::before{content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+  background:radial-gradient(circle at 50% 0%,rgba(217,173,91,.09),transparent 60%)}
+.logo8{width:84px;height:84px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;
+  font-size:44px;font-weight:900;color:#fff;
+  background:radial-gradient(circle at 35% 28%,#fff 0%,#d0d0d0 8%,#3a3a3a 22%,#0a0a0a 68%);
+  border:3px solid #d8d8d8;box-shadow:0 12px 40px rgba(0,0,0,.9),inset 0 -8px 20px rgba(0,0,0,.6);
+  text-shadow:0 2px 4px rgba(0,0,0,.5);position:relative}
+h1{font-size:30px;letter-spacing:6px;margin:14px 0 6px;font-weight:900;
+  background:linear-gradient(180deg,#fff,#d9ad5b 120%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+h2{font-size:22px;margin-bottom:12px;font-weight:800;color:#f0d79a}
+.panel p{color:#a9b4af;font-size:13px;line-height:1.9;margin-bottom:22px}
+.pbtn,.sbtn{width:100%;height:52px;border-radius:14px;font-family:inherit;font-weight:800;font-size:14.5px;cursor:pointer;transition:.15s}
+.pbtn{border:1px solid #e2c47c;background:linear-gradient(150deg,#d4a85a 0%,#8a6320 50%,#4a330c 100%);
+  color:#fff;box-shadow:0 10px 26px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.35);margin-bottom:10px}
+.pbtn:active{filter:brightness(1.15);transform:scale(.98)}
+.sbtn{border:1px solid rgba(255,255,255,.16);background:linear-gradient(160deg,#141f1a,#0a110d);color:#d7ded9}
+.sbtn:active{background:#1c2a23}
+.rulelist{text-align:right;color:#b6c1bb;font-size:13px;line-height:2.05;margin-bottom:22px}
 .rulelist b{color:#e9cf8b}
 
-/* ---------- Loading ---------- */
-#loading{position:fixed;inset:0;z-index:100;display:grid;place-items:center;align-content:center;gap:16px;background:#030706;font-size:13px;color:#ccc}
-.spin{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:#d9ad5b;border-radius:50%;animation:sp .8s linear infinite}
+/* Loading */
+#loading{position:fixed;inset:0;z-index:100;display:grid;place-items:center;align-content:center;gap:20px;
+  background:radial-gradient(ellipse at center,#0a1510,#020504 80%);font-size:13px;color:#c9d3ce}
+.spin{width:52px;height:52px;border:3px solid rgba(217,173,91,.15);border-top-color:#d9ad5b;border-radius:50%;
+  animation:sp .9s cubic-bezier(.5,0,.5,1) infinite;box-shadow:0 0 24px rgba(217,173,91,.25)}
 @keyframes sp{to{transform:rotate(360deg)}}
+.loadtxt{font-size:12px;letter-spacing:3px;color:#8a9791;text-transform:uppercase}
+
+/* Intro cinematic text */
+#cineText{position:fixed;bottom:12vh;left:0;right:0;text-align:center;z-index:51;pointer-events:none;
+  font-size:15px;letter-spacing:6px;color:#e8c87e;font-weight:600;opacity:0;transition:opacity 1.2s;
+  text-shadow:0 2px 16px rgba(0,0,0,.9)}
+#cineText.show{opacity:.9}
+
+/* Touch skip */
+#skipBtn{position:fixed;top:calc(12vh + 14px);right:20px;z-index:52;padding:8px 16px;border-radius:20px;
+  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);color:#ddd;font-size:11px;cursor:pointer;
+  backdrop-filter:blur(8px);font-family:inherit;opacity:0;transition:.4s;pointer-events:none}
+#skipBtn.show{opacity:1;pointer-events:auto}
 
 @media(max-width:600px){
-  .pcard{min-width:88px;padding:5px 8px}
-  .pcard span{font-size:9px}
-  #hint{font-size:9px;bottom:104px}
-  .cbtn{width:52px;height:48px}
-  #shootBtn{width:104px;height:58px}
+  .pcard{min-width:92px;padding:5px 9px}
+  .pcard span{font-size:9px}.pcard b{font-size:11px}
+  #hint{font-size:9.5px;bottom:calc(112px + env(safe-area-inset-bottom))}
+  .cbtn{width:52px;height:50px;font-size:16px}
+  #shootBtn{width:112px;height:62px}
+  #shootBtn span{font-size:15px}
+  h1{font-size:26px}.logo8{width:72px;height:72px;font-size:38px}
 }
 </style>
 </head>
 <body>
 
-<div id="loading"><div class="spin"></div><div>جاري تحميل الطاولة…</div></div>
+<div id="loading">
+  <div class="spin"></div>
+  <div class="loadtxt">Dressing the room…</div>
+</div>
 
 <div id="app" class="hidden">
   <div id="game"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+
+  <div class="cinebar" id="cineTop"></div>
+  <div class="cinebar" id="cineBot"></div>
+  <div id="cineText">نادي البلياردو · 22:47</div>
+  <button id="skipBtn">تخطي ›</button>
 
   <!-- HUD -->
   <div class="hud">
     <div class="scores">
-      <div class="pcard active" id="p1Card"><div class="dot"></div><span id="p1Name">اللاعب 1</span><b id="p1Score">0</b></div>
+      <div class="pcard active" id="p1Card"><div class="dot"></div><span id="p1Name">أنت</span><b id="p1Score">0</b></div>
       <div class="vs">VS</div>
-      <div class="pcard" id="p2Card"><div class="dot"></div><span id="p2Name">اللاعب 2</span><b id="p2Score">0</b></div>
+      <div class="pcard" id="p2Card"><div class="dot"></div><span id="p2Name">الخصم</span><b id="p2Score">0</b></div>
     </div>
     <div class="topright">
       <button class="ibtn" id="menuBtn">☰</button>
@@ -124,7 +198,7 @@ h2{font-size:21px;margin-bottom:10px;font-weight:800}
   </div>
 
   <div class="center-info">
-    <div class="pill"><i></i><span id="turnText">دور اللاعب 1</span></div>
+    <div class="pill"><i></i><span id="turnText">دورك</span></div>
     <div class="powerwrap">
       <span>POWER</span>
       <div class="ptrack"><div id="powerBar"></div></div>
@@ -132,14 +206,15 @@ h2{font-size:21px;margin-bottom:10px;font-weight:800}
     </div>
   </div>
 
-  <div id="hint">انقر للتصويب بالماوس · ESC للخروج</div>
+  <div id="hint">اسحب للتصويب · اضغط مطوّلاً للضرب</div>
 
-  <!-- Controls -->
   <div class="controls">
     <button class="cbtn" id="leftBtn">↺<small>يسار</small></button>
-    <button id="shootBtn" disabled><span>اضرب</span><small>اضغط مع الاستمرار</small></button>
+    <button id="shootBtn" disabled><span>اضرب</span><small>اضغط مطوّلاً</small></button>
     <button class="cbtn" id="rightBtn">↻<small>يمين</small></button>
   </div>
+
+  <div id="joystick"><div id="jknob"></div></div>
 
   <div id="toast"></div>
 </div>
@@ -149,32 +224,30 @@ h2{font-size:21px;margin-bottom:10px;font-weight:800}
   <div class="panel">
     <div class="logo8">8</div>
     <h1>POOL 8</h1>
-    <p>بلياردو بمنظور الشخص الأول<br>فيزياء واقعية · تصويب بالماوس</p>
-    <button class="pbtn" id="startBtn">ابدأ اللعب</button>
+    <p>تجربة بلياردو سينمائية بمنظور الشخص الأول<br>فيزياء واقعية · خصم حي · جو ليلي فخم</p>
+    <button class="pbtn" id="startBtn">ادخل النادي</button>
     <button class="sbtn" id="rulesBtn">القواعد</button>
   </div>
 </div>
 
-<!-- Rules -->
 <div class="overlay hidden" id="rulesOverlay">
   <div class="panel">
     <h2>القواعد</h2>
     <div class="rulelist">
-      • أول كرة تُدخل تحدد نوعك (<b>صلبة</b> 1-7 أو <b>مخططة</b> 9-15).<br>
-      • أدخل كل كراتك ثم الكرة <b>8</b> لتفوز.<br>
-      • إدخال الكرة 8 مبكراً = خسارة.<br>
-      • إدخال الكرة البيضاء (خطأ) = ينتقل الدور.<br>
-      • إذا لم تُدخل كرة صحيحة ينتقل الدور.
+      • أول كرة تُدخل تحدد نوعك (<b>صلبة</b> أو <b>مخططة</b>).<br>
+      • أدخل كل كراتك ثم الكرة <b>8</b> للفوز.<br>
+      • إدخال 8 مبكراً = خسارة فورية.<br>
+      • إدخال البيضاء = خطأ، ينتقل الدور.<br>
+      • التصويب: سحب الفأرة/الإصبع · الضرب: ضغط مطوّل.
     </div>
     <button class="pbtn" id="rulesClose">فهمت</button>
   </div>
 </div>
 
-<!-- Win -->
 <div class="overlay hidden" id="winOverlay">
   <div class="panel">
-    <div style="font-size:56px;line-height:1">🏆</div>
-    <h2 id="winTitle">فاز اللاعب 1</h2>
+    <div style="font-size:64px;line-height:1;filter:drop-shadow(0 8px 20px rgba(217,173,91,.5))">🏆</div>
+    <h2 id="winTitle">فزت!</h2>
     <p id="winMsg">مبروك!</p>
     <button class="pbtn" id="replayBtn">لعب مرة أخرى</button>
   </div>
@@ -194,24 +267,24 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* =========================================================
-   CONSTANTS  (وحدات حقيقية بالمتر — طاولة 9ft)
+   CONSTANTS — طاولة 9ft حقيقية
    ========================================================= */
-const BALL_R   = 0.0286;      // نصف قطر الكرة (57.15mm قطر)
-const TABLE_W  = 1.27;        // عرض سطح اللعب  (X)
-const TABLE_L  = 2.54;        // طول سطح اللعب  (Z)
+const BALL_R   = 0.0286;
+const TABLE_W  = 1.27;
+const TABLE_L  = 2.54;
 const HW = TABLE_W / 2;
 const HL = TABLE_L / 2;
-const RAIL_W = 0.075;         // عرض الحافة
-const RAIL_H = 0.052;         // ارتفاع الحافة
-const POCKET_R = 0.058;       // نصف قطر التقاط الجيب
-const CORNER_GAP = 0.085;     // فتحة الجيب الركني في الحافة
-const SIDE_GAP   = 0.115;     // فتحة الجيب الأوسط
+const RAIL_W = 0.075;
+const RAIL_H = 0.052;
+const POCKET_R = 0.058;
+const CORNER_GAP = 0.085;
+const SIDE_GAP   = 0.115;
 
-const ROLL_DECEL   = 1.35;    // تباطؤ التدحرج m/s²
-const CUSHION_E    = 0.72;    // ارتداد الحافة
-const BALL_E       = 0.96;    // ارتداد الكرات
-const STOP_V       = 0.012;   // سرعة التوقف
-const MAX_SPEED    = 5.2;     // أقصى سرعة عند 100% قوة
+const ROLL_DECEL   = 1.35;
+const CUSHION_E    = 0.72;
+const BALL_E       = 0.96;
+const STOP_V       = 0.012;
+const MAX_SPEED    = 5.2;
 const FIXED_DT     = 1 / 200;
 
 const POCKETS = [
@@ -221,101 +294,469 @@ const POCKETS = [
 ];
 
 const BALL_COLORS = {
-  1:'#f4c419', 2:'#1f5fb0', 3:'#c8281e', 4:'#5c2a86',
-  5:'#e07b1a', 6:'#12864a', 7:'#8a1a12', 8:'#141414',
+  1:'#f4c419',2:'#1f5fb0',3:'#c8281e',4:'#5c2a86',
+  5:'#e07b1a',6:'#12864a',7:'#8a1a12',8:'#141414',
   9:'#f4c419',10:'#1f5fb0',11:'#c8281e',12:'#5c2a86',
- 13:'#e07b1a',14:'#12864a',15:'#8a1a12'
+  13:'#e07b1a',14:'#12864a',15:'#8a1a12'
 };
 
 /* =========================================================
-   RENDERER / SCENE
+   RENDERER / SCENE / CAMERA
    ========================================================= */
 const container = document.getElementById('game');
 const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 1.12;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 container.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x070a09);
-scene.fog = new THREE.FogExp2(0x070a09, 0.055);
+scene.background = new THREE.Color(0x050807);
+scene.fog = new THREE.FogExp2(0x08110d, 0.045);
 
-const camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.015, 60);
+const camera = new THREE.PerspectiveCamera(64, innerWidth/innerHeight, 0.02, 60);
 
-/* environment */
 try {
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-} catch(e) { /* ignore */ }
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.05).texture;
+} catch(e) {}
 
 /* =========================================================
-   LIGHTS
+   LIGHTS — جو النادي الليلي
    ========================================================= */
-scene.add(new THREE.HemisphereLight(0x8fa8bb, 0x101512, 0.35));
-scene.add(new THREE.AmbientLight(0xffffff, 0.18));
+scene.add(new THREE.HemisphereLight(0x4a6a78, 0x0a0f0c, 0.28));
+scene.add(new THREE.AmbientLight(0xffe6c0, 0.14));
 
-const key = new THREE.DirectionalLight(0xfff0d6, 2.4);
+/* المفتاح الرئيسي فوق الطاولة */
+const key = new THREE.DirectionalLight(0xfff0d6, 2.1);
 key.position.set(1.6, 4.2, 1.2);
 key.castShadow = true;
-key.shadow.mapSize.set(1536, 1536);
-key.shadow.camera.left = -1.9; key.shadow.camera.right = 1.9;
-key.shadow.camera.top = 1.9;   key.shadow.camera.bottom = -1.9;
-key.shadow.camera.near = 0.5;  key.shadow.camera.far = 9;
-key.shadow.bias = -0.0009;
-key.shadow.normalBias = 0.008;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = -2.2; key.shadow.camera.right = 2.2;
+key.shadow.camera.top = 2.2;   key.shadow.camera.bottom = -2.2;
+key.shadow.camera.near = 0.5;  key.shadow.camera.far = 10;
+key.shadow.bias = -0.0006;
+key.shadow.normalBias = 0.012;
+key.shadow.radius = 3;
 scene.add(key);
 
-const lamp1 = new THREE.PointLight(0xffe4b8, 9, 5, 2.0);
-lamp1.position.set(0, 1.35, -0.75); scene.add(lamp1);
-const lamp2 = new THREE.PointLight(0xffe4b8, 9, 5, 2.0);
-lamp2.position.set(0, 1.35, 0.75);  scene.add(lamp2);
+/* لمبة الطاولة (3 رؤوس) */
+const tableLampLights = [];
+[[-0.42,1.45,-0.78],[0,1.5,0],[0.42,1.45,0.78]].forEach(([x,y,z])=>{
+  const l = new THREE.PointLight(0xffdba6, 6.5, 4.2, 2.0);
+  l.position.set(x, y, z);
+  scene.add(l);
+  tableLampLights.push(l);
+});
+
+/* سبوت حاد على الطاولة */
+const spot = new THREE.SpotLight(0xfff2d8, 12, 6, Math.PI/5.5, 0.55, 1.6);
+spot.position.set(0, 2.4, 0);
+spot.target.position.set(0, 0, 0);
+spot.castShadow = true;
+spot.shadow.mapSize.set(1024, 1024);
+spot.shadow.bias = -0.0008;
+scene.add(spot); scene.add(spot.target);
+
+/* إضاءة خلفية (بار) */
+const barLight = new THREE.PointLight(0xff8a3c, 3.2, 4.5, 2.0);
+barLight.position.set(-2.6, 1.5, 0);
+scene.add(barLight);
+
+const neonLight = new THREE.PointLight(0x3fb0ff, 1.8, 4, 2.0);
+neonLight.position.set(2.4, 1.7, -2.2);
+scene.add(neonLight);
 
 /* =========================================================
-   ROOM (بسيطة لإحساس الجو)
+   ROOM BUILD — نادي بلياردو فخم
    ========================================================= */
+function woodFloorTexture(){
+  const S = 512;
+  const c = document.createElement('canvas'); c.width = S; c.height = S;
+  const g = c.getContext('2d');
+  g.fillStyle = '#1c1008'; g.fillRect(0,0,S,S);
+  // ألواح
+  const planks = 8, pw = S/planks;
+  for (let i=0;i<planks;i++){
+    const shade = 15 + Math.random()*22;
+    g.fillStyle = `rgb(${shade+18},${shade+8},${shade})`;
+    g.fillRect(i*pw, 0, pw-2, S);
+    // عروق خشب
+    for (let k=0;k<40;k++){
+      g.strokeStyle = `rgba(0,0,0,${0.04+Math.random()*0.08})`;
+      g.lineWidth = 1;
+      g.beginPath();
+      const y = Math.random()*S;
+      g.moveTo(i*pw + 4, y);
+      g.bezierCurveTo(i*pw+pw*0.3, y+8, i*pw+pw*0.6, y-6, i*pw+pw-6, y+3);
+      g.stroke();
+    }
+    g.strokeStyle='rgba(0,0,0,0.6)';
+    g.lineWidth=2;
+    g.beginPath(); g.moveTo(i*pw,0); g.lineTo(i*pw,S); g.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 3);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function wallTexture(base='#16241e', accent='#0d1915'){
+  const S = 512;
+  const c = document.createElement('canvas'); c.width = S; c.height = S/2;
+  const g = c.getContext('2d');
+  g.fillStyle = base; g.fillRect(0,0,S,S/2);
+  // نقشة
+  for (let i=0;i<2500;i++){
+    g.fillStyle = `rgba(0,0,0,${Math.random()*0.08})`;
+    g.fillRect(Math.random()*S, Math.random()*S/2, 2, 2);
+  }
+  // لوح خشبي سفلي
+  g.fillStyle = accent;
+  g.fillRect(0, S*0.35, S, S*0.15);
+  g.strokeStyle = 'rgba(217,173,91,0.18)';
+  g.lineWidth = 2;
+  g.beginPath(); g.moveTo(0, S*0.35); g.lineTo(S, S*0.35); g.stroke();
+  g.beginPath(); g.moveTo(0, S*0.5); g.lineTo(S, S*0.5); g.stroke();
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function pictureTexture(label, hue){
+  const W = 256, H = 320;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  // خلفية متدرجة
+  const grd = g.createLinearGradient(0,0,0,H);
+  grd.addColorStop(0, `hsl(${hue},35%,22%)`);
+  grd.addColorStop(1, `hsl(${hue+20},45%,8%)`);
+  g.fillStyle = grd; g.fillRect(0,0,W,H);
+  // أشكال تجريدية
+  for (let i=0;i<14;i++){
+    g.fillStyle = `hsla(${hue+Math.random()*40},60%,${30+Math.random()*40}%,${0.15+Math.random()*0.35})`;
+    g.beginPath();
+    g.arc(Math.random()*W, Math.random()*H, 20+Math.random()*60, 0, Math.PI*2);
+    g.fill();
+  }
+  // حافة ذهبية
+  g.strokeStyle = 'rgba(217,173,91,.6)';
+  g.lineWidth = 8;
+  g.strokeRect(4,4,W-8,H-8);
+  return new THREE.CanvasTexture(c);
+}
+
 (function buildRoom(){
-  const floorMat = new THREE.MeshStandardMaterial({ color:0x14100c, roughness:0.85, metalness:0.05 });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), floorMat);
+  const roomW = 7.2, roomH = 3.4, roomD = 8.4;
+  const wallMat = new THREE.MeshStandardMaterial({ map: wallTexture(), roughness:0.92, metalness:0.05 });
+
+  // جداران جانبيان
+  const wallL = new THREE.Mesh(new THREE.PlaneGeometry(roomD, roomH), wallMat);
+  wallL.rotation.y = Math.PI/2;
+  wallL.position.set(-roomW/2, roomH/2, 0);
+  wallL.receiveShadow = true;
+  scene.add(wallL);
+
+  const wallR = wallL.clone();
+  wallR.rotation.y = -Math.PI/2;
+  wallR.position.set(roomW/2, roomH/2, 0);
+  scene.add(wallR);
+
+  // جدار خلفي (خلف الخصم)
+  const wallB = new THREE.Mesh(new THREE.PlaneGeometry(roomW, roomH), wallMat);
+  wallB.position.set(0, roomH/2, -roomD/2);
+  wallB.receiveShadow = true;
+  scene.add(wallB);
+
+  // جدار أمامي (خلف اللاعب)
+  const wallF = new THREE.Mesh(new THREE.PlaneGeometry(roomW, roomH), wallMat);
+  wallF.rotation.y = Math.PI;
+  wallF.position.set(0, roomH/2, roomD/2);
+  scene.add(wallF);
+
+  // سقف
+  const ceilMat = new THREE.MeshStandardMaterial({ color:0x0a0d0b, roughness:0.95 });
+  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(roomW, roomD), ceilMat);
+  ceil.rotation.x = Math.PI/2;
+  ceil.position.y = roomH;
+  scene.add(ceil);
+
+  // أرضية خشبية
+  const floorMat = new THREE.MeshStandardMaterial({ map: woodFloorTexture(), roughness:0.62, metalness:0.08 });
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(roomW, roomD), floorMat);
   floor.rotation.x = -Math.PI/2;
-  floor.position.y = -0.78;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const wallMat = new THREE.MeshStandardMaterial({ color:0x0b1210, roughness:0.95, side:THREE.BackSide });
-  const room = new THREE.Mesh(new THREE.BoxGeometry(14, 5.2, 14), wallMat);
-  room.position.y = 1.8;
-  scene.add(room);
+  // سجادة تحت الطاولة
+  const rugMat = new THREE.MeshStandardMaterial({ color:0x2a0a0a, roughness:0.98 });
+  const rug = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 4.8), rugMat);
+  rug.rotation.x = -Math.PI/2;
+  rug.position.y = 0.005;
+  rug.receiveShadow = true;
+  scene.add(rug);
+
+  // لوحات على الحوائط
+  [[-roomW/2+0.05, 1.7, -2.2, Math.PI/2, 40],
+   [-roomW/2+0.05, 1.7,  2.2, Math.PI/2, 200],
+   [ roomW/2-0.05, 1.8,  1.6, -Math.PI/2, 300],
+   [ 0, 1.9, -roomD/2+0.06, 0, 120]].forEach(([x,y,z,ry,hue])=>{
+    const frame = new THREE.Mesh(
+      new THREE.BoxGeometry(0.62, 0.78, 0.04),
+      new THREE.MeshStandardMaterial({ color:0x5c3d18, roughness:0.5, metalness:0.35 })
+    );
+    frame.position.set(x,y,z); frame.rotation.y = ry;
+    scene.add(frame);
+    const art = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.54, 0.70),
+      new THREE.MeshStandardMaterial({ map:pictureTexture('', hue), roughness:0.7 })
+    );
+    art.position.set(x + Math.sin(ry+Math.PI/2)*0.001, y, z);
+    // تحريك بسيط للأمام حسب الاتجاه
+    const nx = Math.cos(ry)*0.021, nz = -Math.sin(ry)*0.021;
+    art.position.x += nx; art.position.z += nz;
+    art.rotation.y = ry;
+    scene.add(art);
+  });
+
+  // بار خشبي على الجانب الأيسر
+  const barMat = new THREE.MeshStandardMaterial({ color:0x2a1810, roughness:0.45, metalness:0.25 });
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.05, 2.4), barMat);
+  bar.position.set(-2.6, 0.52, 0);
+  bar.castShadow = true; bar.receiveShadow = true;
+  scene.add(bar);
+
+  const barTop = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 0.06, 2.55),
+    new THREE.MeshStandardMaterial({ color:0x100805, roughness:0.35, metalness:0.4 })
+  );
+  barTop.position.set(-2.55, 1.08, 0);
+  barTop.castShadow = true;
+  scene.add(barTop);
+
+  // رف زجاجات خلف البار
+  const shelfMat = new THREE.MeshStandardMaterial({ color:0x1a0f08, roughness:0.55 });
+  for (let s=0;s<2;s++){
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.03, 2.3), shelfMat);
+    shelf.position.set(-3.35, 1.25 + s*0.45, 0);
+    scene.add(shelf);
+    for (let i=0;i<8;i++){
+      const col = [0x8b2214, 0x1b5a2e, 0x4a3a0e, 0x2a1a4a][i%4];
+      const bottle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.035, 0.045, 0.24, 10),
+        new THREE.MeshStandardMaterial({ color:col, roughness:0.15, metalness:0.1,
+          emissive:col, emissiveIntensity:0.18, transparent:true, opacity:0.9 })
+      );
+      bottle.position.set(-3.35, 1.39 + s*0.45, -1 + i*0.28);
+      bottle.castShadow = true;
+      scene.add(bottle);
+    }
+  }
+
+  // كراسي حول الطاولة (2)
+  function makeChair(x, z, ry){
+    const g = new THREE.Group();
+    const chairMat = new THREE.MeshStandardMaterial({ color:0x2c1810, roughness:0.5, metalness:0.15 });
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.06, 0.42), chairMat);
+    seat.position.y = 0.46; seat.castShadow = true;
+    g.add(seat);
+    for (const [dx,dz] of [[-0.17,-0.17],[0.17,-0.17],[-0.17,0.17],[0.17,0.17]]){
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.46, 0.04), chairMat);
+      leg.position.set(dx, 0.23, dz);
+      g.add(leg);
+    }
+    const back = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.5, 0.05), chairMat);
+    back.position.set(0, 0.73, -0.185);
+    back.castShadow = true;
+    g.add(back);
+    g.position.set(x, 0, z);
+    g.rotation.y = ry;
+    scene.add(g);
+  }
+  makeChair(-1.3, -1.6, Math.PI * 0.15);
+  makeChair(-1.3,  1.6, Math.PI * -0.15);
+
+  // لمبة الطاولة الفخمة (3 أغطية)
+  const lampBodyMat = new THREE.MeshStandardMaterial({ color:0x0d0d0d, roughness:0.35, metalness:0.7 });
+  const lampShadeMat = new THREE.MeshStandardMaterial({
+    color:0x1a3a2a, roughness:0.55, metalness:0.35, side:THREE.DoubleSide,
+    emissive:0x2a5038, emissiveIntensity:0.35
+  });
+  [[-0.42,-0.78],[0,0],[0.42,0.78]].forEach(([x,z])=>{
+    const shade = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.10, 0.26, 0.16, 24, 1, true), lampShadeMat
+    );
+    shade.position.set(x, 1.55, z);
+    shade.castShadow = true;
+    scene.add(shade);
+
+    const bulb = new THREE.Mesh(
+      new THREE.SphereGeometry(0.045, 12, 10),
+      new THREE.MeshBasicMaterial({ color:0xffe8b8 })
+    );
+    bulb.position.set(x, 1.49, z);
+    scene.add(bulb);
+  });
+  // هيكل المعلق
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.06, 0.14), lampBodyMat);
+  bar.position.set(0, 1.68, 0);
+  scene.add(bar);
+  const bar2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 1.75), lampBodyMat);
+  bar2.position.set(0, 1.68, 0);
+  scene.add(bar2);
+  const ropeMat = new THREE.MeshStandardMaterial({ color:0x111111 });
+  for (let i=-3;i<=3;i++){
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.008,0.008, 0.22, 6), ropeMat);
+    rope.position.set(i*0.2, 1.79, 0);
+    scene.add(rope);
+  }
+  const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006, roomH-1.9, 6), ropeMat);
+  cord.position.set(0, (roomH+1.9)/2, 0);
+  scene.add(cord);
+
+  // نقاط غبار معلقة في الضوء
+  const dustGeo = new THREE.BufferGeometry();
+  const N = 240;
+  const positions = new Float32Array(N*3);
+  for (let i=0;i<N;i++){
+    positions[i*3]   = (Math.random()-0.5)*3;
+    positions[i*3+1] = 0.2 + Math.random()*2.4;
+    positions[i*3+2] = (Math.random()-0.5)*4;
+  }
+  dustGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const dustMat = new THREE.PointsMaterial({
+    color:0xffe8c0, size:0.006, transparent:true, opacity:0.55,
+    depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true
+  });
+  const dust = new THREE.Points(dustGeo, dustMat);
+  scene.add(dust);
+  window.__dust = dust;
 })();
 
 /* =========================================================
-   CLOTH TEXTURE
+   OPPONENT CHARACTER — خصم بشري
+   ========================================================= */
+function buildOpponent(){
+  const g = new THREE.Group();
+
+  const skin = new THREE.MeshStandardMaterial({ color:0xc99a72, roughness:0.75 });
+  const shirt = new THREE.MeshStandardMaterial({ color:0x1f2f3a, roughness:0.7 });
+  const pants = new THREE.MeshStandardMaterial({ color:0x161616, roughness:0.75 });
+  const shoes = new THREE.MeshStandardMaterial({ color:0x0a0a0a, roughness:0.5, metalness:0.2 });
+  const hairMat = new THREE.MeshStandardMaterial({ color:0x1a0f08, roughness:0.85 });
+
+  // الجسم
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.19, 0.42, 8, 16), shirt);
+  torso.position.y = 1.05;
+  torso.castShadow = true;
+  g.add(torso);
+
+  const hips = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.1, 6, 14), pants);
+  hips.position.y = 0.78;
+  hips.castShadow = true;
+  g.add(hips);
+
+  // الرقبة والرأس
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.06,0.08,10), skin);
+  neck.position.y = 1.36;
+  g.add(neck);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.115, 22, 18), skin);
+  head.position.y = 1.5;
+  head.scale.set(1, 1.15, 1.02);
+  head.castShadow = true;
+  g.add(head);
+
+  // شعر
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.122, 20, 16, 0, Math.PI*2, 0, Math.PI*0.62), hairMat);
+  hair.position.y = 1.525;
+  hair.scale.set(1, 1.05, 1.05);
+  g.add(hair);
+
+  // عيون (بسيطة)
+  const eyeMat = new THREE.MeshStandardMaterial({ color:0x0a0a0a });
+  for (const sx of [-1,1]){
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), eyeMat);
+    eye.position.set(sx*0.04, 1.51, 0.105);
+    g.add(eye);
+  }
+
+  // الذراعان
+  function makeArm(side){
+    const arm = new THREE.Group();
+    const upper = new THREE.Mesh(new THREE.CapsuleGeometry(0.055, 0.22, 6, 10), shirt);
+    upper.position.y = -0.13;
+    upper.castShadow = true;
+    arm.add(upper);
+    const fore = new THREE.Mesh(new THREE.CapsuleGeometry(0.048, 0.22, 6, 10), skin);
+    fore.position.y = -0.36;
+    fore.castShadow = true;
+    arm.add(fore);
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), skin);
+    hand.position.y = -0.52;
+    arm.add(hand);
+    arm.position.set(side * 0.24, 1.28, 0);
+    return arm;
+  }
+  const armL = makeArm(-1);
+  const armR = makeArm(1);
+  armL.rotation.z = 0.16;
+  armR.rotation.z = -0.16;
+  g.add(armL, armR);
+
+  // الساقان
+  function makeLeg(side){
+    const leg = new THREE.Group();
+    const upper = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.32, 6, 10), pants);
+    upper.position.y = -0.20; upper.castShadow = true;
+    leg.add(upper);
+    const lower = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.30, 6, 10), pants);
+    lower.position.y = -0.56; lower.castShadow = true;
+    leg.add(lower);
+    const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.07, 0.22), shoes);
+    shoe.position.set(0, -0.78, 0.03);
+    shoe.castShadow = true;
+    leg.add(shoe);
+    leg.position.set(side * 0.09, 0.78, 0);
+    return leg;
+  }
+  const legL = makeLeg(-1);
+  const legR = makeLeg(1);
+  g.add(legL, legR);
+
+  scene.add(g);
+  return { group:g, armL, armR, legL, legR, head, torso, hips };
+}
+
+const opponent = buildOpponent();
+opponent.group.position.set(0, 0, HL + 0.55);
+opponent.group.rotation.y = Math.PI; // يواجه اللاعب
+window.__opp = opponent;
+
+/* =========================================================
+   TABLE
    ========================================================= */
 function makeClothTexture(){
   const W = 1024, H = 512;
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-
   g.fillStyle = '#0d5c3a';
   g.fillRect(0,0,W,H);
-
-  // نويز النسيج
   for (let i=0;i<30000;i++){
     const x = Math.random()*W, y = Math.random()*H;
     const a = Math.random()*0.07;
-    g.fillStyle = Math.random() > 0.5
-      ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
+    g.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
     g.fillRect(x, y, 1.6, 1.6);
   }
-
   const toX = x => (x + HW) / TABLE_W * W;
   const toY = z => (z + HL) / TABLE_L * H;
-
-  // الجيوب
   for (const p of POCKETS){
     const px = toX(p.x), py = toY(p.z);
     const pr = (POCKET_R / TABLE_W) * W;
@@ -327,86 +768,67 @@ function makeClothTexture(){
     g.fillStyle = grd;
     g.beginPath(); g.arc(px,py,pr*1.55,0,Math.PI*2); g.fill();
   }
-
-  // خط الرأس
   g.strokeStyle = 'rgba(255,255,255,0.13)';
   g.lineWidth = 2;
   g.beginPath();
   g.moveTo(toX(-HW), toY(-HL/2));
   g.lineTo(toX( HW), toY(-HL/2));
   g.stroke();
-
-  // نقطة القدم
   g.fillStyle = 'rgba(255,255,255,0.22)';
   g.beginPath(); g.arc(toX(0), toY(HL/2), 4.5, 0, Math.PI*2); g.fill();
-
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
   return tex;
 }
 
-/* =========================================================
-   TABLE MESHES
-   ========================================================= */
 const tableGroup = new THREE.Group();
 scene.add(tableGroup);
 
 (function buildTable(){
-  // القماش
   const clothMat = new THREE.MeshStandardMaterial({
-    map: makeClothTexture(), roughness: 0.92, metalness: 0.0,
-    envMapIntensity: 0.25
+    map: makeClothTexture(), roughness: 0.94, metalness: 0.0, envMapIntensity: 0.25
   });
   const cloth = new THREE.Mesh(new THREE.PlaneGeometry(TABLE_W, TABLE_L), clothMat);
   cloth.rotation.x = -Math.PI/2;
   cloth.receiveShadow = true;
   tableGroup.add(cloth);
 
-  // قاعدة الطاولة (خشب)
-  const woodMat = new THREE.MeshStandardMaterial({ color:0x2c1a0f, roughness:0.55, metalness:0.18 });
+  const woodMat = new THREE.MeshStandardMaterial({ color:0x2c1a0f, roughness:0.45, metalness:0.28 });
   const slateMat = new THREE.MeshStandardMaterial({ color:0x0a0a0a, roughness:0.95 });
-
   const slate = new THREE.Mesh(
     new THREE.BoxGeometry(TABLE_W + RAIL_W*2, 0.05, TABLE_L + RAIL_W*2), slateMat);
   slate.position.y = -0.036;
   slate.castShadow = true; slate.receiveShadow = true;
   tableGroup.add(slate);
 
-  // الحافات الطويلة (مقطوعة عند الجيب الأوسط)
   const zStart = -(HL + RAIL_W - CORNER_GAP);
   const zEnd   =  (HL + RAIL_W - CORNER_GAP);
   const totalLen = zEnd - zStart;
   const segLen = (totalLen - SIDE_GAP) / 2;
 
-  const railMat = new THREE.MeshStandardMaterial({ color:0x3a2214, roughness:0.5, metalness:0.15 });
+  const railMat = new THREE.MeshStandardMaterial({ color:0x3a2214, roughness:0.42, metalness:0.22 });
   const railTopMat = new THREE.MeshStandardMaterial({ color:0x0f5e3c, roughness:0.95 });
 
-  function addRail(w, d, x, z, alongX){
+  function addRail(w, d, x, z){
     const rail = new THREE.Mesh(new THREE.BoxGeometry(w, RAIL_H, d), railMat);
     rail.position.set(x, RAIL_H/2, z);
     rail.castShadow = true; rail.receiveShadow = true;
     tableGroup.add(rail);
-    // سطح أخضر علوي
     const top = new THREE.Mesh(new THREE.BoxGeometry(w*0.96, 0.006, d*0.96), railTopMat);
     top.position.set(x, RAIL_H + 0.002, z);
     top.receiveShadow = true;
     tableGroup.add(top);
   }
-
-  // حافات طويلة
   addRail(RAIL_W, segLen, -(HW + RAIL_W/2), zStart + segLen/2);
   addRail(RAIL_W, segLen, -(HW + RAIL_W/2), zEnd  - segLen/2);
   addRail(RAIL_W, segLen,  (HW + RAIL_W/2), zStart + segLen/2);
   addRail(RAIL_W, segLen,  (HW + RAIL_W/2), zEnd  - segLen/2);
-
-  // حافات قصيرة
   const shortLen = TABLE_W + RAIL_W*2 - CORNER_GAP*2;
   addRail(shortLen, RAIL_W, 0, -(HL + RAIL_W/2));
   addRail(shortLen, RAIL_W, 0,  (HL + RAIL_W/2));
 
-  // الأرجل
-  const legMat = new THREE.MeshStandardMaterial({ color:0x1e1108, roughness:0.6, metalness:0.2 });
+  const legMat = new THREE.MeshStandardMaterial({ color:0x1e1108, roughness:0.55, metalness:0.25 });
   const legPos = [
     [-HW - 0.06, -HL - 0.06], [HW + 0.06, -HL - 0.06],
     [-HW - 0.06,  HL + 0.06], [HW + 0.06,  HL + 0.06]
@@ -417,16 +839,13 @@ scene.add(tableGroup);
     leg.castShadow = true;
     tableGroup.add(leg);
   }
-
-  // أبليك أسفل الحافة
   const apron = new THREE.Mesh(
     new THREE.BoxGeometry(TABLE_W + RAIL_W*2 + 0.02, 0.1, TABLE_L + RAIL_W*2 + 0.02), woodMat);
   apron.position.y = -0.12;
   apron.castShadow = true;
   tableGroup.add(apron);
 
-  // الماس على الحافات (زخرفة)
-  const diamondMat = new THREE.MeshStandardMaterial({ color:0xf0e2c0, roughness:0.3, metalness:0.4, emissive:0x554422, emissiveIntensity:0.25 });
+  const diamondMat = new THREE.MeshStandardMaterial({ color:0xf0e2c0, roughness:0.25, metalness:0.5, emissive:0x554422, emissiveIntensity:0.3 });
   const dGeo = new THREE.OctahedronGeometry(0.008);
   for (let i=1;i<8;i++){
     if (i === 4) continue;
@@ -457,7 +876,6 @@ function makeBallTexture(num, color, isStripe){
   const c = document.createElement('canvas');
   c.width = S; c.height = H;
   const g = c.getContext('2d');
-
   if (isStripe){
     g.fillStyle = '#f6f5f2'; g.fillRect(0,0,S,H);
     g.fillStyle = color;
@@ -465,15 +883,12 @@ function makeBallTexture(num, color, isStripe){
   } else {
     g.fillStyle = color; g.fillRect(0,0,S,H);
   }
-
-  // لمعة القطبين
   const vg = g.createLinearGradient(0,0,0,H);
   vg.addColorStop(0,   'rgba(0,0,0,0.35)');
   vg.addColorStop(0.35,'rgba(0,0,0,0)');
   vg.addColorStop(0.65,'rgba(0,0,0,0)');
   vg.addColorStop(1,   'rgba(0,0,0,0.35)');
   g.fillStyle = vg; g.fillRect(0,0,S,H);
-
   const drawNum = (cx) => {
     const cy = H/2;
     const r  = S*0.067;
@@ -487,7 +902,6 @@ function makeBallTexture(num, color, isStripe){
   };
   drawNum(S*0.25);
   drawNum(S*0.75);
-
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -495,7 +909,6 @@ function makeBallTexture(num, color, isStripe){
 }
 
 const ballGeo = new THREE.SphereGeometry(BALL_R, 40, 28);
-
 const balls = [];
 let cueBall = null;
 
@@ -505,13 +918,13 @@ function createBall(num, x, z){
   let mat;
   if (isCue){
     mat = new THREE.MeshStandardMaterial({
-      color: 0xfbfbf7, roughness: 0.06, metalness: 0.0, envMapIntensity: 1.1
+      color: 0xfbfbf7, roughness: 0.05, metalness: 0.0, envMapIntensity: 1.4
     });
   } else {
     const color = num === 8 ? '#141414' : BALL_COLORS[num];
     mat = new THREE.MeshStandardMaterial({
       map: makeBallTexture(num, color, isStripe),
-      roughness: 0.075, metalness: 0.0, envMapIntensity: 1.0
+      roughness: 0.07, metalness: 0.0, envMapIntensity: 1.2
     });
   }
   const mesh = new THREE.Mesh(ballGeo, mat);
@@ -519,7 +932,6 @@ function createBall(num, x, z){
   mesh.receiveShadow = true;
   mesh.position.set(x, BALL_R, z);
   scene.add(mesh);
-
   const b = { num, x, z, vx:0, vz:0, potted:false, isCue, mesh, isStripe,
               color: isCue ? '#ffffff' : (num===8 ? '#141414' : BALL_COLORS[num]) };
   balls.push(b);
@@ -528,17 +940,12 @@ function createBall(num, x, z){
 }
 
 function rackBalls(){
-  // إزالة الكرات القديمة
   for (const b of balls) scene.remove(b.mesh);
   balls.length = 0;
   cueBall = null;
-
-  const d  = BALL_R * 2 * 1.002;      // مسافة التلامس
-  const rs = d * Math.sqrt(3) / 2;    // مسافة الصفوف
-  const apexZ = HL / 2;               // نقطة القدم
-  const startZ = apexZ;
-
-  // ترتيب قياسي (8 في المنتصف، زوايا الصف الأخير صلبة/مخططة)
+  const d  = BALL_R * 2 * 1.002;
+  const rs = d * Math.sqrt(3) / 2;
+  const startZ = HL / 2;
   const layout = [
     [1],
     [2, 9],
@@ -546,7 +953,6 @@ function rackBalls(){
     [11, 7, 14, 4],
     [5, 13, 15, 6, 12]
   ];
-
   for (let row = 0; row < layout.length; row++){
     const nums = layout[row];
     const z = startZ + row * rs;
@@ -555,8 +961,6 @@ function rackBalls(){
       createBall(nums[i], x0 + i * d, z);
     }
   }
-
-  // الكرة البيضاء
   createBall(0, 0, -HL/2);
 }
 
@@ -569,25 +973,20 @@ scene.add(cueGroup);
 (function buildCue(){
   const L = 1.45;
   const geo = new THREE.CylinderGeometry(0.0125, 0.0058, L, 14, 1, false);
-  geo.rotateX(Math.PI/2);        // المحور الآن Z
-  geo.translate(0, 0, L/2);      // الطرف عند z=0، المؤخرة عند z=L
-
-  const mat = new THREE.MeshStandardMaterial({ color:0xb98a4e, roughness:0.42, metalness:0.12 });
+  geo.rotateX(Math.PI/2);
+  geo.translate(0, 0, L/2);
+  const mat = new THREE.MeshStandardMaterial({ color:0xb98a4e, roughness:0.4, metalness:0.15 });
   const stick = new THREE.Mesh(geo, mat);
   stick.castShadow = true;
   cueGroup.add(stick);
 
-  // طرف أزرق
   const tipGeo = new THREE.CylinderGeometry(0.0058, 0.0058, 0.014, 14);
-  tipGeo.rotateX(Math.PI/2);
-  tipGeo.translate(0, 0, 0.006);
+  tipGeo.rotateX(Math.PI/2); tipGeo.translate(0, 0, 0.006);
   const tip = new THREE.Mesh(tipGeo, new THREE.MeshStandardMaterial({ color:0x2b6fa8, roughness:0.7 }));
   cueGroup.add(tip);
 
-  // حلقة بيضاء
   const ringGeo = new THREE.CylinderGeometry(0.0062, 0.0062, 0.03, 14);
-  ringGeo.rotateX(Math.PI/2);
-  ringGeo.translate(0, 0, 0.028);
+  ringGeo.rotateX(Math.PI/2); ringGeo.translate(0, 0, 0.028);
   const ring = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color:0xf2ead6, roughness:0.35 }));
   cueGroup.add(ring);
 })();
@@ -612,7 +1011,7 @@ scene.add(ghost);
 /* =========================================================
    GAME STATE
    ========================================================= */
-let state = 'intro';           // intro | aiming | moving | over
+let state = 'intro'; // intro | cinematic | aiming | moving | over
 let currentPlayer = 1;
 let groups = { 1:null, 2:null };
 let scores = { 1:0, 2:0 };
@@ -625,6 +1024,12 @@ let charging = false;
 let chargeStart = 0;
 let acc = 0;
 let lastTime = performance.now();
+let breatheT = 0;
+let swayT = 0;
+
+/* Cinematic */
+let cineT = 0;
+const CINE_DURATION = 6.5;
 
 /* =========================================================
    DOM
@@ -639,54 +1044,49 @@ const p1Name = $('p1Name'), p2Name = $('p2Name');
 const shootBtn = $('shootBtn'), leftBtn = $('leftBtn'), rightBtn = $('rightBtn');
 const toastEl = $('toast'), hintEl = $('hint');
 const introOverlay = $('introOverlay'), rulesOverlay = $('rulesOverlay'), winOverlay = $('winOverlay');
+const cineText = $('cineText'), skipBtn = $('skipBtn');
+const joystick = $('joystick'), jknob = $('jknob');
 
 /* =========================================================
-   UI HELPERS
+   UI
    ========================================================= */
 let toastTimer = null;
-function showToast(msg, ms = 1600){
+function showToast(msg, ms = 1700){
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toastEl.classList.remove('show'), ms);
 }
-
 function updateTurnUI(){
-  turnText.textContent = `دور اللاعب ${currentPlayer}`;
+  turnText.textContent = currentPlayer === 1 ? 'دورك' : 'دور الخصم';
   p1Card.classList.toggle('active', currentPlayer === 1);
   p2Card.classList.toggle('active', currentPlayer === 2);
   p1Score.textContent = scores[1];
   p2Score.textContent = scores[2];
-  p1Name.textContent = groups[1] === 'solid' ? 'اللاعب 1 · صلبة'
-                     : groups[1] === 'stripe' ? 'اللاعب 1 · مخططة' : 'اللاعب 1';
-  p2Name.textContent = groups[2] === 'solid' ? 'اللاعب 2 · صلبة'
-                     : groups[2] === 'stripe' ? 'اللاعب 2 · مخططة' : 'اللاعب 2';
+  p1Name.textContent = groups[1] === 'solid' ? 'أنت · صلبة'
+                     : groups[1] === 'stripe' ? 'أنت · مخططة' : 'أنت';
+  p2Name.textContent = groups[2] === 'solid' ? 'الخصم · صلبة'
+                     : groups[2] === 'stripe' ? 'الخصم · مخططة' : 'الخصم';
 }
-
 function updatePowerUI(){
   powerBar.style.width = power + '%';
   powerText.textContent = Math.round(power) + '%';
 }
 
 /* =========================================================
-   INPUT
+   INPUT — mouse + touch + joystick
    ========================================================= */
 let dragging = false;
-let lastPointer = { x:0, y:0 };
-let touchAimId = null, touchAimLast = null;
-
 renderer.domElement.addEventListener('pointerdown', e => {
   if (state !== 'aiming') return;
-  if (!document.pointerLockElement && e.pointerType === 'mouse'){
+  if (e.pointerType === 'mouse' && !document.pointerLockElement){
     renderer.domElement.requestPointerLock();
   }
 });
-
 document.addEventListener('pointerlockchange', () => {
   const locked = document.pointerLockElement === renderer.domElement;
   hintEl.style.opacity = (locked || state !== 'aiming') ? '0' : '1';
 });
-
 document.addEventListener('mousemove', e => {
   if (document.pointerLockElement !== renderer.domElement) return;
   if (state !== 'aiming' && state !== 'moving') return;
@@ -695,7 +1095,8 @@ document.addEventListener('mousemove', e => {
   pitch = Math.max(0.10, Math.min(1.25, pitch));
 });
 
-/* لمس للتصويب */
+/* Touch aim (touch on screen outside joystick) */
+let touchAimId = null, touchAimLast = null;
 renderer.domElement.addEventListener('touchstart', e => {
   if (state !== 'aiming') return;
   if (touchAimId !== null) return;
@@ -703,7 +1104,6 @@ renderer.domElement.addEventListener('touchstart', e => {
   touchAimId = t.identifier;
   touchAimLast = { x:t.clientX, y:t.clientY };
 }, { passive:true });
-
 renderer.domElement.addEventListener('touchmove', e => {
   if (touchAimId === null) return;
   for (const t of e.changedTouches){
@@ -717,7 +1117,6 @@ renderer.domElement.addEventListener('touchmove', e => {
     }
   }
 }, { passive:true });
-
 function endTouchAim(e){
   for (const t of e.changedTouches){
     if (t.identifier === touchAimId){ touchAimId = null; touchAimLast = null; }
@@ -726,39 +1125,30 @@ function endTouchAim(e){
 renderer.domElement.addEventListener('touchend', endTouchAim, { passive:true });
 renderer.domElement.addEventListener('touchcancel', endTouchAim, { passive:true });
 
-/* أزرار التصويب الدقيق */
-function nudge(dir){
-  if (state !== 'aiming') return;
-  yaw += dir * 0.012;
-}
+/* Buttons */
+function nudge(dir){ if (state === 'aiming') yaw += dir * 0.012; }
 leftBtn.addEventListener('click', () => nudge(+1));
 rightBtn.addEventListener('click', () => nudge(-1));
 
-/* زر الضرب */
 function startCharge(e){
   e.preventDefault();
   if (state !== 'aiming' || charging) return;
-  charging = true;
-  power = 0;
+  charging = true; power = 0;
   chargeStart = performance.now();
 }
 function endCharge(e){
   if (e) e.preventDefault();
   if (!charging) return;
   charging = false;
-  if (state !== 'aiming') { power = 0; updatePowerUI(); return; }
+  if (state !== 'aiming'){ power = 0; updatePowerUI(); return; }
   fire();
 }
 shootBtn.addEventListener('pointerdown', startCharge);
 window.addEventListener('pointerup', endCharge);
 window.addEventListener('pointercancel', endCharge);
 
-/* كيبورد */
 window.addEventListener('keydown', e => {
-  if (e.code === 'Space'){
-    e.preventDefault();
-    if (!charging) startCharge(e);
-  }
+  if (e.code === 'Space'){ e.preventDefault(); if (!charging) startCharge(e); }
   if (e.code === 'ArrowLeft'  || e.code === 'KeyA') nudge(+1);
   if (e.code === 'ArrowRight' || e.code === 'KeyD') nudge(-1);
 });
@@ -766,20 +1156,54 @@ window.addEventListener('keyup', e => {
   if (e.code === 'Space'){ e.preventDefault(); endCharge(e); }
 });
 
+/* ----- Joystick ----- */
+let joyActive = false, joyId = null, joyStart = { x:0, y:0 }, joyVal = { x:0, y:0 };
+function joyStartHandler(e){
+  if (state !== 'aiming') return;
+  const t = e.changedTouches ? e.changedTouches[0] : e;
+  joyActive = true; joyId = t.identifier ?? 'm';
+  joyStart = { x:t.clientX, y:t.clientY };
+  joystick.classList.add('active');
+  e.preventDefault();
+}
+function joyMoveHandler(e){
+  if (!joyActive) return;
+  const list = e.changedTouches || [e];
+  for (const t of list){
+    if ((t.identifier ?? 'm') !== joyId) continue;
+    let dx = t.clientX - joyStart.x;
+    let dy = t.clientY - joyStart.y;
+    const maxR = 44;
+    const d = Math.hypot(dx, dy);
+    if (d > maxR){ dx = dx/d*maxR; dy = dy/d*maxR; }
+    joyVal.x = dx/maxR; joyVal.y = dy/maxR;
+    jknob.style.transform = `translate(${dx}px,${dy}px)`;
+  }
+  e.preventDefault();
+}
+function joyEndHandler(e){
+  if (!joyActive) return;
+  joyActive = false; joyId = null;
+  joyVal.x = 0; joyVal.y = 0;
+  jknob.style.transform = '';
+  joystick.classList.remove('active');
+}
+joystick.addEventListener('touchstart', joyStartHandler, { passive:false });
+joystick.addEventListener('touchmove', joyMoveHandler, { passive:false });
+joystick.addEventListener('touchend', joyEndHandler);
+joystick.addEventListener('touchcancel', joyEndHandler);
+
 /* =========================================================
    SHOOT
    ========================================================= */
 function fire(){
   if (state !== 'aiming' || !cueBall || cueBall.potted) return;
   if (power < 4){ power = 0; updatePowerUI(); return; }
-
   const dx = -Math.sin(yaw);
   const dz = -Math.cos(yaw);
   const v  = (power / 100) * MAX_SPEED;
-
   cueBall.vx = dx * v;
   cueBall.vz = dz * v;
-
   turnPocketed = [];
   state = 'moving';
   power = 0;
@@ -794,38 +1218,28 @@ function fire(){
 function physicsStep(h){
   for (const b of balls){
     if (b.potted) continue;
-
     const sp = Math.hypot(b.vx, b.vz);
     if (sp > 0){
       const dec = ROLL_DECEL * h;
       const nsp = Math.max(0, sp - dec);
-      if (nsp < STOP_V){
-        b.vx = 0; b.vz = 0;
-      } else {
-        const k = nsp / sp;
-        b.vx *= k; b.vz *= k;
-      }
+      if (nsp < STOP_V){ b.vx = 0; b.vz = 0; }
+      else { const k = nsp / sp; b.vx *= k; b.vz *= k; }
     }
     b.x += b.vx * h;
     b.z += b.vz * h;
   }
-
-  /* الجيوب */
   for (const b of balls){
     if (b.potted) continue;
     for (const p of POCKETS){
       const dx = b.x - p.x, dz = b.z - p.z;
       if (dx*dx + dz*dz < POCKET_R * POCKET_R){
-        b.potted = true;
-        b.vx = 0; b.vz = 0;
+        b.potted = true; b.vx = 0; b.vz = 0;
         b.mesh.visible = false;
         turnPocketed.push(b);
         break;
       }
     }
   }
-
-  /* الحافات */
   const minX = -HW + BALL_R, maxX = HW - BALL_R;
   const minZ = -HL + BALL_R, maxZ = HL - BALL_R;
   for (const b of balls){
@@ -835,8 +1249,6 @@ function physicsStep(h){
     if (b.z < minZ){ b.z = minZ; b.vz =  Math.abs(b.vz) * CUSHION_E; }
     if (b.z > maxZ){ b.z = maxZ; b.vz = -Math.abs(b.vz) * CUSHION_E; }
   }
-
-  /* تصادم الكرات */
   const D2 = (BALL_R * 2) * (BALL_R * 2);
   for (let i = 0; i < balls.length; i++){
     const a = balls[i];
@@ -844,26 +1256,21 @@ function physicsStep(h){
     for (let j = i + 1; j < balls.length; j++){
       const b = balls[j];
       if (b.potted) continue;
-
       let dx = b.x - a.x;
       let dz = b.z - a.z;
       let d2 = dx*dx + dz*dz;
       if (d2 >= D2 || d2 < 1e-12) continue;
-
       const d = Math.sqrt(d2);
       const nx = dx / d, nz = dz / d;
       const overlap = (BALL_R * 2) - d;
-
       a.x -= nx * overlap * 0.5;
       a.z -= nz * overlap * 0.5;
       b.x += nx * overlap * 0.5;
       b.z += nz * overlap * 0.5;
-
       const dvx = a.vx - b.vx;
       const dvz = a.vz - b.vz;
       const vn  = dvx * nx + dvz * nz;
       if (vn <= 0) continue;
-
       const jImp = -(1 + BALL_E) * vn * 0.5;
       a.vx += jImp * nx; a.vz += jImp * nz;
       b.vx -= jImp * nx; b.vz -= jImp * nz;
@@ -887,11 +1294,9 @@ function groupOf(num){
   if (num === 8) return 'eight';
   return num < 8 ? 'solid' : 'stripe';
 }
-
 function remainingFor(group){
   return balls.filter(b => !b.potted && !b.isCue && b.num !== 8 && groupOf(b.num) === group).length;
 }
-
 function placeCueBall(){
   const spotZ = -HL / 2;
   let z = spotZ;
@@ -906,30 +1311,24 @@ function placeCueBall(){
     z -= BALL_R * 2.2;
     if (z < -HL + BALL_R) z = spotZ + BALL_R * 2.2;
   }
-  cueBall.x = 0;
-  cueBall.z = z;
+  cueBall.x = 0; cueBall.z = z;
   cueBall.vx = 0; cueBall.vz = 0;
   cueBall.potted = false;
   cueBall.mesh.visible = true;
   cueBall.mesh.position.set(cueBall.x, BALL_R, cueBall.z);
 }
-
 function resolveTurn(){
   const pocketed = turnPocketed.slice();
   turnPocketed = [];
-
   const other = currentPlayer === 1 ? 2 : 1;
   let foul = false;
   let legalPocket = false;
 
-  /* الكرة البيضاء دخلت */
   if (cueBall.potted){
     foul = true;
     placeCueBall();
     showToast('خطأ! الكرة البيضاء دخلت');
   }
-
-  /* تحديد المجموعات */
   if (!groups[1] && !groups[2]){
     const first = pocketed.find(b => !b.isCue && b.num !== 8);
     if (first){
@@ -939,33 +1338,18 @@ function resolveTurn(){
       showToast(`اللاعب ${currentPlayer} → ${g === 'solid' ? 'صلبة' : 'مخططة'}`);
     }
   }
-
-  /* معالجة كل كرة دخلت */
   for (const b of pocketed){
     if (b.isCue) continue;
-
     if (b.num === 8){
       const g = groups[currentPlayer];
-      if (g && remainingFor(g) === 0){
-        endGame(currentPlayer);
-      } else {
-        endGame(other);
-      }
+      if (g && remainingFor(g) === 0) endGame(currentPlayer);
+      else endGame(other);
       return;
     }
-
     const g = groupOf(b.num);
-    if (!groups[currentPlayer]){
-      scores[currentPlayer]++;
-      legalPocket = true;
-    } else if (g === groups[currentPlayer]){
-      scores[currentPlayer]++;
-      legalPocket = true;
-    }
-    /* كرة الخصم لا تحسب ولا تعتبر خطأ في هذه النسخة المبسطة */
+    if (!groups[currentPlayer]){ scores[currentPlayer]++; legalPocket = true; }
+    else if (g === groups[currentPlayer]){ scores[currentPlayer]++; legalPocket = true; }
   }
-
-  /* الكرة 8 دخلت في مكان آخر؟ */
   const eight = balls.find(b => b.num === 8);
   if (eight && eight.potted){
     const g = groups[currentPlayer];
@@ -973,27 +1357,22 @@ function resolveTurn(){
     else endGame(other);
     return;
   }
-
-  if (foul || !legalPocket){
-    currentPlayer = other;
-  }
-
+  if (foul || !legalPocket) currentPlayer = other;
   updateTurnUI();
   state = 'aiming';
   shootBtn.disabled = false;
   hintEl.style.opacity = document.pointerLockElement ? '0' : '1';
 }
-
 function endGame(winner){
   state = 'over';
-  $('winTitle').textContent = `فاز اللاعب ${winner}`;
-  $('winMsg').textContent = winner === 1 ? 'أداء رائع! 🎱' : 'أحسنت! 🎱';
+  $('winTitle').textContent = winner === 1 ? 'فزت!' : 'خسرت';
+  $('winMsg').textContent = winner === 1 ? 'أداء رائع، أنت نجم الطاولة 🎱' : 'الخصم كان محظوظاً… حاول مجدداً';
   winOverlay.classList.remove('hidden');
   if (document.pointerLockElement) document.exitPointerLock();
 }
 
 /* =========================================================
-   AIM GUIDE UPDATE
+   AIM GUIDE
    ========================================================= */
 function updateAimGuide(){
   if (!cueBall || cueBall.potted || state !== 'aiming'){
@@ -1002,13 +1381,9 @@ function updateAimGuide(){
     return;
   }
   guideLine.visible = true;
-
   const dx = -Math.sin(yaw);
   const dz = -Math.cos(yaw);
-
   let bestT = Infinity;
-
-  // الحافات
   const boundX = HW - BALL_R;
   const boundZ = HL - BALL_R;
   if (dx >  1e-6) bestT = Math.min(bestT, ( boundX - cueBall.x) / dx);
@@ -1016,8 +1391,6 @@ function updateAimGuide(){
   if (dz >  1e-6) bestT = Math.min(bestT, ( boundZ - cueBall.z) / dz);
   if (dz < -1e-6) bestT = Math.min(bestT, (-boundZ - cueBall.z) / dz);
   if (!isFinite(bestT) || bestT < 0) bestT = 0.01;
-
-  // الكرات
   let hit = null;
   const R2 = (BALL_R * 2) * (BALL_R * 2);
   for (const b of balls){
@@ -1031,15 +1404,12 @@ function updateAimGuide(){
     const t = -proj - Math.sqrt(disc);
     if (t > 1e-4 && t < bestT){ bestT = t; hit = b; }
   }
-
   const ex = cueBall.x + dx * bestT;
   const ez = cueBall.z + dz * bestT;
-
   const pos = guideGeo.attributes.position.array;
   pos[0] = cueBall.x; pos[1] = BALL_R * 0.35; pos[2] = cueBall.z;
   pos[3] = ex;        pos[4] = BALL_R * 0.35; pos[5] = ez;
   guideGeo.attributes.position.needsUpdate = true;
-
   if (hit){
     ghost.visible = true;
     ghost.position.set(ex, 0.0016, ez);
@@ -1052,69 +1422,115 @@ function updateAimGuide(){
 }
 
 /* =========================================================
-   CAMERA UPDATE
+   CAMERA
    ========================================================= */
 const camTarget = new THREE.Vector3();
 const lookTarget = new THREE.Vector3();
+const tmpLookAt = new THREE.Vector3();
 
-function updateCamera(){
+function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+
+function updateCamera(dt){
+  /* Cinematic camera */
+  if (state === 'cinematic'){
+    cineT += dt;
+    const p = Math.min(1, cineT / CINE_DURATION);
+    const e = easeInOutCubic(Math.min(1, p*1.15));
+
+    // مسار: باب (0,1.68,-4.4) → قرب الطاولة (0,1.22,-1.15)
+    const startPos = { x:0, y:1.68, z:-4.4 };
+    const endPos   = { x:0, y:1.24, z:-1.10 };
+
+    // منحنى خفيف
+    const curve = Math.sin(p*Math.PI) * 0.35;
+    const camX = startPos.x + (endPos.x - startPos.x) * e;
+    const camY = startPos.y + (endPos.y - startPos.y) * e + Math.sin(p*Math.PI*2.5)*0.012;
+    const camZ = startPos.z + (endPos.z - startPos.z) * e;
+
+    // ميل خفيف أثناء المشي (محاكاة خطوات)
+    const stepBob = Math.sin(cineT * 6.5) * 0.008 * (1 - e);
+
+    camera.position.set(camX + curve*0.05, camY + stepBob, camZ);
+
+    // الهدف: من مركز الطاولة إلى الكرة البيضاء
+    const lookFrom = { x:0, y:1.15, z:0 };
+    const lookTo   = { x:0, y:0.04, z:-HL/2 };
+    const lx = lookFrom.x + (lookTo.x - lookFrom.x) * e;
+    const ly = lookFrom.y + (lookTo.y - lookFrom.y) * e;
+    const lz = lookFrom.z + (lookTo.z - lookFrom.z) * e;
+    camera.lookAt(lx, ly, lz);
+
+    // الظهور التدريجي للعصا
+    const cueVis = Math.max(0, Math.min(1, (p - 0.55) / 0.3));
+    cueGroup.scale.setScalar(cueVis);
+    cueGroup.visible = cueVis > 0.02;
+
+    // مزامنة yaw/pitch مع نهاية الحركة لتكون سلسة
+    if (p > 0.85){
+      yaw = Math.PI;
+      pitch = 0.62;
+    }
+    return;
+  }
+
   if (!cueBall) return;
   const cb = cueBall.potted ? { x:0, z:-HL/2 } : cueBall;
 
-  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  breatheT += dt;
+  swayT += dt;
 
-  const camX = cb.x + Math.sin(yaw) * cp * CAM_DIST;
-  const camY = BALL_R + sp * CAM_DIST + 0.03;
+  // تنفس + تمايل خفيف
+  const breathe = Math.sin(breatheT * 1.6) * 0.006;
+  const swayY = Math.sin(swayT * 0.7) * 0.004;
+  const swayX = Math.cos(swayT * 0.5) * 0.003;
+
+  const cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const camX = cb.x + Math.sin(yaw) * cp * CAM_DIST + swayX;
+  const camY = BALL_R + sp * CAM_DIST + 0.035 + breathe + swayY;
   const camZ = cb.z + Math.cos(yaw) * cp * CAM_DIST;
 
   camera.position.lerp(camTarget.set(camX, camY, camZ), 0.55);
 
   const lookX = cb.x - Math.sin(yaw) * 1.9;
   const lookZ = cb.z - Math.cos(yaw) * 1.9;
-  camera.lookAt(lookTarget.set(lookX, 0.005, lookZ));
+  tmpLookAt.set(lookX, 0.005 + breathe*0.5, lookZ);
+  camera.lookAt(lookTarget.copy(tmpLookAt));
 }
 
 /* =========================================================
-   CUE STICK UPDATE
+   CUE
    ========================================================= */
 const Z_AXIS = new THREE.Vector3(0, 0, 1);
 const backDir = new THREE.Vector3();
-const tmpV = new THREE.Vector3();
 
 function updateCue(){
-  if (!cueBall || cueBall.potted || state !== 'aiming' || !cueBall.mesh.visible){
+  if (state === 'cinematic') return;
+  if (!cueBall || cueBall.potted || state !== 'aiming'){
     cueGroup.visible = false;
     return;
   }
   cueGroup.visible = true;
-
   const dx = -Math.sin(yaw);
   const dz = -Math.cos(yaw);
-
   const pullback = BALL_R + 0.012 + (power / 100) * 0.28;
-
   cueGroup.position.set(
     cueBall.x - dx * pullback,
     BALL_R,
     cueBall.z - dz * pullback
   );
-
   backDir.set(-dx, 0, -dz).normalize();
   cueGroup.quaternion.setFromUnitVectors(Z_AXIS, backDir);
 }
 
 /* =========================================================
-   BALL MESH SYNC
+   BALL SYNC
    ========================================================= */
+const tmpV = new THREE.Vector3();
 function syncBalls(dt){
   for (const b of balls){
-    if (b.potted){
-      b.mesh.visible = false;
-      continue;
-    }
+    if (b.potted){ b.mesh.visible = false; continue; }
     b.mesh.visible = true;
     b.mesh.position.set(b.x, BALL_R, b.z);
-
     const sp = Math.hypot(b.vx, b.vz);
     if (sp > 0.002){
       const ax = b.vz / sp;
@@ -1127,23 +1543,88 @@ function syncBalls(dt){
 }
 
 /* =========================================================
+   OPPONENT ANIMATION — سلوك بشري
+   ========================================================= */
+let oppTime = 0;
+function updateOpponent(dt){
+  oppTime += dt;
+  const o = opponent;
+
+  // تنفس
+  const breathe = Math.sin(oppTime * 1.3) * 0.012;
+  o.torso.position.y = 1.05 + breathe;
+  o.head.position.y = 1.5 + breathe * 0.9;
+
+  // تمايل بسيط
+  const sway = Math.sin(oppTime * 0.65) * 0.02;
+  o.group.rotation.z = sway * 0.6;
+  o.group.position.x = Math.sin(oppTime * 0.4) * 0.015;
+
+  // تحريك الرأس — ينظر للكرة البيضاء إن وُجدت
+  if (cueBall && !cueBall.potted){
+    const dx = cueBall.x - o.group.position.x;
+    const dz = cueBall.z - o.group.position.z;
+    const targetYaw = Math.atan2(dx, dz);
+    // دوران الرأس حول Y
+    o.head.rotation.y = Math.max(-0.5, Math.min(0.5, (targetYaw - Math.PI) * 0.5));
+    o.head.rotation.x = -0.08 + Math.sin(oppTime * 0.7) * 0.02;
+  }
+
+  // ذراعان — يتحرك قليلاً
+  const armSwing = Math.sin(oppTime * 1.1) * 0.04;
+  o.armL.rotation.x = armSwing;
+  o.armR.rotation.x = -armSwing * 0.7;
+  o.armL.rotation.z = 0.16 + Math.sin(oppTime * 0.9) * 0.02;
+  o.armR.rotation.z = -0.16 - Math.sin(oppTime * 0.9) * 0.02;
+
+  // وزن الجسم — تحريك بسيط
+  o.legL.rotation.x = Math.sin(oppTime * 0.8) * 0.015;
+  o.legR.rotation.x = -Math.sin(oppTime * 0.8) * 0.015;
+}
+
+/* =========================================================
+   DUST
+   ========================================================= */
+function updateDust(dt){
+  const d = window.__dust;
+  if (!d) return;
+  const pos = d.geometry.attributes.position;
+  const arr = pos.array;
+  for (let i=1; i<arr.length; i+=3){
+    arr[i] += dt * 0.012;
+    if (arr[i] > 2.6) arr[i] = 0.2;
+  }
+  pos.needsUpdate = true;
+}
+
+/* =========================================================
    MAIN LOOP
    ========================================================= */
 function animate(now){
   requestAnimationFrame(animate);
-
   let dt = (now - lastTime) / 1000;
   lastTime = now;
   if (dt > 0.05) dt = 0.05;
 
-  /* شحن القوة */
+  /* Joystick aim */
+  if (joyActive && state === 'aiming'){
+    yaw   -= joyVal.x * dt * 2.4;
+    pitch += joyVal.y * dt * 1.6;
+    pitch = Math.max(0.10, Math.min(1.25, pitch));
+  }
+
+  /* Charging */
   if (charging && state === 'aiming'){
     const elapsed = (now - chargeStart) / 1000;
     power = Math.min(100, elapsed * 110);
     updatePowerUI();
   }
 
-  /* فيزياء */
+  /* Cinematic skip */
+  if (state === 'cinematic' && cineT > 0.8) skipBtn.classList.add('show');
+  else skipBtn.classList.remove('show');
+
+  /* Physics */
   if (state === 'moving'){
     acc += dt;
     let iter = 0;
@@ -1153,19 +1634,17 @@ function animate(now){
       iter++;
     }
     if (iter >= 60) acc = 0;
-
-    if (allStopped()){
-      acc = 0;
-      resolveTurn();
-    }
+    if (allStopped()){ acc = 0; resolveTurn(); }
   } else {
     acc = 0;
   }
 
   syncBalls(dt);
-  updateCamera();
+  updateCamera(dt);
   updateCue();
   updateAimGuide();
+  updateOpponent(dt);
+  updateDust(dt);
 
   renderer.render(scene, camera);
 }
@@ -1177,13 +1656,38 @@ addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
 });
 
 /* =========================================================
-   GAME START
+   START / INTRO CINEMATIC
    ========================================================= */
+function beginCinematic(){
+  // إخفاء مؤقت للعصا والتصويب
+  cueGroup.visible = false;
+  guideLine.visible = false;
+  ghost.visible = false;
+
+  // إعادة ضبط
+  cineT = 0;
+  state = 'cinematic';
+
+  // camera start
+  camera.position.set(0, 1.68, -4.4);
+  camera.lookAt(0, 1.15, 0);
+
+  // cinematic UI
+  document.body.classList.add('cine-on');
+  appEl.classList.remove('hidden');
+  introOverlay.classList.add('hidden');
+  winOverlay.classList.add('hidden');
+  cineText.classList.add('show');
+  setTimeout(() => cineText.classList.remove('show'), 3200);
+}
+
 function startGame(){
+  document.body.classList.remove('cine-on');
+  skipBtn.classList.remove('show');
   rackBalls();
   groups = { 1:null, 2:null };
   scores = { 1:0, 2:0 };
@@ -1193,47 +1697,51 @@ function startGame(){
   charging = false;
   yaw = Math.PI;
   pitch = 0.62;
-
+  cueGroup.scale.setScalar(1);
   updatePowerUI();
   updateTurnUI();
 
   state = 'aiming';
   shootBtn.disabled = false;
-
-  introOverlay.classList.add('hidden');
-  winOverlay.classList.add('hidden');
-  appEl.classList.remove('hidden');
   hintEl.style.opacity = '1';
 
+  // محاولة قفل الماوس
   setTimeout(() => {
-    if (!document.pointerLockElement){
+    if (!document.pointerLockElement && matchMedia('(hover:hover)').matches){
       renderer.domElement.requestPointerLock?.();
     }
-  }, 120);
+  }, 250);
 }
+
+skipBtn.addEventListener('click', () => {
+  if (state === 'cinematic'){
+    // انتقل بسرعة إلى نهاية المشهد
+    cineT = CINE_DURATION * 0.98;
+  }
+});
 
 /* =========================================================
    BUTTONS
    ========================================================= */
-$('startBtn').addEventListener('click', startGame);
-$('replayBtn').addEventListener('click', startGame);
-
+$('startBtn').addEventListener('click', beginCinematic);
+$('replayBtn').addEventListener('click', () => {
+  winOverlay.classList.add('hidden');
+  startGame();
+});
 $('rulesBtn').addEventListener('click', () => rulesOverlay.classList.remove('hidden'));
 $('rulesClose').addEventListener('click', () => rulesOverlay.classList.add('hidden'));
 
 $('menuBtn').addEventListener('click', () => {
   if (document.pointerLockElement) document.exitPointerLock();
-  charging = false;
-  power = 0;
-  updatePowerUI();
+  charging = false; power = 0; updatePowerUI();
   introOverlay.classList.remove('hidden');
   introOverlay.querySelector('h1').textContent = 'PAUSED';
   introOverlay.querySelector('.pbtn').textContent = 'استئناف';
   introOverlay.querySelector('.pbtn').onclick = () => {
     introOverlay.classList.add('hidden');
     introOverlay.querySelector('h1').textContent = 'POOL 8';
-    introOverlay.querySelector('.pbtn').textContent = 'ابدأ اللعب';
-    introOverlay.querySelector('.pbtn').onclick = startGame;
+    introOverlay.querySelector('.pbtn').textContent = 'ادخل النادي';
+    introOverlay.querySelector('.pbtn').onclick = beginCinematic;
     if (state === 'aiming') renderer.domElement.requestPointerLock?.();
   };
 });
@@ -1244,15 +1752,12 @@ $('menuBtn').addEventListener('click', () => {
 rackBalls();
 updateTurnUI();
 updatePowerUI();
-
-// أول إطار لتهيئة الـ shaders
 renderer.compile(scene, camera);
 
 setTimeout(() => {
   loadingEl.classList.add('hidden');
-  appEl.classList.remove('hidden');
   state = 'intro';
-}, 450);
+}, 600);
 
 requestAnimationFrame(animate);
 </script>
